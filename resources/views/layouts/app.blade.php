@@ -40,7 +40,7 @@
           <a class="nav-link active" href="/gioi-thieu">GIỚI THIỆU</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link active" href="/tai-khoan">TÀI KHOẢN</a>
+          <a class="nav-link active" href="/login">TÀI KHOẢN</a>
         </li>
       </ul>
 

@@ -86,7 +86,7 @@
         }
         
         .btn-register {
-            background: var(--secondary);
+            background: var(--secondary) !important;
             border: none;
             color: white;
             padding: 12px;
