@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    @vite(['resources/css/profile.css', 'resources/js/app.js'])
+    @vite(['resources/css/dashboard_user.css', 'resources/js/app.js'])
     <title>Hồ Sơ Cá Nhân </title>
 </head>
 <body>
@@ -15,7 +15,7 @@
          <div class="container profile-container">
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <div class="store-logo">ten shop</div>
+            <div class="store-logo">USER Ở ĐÂY NÈ</div>
             <div>
                 <a href="/" class="btn btn-outline-primary mr-2"><i class="fas fa-home"></i> Trang chủ</a>
                 <a href="/logout" class="btn btn-primary"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
