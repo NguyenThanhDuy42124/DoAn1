@@ -28,8 +28,8 @@
                 <div class="d-flex align-items-center">
                     <img src="https://ui-avatars.com/api/?name=Nguyễn+Văn+A&background=ff6600&color=fff&size=120" alt="Avatar" class="profile-avatar mr-4">
                     <div>
-                        <h2 class="mb-1">...</h2>
-                        <p class="mb-0">Thành viên từ: ...</p>
+                        <h2 class="mb-1">{{ Auth::user()->name }}</h2>
+                        <p class="mb-0">Thành viên từ: {{ Auth::user()->created_at->format('d/m/Y') }}</p>
                     </div>
                 </div>
             </div>
@@ -69,12 +69,12 @@
                                 
                                 <div class="info-item">
                                     <div class="info-label">Họ và tên:</div>
-                                    <div class="info-value">...</div>
+                                    <div class="info-value">{{ Auth::user()->name }}</div>
                                 </div>
                                 
                                 <div class="info-item">
                                     <div class="info-label">Email:</div>
-                                    <div class="info-value">...</div>
+                                    <div class="info-value">{{ Auth::user()->email }}</div>
                                 </div>
                                 
                                 <div class="info-item">

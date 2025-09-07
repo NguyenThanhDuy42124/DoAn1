@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
-    return view('seller.dashboard');
+    return view('MainPage');
 });
 // cụm của đăng ký, đăng nhập, đăng xuất
 Route::post('/register', [UserController::class, 'register']); // gọi đến controller
@@ -13,12 +13,12 @@ Route::post('/login', [UserController::class, 'login']);
 // hết cụm của đăng ký, đăng nhập, đăng xuất
 Route::get('/login', function () {
     return view('auth.login');
-});
+})->name('login');
 Route::get('/register', function () {
     return view('auth.register');
 });
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    return view('buyer.dashboard');
 })->middleware('auth')->name('dashboard');
 
 

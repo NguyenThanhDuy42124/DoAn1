@@ -18,7 +18,7 @@
     <div class="container dashboard-container">
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <div class="store-logo">SELLER Ở ĐÂY NÈ</div>
+            <div class="store-logo">{{ Auth::user()->shop_info }}</div>
             <div>
                 <a href="/" class="btn btn-outline-primary mr-2"><i class="fas fa-home"></i> Trang chủ</a>
                 <a href="/logout" class="btn btn-primary"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
@@ -32,9 +32,9 @@
                     <img src="https://ui-avatars.com/api/?name=Nguyễn+Văn+B&background=ff6600&color=fff&size=120"
                         alt="Avatar" class="seller-avatar mr-4">
                     <div>
-                        <h2 class="mb-1">... - Seller</h2>
-                        <p class="mb-0">Nhà bán hàng từ: ../../....</p>
-                        <p class="mb-0">Đánh giá: ../.. (... đánh giá)</p>
+                        <h2 class="mb-1">{{ Auth::user()->name }}</h2>
+                        <p class="mb-0">Nhà bán hàng từ: {{ Auth::user()->created_at->format('d/m/Y') }}</p>
+                        <p class="mb-0">Đánh giá: {{ Auth::user()->rating }} ({{ Auth::user()->reviews_count }} đánh giá)</p>
                     </div>
                 </div>
             </div>
