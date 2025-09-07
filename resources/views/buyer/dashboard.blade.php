@@ -48,8 +48,8 @@
                             <a class="nav-link" id="v-pills-wishlist-tab" data-toggle="pill" href="#v-pills-wishlist" role="tab" aria-controls="v-pills-wishlist" aria-selected="false">
                                 <i class="fas fa-heart mr-2"></i> Sản phẩm yêu thích
                             </a>
-                            <a class="nav-link" id="v-pills-address-tab" data-toggle="pill" href="#v-pills-address" role="tab" aria-controls="v-pills-address" aria-selected="false">
-                                <i class="fas fa-map-marker-alt mr-2"></i> Sổ địa chỉ
+                            <a class="nav-link" id="v-pills-carts-tab" data-toggle="pill" href="#v-pills-carts" role="tab" aria-controls="v-pills-carts" aria-selected="false">
+                                <i class="fas fa-map-marker-alt mr-2"></i> Giỏ hàng
                             </a>
                             <a class="nav-link" id="v-pills-notifications-tab" data-toggle="pill" href="#v-pills-notifications" role="tab" aria-controls="v-pills-notifications" aria-selected="false">
                                 <i class="fas fa-bell mr-2"></i> Thông báo
@@ -209,8 +209,8 @@
                             </div>
                             
                             <!-- Các tab khác có thể được thêm ở đây -->
-                            <div class="tab-pane fade" id="v-pills-address" role="tabpanel" aria-labelledby="v-pills-address-tab">
-                                <h4 class="section-title">Sổ địa chỉ</h4>
+                            <div class="tab-pane fade" id="v-pills-carts" role="tabpanel" aria-labelledby="v-pills-carts-tab">
+                                <h4 class="section-title">Giỏ hàng</h4>
                                 <p class="text-muted">...</p>
                             </div>
                             

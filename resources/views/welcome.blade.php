@@ -33,7 +33,7 @@
             <div class="col-md-4">
                 <div class="category-card">
                     <div class="category-icon">
-                        <i class="fas fa-mobile-alt"></i>
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/2/24/Samsung_Logo.svg" alt="Samsung" class="brand-logo">
                     </div>
                     <h3 class="category-title">SAMSUNG</h3>
                     <p>Điện thoại Samsung với nhiều dòng sản phẩm từ phổ thông đến cao cấp</p>
@@ -44,7 +44,7 @@
             <div class="col-md-4">
                 <div class="category-card">
                     <div class="category-icon">
-                        <i class="fas fa-laptop"></i>
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="Apple" class="brand-logo" style="height: 40px;">
                     </div>
                     <h3 class="category-title">APPLE</h3>
                     <p>iPhone chính hãng với thiết kế sang trọng và hiệu năng vượt trội</p>
@@ -55,7 +55,7 @@
             <div class="col-md-4">
                 <div class="category-card">
                     <div class="category-icon">
-                        <i class="fas fa-tablet-alt"></i>
+                        <i class="fas fa-mobile-alt"></i>
                     </div>
                     <h3 class="category-title">CÁC HÃNG KHÁC</h3>
                     <p>Điện thoại đến từ nhiều thương hiệu khác nhau, đa dạng mẫu mã và giá thành</p>
