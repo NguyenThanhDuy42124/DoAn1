@@ -11,7 +11,7 @@
      @vite(['resources/css/dashboard_admin.css', 'resources/js/app.js'])
      <title>Dashboard Admin - TechStore</title>
 </head>
-<body>
+<body style="padding-top: 0">
     <div class="wrapper pt-0">
         <!-- Sidebar -->
         <nav id="sidebar">
