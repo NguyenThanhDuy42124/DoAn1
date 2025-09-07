@@ -9,7 +9,7 @@
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     @vite(['resources/css/dashboard_user.css', 'resources/js/app.js'])
-    <title>Hồ Sơ Cá Nhân </title>
+    <title>Dashboard Buyer </title>
 </head>
 
 <body>
