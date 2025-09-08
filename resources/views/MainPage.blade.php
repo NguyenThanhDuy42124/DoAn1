@@ -17,7 +17,7 @@
         <div class="container">
             <div class="hero-content">
                 <h1 class="hero-title">Công Nghệ Mới Nhất - Giá Tốt Nhất</h1>
-                <p class="hero-subtitle">Khám phá các sản phẩm điện thoại thông minh, tablet và laptop với ưu đãi đặc biệt chỉ có tại TechStore</p>
+                <p class="hero-subtitle">Khám phá các sản phẩm điện thoại thông minh với ưu đãi đặc biệt chỉ có tại tenshop</p>
                 <a href="#products" class="btn btn-light btn-lg">Mua ngay <i class="fas fa-arrow-right ml-2"></i></a>
             </div>
         </div>

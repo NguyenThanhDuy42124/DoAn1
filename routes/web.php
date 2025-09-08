@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
-    return view('admin.dashboard');
+    return view('MainPage');
 });
 // cụm của đăng ký, đăng nhập, đăng xuất
 Route::post('/register', [UserController::class, 'register']); // gọi đến controller
