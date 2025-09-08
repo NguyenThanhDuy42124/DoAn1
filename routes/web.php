@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 
@@ -10,6 +12,10 @@ Route::get('/', function () {
 Route::post('/register', [UserController::class, 'register']); // gọi đến controller
 Route::post('/logout', [UserController::class, 'logout']);
 Route::post('/login', [UserController::class, 'login']);
+
+
+
+
 // hết cụm của đăng ký, đăng nhập, đăng xuất
 Route::get('/login', function () {
     return view('auth.login');
@@ -26,8 +32,9 @@ Route::get('/switch-role/{role}', [UserController::class, 'switchRole'])->name('
 
 // Route riêng cho admin
 Route::middleware('role:admin')->group(function () {
-    Route::get('/admin/dashboard', [UserController::class, 'index'])->name('admin.dashboard');
+    Route::get('/admin/dashboard', [UserController::class, 'dashboard'])->name('admin.dashboard');
 });
+
 
 // Route riêng cho seller
 Route::middleware('role:seller')->group(function () {
