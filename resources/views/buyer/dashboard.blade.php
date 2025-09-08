@@ -112,7 +112,7 @@
                                 </div>
                                 <div class="info-item">
                                     <div class="info-label">Quyền hạn:</div>
-                                    <div class="info-value"> {{ session('current_role', Auth::user()->role) }}</div>
+                                    <div class="info-value"> {{ Auth::user()->role }}</div>
                                 </div>
                                 <div>
                                     @if(Auth::user()->role == 'seller')

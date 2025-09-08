@@ -8,9 +8,10 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-     @vite(['resources/css/dashboard_admin.css', 'resources/js/app.js'])
-     <title>Dashboard Admin - TechStore</title>
+    @vite(['resources/css/dashboard_admin.css', 'resources/js/app.js'])
+    <title>Dashboard Admin - TechStore</title>
 </head>
+
 <body style="padding-top: 0">
     <div class="wrapper pt-0">
         <!-- Sidebar -->
@@ -18,7 +19,7 @@
             <div class="sidebar-header">
                 <h3>tenshop Admin</h3>
             </div>
-            
+
             <ul class="list-unstyled components">
                 <li>
                     <a href="#" class="active">
@@ -69,7 +70,7 @@
                     </a>
                 </li>
             </ul>
-            
+
             <ul class="list-unstyled CTAs">
                 <li>
                     <a href="/" class="btn btn-light btn-block">
@@ -77,9 +78,11 @@
                     </a>
                 </li>
                 <li>
-                    <a href="/logout" class="btn btn-light btn-block">
-                        <i class="fas fa-sign-out-alt"></i> Đăng xuất
-                    </a>
+                    <form action="/logout" method="POST">
+                        <button type="submit" class="btn btn-light btn-block hover-green">
+                            <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                        </button>
+                    </form>
                 </li>
             </ul>
         </nav>
@@ -93,10 +96,11 @@
                         <i class="fas fa-bars"></i>
                         <span>Menu</span>
                     </button>
-                    
+
                     <div class="ml-auto d-flex align-items-center">
                         <div class="dropdown mr-3">
-                            <button class="btn btn-light dropdown-toggle" type="button" id="notificationDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <button class="btn btn-light dropdown-toggle" type="button" id="notificationDropdown"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fas fa-bell"></i>
                                 <span class="badge badge-danger">3</span>
                             </button>
@@ -109,10 +113,12 @@
                                 <a class="dropdown-item text-center" href="#">Xem tất cả</a>
                             </div>
                         </div>
-                        
+
                         <div class="dropdown">
-                            <button class="btn btn-light dropdown-toggle" type="button" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <img src="https://ui-avatars.com/api/?name=Admin+User&background=ff6600&color=fff" width="30" height="30" class="rounded-circle mr-2">
+                            <button class="btn btn-light dropdown-toggle" type="button" id="userDropdown"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <img src="https://ui-avatars.com/api/?name=Admin+User&background=ff6600&color=fff"
+                                    width="30" height="30" class="rounded-circle mr-2">
                                 Admin User
                             </button>
                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
@@ -131,7 +137,7 @@
                     </div>
                 </div>
             </nav>
-            
+
             <!-- Main Content -->
             <div class="container-fluid">
                 <!-- Stats Row -->
@@ -165,7 +171,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Charts Row -->
                 <div class="row mb-4">
                     <div class="col-md-8">
@@ -189,7 +195,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- User Management & Notifications Row -->
                 <div class="row mb-4">
                     <div class="col-md-8">
@@ -227,8 +233,10 @@
                                                 </td>
                                                 <td><span class="badge badge-success">Active</span></td>
                                                 <td>
-                                                    <button class="btn btn-sm btn-info"><i class="fas fa-edit"></i></button>
-                                                    <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                                    <button class="btn btn-sm btn-info"><i
+                                                            class="fas fa-edit"></i></button>
+                                                    <button class="btn btn-sm btn-danger"><i
+                                                            class="fas fa-trash"></i></button>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -237,7 +245,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="col-md-4">
                         <div class="dashboard-card">
                             <div class="card-header">Gửi thông báo</div>
@@ -249,7 +257,8 @@
                                     </div>
                                     <div class="form-group">
                                         <label>Nội dung thông báo</label>
-                                        <textarea class="form-control" rows="3" placeholder="Nhập nội dung thông báo"></textarea>
+                                        <textarea class="form-control" rows="3"
+                                            placeholder="Nhập nội dung thông báo"></textarea>
                                     </div>
                                     <div class="form-group">
                                         <label>Gửi đến</label>
@@ -270,10 +279,17 @@
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
+
 </body>
+
 </html>
