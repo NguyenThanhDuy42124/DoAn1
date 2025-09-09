@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -112,13 +113,19 @@ class UserController extends Controller
     public function update(Request $request, $id)
     {
         $user = User::findOrFail($id);
-        if (!$user) {
-            return redirect()->route('admin.dashboard')->with('error', 'User not found.');
-        }
-        $user->password = bcrypt($request->password);
-        $user->update($request->all());
-        $message = 'Cập nhật tài khoản thành công';
-        return redirect()->route('admin.dashboard')->with('message', $message);
+
+    $data = $request->only(['name', 'email', 'password', 'role']);
+
+    // Nếu password không nhập lại thì bỏ qua
+    if (empty($data['password'])) {
+        unset($data['password']);
+    } else {
+        $data['password'] = Hash::make($data['password']);
+    }
+
+    $user->update($data);
+
+    return redirect()->route('admin.dashboard')->with('message', 'Cập nhật thành công');
     }
 
     // hàm này để load trang tạo user
@@ -139,4 +146,5 @@ class UserController extends Controller
         User::create($incomingData);
         return redirect()->route('admin.dashboard')->with('message', $message);
     }
+    
 }
