@@ -129,9 +129,15 @@
                                     <i class="fas fa-cog mr-2"></i> Cài đặt
                                 </a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#">
+                                <!-- Logout form lưu ý phần này vì có thể tái xử dung -->
+                                <form id="logout-form" action="/logout" method="POST" style="display: none;">
+                                    @csrf
+                                </form>
+                                <a class="dropdown-item" href="#"
+                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                     <i class="fas fa-sign-out-alt mr-2"></i> Đăng xuất
                                 </a>
+
                             </div>
                         </div>
                     </div>
@@ -197,15 +203,43 @@
                 </div>
 
                 <!-- User Management & Notifications Row -->
+                <!-- Thêm phần quản lý người dùng và gửi thông báo ở đây -->
                 <div class="row mb-4">
                     <div class="col-md-8">
                         <div class="dashboard-card">
                             <div class="card-header d-flex justify-content-between align-items-center">
+                                <!-- Search và Add Buttons -->
                                 <span>Quản lý người dùng</span>
-                                <button class="btn btn-sm btn-primary">
-                                    <i class="fas fa-plus"></i> Thêm mới
-                                </button>
+                                <div>
+                                    <button class="btn btn-sm btn-secondary" data-toggle="collapse"
+                                        data-target="#searchPanel">
+                                        <i class="fas fa-search"></i> Tìm kiếm
+                                    </button>
+                                    <a class="btn btn-sm btn-primary" href="{{ route('users.create') }}">
+                                        <i class="fas fa-plus"></i> Thêm mới
+                                    </a>
+                                </div>
                             </div>
+
+                            <!-- Collapse search form -->
+                            <div class="collapse mt-2" id="searchPanel" style="">
+                                <form method="GET" action="{{ route('admin.dashboard') }}" class="form-inline mb-3"
+                                    style="align-items: left;">
+                                    <div class="form-group mr-2">
+                                        <input type="text" name="keyword" value="{{ request('keyword') }}"
+                                            class="form-control form-control-sm" placeholder="Nhập tên người dùng"
+                                            style="height: 55px;">
+                                    </div>
+                                    <button type="submit" class="btn btn-sm btn-success">
+                                        <i class="fas fa-filter"></i> Lọc
+                                    </button>
+                                </form>
+                            </div>
+
+                            <!-- User Table -->
+                            @if (session()->has('message'))
+                            <h3 style="align-self: center">{{ session('message') }}</h3>
+                            @endif
                             <div class="card-body">
                                 <div class="table-responsive">
                                     <table class="table table-hover">
@@ -220,27 +254,42 @@
                                             </tr>
                                         </thead>
                                         <tbody>
+                                            @foreach ($users as $user)
                                             <tr>
-                                                <td>1</td>
-                                                <td>Nguyễn Văn A</td>
-                                                <td>nguyenvana@example.com</td>
+                                                <td>{{ $user->id }}</td>
+                                                <td>{{ $user->name }}</td>
+                                                <td>{{ $user->email }}</td>
                                                 <td>
-                                                    <select class="form-control form-control-sm">
-                                                        <option>User</option>
-                                                        <option selected>Seller</option>
-                                                        <option>Admin</option>
-                                                    </select>
+                                                    {{ $user->role }}
+                                                    <!-- cái này nữa làm cái form select để đổi role
+                                                        form này sẽ xuất hiện khi bấm nút edit ( edit sẽ thay đổi dc tên email vs role)
+                                                        <select class="form-control" style="height: 50px;">
+                                                        <option value="Buyer" {{ $user->role == 'buyer' ? 'selected' : '' }}>Buyer</option>
+                                                        <option value="Seller" {{ $user->role == 'seller' ? 'selected' : '' }}>Seller</option>
+                                                        <option value="Admin" {{ $user->role == 'admin' ? 'selected' : '' }}>Admin</option>
+                                                    </select>-->
                                                 </td>
                                                 <td><span class="badge badge-success">Active</span></td>
                                                 <td>
-                                                    <button class="btn btn-sm btn-info"><i
-                                                            class="fas fa-edit"></i></button>
-                                                    <button class="btn btn-sm btn-danger"><i
-                                                            class="fas fa-trash"></i></button>
+                                                    <a class="btn btn-sm btn-info"
+                                                        href="{{ route('users.edit', $user->id) }}">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    <form action="{{ route('users.destroy', $user->id) }}" method="POST"
+                                                        style="display:inline;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button class="btn btn-sm btn-danger"><i
+                                                                class="fas fa-trash"></i></button>
+                                                    </form>
                                                 </td>
                                             </tr>
+                                            @endforeach
                                         </tbody>
                                     </table>
+
+                                    <!-- Pagination -->
+                                    {{ $users->links() }}
                                 </div>
                             </div>
                         </div>
@@ -262,7 +311,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label>Gửi đến</label>
-                                        <select class="form-control">
+                                        <select class="form-control" style="height: 50px;">
                                             <option>Tất cả người dùng</option>
                                             <option>Người dùng thường</option>
                                             <option>Người bán hàng</option>
