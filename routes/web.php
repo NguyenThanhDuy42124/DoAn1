@@ -8,10 +8,11 @@ use App\Http\Controllers\UserController;
 Route::get('/', function () {
     return view('MainPage');
 });
-// cụm của đăng ký, đăng nhập, đăng xuất
+// Post là bắt dữ liệu gửi từ form
 Route::post('/register', [UserController::class, 'register']); // gọi đến controller
 Route::post('/logout', [UserController::class, 'logout']);
 Route::post('/login', [UserController::class, 'login']);
+// get là load trang web
 Route::get('/login', function () {
     return view('auth.login');
 })->name('login');

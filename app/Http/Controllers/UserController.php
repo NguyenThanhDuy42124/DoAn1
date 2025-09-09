@@ -146,5 +146,5 @@ class UserController extends Controller
         User::create($incomingData);
         return redirect()->route('admin.dashboard')->with('message', $message);
     }
-    
+
 }
