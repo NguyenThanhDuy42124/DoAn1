@@ -54,7 +54,7 @@ class UserController extends Controller
         }
         return view('dashboard');
     }
-    
+
     public function switchRole($role)
     {
         $user = Auth::user();
@@ -66,14 +66,17 @@ class UserController extends Controller
 
         abort(403, 'Không có quyền');
     }
+
+
+    // hàm này để load trang dashboard của admin, có thêm phần tìm kiếm user
     public function dashboard(Request $request)
     {
         $role = session('current_role', Auth::user()->role);
 
         // Lấy danh sách user nếu là admin
         $users = collect(); // mặc định trống
-        if ($role === 'admin') {
-            $query = User::query();
+
+            $query = User::where('role', '!=', 'admin');
 
             // Nếu có từ khóa tìm kiếm
             if ($request->filled('keyword')) {
@@ -81,13 +84,58 @@ class UserController extends Controller
             }
 
             $users = $query->paginate(10)->appends($request->query());
-        }
+
 
         // Trả view dashboard, luôn truyền $users
         return view('admin.dashboard', compact('users', 'role'));
     }
+    public function destroy(User $user)
+ {
+    $message = 'Cook 1 tài khoản thành công';
+    $user->delete();
+    return redirect()->route('admin.dashboard')->with('success', 'User deleted successfully.')->with('message', $message);
+ }
+public function create()
+{
+ return view('admin.create');
+}
+public function edit($id)
+{
+    $user = User::findOrFail($id);
+    if (!$user) {
+        return redirect()->route('admin.dashboard')->with('error', 'User not found.');
+    }
+    return view('admin.edit', compact('user'));
+}
+
+public function update(Request $request, $id)
+{
+    $user = User::findOrFail($id);
+    if (!$user) {
+        return redirect()->route('admin.dashboard')->with('error', 'User not found.');
+    }
+    $user->password = bcrypt($request->password);
+    $user->update($request->all());
+    $message = 'Cập nhật tài khoản thành công';
+    return redirect()->route('admin.dashboard')->with('message', $message);
+}
 
 
-    
+
+
+public function store(Request $request)
+{
+    $message ='tạo 1 tài khoản thành công';
+ $incomingData = $request->validate([
+     "email" => "required|email|max:255|unique:users,email",
+     "name" => "required|string|max:255|unique:users,name",
+     "password" => "required|string|min:3",
+ ]);
+ $incomingData["password"] = bcrypt($incomingData["password"]);
+ User::create($incomingData);
+ return redirect()->route('admin.dashboard')->with('message', $message);
+}
+
+
 
 }

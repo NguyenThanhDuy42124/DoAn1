@@ -28,11 +28,15 @@ Route::get('/dashboard', function () {
 })->middleware('auth')->name('dashboard');
 
 
+
 Route::get('/switch-role/{role}', [UserController::class, 'switchRole'])->name('switchRole');
 
 // Route riêng cho admin
-Route::middleware('role:admin')->group(function () {
-    Route::get('/admin/dashboard', [UserController::class, 'dashboard'])->name('admin.dashboard');
+Route::prefix('admin')->middleware('role:admin')->group(function () {
+    //vừa truyền $users vừa gọi hàm dashboard trong UserController
+    Route::get('/dashboard', [UserController::class, 'dashboard'])->name('admin.dashboard');
+    Route::resource('users', UserController::class, ['name' => 'admin']);
+
 });
 
 

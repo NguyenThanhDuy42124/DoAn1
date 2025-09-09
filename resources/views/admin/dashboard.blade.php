@@ -129,9 +129,15 @@
                                     <i class="fas fa-cog mr-2"></i> Cài đặt
                                 </a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#">
+                                <!-- Logout form lưu ý phần này vì có thể tái xử dung -->
+                                <form id="logout-form" action="/logout" method="POST" style="display: none;">
+                                    @csrf
+                                </form>
+                                <a class="dropdown-item" href="#"
+                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                     <i class="fas fa-sign-out-alt mr-2"></i> Đăng xuất
                                 </a>
+
                             </div>
                         </div>
                     </div>
@@ -143,14 +149,16 @@
                 <!-- Stats Row -->
                 <div class="row mb-4">
                     <div class="col-md-3">
-                        <div class="stats-card" style="background: linear-gradient(to right, var(--primary), #004d99);">
+                        <div class="stats-card"
+                            style="background: linear-gradient(to right, var(--primary), #004d99);">
                             <i class="fas fa-users"></i>
                             <div class="stats-value">39</div>
                             <div class="stats-label">Người dùng</div>
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="stats-card" style="background: linear-gradient(to right, var(--success), #1e7e34);">
+                        <div class="stats-card"
+                            style="background: linear-gradient(to right, var(--success), #1e7e34);">
                             <i class="fas fa-shopping-cart"></i>
                             <div class="stats-value">10</div>
                             <div class="stats-label">Đơn hàng</div>
@@ -164,7 +172,8 @@
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="stats-card" style="background: linear-gradient(to right, var(--warning), #d39e00);">
+                        <div class="stats-card"
+                            style="background: linear-gradient(to right, var(--warning), #d39e00);">
                             <i class="fas fa-money-bill-wave"></i>
                             <div class="stats-value">10.3 triệu</div>
                             <div class="stats-label">Doanh thu</div>
@@ -197,28 +206,32 @@
                 </div>
 
                 <!-- User Management & Notifications Row -->
+                <!-- Thêm phần quản lý người dùng và gửi thông báo ở đây -->
                 <div class="row mb-4">
                     <div class="col-md-8">
                         <div class="dashboard-card">
                             <div class="card-header d-flex justify-content-between align-items-center">
+                                <!-- Search và Add Buttons -->
                                 <span>Quản lý người dùng</span>
                                 <div>
                                     <button class="btn btn-sm btn-secondary" data-toggle="collapse"
                                         data-target="#searchPanel">
                                         <i class="fas fa-search"></i> Tìm kiếm
                                     </button>
-                                    <button class="btn btn-sm btn-primary">
+                                    <a class="btn btn-sm btn-primary" href="{{ route('users.create') }}">
                                         <i class="fas fa-plus"></i> Thêm mới
-                                    </button>
+                                    </a>
                                 </div>
                             </div>
 
                             <!-- Collapse search form -->
                             <div class="collapse mt-2" id="searchPanel" style="">
-                                <form method="GET" action="{{ route('admin.dashboard') }}" class="form-inline mb-3" style="align-items: left;">
+                                <form method="GET" action="{{ route('admin.dashboard') }}" class="form-inline mb-3"
+                                    style="align-items: left;">
                                     <div class="form-group mr-2">
                                         <input type="text" name="keyword" value="{{ request('keyword') }}"
-                                            class="form-control form-control-sm" placeholder="Nhập tên người dùng" style="height: 55px;">
+                                            class="form-control form-control-sm" placeholder="Nhập tên người dùng"
+                                            style="height: 55px;">
                                     </div>
                                     <button type="submit" class="btn btn-sm btn-success">
                                         <i class="fas fa-filter"></i> Lọc
@@ -226,6 +239,10 @@
                                 </form>
                             </div>
 
+                            <!-- User Table -->
+                            @if (session()->has('message'))
+                            <h3 style="align-self: center">{{ session('message') }}</h3>
+                            @endif
                             <div class="card-body">
                                 <div class="table-responsive">
                                     <table class="table table-hover">
@@ -241,31 +258,33 @@
                                         </thead>
                                         <tbody>
                                             @foreach ($users as $user)
-                                            <tr>
-                                                <td>{{ $user->id }}</td>
-                                                <td>{{ $user->name }}</td>
-                                                <td>{{ $user->email }}</td>
-                                                <td>
-                                                    {{ $user->role }}
-                                                    <!-- cái này nữa làm cái form select để đổi role
+                                                <tr>
+                                                    <td>{{ $user->id }}</td>
+                                                    <td>{{ $user->name }}</td>
+                                                    <td>{{ $user->email }}</td>
+                                                    <td>
+                                                        {{ $user->role }}
+                                                        <!-- cái này nữa làm cái form select để đổi role
                                                         form này sẽ xuất hiện khi bấm nút edit ( edit sẽ thay đổi dc tên email vs role)
                                                         <select class="form-control" style="height: 50px;">
-                                                        <option value="Buyer" {{ $user->role == 'buyer' ? 'selected' : ''
-                                                            }}>Buyer</option>
-                                                        <option value="Seller" {{ $user->role == 'seller' ? 'selected' :
-                                                            '' }}>Seller</option>
-                                                        <option value="Admin" {{ $user->role == 'admin' ? 'selected' :
-                                                            '' }}>Admin</option>
+                                                        <option value="Buyer" {{ $user->role == 'buyer' ? 'selected' : '' }}>Buyer</option>
+                                                        <option value="Seller" {{ $user->role == 'seller' ? 'selected' : '' }}>Seller</option>
+                                                        <option value="Admin" {{ $user->role == 'admin' ? 'selected' : '' }}>Admin</option>
                                                     </select>-->
-                                                </td>
-                                                <td><span class="badge badge-success">Active</span></td>
-                                                <td>
-                                                    <button class="btn btn-sm btn-info"><i
-                                                            class="fas fa-edit"></i></button>
-                                                    <button class="btn btn-sm btn-danger"><i
-                                                            class="fas fa-trash"></i></button>
-                                                </td>
-                                            </tr>
+                                                    </td>
+                                                    <td><span class="badge badge-success">Active</span></td>
+                                                    <td>
+                                                        <a class="btn btn-sm btn-info" href="{{ route('users.edit', $user->id) }}">
+                                                            <i class="fas fa-edit"></i>
+                                                        </a>
+                                                        <form action="{{ route('users.destroy', $user->id) }}" method="POST" style="display:inline;">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button class="btn btn-sm btn-danger"><i
+                                                                    class="fas fa-trash"></i></button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
                                             @endforeach
                                         </tbody>
                                     </table>
@@ -288,8 +307,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label>Nội dung thông báo</label>
-                                        <textarea class="form-control" rows="3"
-                                            placeholder="Nhập nội dung thông báo"></textarea>
+                                        <textarea class="form-control" rows="3" placeholder="Nhập nội dung thông báo"></textarea>
                                     </div>
                                     <div class="form-group">
                                         <label>Gửi đến</label>
