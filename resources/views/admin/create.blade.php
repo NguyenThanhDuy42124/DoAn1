@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    @vite(['resources/css/register.css', 'resources/js/app.js'])
+    @vite(['resources/css/create.css', 'resources/js/app.js'])
     <title>Document</title>
 </head>
 
@@ -16,7 +16,7 @@
     <!--  tạo tài khoản -->
     <form action="{{ route('users.store') }}" method="POST" class="form-sample">
         @csrf
-        <h5>Thông tin người dùng</h5>
+        <h5>Tạo người dùng mới</h5>
         <div class="form-group">
             <label for="name">Họ và tên</label>
             <input type="text" id="name" name="name" placeholder="Nhập họ và tên đầy đủ" required>
@@ -29,7 +29,7 @@
             <label for="password">Mật Khẩu</label>
             <input type="password" id="password" name="password" placeholder="Tạo mật khẩu mạnh" required>
         </div>
-        <button type="submit" class="btn btn-register">Mới</button>
+        <button type="submit" class="btn btn-register">Thêm mới</button>
 
     </form>
     <!-- <form class="form-e" action="" method="POST">
