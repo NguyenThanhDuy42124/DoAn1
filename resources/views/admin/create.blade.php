@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,10 +8,12 @@
     @vite(['resources/css/register.css', 'resources/js/app.js'])
     <title>Document</title>
 </head>
+
 <body>
     @if (session()->has('message'))
-        <h3 style="align-self: center">{{ session('message') }}</h3>
+    <h3 style="align-self: center">{{ session('message') }}</h3>
     @endif
+    <!--  tạo tài khoản -->
     <form action="{{ route('users.store') }}" method="POST" class="form-sample">
         @csrf
         <h5>Thông tin người dùng</h5>
@@ -29,7 +32,7 @@
         <button type="submit" class="btn btn-register">Mới</button>
 
     </form>
-       <!-- <form class="form-e" action="" method="POST">
+    <!-- <form class="form-e" action="" method="POST">
                         @csrf
                         <div class="form-group">
                             <label for="name" >họ và tên</label>
@@ -46,4 +49,5 @@
                         <button type="submit" class="btn btn-register">Mới</button>
                     </form> -->
 </body>
+
 </html>

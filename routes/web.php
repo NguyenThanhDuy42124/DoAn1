@@ -12,11 +12,6 @@ Route::get('/', function () {
 Route::post('/register', [UserController::class, 'register']); // gọi đến controller
 Route::post('/logout', [UserController::class, 'logout']);
 Route::post('/login', [UserController::class, 'login']);
-
-
-
-
-// hết cụm của đăng ký, đăng nhập, đăng xuất
 Route::get('/login', function () {
     return view('auth.login');
 })->name('login');
@@ -28,15 +23,15 @@ Route::get('/dashboard', function () {
 })->middleware('auth')->name('dashboard');
 
 
-
+// Route để chuyển đổi vai trò giữa buyer sang admin và seller
 Route::get('/switch-role/{role}', [UserController::class, 'switchRole'])->name('switchRole');
 
 // Route riêng cho admin
 Route::prefix('admin')->middleware('role:admin')->group(function () {
     //vừa truyền $users vừa gọi hàm dashboard trong UserController
     Route::get('/dashboard', [UserController::class, 'dashboard'])->name('admin.dashboard');
+    // khai báo tài nguyên CRUD cho UserController
     Route::resource('users', UserController::class, ['name' => 'admin']);
-
 });
 
 

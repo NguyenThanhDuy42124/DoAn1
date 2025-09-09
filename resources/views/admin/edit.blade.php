@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,9 +8,10 @@
     @vite(['resources/css/register.css', 'resources/js/app.js'])
     <title>Document</title>
 </head>
+
 <body>
     @if (session()->has('message'))
-        <h3 style="align-self: center">{{ session('message') }}</h3>
+    <h3 style="align-self: center">{{ session('message') }}</h3>
     @endif
     <form action="{{ route('users.update', $user->id) }}" method="POST" class="form-sample">
         @csrf
@@ -17,15 +19,18 @@
         <h5>Thông tin người dùng</h5>
         <div class="form-group">
             <label for="name">Họ và tên</label>
-            <input type="text" id="name" name="name"  value="{{ $user->name }}" placeholder="Nhập họ và tên đầy đủ" required>
+            <input type="text" id="name" name="name" value="{{ $user->name }}" placeholder="Nhập họ và tên đầy đủ"
+                required>
         </div>
         <div class="form-group">
             <label for="email">Email</label>
-            <input type="email" id="email" name="email" value="{{ $user->email }}" placeholder="Nhập địa chỉ email" required>
+            <input type="email" id="email" name="email" value="{{ $user->email }}" placeholder="Nhập địa chỉ email"
+                required>
         </div>
         <div class="form-group">
             <label for="password">Mật Khẩu</label>
-            <input type="password" id="password" name="password" value="{{ $user->password }}" placeholder="Tạo mật khẩu mạnh" required>
+            <input type="password" id="password" name="password" value="{{ $user->password }}"
+                placeholder="Tạo mật khẩu mạnh" required>
         </div>
         <div class="form-group">
             <label for="role">Vai trò</label>
@@ -38,7 +43,7 @@
         <button type="submit" class="btn btn-register">Mới</button>
 
     </form>
-       <!-- <form class="form-e" action="" method="POST">
+    <!-- <form class="form-e" action="" method="POST">
                         @csrf
                         <div class="form-group">
                             <label for="name" >họ và tên</label>
@@ -55,4 +60,5 @@
                         <button type="submit" class="btn btn-register">Mới</button>
                     </form> -->
 </body>
+
 </html>

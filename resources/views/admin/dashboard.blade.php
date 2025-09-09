@@ -149,16 +149,14 @@
                 <!-- Stats Row -->
                 <div class="row mb-4">
                     <div class="col-md-3">
-                        <div class="stats-card"
-                            style="background: linear-gradient(to right, var(--primary), #004d99);">
+                        <div class="stats-card" style="background: linear-gradient(to right, var(--primary), #004d99);">
                             <i class="fas fa-users"></i>
                             <div class="stats-value">39</div>
                             <div class="stats-label">Người dùng</div>
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="stats-card"
-                            style="background: linear-gradient(to right, var(--success), #1e7e34);">
+                        <div class="stats-card" style="background: linear-gradient(to right, var(--success), #1e7e34);">
                             <i class="fas fa-shopping-cart"></i>
                             <div class="stats-value">10</div>
                             <div class="stats-label">Đơn hàng</div>
@@ -172,8 +170,7 @@
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="stats-card"
-                            style="background: linear-gradient(to right, var(--warning), #d39e00);">
+                        <div class="stats-card" style="background: linear-gradient(to right, var(--warning), #d39e00);">
                             <i class="fas fa-money-bill-wave"></i>
                             <div class="stats-value">10.3 triệu</div>
                             <div class="stats-label">Doanh thu</div>
@@ -258,33 +255,35 @@
                                         </thead>
                                         <tbody>
                                             @foreach ($users as $user)
-                                                <tr>
-                                                    <td>{{ $user->id }}</td>
-                                                    <td>{{ $user->name }}</td>
-                                                    <td>{{ $user->email }}</td>
-                                                    <td>
-                                                        {{ $user->role }}
-                                                        <!-- cái này nữa làm cái form select để đổi role
+                                            <tr>
+                                                <td>{{ $user->id }}</td>
+                                                <td>{{ $user->name }}</td>
+                                                <td>{{ $user->email }}</td>
+                                                <td>
+                                                    {{ $user->role }}
+                                                    <!-- cái này nữa làm cái form select để đổi role
                                                         form này sẽ xuất hiện khi bấm nút edit ( edit sẽ thay đổi dc tên email vs role)
                                                         <select class="form-control" style="height: 50px;">
                                                         <option value="Buyer" {{ $user->role == 'buyer' ? 'selected' : '' }}>Buyer</option>
                                                         <option value="Seller" {{ $user->role == 'seller' ? 'selected' : '' }}>Seller</option>
                                                         <option value="Admin" {{ $user->role == 'admin' ? 'selected' : '' }}>Admin</option>
                                                     </select>-->
-                                                    </td>
-                                                    <td><span class="badge badge-success">Active</span></td>
-                                                    <td>
-                                                        <a class="btn btn-sm btn-info" href="{{ route('users.edit', $user->id) }}">
-                                                            <i class="fas fa-edit"></i>
-                                                        </a>
-                                                        <form action="{{ route('users.destroy', $user->id) }}" method="POST" style="display:inline;">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button class="btn btn-sm btn-danger"><i
-                                                                    class="fas fa-trash"></i></button>
-                                                        </form>
-                                                    </td>
-                                                </tr>
+                                                </td>
+                                                <td><span class="badge badge-success">Active</span></td>
+                                                <td>
+                                                    <a class="btn btn-sm btn-info"
+                                                        href="{{ route('users.edit', $user->id) }}">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    <form action="{{ route('users.destroy', $user->id) }}" method="POST"
+                                                        style="display:inline;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button class="btn btn-sm btn-danger"><i
+                                                                class="fas fa-trash"></i></button>
+                                                    </form>
+                                                </td>
+                                            </tr>
                                             @endforeach
                                         </tbody>
                                     </table>
@@ -307,7 +306,8 @@
                                     </div>
                                     <div class="form-group">
                                         <label>Nội dung thông báo</label>
-                                        <textarea class="form-control" rows="3" placeholder="Nhập nội dung thông báo"></textarea>
+                                        <textarea class="form-control" rows="3"
+                                            placeholder="Nhập nội dung thông báo"></textarea>
                                     </div>
                                     <div class="form-group">
                                         <label>Gửi đến</label>
