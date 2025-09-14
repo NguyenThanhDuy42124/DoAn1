@@ -9,7 +9,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\AdminController;
 
 Route::get('/', function () {
-    return view('MainPage');
+    return view('pages.listproducts');
 });
 // Post là bắt dữ liệu gửi từ form
 Route::post('/register', [UserController::class, 'register']); // gọi đến controller
