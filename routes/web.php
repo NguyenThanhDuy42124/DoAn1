@@ -4,7 +4,9 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ProductController;
+
+Route::resource('products', ProductController::class);
 
 Route::get('/', function () {
     return view('MainPage');
@@ -38,7 +40,6 @@ Route::prefix('admin')->middleware('role:admin')->group(function () {
 
 
 // Route riêng cho seller
-Route::prefix('seller')->middleware('role:seller')->group(function () {
-    
-    Route::get('/dashboard', [UserController::class, 'index'])->name('seller.dashboard');
+Route::middleware('role:seller')->group(function () {
+    Route::get('/seller/dashboard', [UserController::class, 'index'])->name('seller.dashboard');
 });
