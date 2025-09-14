@@ -204,19 +204,19 @@
 <!-- Products Section -->
 <div class="container">
   <div class="row g-4">
-    
+    @foreach($products as $product)
     <!-- Product 1 -->
     <div class="col-md-4">
       <div class="card product-card">
         <span class="badge-discount">-12%</span>
         <img src="https://images.unsplash.com/photo-1598327105666-5b89351aff97?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" class="product-img" alt="iPhone 14 Pro Max">
         <div class="card-body">
-          <h5 class="card-title">tên</h5>  
-          <p class="card-text text-muted">thông số nổi bật</p>
+          <h5 class="card-title">{{ $product->name }}</h5>  
+          <p class="card-text text-muted">{{ $product->description }}</p>
           <div class="d-flex justify-content-between align-items-center">
             <div>
-              <span class="product-price">giá</span>
-              <span class="text-muted text-decoration-line-through ms-2">giá gốc</span>
+              <span class="product-price">{{ $product->price }}</span>
+           <!--   <span class="text-muted text-decoration-line-through ms-2">giá gốc</span> -->
             </div>
             <div class="d-flex">
               <button class="btn btn-outline-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#detailModal">
@@ -230,7 +230,7 @@
         </div>
       </div>
     </div>
-    
+    @endforeach
   <!-- Pagination -->
   <nav aria-label="Page navigation">
     <ul class="pagination">
