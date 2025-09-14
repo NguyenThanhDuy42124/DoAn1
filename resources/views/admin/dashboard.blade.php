@@ -151,7 +151,7 @@
                     <div class="col-md-3">
                         <div class="stats-card" style="background: linear-gradient(to right, var(--primary), #004d99);">
                             <i class="fas fa-users"></i>
-                            <div class="stats-value">39</div>
+                            <div class="stats-value">{{ $users->count() }}</div>
                             <div class="stats-label">Người dùng</div>
                         </div>
                     </div>

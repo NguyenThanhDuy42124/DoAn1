@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\AdminController;
 
 Route::get('/', function () {
     return view('MainPage');
@@ -31,18 +32,19 @@ Route::get('/switch-role/{role}', [UserController::class, 'switchRole'])->name('
 
 // Route riêng cho admin
 Route::prefix('admin')->middleware('role:admin')->group(function () {
-    //vừa truyền $users vừa gọi hàm dashboard trong UserController
-    Route::get('/dashboard', [UserController::class, 'dashboard'])->name('admin.dashboard');
+    //vừa truyền $users vừa gọi hàm dashboard trong Admin   Controller
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     // khai báo tài nguyên CRUD cho UserController
-    Route::resource('users', UserController::class, ['name' => 'admin']);
     Route::get('/products', [ProductController::class, 'index'])->name('admin.products.index');
     Route::resource('products', ProductController::class, ['name' => 'admin.products']);
     Route::get('/categories', [CategoryController::class, 'index'])->name('admin.categories.index');
     Route::resource('categories', CategoryController::class, ['names' => 'admin.categories']);
+    Route::resource('users', AdminController::class, ['name' => 'admin']);
 });
 
 
 // Route riêng cho seller
-Route::middleware('role:seller')->group(function () {
-    Route::get('/seller/dashboard', [UserController::class, 'index'])->name('seller.dashboard');
+Route::prefix('seller')->middleware('role:seller')->group(function () {
+    
+    Route::get('/dashboard', [UserController::class, 'index'])->name('seller.dashboard');
 });
