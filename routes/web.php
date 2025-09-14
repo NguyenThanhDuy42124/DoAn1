@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
-    return view('MainPage');
+    return view('pages.listproducts');
 });
 // Post là bắt dữ liệu gửi từ form
 Route::post('/register', [UserController::class, 'register']); // gọi đến controller
