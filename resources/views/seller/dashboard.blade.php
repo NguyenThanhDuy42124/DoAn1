@@ -198,8 +198,9 @@
                                 aria-labelledby="v-pills-products-tab">
                                 <h4 class="section-title">Quản lý sản phẩm</h4>
                                     <a class="btn btn-sm btn-primary" href="{{ route('products.create') }}">
-                                        <i class="fas fa-plus"></i> Thêm mới sản phẩm
-                                    </a>                     
+  <i class="fas fa-plus"></i> Thêm mới sản phẩm
+</a>
+           
                                        </div>
 
                             <!-- Các tab khác có thể được thêm ở đây -->

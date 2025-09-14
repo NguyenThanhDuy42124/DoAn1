@@ -8,44 +8,57 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
-    <div class="container">
-        <div class="form-container">
-            <h2 class="form-title"><i class="fas fa-plus-circle mr-2"></i>Tạo Sản Phẩm Mới</h2>
+   <div class="container">
+    <h1>Thêm mới sản phẩm</h1>
+
+    @if ($errors->any())
+      <div class="alert alert-danger">
+        <ul>@foreach ($errors->all() as $e) <li>{{ $e }}</li> @endforeach</ul>
+      </div>
+    @endif
+
+    <form action="{{ route('products.store') }}" method="POST">
+    @csrf
+    <input type="hidden" name="seller_id" value="{{ auth()->id() }}">
+    <div>
+        <label for="category_id">Danh mục</label>
+        <select name="category_id" id="category_id" required>
+            <option value="">-- Chọn danh mục --</option>
+            @foreach($categories as $category)
+                <option value="{{ $category->id }}">{{ $category->name }}</option>
+            @endforeach
             
-            @if (session()->has('message'))
-                <div class="alert-message">
-                    <i class="fas fa-check-circle mr-2"></i>{{ session('message') }}
-                </div>
-            @endif
-            
-            <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                <input type="hidden" name="seller_id" value="{{ auth()->id() }}">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="name">Tên sản phẩm</label>
-                            <input type="text" class="form-control" id="name" name="name" placeholder="Nhập tên sản phẩm" required>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="price">Giá sản phẩm (VND)</label>
-                            <input type="number" class="form-control" id="price" name="price" placeholder="Nhập giá sản phẩm" min="0" required>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="description">Mô tả sản phẩm</label>
-                    <textarea class="form-control" id="description" name="description" rows="4" placeholder="Nhập mô tả chi tiết về sản phẩm"></textarea>
-                </div>
-                <div class="d-flex justify-content-between mt-4">
-                    <a href="{{ route('products.list') }}" class="btn btn-back"><i class="fas fa-arrow-left mr-2"></i>Quay lại</a>
-                    <button type="submit" class="btn btn-primary"><i class="fas fa-save mr-2"></i>Tạo sản phẩm</button>
-                </div>
-            </form>
-        </div>
+        </select>
     </div>
+    <div>
+        <label>Tên sản phẩm</label>
+        <input type="text" name="name" required>
+    </div>
+
+    <div>
+        <label>Giá</label>
+        <input type="number" step="0.01" name="price" required>
+    </div>
+
+    <div>
+        <label>Thương hiệu</label>
+        <input type="text" name="brand">
+    </div>
+
+    <div>
+        <label>Tồn kho</label>
+        <input type="number" name="stock" value="0">
+    </div>
+
+    <div>
+        <label>Mô tả</label>
+        <textarea name="description"></textarea>
+    </div>
+
+    <button type="submit">Lưu</button>
+</form>
+
+</div>
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
