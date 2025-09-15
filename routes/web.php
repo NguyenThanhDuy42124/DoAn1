@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\ProductController;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\CategoryController;
 
 Route::get('/', function () {
     return view('MainPage');
@@ -33,6 +35,10 @@ Route::prefix('admin')->middleware('role:admin')->group(function () {
     Route::get('/dashboard', [UserController::class, 'dashboard'])->name('admin.dashboard');
     // khai báo tài nguyên CRUD cho UserController
     Route::resource('users', UserController::class, ['name' => 'admin']);
+    Route::get('/products', [ProductController::class, 'index'])->name('admin.products.index');
+    Route::resource('products', ProductController::class, ['name' => 'admin.products']);
+    Route::get('/categories', [CategoryController::class, 'index'])->name('admin.categories.index');
+    Route::resource('categories', CategoryController::class, ['names' => 'admin.categories']);
 });
 
 

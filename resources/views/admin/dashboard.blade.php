@@ -34,7 +34,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="{{ route('admin.categories.index') }}">
                         <i class="fas fa-box"></i>
                         Quản lý sản phẩm
                     </a>
