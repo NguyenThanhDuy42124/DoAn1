@@ -30,6 +30,25 @@ class AdminController extends Controller
         // Trả view dashboard, luôn truyền $users
         return view('admin.dashboard', compact('users', 'role'));
     }
+    public function userDashboard(Request $request){
+        $role = session('current_role', Auth::user()->role);
+
+        // Lấy danh sách user nếu là admin
+        $users = collect(); // mặc định trống
+
+        $query = User::where('role', '!=', 'admin');
+
+        // Nếu có từ khóa tìm kiếm
+        if ($request->filled('keyword')) {
+            $query->where('name', 'like', '%' . $request->keyword . '%');
+        }
+
+        $users = $query->paginate(10)->appends($request->query());
+
+
+        // Trả view dashboard, luôn truyền $users
+        return view('admin.Users.UserManager', compact('users', 'role'));
+    }
     public function destroy(User $user)
     {
         $message = 'Cook 1 tài khoản thành công';

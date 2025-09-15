@@ -28,7 +28,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="{{ route('admin.users.manager') }}">
                         <i class="fas fa-users"></i>
                         Quản lý người dùng
                     </a>
