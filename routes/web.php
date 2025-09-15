@@ -8,7 +8,6 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\NotificationController;
 
 Route::resource('products', ProductController::class);
 
@@ -45,9 +44,6 @@ Route::prefix('admin')->middleware('role:admin')->group(function () {
     Route::resource('products', ProductController::class, ['name' => 'admin.products']);
     Route::get('/categories', [CategoryController::class, 'index'])->name('admin.categories.index');
     Route::resource('categories', CategoryController::class, ['names' => 'admin.categories']);
-    Route::get('/notifications', [NotificationController::class, 'index'])->name('admin.notifications.index');
-    Route::post('/notifications', [NotificationController::class, 'store'])->name('admin.notifications.store');
-
 });
 
 

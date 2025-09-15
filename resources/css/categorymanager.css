@@ -1,5 +1,4 @@
-
-        :root {
+:root {
             --primary: #0066cc;
             --secondary: #ff6600;
             --dark: #343a40;
@@ -155,4 +154,3 @@
                 margin-bottom: 20px;
             }
         }
-  
