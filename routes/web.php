@@ -43,6 +43,5 @@ Route::prefix('admin')->middleware('role:admin')->group(function () {
 
 // Route riêng cho seller
 Route::prefix('seller')->middleware('role:seller')->group(function () {
-    
     Route::get('/dashboard', [UserController::class, 'index'])->name('seller.dashboard');
 });
