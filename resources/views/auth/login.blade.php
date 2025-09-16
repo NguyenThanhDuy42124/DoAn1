@@ -35,9 +35,9 @@
                             <input type="password" class="form-control" id="password" name="password"
                                 placeholder="Nhập mật khẩu" required>
                             <div class="forgot-password">
-                                <a href="/forgot-password">Quên mật khẩu?</a>
+                                <a href="{{ route('forgetPassword.form') }}">Quên mật khẩu?</a>
+                                </div>
                             </div>
-                        </div>
                         <button type="submit" class="btn btn-login">Đăng Nhập</button>
 
                         {{-- Hiển thị lỗi đăng nhập --}}

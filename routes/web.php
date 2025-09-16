@@ -8,6 +8,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\PasswordResetController;
+use App\Http\Controllers\ForgetPasswordController;
 
 Route::resource('products', ProductController::class);
 
@@ -28,6 +30,19 @@ Route::get('/register', function () {
 Route::get('/dashboard', function () {
     return view('buyer.dashboard');
 })->middleware('auth')->name('dashboard');
+
+
+// Password Reset Routes
+Route::get('/PasswordReset', function () {
+    return view('auth.PasswordReset');
+});
+
+
+Route::post('/forgotPassword', [ForgetPasswordController::class, 'sendResetLink'])->middleware('throttle:5,1') ->name('forgetPassword.link');
+Route::get('/forgetPassword', [ForgetPasswordController::class,'showForget_Password'])->name('forgetPassword.form');
+
+Route::post('/resetPassword', [PasswordResetController::class, 'resetPassword'])->name('password.update');
+Route::get('/resetPassword/{token}', [PasswordResetController::class, 'showReset_Password'])->name('password.reset');
 
 
 // Route để chuyển đổi vai trò giữa buyer sang admin và seller
