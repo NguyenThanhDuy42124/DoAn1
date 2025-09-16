@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
      @vite(['resources/css/usermanager.css', 'resources/js/app.js'])
     <title>Quản lý người dùng - TechStore</title>
-    
+
 </head>
 
 <body style="padding-top: 0">
@@ -155,6 +155,24 @@
             <label for="name">Họ và tên</label>
             <input type="text" id="name" name="name" value="{{ $user->name }}" placeholder="Nhập họ và tên đầy đủ"
                 required>
+        </div>
+        <div class="form-group">
+            <label for="phoneNumber">Số điện thoại</label>
+            <input type="text" id="phoneNumber" name="phoneNumber" value="{{ $user->phoneNumber }}" placeholder="Nhập số điện thoại"
+                required>
+        </div>
+        <div class="form-group">
+            <label for="dateOfBirth">Ngày sinh</label>
+            <input type="date" id="dateOfBirth" name="dateOfBirth" value="{{ $user->dateOfBirth }}" placeholder="Nhập ngày sinh"
+                required>
+        </div>
+        <div class="form-group">
+            <label for="gender">Giới tính</label>
+            <select id="gender" name="gender" required>
+                <option value="male" {{ $user->gender === 'male' ? 'selected' : '' }}>Nam</option>
+                <option value="female" {{ $user->gender === 'female' ? 'selected' : '' }}>Nữ</option>
+                <option value="other" {{ $user->gender === 'other' ? 'selected' : '' }}>Khác</option>
+            </select>
         </div>
         <div class="form-group">
             <label for="email">Email</label>

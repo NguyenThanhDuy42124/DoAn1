@@ -69,7 +69,7 @@ class AdminController extends Controller
     {
         $user = User::findOrFail($id);
 
-    $data = $request->only(['name', 'email', 'password', 'role']);
+    $data = $request->only(['name', 'email', 'password', 'role','phoneNumber', 'dateOfBirth','gender']);
 
     // Nếu password không nhập lại thì bỏ qua
     if (empty($data['password'])) {

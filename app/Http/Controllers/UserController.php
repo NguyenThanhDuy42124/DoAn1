@@ -14,8 +14,11 @@ class UserController extends Controller
     {
         $incomingData = $request->validate([
             "email" => "required|email|max:255|unique:users,email",
-            "name" => "required|string|max:255|unique:users,name",
+            "name" => "required|string|max:255",
             "password" => "required|string|min:3",
+            "phoneNumber" => "nullable|string|max:15",
+            "dateOfBirth" => "nullable|date",
+            "gender" => "nullable|string|in:male,female,other",
         ]);
         $incomingData["password"] = bcrypt($incomingData["password"]);
         $user = User::create($incomingData);
@@ -34,18 +37,18 @@ class UserController extends Controller
     public function login(Request $request)
     {
         $incomingData = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255'],
             'password' => ['required'],
         ]);
 
-        if (Auth::attempt(['name' => $incomingData['name'], 'password' => $incomingData['password']])) {
+        if (Auth::attempt(['email' => $incomingData['email'], 'password' => $incomingData['password']])) {
             $request->session()->regenerate();
             return redirect()->intended('/dashboard');
         }
 
         return back()->withErrors([
             'login' => 'Tên hoặc mật khẩu không đúng.',
-        ])->onlyInput('name');
+        ])->onlyInput('email');
     }
     // hàm này để load trang dashboard của seller và admin
     public function index()

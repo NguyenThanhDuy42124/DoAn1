@@ -26,8 +26,8 @@
                     <form action="/login" method="POST">
                         @csrf
                         <div class="form-group">
-                            <label for="name">Họ và Tên</label>
-                            <input type="text" class="form-control" id="name" name="name" placeholder="Nhập họ và tên"
+                            <label for="email">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" placeholder="Nhập email"
                                 required>
                         </div>
                         <div class="form-group">

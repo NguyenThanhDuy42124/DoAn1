@@ -98,18 +98,24 @@
 
                                 <div class="info-item">
                                     <div class="info-label">Số điện thoại:</div>
-                                    <div class="info-value">...</div>
+                                    <div class="info-value">{{ Auth::user()->phoneNumber }}</div>
                                 </div>
 
                                 <div class="info-item">
                                     <div class="info-label">Ngày sinh:</div>
-                                    <div class="info-value">...</div>
+                                    <div class="info-value">{{ Auth::user()->dateOfBirth }}</div>
                                 </div>
 
                                 <div class="info-item">
                                     <div class="info-label">Giới tính:</div>
-                                    <div class="info-value">...</div>
+                                    <div class="info-value">{{ Auth::user()->gender }}</div>
                                 </div>
+                                @if(Auth::user()->role == 'buyer' && auth()->user()->address != null)
+                                    <div class="info-item">
+                                    <div class="info-label">Địa chỉ:</div>
+                                    <div class="info-value">{{ Auth::user()->address }}</div>
+                                </div>
+                                @endif
                                 <div class="info-item">
                                     <div class="info-label">Quyền hạn:</div>
                                     <div class="info-value"> {{ Auth::user()->role }}</div>
@@ -160,7 +166,7 @@
                                         <button class="btn btn-primary btn-sm">Mua lại</button>
                                     </div>
                                 </div>
-                                
+
                                 <div class="order-card">
                                     <div class="d-flex justify-content-between align-items-center mb-2">
                                         <div class="font-weight-bold">Mã đơn: #DH12346</div>
@@ -191,7 +197,7 @@
                             <div class="tab-pane fade" id="v-pills-wishlist" role="tabpanel"
                                 aria-labelledby="v-pills-wishlist-tab">
                                 <h4 class="section-title">Sản phẩm yêu thích</h4>
-                                <!--  
+                                <!--
                                 <div class="wishlist-item">
                                     <div class="row">
                                         <div class="col-3 col-md-2">
@@ -217,7 +223,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <div class="wishlist-item">
                                     <div class="row">
                                         <div class="col-3 col-md-2">
