@@ -11,7 +11,6 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ForgetPasswordController;
 
-Route::resource('products', ProductController::class);
 
 Route::get('/', function () {
     return view('MainPage');
@@ -60,4 +59,5 @@ Route::prefix('admin')->middleware('role:admin')->group(function () {
 // Route riêng cho seller
 Route::prefix('seller')->middleware('role:seller')->group(function () {
     Route::get('/dashboard', [UserController::class, 'index'])->name('seller.dashboard');
+    Route::resource('products', ProductController::class, ['names' => 'seller.products']);
 });
