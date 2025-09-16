@@ -17,7 +17,7 @@
       </div>
     @endif
 
-    <form action="{{ route('products.store') }}" method="POST">
+    <form action="{{ route('seller.products.store') }}" method="POST">
     @csrf
     <input type="hidden" name="seller_id" value="{{ auth()->id() }}">
     <div>

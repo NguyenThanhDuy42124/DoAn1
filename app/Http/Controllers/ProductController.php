@@ -30,7 +30,12 @@ class ProductController extends Controller
 
     Product::create($validated);
 
-    return redirect()->route('products.index')->with('success', 'Thêm sản phẩm thành công!');
+    // Nếu đang trong admin
+
+// Nếu đang trong seller
+return redirect()->route('seller.products.index')
+                 ->with('success', 'Thêm sản phẩm thành công!');
+
 }
     public function index()
     {
