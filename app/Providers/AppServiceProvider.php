@@ -34,7 +34,7 @@ class AppServiceProvider extends ServiceProvider
                 ->action('Xác nhận', $url)
                 ->line('Liên kết có hiệu lực trong '.config('auth.passwords.users.expire').' phút.')
                 ->line('Nếu không phải bạn yêu cầu, bạn có thể bỏ qua email này.')
-                ->salutation('Trân trọng, DuManMinh Cinema');
+                ->salutation('Trân trọng, TenShop Team.');
         });
     }
 }
