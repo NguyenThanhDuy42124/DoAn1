@@ -32,12 +32,7 @@ Route::get('/dashboard', function () {
 })->middleware('auth')->name('dashboard');
 
 
-// Password Reset Routes
-Route::get('/PasswordReset', function () {
-    return view('auth.PasswordReset');
-});
-
-
+// route của forget password
 Route::post('/forgotPassword', [ForgetPasswordController::class, 'sendResetLink'])->middleware('throttle:5,1') ->name('forgetPassword.link');
 Route::get('/forgetPassword', [ForgetPasswordController::class,'showForget_Password'])->name('forgetPassword.form');
 
