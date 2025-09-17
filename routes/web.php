@@ -5,6 +5,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\SellerController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
@@ -71,6 +72,10 @@ Route::prefix('admin')->middleware('role:admin')->group(function () {
 
 // Route riêng cho seller
 Route::prefix('seller')->middleware('role:seller')->group(function () {
-    Route::get('/dashboard', [UserController::class, 'index'])->name('seller.dashboard');
+    // Sửa thành SellerController::dashboard
+    Route::get('/dashboard', [SellerController::class, 'dashboard'])->name('seller.dashboard');
     Route::resource('products', ProductController::class, ['names' => 'seller.products']);
+    Route::get('/seller/products/{id}/edit', [ProductController::class, 'edit'])->name('seller.products.edit');
+    Route::put('/seller/products/{id}', [ProductController::class, 'update'])->name('seller.products.update');
 });
+Route::get('/products', [ProductController::class, 'listProducts'])->name('products.list');

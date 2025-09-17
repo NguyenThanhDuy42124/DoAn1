@@ -195,13 +195,35 @@
 
                             <!-- Sản phẩm -->
                             <div class="tab-pane fade" id="v-pills-products" role="tabpanel"
-                                aria-labelledby="v-pills-products-tab">
-                                <h4 class="section-title">Quản lý sản phẩm</h4>
-                                    <a class="btn btn-sm btn-primary" href="{{ route('seller.products.create') }}">
-  <i class="fas fa-plus"></i> Thêm mới sản phẩm
-</a>
-           
-                                       </div>
+    aria-labelledby="v-pills-products-tab">
+    <h4 class="section-title">Quản lý sản phẩm</h4>
+    <a class="btn btn-sm btn-primary" href="{{ route('seller.products.create') }}">
+        <i class="fas fa-plus"></i> Thêm mới sản phẩm
+    </a>
+    <div class="row pt-3">
+        @foreach($products as $product)
+        <div class="col-md-3 mb-4">
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1598327105666-5b89351aff97?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" 
+                     alt="{{ $product->name }}" class="product-img">
+                <div class="product-body">
+                    <h3 class="product-title">{{ $product->name }}</h3>
+                    <div class="product-price">
+                        <span class="current-price">{{ number_format($product->price, 0, ',', '.') }}₫</span>
+                    </div>
+<a href="{{ route('seller.products.edit', $product->id) }}" class="btn btn-primary btn-block">Sửa</a>
+                    <form action="{{ route('seller.products.destroy', $product->id) }}" method="POST" class="d-inline">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger btn-block" 
+                               >Xóa</button>
+                    </form>
+                </div> 
+            </div>
+        </div>
+        @endforeach
+    </div>
+</div>
 
                             <!-- Các tab khác có thể được thêm ở đây -->
                             <div class="tab-pane fade" id="v-pills-analytics" role="tabpanel"

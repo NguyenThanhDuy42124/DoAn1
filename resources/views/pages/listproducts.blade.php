@@ -209,20 +209,22 @@
     <div class="col-md-4">
       <div class="card product-card">
         <span class="badge-discount">-12%</span>
-        <img src="https://images.unsplash.com/photo-1598327105666-5b89351aff97?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" class="product-img" alt="iPhone 14 Pro Max">
+        <img src="https://images.unsplash.com/photo-1598327105666-5b89351aff97?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" 
+             class="product-img" alt="{{ $product->name }}">
         <div class="card-body">
           <h5 class="card-title">{{ $product->name }}</h5>  
-          <p class="card-text text-muted">{{ $product->description }}</p>
+          <p class="card-text text-muted">{{ Str::limit($product->description, 100) }}</p>
           <div class="d-flex justify-content-between align-items-center">
             <div>
-              <span class="product-price">{{ $product->price }}</span>
-           <!--   <span class="text-muted text-decoration-line-through ms-2">giá gốc</span> -->
+              <span class="product-price">{{ number_format($product->price, 0, ',', '.') }}₫</span>
             </div>
             <div class="d-flex">
-              <button class="btn btn-outline-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#detailModal">
+              <button class="btn btn-outline-primary btn-sm me-2" data-bs-toggle="modal" 
+                      data-bs-target="#detailModal-{{ $product->id }}">
                 <i class="fas fa-eye"></i>
               </button>
-              <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#cartModal">
+              <button class="btn btn-success btn-sm" data-bs-toggle="modal" 
+                      data-bs-target="#cartModal-{{ $product->id }}">
                 <i class="fas fa-cart-plus"></i>
               </button>
             </div>
@@ -230,21 +232,21 @@
         </div>
       </div>
     </div>
+    
+    <!-- Modal: detail for each product -->
+    <div class="modal fade" id="detailModal-{{ $product->id }}" tabindex="-1" aria-hidden="true">
+      <!-- Nội dung modal chi tiết sản phẩm -->
+    </div>
+    
+    <!-- Modal: add to cart for each product -->
+    <div class="modal fade" id="cartModal-{{ $product->id }}" tabindex="-1" aria-hidden="true">
+      <!-- Nội dung modal thêm vào giỏ hàng -->
+    </div>
     @endforeach
+  </div>
+  
   <!-- Pagination -->
-  <nav aria-label="Page navigation">
-    <ul class="pagination">
-      <li class="page-item disabled">
-        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Trước</a>
-      </li>
-      <li class="page-item active"><a class="page-link" href="#">1</a></li>
-      <li class="page-item"><a class="page-link" href="#">2</a></li>
-      <li class="page-item"><a class="page-link" href="#">3</a></li>
-      <li class="page-item">
-        <a class="page-link" href="#">Sau</a>
-      </li>
-    </ul>
-  </nav>
+
 </div>
 
 <!-- Modal: detail -->

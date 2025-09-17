@@ -37,14 +37,55 @@ return redirect()->route('seller.products.index')
                  ->with('success', 'Thêm sản phẩm thành công!');
 
 }
-    public function index()
-    {
-        // Lấy tất cả sản phẩm từ DB
-        $products = Product::all();
+     public function index()
+{
+    $products = Product::where('seller_id', auth()->id())->paginate(8);
+    return view('seller.dashboard', compact('products'));
+}
 
-        // Trả về view (ví dụ: resources/views/products/index.blade.php)
-        return view('pages.listproducts', compact('products'));
+public function listProducts()
+{
+    $products = Product::paginate(9);
+    return view('pages.listproducts', compact('products'));
+}
+public function destroy($id)
+{
+    // Tìm sản phẩm theo id
+    $product = Product::findOrFail($id);
+
+    // Xóa sản phẩm
+    $product->delete();
+
+    // Điều hướng về danh sách sản phẩm với thông báo
+    return redirect()->route('seller.dashboard')
+                     ->with('success', 'Xóa sản phẩm thành công!');
+}
+public function edit($id)
+{
+    $product = Product::findOrFail($id);
+    return view('seller.edit_product', compact('product'));
+}
+
+public function update(Request $request, $id)
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'price' => 'required|numeric',
+    ]);
+
+    $product = Product::findOrFail($id);
+    $product->name = $request->name;
+    $product->price = $request->price;
+
+    // cập nhật ảnh?
+    if ($request->hasFile('image')) {
+        $path = $request->file('image')->store('products', 'public');
+        $product->image = $path;
     }
 
+    $product->save();
+
+    return redirect()->route('seller.dashboard')->with('success', 'Cập nhật sản phẩm thành công!');
+}
     // ... các method index, show, edit, update, destroy nếu cần
 }

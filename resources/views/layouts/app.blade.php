@@ -31,7 +31,7 @@
                 <!-- Menu trái -->
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" href="/san-pham">DANH SÁCH SẢN PHẨM</a>
+                        <a class="nav-link active" href="/products">DANH SÁCH SẢN PHẨM</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link active" href="/khuyen-mai">KHUYẾN MÃI</a>
