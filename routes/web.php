@@ -10,6 +10,8 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ForgetPasswordController;
+use App\Http\Controllers\NotificationController;
+
 
 
 Route::get('/', function () {
@@ -53,6 +55,17 @@ Route::prefix('admin')->middleware('role:admin')->group(function () {
     Route::resource('products', ProductController::class, ['name' => 'admin.products']);
     Route::get('/categories', [CategoryController::class, 'index'])->name('admin.categories.index');
     Route::resource('categories', CategoryController::class, ['names' => 'admin.categories']);
+    //route thong bao
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('admin.notifications.index');
+    Route::get('/notifications/create', [NotificationController::class, 'create'])->name('admin.notifications.create');
+    Route::post('/notifications', [NotificationController::class, 'store'])->name('admin.notifications.store');
+    Route::get('/notifications/{notification}', [NotificationController::class, 'show'])->name('admin.notifications.show');
+    Route::get('/notifications/{notification}/edit', [NotificationController::class, 'edit'])->name('admin.notifications.edit');
+    Route::put('/notifications/{notification}', [NotificationController::class, 'update'])->name('admin.notifications.update');
+    Route::delete('/notifications/{notification}', [NotificationController::class, 'destroy'])->name('admin.notifications.destroy');
+    Route::post('/notifications/{notification}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('admin.notifications.markAsRead');
+    Route::post('/notifications/{notification}/mark-as-unread', [NotificationController::class, 'markAsUnread'])->name('admin.notifications.markAsUnread');
+
 });
 
 

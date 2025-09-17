@@ -46,7 +46,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="{{ route('admin.notifications.index') }}">
                         <i class="fas fa-bell"></i>
                         Gửi thông báo
                     </a>
