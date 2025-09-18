@@ -12,7 +12,7 @@ class ProductController extends Controller
     {
         // nếu cần truyền dữ liệu như danh mục
         $categories = Category::all();
-        return view('seller.create_product', compact('categories'));
+        return view('seller.products.create_product', compact('categories'));
     }
 
    public function store(Request $request)
@@ -40,7 +40,7 @@ return redirect()->route('seller.products.index')
      public function index()
 {
     $products = Product::where('seller_id', auth()->id())->paginate(8);
-    return view('seller.dashboard', compact('products'));
+    return view('seller.products.index', compact('products'));
 }
 
 public function listProducts()
@@ -57,13 +57,13 @@ public function destroy($id)
     $product->delete();
 
     // Điều hướng về danh sách sản phẩm với thông báo
-    return redirect()->route('seller.dashboard')
+    return redirect()->route('seller.products.index')
                      ->with('success', 'Xóa sản phẩm thành công!');
 }
 public function edit($id)
-{
+{    $categories = Category::orderBy('name')->get();
     $product = Product::findOrFail($id);
-    return view('seller.edit_product', compact('product'));
+    return view('seller.products.edit_product', compact('product','categories'));
 }
 
 public function update(Request $request, $id)
@@ -71,13 +71,24 @@ public function update(Request $request, $id)
     $request->validate([
         'name' => 'required|string|max:255',
         'price' => 'required|numeric',
+        'brand' => 'nullable|string|max:255',
+        'stock' => 'required|integer|min:0',
+        'description' => 'nullable|string',
+        'status' => 'required|in:active,inactive', 
+        'image' => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
     ]);
 
     $product = Product::findOrFail($id);
+
+    // Gán dữ liệu
     $product->name = $request->name;
     $product->price = $request->price;
+    $product->brand = $request->brand;
+    $product->stock = $request->stock;
+    $product->description = $request->description;
+    $product->status = $request->status; 
 
-    // cập nhật ảnh?
+    // Xử lý ảnh (nếu có upload mới)
     if ($request->hasFile('image')) {
         $path = $request->file('image')->store('products', 'public');
         $product->image = $path;
@@ -85,7 +96,8 @@ public function update(Request $request, $id)
 
     $product->save();
 
-    return redirect()->route('seller.dashboard')->with('success', 'Cập nhật sản phẩm thành công!');
+    return redirect()->route('seller.products.index')->with('success', 'Cập nhật sản phẩm thành công!');
 }
+
     // ... các method index, show, edit, update, destroy nếu cần
 }

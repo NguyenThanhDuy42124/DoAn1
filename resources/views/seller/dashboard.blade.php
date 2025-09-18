@@ -13,8 +13,7 @@
 </head>
 
 <body>
-    @extends('layouts.app')
-    @section('content')
+ 
     <div class="container dashboard-container">
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -55,27 +54,7 @@
                                 aria-selected="true">
                                 <i class="fas fa-tachometer-alt mr-2"></i> Tổng quan
                             </a>
-                            <a class="nav-link" id="v-pills-orders-tab" data-toggle="pill" href="#v-pills-orders"
-                                role="tab" aria-controls="v-pills-orders" aria-selected="false">
-                                <i class="fas fa-shopping-bag mr-2"></i> Đơn hàng
-                            </a>
-                            <a class="nav-link" id="v-pills-products-tab" data-toggle="pill" href="#v-pills-products"
-                                role="tab" aria-controls="v-pills-products" aria-selected="false">
-                                <i class="fas fa-box mr-2"></i> Sản phẩm
-                            </a>
-                            <a class="nav-link" id="v-pills-analytics-tab" data-toggle="pill" href="#v-pills-analytics"
-                                role="tab" aria-controls="v-pills-analytics" aria-selected="false">
-                                <i class="fas fa-chart-line mr-2"></i> Thống kê
-                            </a>
-                            <a class="nav-link" id="v-pills-customers-tab" data-toggle="pill" href="#v-pills-customers"
-                                role="tab" aria-controls="v-pills-customers" aria-selected="false">
-                                <i class="fas fa-users mr-2"></i> Khách hàng
-                            </a>
-                            <a class="nav-link" id="v-pills-promotions-tab" data-toggle="pill"
-                                href="#v-pills-promotions" role="tab" aria-controls="v-pills-promotions"
-                                aria-selected="false">
-                                <i class="fas fa-percent mr-2"></i> Khuyến mãi
-                            </a>
+                            
                             <a class="nav-link" id="v-pills-settings-tab" data-toggle="pill" href="#v-pills-settings"
                                 role="tab" aria-controls="v-pills-settings" aria-selected="false">
                                 <i class="fas fa-cog mr-2"></i> Cài đặt
@@ -97,25 +76,24 @@
                                             <div class="stats-icon">
                                                 <i class="fas fa-shopping-bag"></i>
                                             </div>
-                                            <div class="stats-value">...</div>
                                             <div class="stats-label">Đơn hàng</div>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
+                                        <a href="{{ route('seller.products.index') }}" style="text-decoration:none; color:inherit;">
                                         <div class="stats-card">
                                             <div class="stats-icon">
                                                 <i class="fas fa-box"></i>
                                             </div>
-                                            <div class="stats-value">...</div>
                                             <div class="stats-label">Sản phẩm</div>
                                         </div>
+                                        </a>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="stats-card">
                                             <div class="stats-icon">
                                                 <i class="fas fa-users"></i>
                                             </div>
-                                            <div class="stats-value">...</div>
                                             <div class="stats-label">Khách hàng</div>
                                         </div>
                                     </div>
@@ -124,138 +102,39 @@
                                             <div class="stats-icon">
                                                 <i class="fas fa-money-bill-wave"></i>
                                             </div>
-                                            <div class="stats-value">...</div>
                                             <div class="stats-label">Doanh thu</div>
                                         </div>
                                     </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-8">
-                                        <div class="dashboard-card">
-                                            <div class="dashboard-body">
-                                                <h5 class="section-title">Doanh thu</h5>
-                                                <div class="chart-container">
-                                                    <canvas id="revenueChart"></canvas>
-                                                </div>
+                                    <div class="col-md-3">
+                                        <a href="{{ route('vouchers.index') }}" style="text-decoration:none; color:inherit;">
+                                            <div class="stats-card">
+                                              <div class="stats-icon">
+                                                  <i class="fas fa-percent mr-2"></i>
+                                             </div>
+                                            <div class="stats-label">Khuyến mãi</div>
                                             </div>
-                                        </div>
+                                        </a>
                                     </div>
-                                    <div class="col-md-4">
-                                        <div class="dashboard-card">
-                                            <div class="dashboard-body">
-                                                <h5 class="section-title">Trạng thái đơn hàng</h5>
-                                                <div class="chart-container">
-                                                    <canvas id="orderStatusChart"></canvas>
-                                                </div>
+                                    <div class="col-md-3">
+                                        <div class="stats-card">
+                                            <div class="stats-icon">
+                                                <i class="fas fa-chart-line mr-2"></i>
                                             </div>
+                                            <div class="stats-label">Thống kê</div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="dashboard-card mt-4">
-                                    <div class="dashboard-body">
-                                        <h5 class="section-title">Đơn hàng mới nhất</h5>
-                                        <!--   
-                                        <div class="order-card">
-                                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                                <div class="font-weight-bold">Mã đơn: #DH12347</div>
-                                                <div class="order-status status-pending">Chờ xác nhận</div>
-                                            </div>
-                                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                                <div>Ngày đặt: 12/10/2023</div>
-                                                <div class="font-weight-bold text-primary">5.990.000₫</div>
-                                            </div>
-                                            <div class="d-flex align-items-center">
-                                                <img src="https://images.unsplash.com/photo-1598327105666-5b89351aff97?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Product" class="product-img mr-3">
-                                                <div>
-                                                    <div class="font-weight-bold">iPhone 14 Pro Max 128GB</div>
-                                                    <div class="text-muted">Số lượng: 1</div>
-                                                </div>
-                                            </div>
-                                            <div class="text-right mt-3">
-                                                <button class="btn btn-outline-primary btn-sm mr-2">Xem chi tiết</button>
-                                                <button class="btn btn-primary btn-sm">Xác nhận</button>
-                                            </div>
-                                        </div>
-                                    -->
-                                        <div class="text-center mt-3">
-                                            <button class="btn btn-outline-primary">Xem tất cả đơn hàng</button>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
 
-                            <!-- Đơn hàng -->
-                            <div class="tab-pane fade" id="v-pills-orders" role="tabpanel"
-                                aria-labelledby="v-pills-orders-tab">
-                                <h4 class="section-title">Quản lý đơn hàng</h4>
-                                <p class="text-muted">...</p>
-                            </div>
-
-                            <!-- Sản phẩm -->
-                            <div class="tab-pane fade" id="v-pills-products" role="tabpanel"
-    aria-labelledby="v-pills-products-tab">
-    <h4 class="section-title">Quản lý sản phẩm</h4>
-    <a class="btn btn-sm btn-primary" href="{{ route('seller.products.create') }}">
-        <i class="fas fa-plus"></i> Thêm mới sản phẩm
-    </a>
-    <div class="row pt-3">
-        @foreach($products as $product)
-        <div class="col-md-3 mb-4">
-            <div class="product-card">
-                <img src="https://images.unsplash.com/photo-1598327105666-5b89351aff97?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" 
-                     alt="{{ $product->name }}" class="product-img">
-                <div class="product-body">
-                    <h3 class="product-title">{{ $product->name }}</h3>
-                    <div class="product-price">
-                        <span class="current-price">{{ number_format($product->price, 0, ',', '.') }}₫</span>
-                    </div>
-<a href="{{ route('seller.products.edit', $product->id) }}" class="btn btn-primary btn-block">Sửa</a>
-                    <form action="{{ route('seller.products.destroy', $product->id) }}" method="POST" class="d-inline">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger btn-block" 
-                               >Xóa</button>
-                    </form>
-                </div> 
-            </div>
-        </div>
-        @endforeach
-    </div>
-</div>
-
-                            <!-- Các tab khác có thể được thêm ở đây -->
-                            <div class="tab-pane fade" id="v-pills-analytics" role="tabpanel"
-                                aria-labelledby="v-pills-analytics-tab">
-                                <h4 class="section-title">Thống kê và báo cáo</h4>
-                                <p class="text-muted">...</p>
-                            </div>
-
-                            <div class="tab-pane fade" id="v-pills-customers" role="tabpanel"
-                                aria-labelledby="v-pills-customers-tab">
-                                <h4 class="section-title">Quản lý khách hàng</h4>
-                                <p class="text-muted">...</p>
-                            </div>
-
-                            <div class="tab-pane fade" id="v-pills-promotions" role="tabpanel"
-                                aria-labelledby="v-pills-promotions-tab">
-                                <h4 class="section-title">Khuyến mãi và giảm giá</h4>
-                                <p class="text-muted">...</p>
-                            </div>
-
-                            <div class="tab-pane fade" id="v-pills-settings" role="tabpanel"
-                                aria-labelledby="v-pills-settings-tab">
-                                <h4 class="section-title">Cài đặt cửa hàng</h4>
-                                <p class="text-muted">...</p>
-                            </div>
+                            
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    @endsection
+   
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
     </script>

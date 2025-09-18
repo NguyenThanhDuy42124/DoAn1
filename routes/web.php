@@ -12,6 +12,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ForgetPasswordController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\VoucherController;
 
 
 
@@ -77,5 +78,13 @@ Route::prefix('seller')->middleware('role:seller')->group(function () {
     Route::resource('products', ProductController::class, ['names' => 'seller.products']);
     Route::get('/seller/products/{id}/edit', [ProductController::class, 'edit'])->name('seller.products.edit');
     Route::put('/seller/products/{id}', [ProductController::class, 'update'])->name('seller.products.update');
+    //route vouchers
+     Route::get('/vouchers', [VoucherController::class, 'index'])->name('vouchers.index');
+    Route::get('/vouchers/create', [VoucherController::class, 'create'])->name('vouchers.create');
+    Route::post('/vouchers', [VoucherController::class, 'store'])->name('vouchers.store');
+    Route::get('/vouchers/{id}/edit', [VoucherController::class, 'edit'])->name('vouchers.edit');
+    Route::put('/vouchers/{id}', [VoucherController::class, 'update'])->name('vouchers.update');
+    Route::delete('/vouchers/{id}', [VoucherController::class, 'destroy'])->name('vouchers.destroy');
 });
 Route::get('/products', [ProductController::class, 'listProducts'])->name('products.list');
+Route::get('/vouchers', [VoucherController::class, 'listVouchers'])->name('vouchers.list');

@@ -34,7 +34,7 @@
                         <a class="nav-link active" href="/products">DANH SÁCH SẢN PHẨM</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="/khuyen-mai">KHUYẾN MÃI</a>
+                        <a class="nav-link active" href="/vouchers">KHUYẾN MÃI</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link active" href="/ho-tro">HỖ TRỢ</a>
