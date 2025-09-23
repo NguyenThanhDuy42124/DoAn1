@@ -223,10 +223,20 @@
                       data-bs-target="#detailModal-{{ $product->id }}">
                 <i class="fas fa-eye"></i>
               </button>
-              <button class="btn btn-success btn-sm" data-bs-toggle="modal" 
-                      data-bs-target="#cartModal-{{ $product->id }}">
-                <i class="fas fa-cart-plus"></i>
-              </button>
+              @if (Auth::check())
+                            <form action="{{ route('buyer.carts.store') }}" method="POST" class="d-inline">
+                                @csrf
+                                <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                <input type="hidden" name="quantity" value="1"> <!-- Default quantity = 1 -->
+                                <button type="submit" class="btn btn-success btn-sm">
+                                    <i class="fas fa-cart-plus"></i>
+                                </button>
+                            </form>
+                        @else
+                            <a href="{{ route('login') }}" class="btn btn-success btn-sm">
+                                <i class="fas fa-cart-plus"></i>
+                            </a>
+                        @endif
             </div>
           </div>
         </div>

@@ -35,10 +35,10 @@
                             <td>{{ number_format($item->price * $item->quantity, 0, ',', '.') }}₫</td>
                             <td>
                                 <a href="{{ route('buyer.carts.edit', $item->cart_id) }}" class="btn btn-primary btn-sm">Edit</a>
-                                <form action="{{ route('buyer.carts.destroy', $item->cart_id) }}" method="POST" style="display:inline;">
+                                <form action="{{ route('buyer.cart_items.destroy', $item->id) }}" method="POST" style="display:inline;">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm">Delete Cart</button>
+                                    <button type="submit" class="btn btn-danger btn-sm">Delete Item</button>
                                 </form>
                             </td>
                         </tr>

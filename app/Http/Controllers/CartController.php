@@ -84,12 +84,5 @@ class CartController extends Controller
             ->with('success', 'Cart updated successfully.');
     }
 
-    public function destroy($id)
-    {
-        $cart = Cart::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
-        $cart->items()->delete(); // Delete all cart items
-        $cart->delete(); // Delete the cart
-        return redirect()->route('buyer.carts.index')
-            ->with('success', 'Cart deleted successfully.');
-    }
+
 }

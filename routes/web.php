@@ -13,7 +13,8 @@ use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ForgetPasswordController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\VoucherController;
-
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\CartItemController;
 
 
 Route::get('/', function () {
@@ -88,3 +89,12 @@ Route::prefix('seller')->middleware('role:seller')->group(function () {
 });
 Route::get('/products', [ProductController::class, 'listProducts'])->name('products.list');
 Route::get('/vouchers', [VoucherController::class, 'listVouchers'])->name('vouchers.list');
+
+
+Route::prefix('buyer')->middleware('role:buyer')->group(function () {
+    Route::get('/carts', [CartController::class, 'index'])->name('buyer.carts.index');
+    Route::post('/carts', [CartController::class, 'store'])->name('buyer.carts.store');
+    Route::get('/carts/{id}/edit', [CartController::class, 'edit'])->name('buyer.carts.edit');
+    Route::put('/carts/{id}', [CartController::class, 'update'])->name('buyer.carts.update');
+    Route::delete('/cart/item/{id}', [CartItemController::class, 'destroy'])->name('buyer.cart_items.destroy');
+});
