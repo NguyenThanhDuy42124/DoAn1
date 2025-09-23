@@ -92,6 +92,7 @@ Route::get('/vouchers', [VoucherController::class, 'listVouchers'])->name('vouch
 Route::post('/checkout', [CartController::class, 'checkout'])->name('buyer.checkouts.checkout');
 Route::get('/checkout/success', [CartController::class, 'success'])->name('buyer.checkouts.success');
 Route::get('/checkout/cancel', [CartController::class, 'cancel'])->name('buyer.checkouts.cancel');
+Route::post('/webhook', [CartController::class, 'webhook'])->name('buyer.checkout.webhook');
 
 Route::prefix('buyer')->middleware('role:buyer')->group(function () {
     Route::get('/carts', [CartController::class, 'index'])->name('buyer.carts.index');
