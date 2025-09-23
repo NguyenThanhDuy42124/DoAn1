@@ -46,7 +46,12 @@
                 </tbody>
             </table>
         @endif
-        <a href="{{ route('buyer.carts.store') }}" class="btn btn-success">Add Product to Cart</a>
+        <p>
+            <form action="{{route('pages.checkouts.checkout')}}" method="POST">
+                @csrf
+                <button>Check out</button>
+            </form>
+        </p>
         <a href="{{ route('products.list') }}" class="btn btn-primary">Continue Shopping</a>
     </div>
 </body>

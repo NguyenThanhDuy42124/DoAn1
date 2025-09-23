@@ -99,5 +99,7 @@ public function update(Request $request, $id)
     return redirect()->route('seller.products.index')->with('success', 'Cập nhật sản phẩm thành công!');
 }
 
+
+
     // ... các method index, show, edit, update, destroy nếu cần
 }
