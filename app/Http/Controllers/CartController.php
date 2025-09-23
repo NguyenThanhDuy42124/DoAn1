@@ -6,6 +6,7 @@ use App\Models\CartItem;
 use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CartController extends Controller
 {
@@ -115,12 +116,17 @@ public function checkout()
 
     \Stripe\Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
 
+    $customer = \Stripe\Customer::create([
+    'email' => Auth::user()->email,
+    'name'  => Auth::user()->name,
+]);
     $session = \Stripe\Checkout\Session::create([
         'payment_method_types' => ['card'], // fix lỗi hồi nãy
         'line_items' => $lineItems,
         'mode' => 'payment',
-        'success_url' => route('pages.checkouts.success', [], true),
-        'cancel_url' => route('pages.checkouts.cancel', [], true),
+        'success_url' => route('buyer.checkouts.success', [], true)."?session_id={CHECKOUT_SESSION_ID}",
+        'cancel_url' => route('buyer.checkouts.cancel', [], true),
+        'customer' => $customer->id,
     ]);
 
     // Tạo order
@@ -143,13 +149,33 @@ public function checkout()
     return redirect($session->url);
 }
 
-public function success()
+public function success(Request $request)
 {
-  return view('pages.checkouts.success');
+    \Stripe\Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
+    $sessionId = $request->get('session_id');
+    try{
+        $session = \Stripe\Checkout\Session::retrieve($sessionId);
+        if(!$session)
+        {
+            throw new NotFoundHttpException;
+        }
+        $customer = \Stripe\Customer::retrieve($session->customer);
+        $order=Order::where('session_id', $session->id)->where('status', 'unpaid')->first();
+        if(!$order)
+        {
+            throw new NotFoundHttpException;
+        }
+        $order->status = "paid";
+        $order->save();
+        return view('buyer.checkouts.success', compact('customer'));
+    }catch(\Exception $e){
+        throw new NotFoundHttpException(); 
+    }
+  
 }
 public function cancel()
 {
-return view('pages.checkouts.cancel');
+return view('buyer.checkouts.cancel');
 }
 
 

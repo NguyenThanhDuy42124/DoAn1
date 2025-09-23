@@ -89,9 +89,9 @@ Route::prefix('seller')->middleware('role:seller')->group(function () {
 });
 Route::get('/products', [ProductController::class, 'listProducts'])->name('products.list');
 Route::get('/vouchers', [VoucherController::class, 'listVouchers'])->name('vouchers.list');
-Route::post('/checkout', [CartController::class, 'checkout'])->name('pages.checkouts.checkout');
-Route::get('/checkout/success', [CartController::class, 'success'])->name('pages.checkouts.success');
-Route::get('/checkout/cancel', [CartController::class, 'cancel'])->name('pages.checkouts.cancel');
+Route::post('/checkout', [CartController::class, 'checkout'])->name('buyer.checkouts.checkout');
+Route::get('/checkout/success', [CartController::class, 'success'])->name('buyer.checkouts.success');
+Route::get('/checkout/cancel', [CartController::class, 'cancel'])->name('buyer.checkouts.cancel');
 
 Route::prefix('buyer')->middleware('role:buyer')->group(function () {
     Route::get('/carts', [CartController::class, 'index'])->name('buyer.carts.index');

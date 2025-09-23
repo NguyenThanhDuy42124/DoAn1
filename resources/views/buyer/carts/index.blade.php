@@ -47,7 +47,7 @@
             </table>
         @endif
         <p>
-            <form action="{{route('pages.checkouts.checkout')}}" method="POST">
+            <form action="{{route('buyer.checkouts.checkout')}}" method="POST">
                 @csrf
                 <button>Check out</button>
             </form>
