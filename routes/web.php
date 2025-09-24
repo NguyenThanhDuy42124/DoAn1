@@ -1,6 +1,5 @@
 <?php
 
-
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -16,33 +15,41 @@ use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CartItemController;
 
-
 Route::get('/', function () {
     return view('MainPage');
 });
+
 // Post là bắt dữ liệu gửi từ form
 Route::post('/register', [UserController::class, 'register']); // gọi đến controller
 Route::post('/logout', [UserController::class, 'logout']);
 Route::post('/login', [UserController::class, 'login']);
+
 // get là load trang web
 Route::get('/login', function () {
     return view('auth.login');
 })->name('login');
+
 Route::get('/register', function () {
     return view('auth.register');
 });
+
 Route::get('/dashboard', function () {
     return view('buyer.dashboard');
 })->middleware('auth')->name('dashboard');
 
-
 // route của forget password
-Route::post('/forgotPassword', [ForgetPasswordController::class, 'sendResetLink'])->middleware('throttle:5,1') ->name('forgetPassword.link');
-Route::get('/forgetPassword', [ForgetPasswordController::class,'showForget_Password'])->name('forgetPassword.form');
+Route::post('/forgotPassword', [ForgetPasswordController::class, 'sendResetLink'])
+    ->middleware('throttle:5,1')
+    ->name('forgetPassword.link');
 
-Route::post('/resetPassword', [PasswordResetController::class, 'resetPassword'])->name('password.update');
-Route::get('/resetPassword/{token}', [PasswordResetController::class, 'showReset_Password'])->name('password.reset');
+Route::get('/forgetPassword', [ForgetPasswordController::class, 'showForget_Password'])
+    ->name('forgetPassword.form');
 
+Route::post('/resetPassword', [PasswordResetController::class, 'resetPassword'])
+    ->name('password.update');
+
+Route::get('/resetPassword/{token}', [PasswordResetController::class, 'showReset_Password'])
+    ->name('password.reset');
 
 // Route để chuyển đổi vai trò giữa buyer sang admin và seller
 Route::get('/switch-role/{role}', [UserController::class, 'switchRole'])->name('switchRole');
@@ -52,12 +59,14 @@ Route::prefix('admin')->middleware('role:admin')->group(function () {
     //vừa truyền $users vừa gọi hàm dashboard trong AdminController
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/usersManager', [AdminController::class, 'userDashboard'])->name('admin.users.manager');
+
     // khai báo tài nguyên CRUD cho UserController
     Route::resource('users', AdminController::class, ['name' => 'admin']);
     Route::get('/products', [ProductController::class, 'index'])->name('admin.products.index');
     Route::resource('products', ProductController::class, ['name' => 'admin.products']);
     Route::get('/categories', [CategoryController::class, 'index'])->name('admin.categories.index');
     Route::resource('categories', CategoryController::class, ['names' => 'admin.categories']);
+
     //route thong bao
     Route::get('/notifications', [NotificationController::class, 'index'])->name('admin.notifications.index');
     Route::get('/notifications/create', [NotificationController::class, 'create'])->name('admin.notifications.create');
@@ -68,9 +77,7 @@ Route::prefix('admin')->middleware('role:admin')->group(function () {
     Route::delete('/notifications/{notification}', [NotificationController::class, 'destroy'])->name('admin.notifications.destroy');
     Route::post('/notifications/{notification}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('admin.notifications.markAsRead');
     Route::post('/notifications/{notification}/mark-as-unread', [NotificationController::class, 'markAsUnread'])->name('admin.notifications.markAsUnread');
-
 });
-
 
 // Route riêng cho seller
 Route::prefix('seller')->middleware('role:seller')->group(function () {
@@ -79,16 +86,19 @@ Route::prefix('seller')->middleware('role:seller')->group(function () {
     Route::resource('products', ProductController::class, ['names' => 'seller.products']);
     Route::get('/seller/products/{id}/edit', [ProductController::class, 'edit'])->name('seller.products.edit');
     Route::put('/seller/products/{id}', [ProductController::class, 'update'])->name('seller.products.update');
+
     //route vouchers
-     Route::get('/vouchers', [VoucherController::class, 'index'])->name('vouchers.index');
+    Route::get('/vouchers', [VoucherController::class, 'index'])->name('vouchers.index');
     Route::get('/vouchers/create', [VoucherController::class, 'create'])->name('vouchers.create');
     Route::post('/vouchers', [VoucherController::class, 'store'])->name('vouchers.store');
     Route::get('/vouchers/{id}/edit', [VoucherController::class, 'edit'])->name('vouchers.edit');
     Route::put('/vouchers/{id}', [VoucherController::class, 'update'])->name('vouchers.update');
     Route::delete('/vouchers/{id}', [VoucherController::class, 'destroy'])->name('vouchers.destroy');
 });
+
 Route::get('/products', [ProductController::class, 'listProducts'])->name('products.list');
 Route::get('/vouchers', [VoucherController::class, 'listVouchers'])->name('vouchers.list');
+
 Route::post('/checkout', [CartController::class, 'checkout'])->name('buyer.checkouts.checkout');
 Route::get('/checkout/success', [CartController::class, 'success'])->name('buyer.checkouts.success');
 Route::get('/checkout/cancel', [CartController::class, 'cancel'])->name('buyer.checkouts.cancel');
@@ -97,7 +107,7 @@ Route::post('/webhook', [CartController::class, 'webhook'])->name('buyer.checkou
 Route::prefix('buyer')->middleware('role:buyer')->group(function () {
     Route::get('/carts', [CartController::class, 'index'])->name('buyer.carts.index');
     Route::post('/carts', [CartController::class, 'store'])->name('buyer.carts.store');
-    Route::get('/carts/{id}/edit', [CartController::class, 'edit'])->name('buyer.carts.edit');
-    Route::put('/carts/{id}', [CartController::class, 'update'])->name('buyer.carts.update');
+    Route::get('/cart-items/{id}/edit', [CartItemController::class, 'edit'])->name('buyer.cart_items.edit');
+    Route::put('/cart-items/{id}', [CartItemController::class, 'update'])->name('buyer.cart_items.update');
     Route::delete('/cart/item/{id}', [CartItemController::class, 'destroy'])->name('buyer.cart_items.destroy');
 });

@@ -15,8 +15,23 @@ class CartController extends Controller
     public function index()
     {
         $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
-        $cartItems = CartItem::with('product')->where('cart_id', $cart->id)->get();
-        return view('buyer.carts.index', compact('cartItems'));
+    $cartItems = CartItem::with('product')->where('cart_id', $cart->id)->get();
+
+    foreach ($cartItems as $item) {
+        $productStock = $item->product->stock;
+
+        if ($productStock == 0) {
+            $item->stock_status = 'out_of_stock';
+        } elseif ($item->quantity > $productStock) {
+            $item->quantity = $productStock; // auto chỉnh quantity về max stock
+            $item->save();
+            $item->stock_status = 'limited_stock';
+        } else {
+            $item->stock_status = 'in_stock';
+        }
+    }
+
+    return view('buyer.carts.index', compact('cartItems'));
     }
 
     public function store(Request $request)
@@ -153,75 +168,90 @@ public function success(Request $request)
 {
     \Stripe\Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
     $sessionId = $request->get('session_id');
-    try{
+
+    try {
         $session = \Stripe\Checkout\Session::retrieve($sessionId);
-        if(!$session)
-        {
+
+        if (!$session) {
             throw new NotFoundHttpException;
         }
+
         $customer = \Stripe\Customer::retrieve($session->customer);
-        $order=Order::where('session_id', $session->id)->where('status', 'unpaid')->first();
-        if(!$order)
-        {
-            throw new NotFoundHttpException;
-        }
-        if(!$order && $order->status=='unpaid')
-        {
-            $order->status = "paid";
+
+        $order = Order::with('items.product')
+            ->where('session_id', $session->id)
+            ->where('status', 'unpaid')
+            ->firstOrFail();
+
+        $order->status = "paid";
         $order->save();
-        }
-        
+
         return view('buyer.checkouts.success', compact('customer'));
-    }catch(\Exception $e){
-        throw new NotFoundHttpException(); 
+    } catch (\Exception $e) {
+        throw new NotFoundHttpException();
     }
-  
 }
+
 public function cancel()
 {
-return view('buyer.checkouts.cancel');
+    return view('buyer.checkouts.cancel');
 }
 
 public function webhook()
 {
     // This is your Stripe CLI webhook secret for testing your endpoint locally.
-        $endpoint_secret = env('STRIPE_WEBHOOK_SECRET');
+    $endpoint_secret = env('STRIPE_WEBHOOK_SECRET');
+    $payload = @file_get_contents('php://input');
+    $sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
+    $event = null;
 
-        $payload = @file_get_contents('php://input');
-        $sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
-        $event = null;
-
-        try {
-            $event = \Stripe\Webhook::constructEvent(
-                $payload, $sig_header, $endpoint_secret
-            );
-        } catch (\UnexpectedValueException $e) {
-            // Invalid payload
-            return response('', 400);
-        } catch (\Stripe\Exception\SignatureVerificationException $e) {
-            // Invalid signature
-            return response('', 400);
-        }
-
-// Handle the event
-        switch ($event->type) {
-            case 'checkout.session.completed':
-                $session = $event->data->object;
-
-                $order = Order::where('session_id', $session->id)->first();
-                if ($order && $order->status === 'unpaid') {
-                    $order->status = 'paid';
-                    $order->save();
-                    // Send email to customer
-                }
-
-            // ... handle other event types
-            default:
-                echo 'Received unknown event type ' . $event->type;
-        }
-
-        return response('');
+    try {
+        $event = \Stripe\Webhook::constructEvent(
+            $payload,
+            $sig_header,
+            $endpoint_secret
+        );
+    } catch (\UnexpectedValueException $e) {
+        // Invalid payload
+        return response('', 400);
+    } catch (\Stripe\Exception\SignatureVerificationException $e) {
+        // Invalid signature
+        return response('', 400);
     }
+
+    // Handle the event
+    switch ($event->type) {
+        case 'checkout.session.completed':
+            $session = $event->data->object;
+
+            $order = Order::with('items.product')
+                ->where('session_id', $session->id)
+                ->first();
+
+            $order->status = 'paid';
+            $order->save();
+
+            // duyệt qua order_items để trừ stock
+            foreach ($order->items as $item) {
+                $product = $item->product; // quan hệ order_item -> product
+                if ($product) {
+                    $product->stock -= $item->quantity;
+                    $product->save();
+                }
+            }
+
+            // chỗ này mày có thể gửi mail hoặc notification
+            // Send email to customer
+            // ...
+            break;
+
+        default:
+            echo 'Received unknown event type ' . $event->type;
+    }
+
+    return response('');
+}
+
 }
 
 
