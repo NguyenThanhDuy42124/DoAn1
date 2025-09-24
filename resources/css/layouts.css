@@ -121,7 +121,120 @@
             border-radius: var(--border-radius);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
         }
-        
+        .page-header {
+      background: linear-gradient(to right, var(--primary), #004d99);
+      color: white;
+      padding: 40px 0;
+      margin-bottom: 30px;
+      border-radius: 0 0 20px 20px;
+    }
+        .product-card {
+      transition: transform .2s;
+      border: none;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      height: 100%;
+    }
+    
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    .product-img {
+      height: 200px;
+      object-fit: cover;
+      width: 100%;
+    }
+    
+    .card-title {
+      font-weight: 600;
+      color: var(--dark-text);
+      margin-bottom: 10px;
+    }
+    
+    .product-price {
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 1.2rem;
+    }
+    
+    .btn-primary {
+      background-color: var(--primary);
+      border-color: var(--primary);
+      border-radius: 6px;
+      font-weight: 500;
+    }
+    
+    .btn-primary:hover {
+      background-color: #0052a3;
+      border-color: #0052a3;
+    }
+    
+    .btn-success {
+      background-color: var(--secondary);
+      border-color: var(--secondary);
+      border-radius: 6px;
+      font-weight: 500;
+    }
+    
+    .btn-success:hover {
+      background-color: #e55a00;
+      border-color: #e55a00;
+    }
+    
+    .modal-header {
+      background-color: var(--primary);
+      color: white;
+    }
+    
+    .filter-section {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      margin-bottom: 30px;
+    }
+    
+    .pagination {
+      justify-content: center;
+      margin-top: 30px;
+    }
+    
+    .page-link {
+      color: var(--primary);
+    }
+    
+    .page-item.active .page-link {
+      background-color: var(--primary);
+      border-color: var(--primary);
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #6c757d;
+    }
+    
+    .empty-state i {
+      font-size: 4rem;
+      margin-bottom: 15px;
+      color: #dee2e6;
+    }
+    
+    .badge-discount {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: var(--secondary);
+      color: white;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+  
         /* Form styling */
         .form-control {
             border: 1px solid #dce1e6;

@@ -1,8 +1,8 @@
 @extends('layouts.app')
-
+@section('title', 'Danh sách voucher')
 @section('content')
 <div class="container">
-    <h2 class="mb-4">Danh sách Voucher</h2>
+   
 
     @if($vouchers->count())
         <div class="row">

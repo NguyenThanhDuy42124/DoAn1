@@ -1,160 +1,17 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Danh sách sản phẩm</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    :root {
-      --primary: #0066cc;
-      --secondary: #ff6600;
-      --light-bg: #f8f9fa;
-      --dark-text: #333;
-    }
-    
-    body {
-      background-color: #f5f7fb;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color: #333;
-    }
-    
-    .page-header {
-      background: linear-gradient(to right, var(--primary), #004d99);
-      color: white;
-      padding: 40px 0;
-      margin-bottom: 30px;
-      border-radius: 0 0 20px 20px;
-    }
-    
-    .product-card {
-      transition: transform .2s;
-      border: none;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-      height: 100%;
-    }
-    
-    .product-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-    }
-    
-    .product-img {
-      height: 200px;
-      object-fit: cover;
-      width: 100%;
-    }
-    
-    .card-title {
-      font-weight: 600;
-      color: var(--dark-text);
-      margin-bottom: 10px;
-    }
-    
-    .product-price {
-      color: var(--primary);
-      font-weight: 700;
-      font-size: 1.2rem;
-    }
-    
-    .btn-primary {
-      background-color: var(--primary);
-      border-color: var(--primary);
-      border-radius: 6px;
-      font-weight: 500;
-    }
-    
-    .btn-primary:hover {
-      background-color: #0052a3;
-      border-color: #0052a3;
-    }
-    
-    .btn-success {
-      background-color: var(--secondary);
-      border-color: var(--secondary);
-      border-radius: 6px;
-      font-weight: 500;
-    }
-    
-    .btn-success:hover {
-      background-color: #e55a00;
-      border-color: #e55a00;
-    }
-    
-    .modal-header {
-      background-color: var(--primary);
-      color: white;
-    }
-    
-    .filter-section {
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-      margin-bottom: 30px;
-    }
-    
-    .pagination {
-      justify-content: center;
-      margin-top: 30px;
-    }
-    
-    .page-link {
-      color: var(--primary);
-    }
-    
-    .page-item.active .page-link {
-      background-color: var(--primary);
-      border-color: var(--primary);
-    }
-    
-    .empty-state {
-      text-align: center;
-      padding: 60px 20px;
-      color: #6c757d;
-    }
-    
-    .empty-state i {
-      font-size: 4rem;
-      margin-bottom: 15px;
-      color: #dee2e6;
-    }
-    
-    .badge-discount {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: var(--secondary);
-      color: white;
-      padding: 5px 10px;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 600;
-    }
-  </style>
-</head>
-<body>
-
+ 
+@extends('layouts.app')
+@section('title', 'Danh sách sản phẩm')
+    @section('content')
+   
 <!-- Header Section -->
 <div class="page-header">
   <div class="container">
     <div class="row align-items-center">
       <div class="col-md-6">
-        <h1 class="display-5 fw-bold"><i class="fas fa-boxes me-2"></i>Danh Sách Sản Phẩm</h1>
+        <h1 class="display-5 fw-bold"><i class="fas fa-boxes me-2"></i>Ten Shop</h1>
       </div>
       <div class="col-md-6 text-md-end">
-        <div class="d-inline-block me-3">
-          <select class="form-select">
-            <option selected>Sắp xếp theo</option>
-            <option>Giá tăng dần</option>
-            <option>Giá giảm dần</option>
-            <option>Mới nhất</option>
-            <option>Bán chạy nhất</option>
-          </select>
-        </div>
+       
         <a href="#" class="btn btn-light"><i class="fas fa-shopping-cart me-2"></i>Giỏ hàng (3)</a>
       </div>
     </div>
@@ -207,7 +64,7 @@
     @foreach($products as $product)
 <div class="col-md-4">
   <div class="card product-card">
-    <span class="badge-discount">-12%</span>
+    <span class="badge-discount">Discount</span>
     <img src="https://images.unsplash.com/photo-1598327105666-5b89351aff97?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" 
          class="product-img" alt="{{ $product->name }}">
     <div class="card-body">
@@ -331,7 +188,6 @@
     </div>
   </div>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+@endsection

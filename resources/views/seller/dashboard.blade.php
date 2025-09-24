@@ -17,7 +17,7 @@
     <div class="container dashboard-container">
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <div class="store-logo">USER Ở ĐÂY NÈ</div>
+            <div class="store-logo">SELLER Ở ĐÂY NÈ</div>
             <div class="d-flex align-items-center justify-content-between" style="width: 250px;">
                 <a href="/" class="btn btn-outline-primary mr-2"><i class="fas fa-home"></i> Trang chủ</a>
                 <div>

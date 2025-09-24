@@ -1,10 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Edit Cart Item</title>
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-</head>
-<body>
+@extends('layouts.app')
+    @section('title', 'Chỉnh sửa giỏ hàng')
+    @section('content')
     <div class="container">
         <h1>Edit Item</h1>
 
@@ -32,5 +28,4 @@
             <a href="{{ route('buyer.carts.index') }}" class="btn btn-secondary">Cancel</a>
         </form>
     </div>
-</body>
-</html>
+@endsection

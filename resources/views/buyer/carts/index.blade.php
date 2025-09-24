@@ -1,10 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>My Cart</title>
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-</head>
-<body>
+@extends('layouts.app')
+    @section('title', 'Giỏ hàng')
+    @section('content')
     <div class="container">
         <h1>My Cart</h1>
 
@@ -84,5 +80,4 @@
 
         <a href="{{ route('products.list') }}" class="btn btn-primary">Continue Shopping</a>
     </div>
-</body>
-</html>
+    @endsection
