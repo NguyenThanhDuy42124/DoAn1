@@ -22,6 +22,7 @@ class CartController extends Controller
 
         if ($productStock == 0) {
             $item->stock_status = 'out_of_stock';
+            $item->quantity=0;
         } elseif ($item->quantity > $productStock) {
             $item->quantity = $productStock; // auto chỉnh quantity về max stock
             $item->save();
@@ -111,6 +112,14 @@ public function checkout()
             ->with('error', 'Giỏ hàng trống, không thể checkout.');
     }
 
+    foreach($cartItems as $item)
+    {
+        if($item->quantity > $item->product->stock)
+        {
+            return redirect()->route('buyer.carts.index')->with('error', 'Insufficient stock for '.$item->product->name . ' please update your cart.');
+        }
+    }
+
     $lineItems = [];
     $totalPrice = 0;
 
@@ -123,7 +132,7 @@ public function checkout()
                 'product_data' => [
                     'name' => $item->product->name,
                 ],
-                'unit_amount' => $item->price * 100, // stripe tính theo cents
+                'unit_amount' => $item->price, // stripe tính theo cents
             ],
             'quantity' => $item->quantity,
         ];
@@ -180,11 +189,23 @@ public function success(Request $request)
 
         $order = Order::with('items.product')
             ->where('session_id', $session->id)
-            ->where('status', 'unpaid')
             ->firstOrFail();
 
-        $order->status = "paid";
-        $order->save();
+        if($order->status ==='unpaid')
+        {
+            $order->status='paid';
+            $order->save();
+            foreach($order->items as $item)
+                {
+                    $product = $item->product;
+                    if($product)
+                    {
+                        $product->stock -= $item->quantity;
+                        $product->save();
+                    }
+                }
+        }
+        
 
         return view('buyer.checkouts.success', compact('customer'));
     } catch (\Exception $e) {
@@ -228,18 +249,24 @@ public function webhook()
                 ->where('session_id', $session->id)
                 ->first();
 
-            $order->status = 'paid';
-            $order->save();
-
-            // duyệt qua order_items để trừ stock
-            foreach ($order->items as $item) {
-                $product = $item->product; // quan hệ order_item -> product
-                if ($product) {
-                    $product->stock -= $item->quantity;
-                    $product->save();
+            if($order && $order->status === 'unpaid')
+            {
+                $order->status='paid';
+                $order->save();
+                foreach($order->items as $item)
+                {
+                    $product = $item->product;
+                    if($product)
+                    {
+                        if($product->stock < $item->quantity)
+                        {
+                            continue;
+                        }
+                        $product->stock -= $item->quantity;
+                        $product->save();
+                    }
                 }
             }
-
             // chỗ này mày có thể gửi mail hoặc notification
             // Send email to customer
             // ...

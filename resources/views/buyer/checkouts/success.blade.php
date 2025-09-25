@@ -9,5 +9,6 @@
 <body>
     <h1>Success</h1>
     <p>{{ $customer->name}}</p>
+    <a href="{{ route('products.list') }}" class="btn btn-primary">Continue Shopping</a>
 </body>
 </html>
