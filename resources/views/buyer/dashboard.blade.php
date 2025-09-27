@@ -133,9 +133,8 @@
                                     @endif
 
                                 </div>
-                                <div><button class="btn btn-primary mt-3"><i class="fas fa-edit mr-2"></i> Chỉnh sửa
-                                        thông
-                                        tin</button>
+                                <div>
+                                    <a href="{{ route('users.edit', Auth::user()->id) }}" class="btn btn-primary">Chỉnh sửa thông tin</a>   
                                 </div>
 
 

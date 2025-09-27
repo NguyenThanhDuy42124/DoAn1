@@ -14,6 +14,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CartItemController;
+use App\Http\Controllers\UserInfoController;
 
 Route::get('/', function () {
     return view('MainPage');
@@ -104,10 +105,19 @@ Route::get('/checkout/success', [CartController::class, 'success'])->name('buyer
 Route::get('/checkout/cancel', [CartController::class, 'cancel'])->name('buyer.checkouts.cancel');
 Route::post('/webhook', [CartController::class, 'webhook'])->name('buyer.checkout.webhook');
 
+
+
+
 Route::prefix('buyer')->middleware('role:buyer')->group(function () {
     Route::get('/carts', [CartController::class, 'index'])->name('buyer.carts.index');
     Route::post('/carts', [CartController::class, 'store'])->name('buyer.carts.store');
     Route::get('/cart-items/{id}/edit', [CartItemController::class, 'edit'])->name('buyer.cart_items.edit');
     Route::put('/cart-items/{id}', [CartItemController::class, 'update'])->name('buyer.cart_items.update');
     Route::delete('/cart/item/{id}', [CartItemController::class, 'destroy'])->name('buyer.cart_items.destroy');
+});
+
+
+Route::middleware('auth')->group(function () {
+    Route::get('/users/{id}/edit', [UserInfoController::class, 'edit'])->name('users.edit');
+    Route::put('/users/{id}', [UserInfoController::class, 'update'])->name('users.update');
 });
