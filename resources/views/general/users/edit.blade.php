@@ -22,7 +22,7 @@
             @if (session()->has('message'))
                 <h3 style="align-self: center">{{ session('message') }}</h3>
                 @endif
-                <form action="{{ route('users.update', $user->id) }}" method="POST" class="form-sample">
+                <form action="{{ route('general.users.update', $user->id) }}" method="POST" class="form-sample">
     @csrf
     @method('PUT')
     <h5>Chỉnh sửa thông tin người dùng</h5>
@@ -54,7 +54,20 @@
         </select>
         @error('gender') <span class="text-danger">{{ $message }}</span> @enderror
     </div>
-    
+   @if(Auth::user()->role == 'buyer')
+    <div class="form-group">
+        <label for="address">Địa chỉ giao hàng</label>
+        <input type="address" id="address" name="address" value="{{ $user->address }}" placeholder="Nhập địa chỉ giao hàng" required>
+        @error('email') <span class="text-danger">{{ $message }}</span> @enderror
+    </div>
+@elseif (Auth::user()->role == 'seller')
+    <div class="form-group">
+        <label for="address">Nhập địa chỉ shop</label>
+        <input type="address" id="address" name="address" value="{{ $user->address }}" placeholder="Nhập địa chỉ shop" required>
+        @error('email') <span class="text-danger">{{ $message }}</span> @enderror
+    </div>
+@endif
+
     <div class="form-group">
         <label for="email">Email</label>
         <input type="email" id="email" name="email" value="{{ $user->email }}" placeholder="Nhập địa chỉ email" required>

@@ -111,7 +111,7 @@
                                     <div class="info-label">Giới tính:</div>
                                     <div class="info-value">{{ Auth::user()->gender }}</div>
                                 </div>
-                                @if(Auth::user()->role == 'buyer' && auth()->user()->address != null)
+                                @if(Auth::user()->role !== 'admin' && auth()->user()->address != null)
                                     <div class="info-item">
                                     <div class="info-label">Địa chỉ:</div>
                                     <div class="info-value">{{ Auth::user()->address }}</div>
@@ -134,7 +134,11 @@
 
                                 </div>
                                 <div>
+                                    @if(Auth::user()->role == 'admin')
                                     <a href="{{ route('users.edit', Auth::user()->id) }}" class="btn btn-primary">Chỉnh sửa thông tin</a>   
+                                    @elseif(Auth::user()->role == 'buyer' || Auth::user()->role == 'seller')
+                                    <a href="{{ route('general.users.edit', Auth::user()->id) }}" class="btn btn-primary">Chỉnh sửa thông tin</a> 
+                                    @endif
                                 </div>
 
 

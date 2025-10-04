@@ -120,6 +120,8 @@ public function checkout()
         }
     }
 
+    $itemsBySeller = $cartItems->groupBy(fn($item)=>$item->product->seller_id);
+
     $lineItems = [];
     $totalPrice = 0;
 
@@ -154,21 +156,38 @@ public function checkout()
     ]);
 
     // Tạo order
-    $order = new Order();
-    $order->buyer_id = Auth::id();
-    $order->status = 'unpaid';
-    $order->total_price = $totalPrice;
-    $order->session_id = $session->id;
-    $order->save();
 
-    // Lưu từng item
-    foreach ($cartItems as $item) {
+    $user = Auth::user();   
+    
+    foreach($itemsBySeller as $sellerId => $sellerItems)
+    {
+        $orderTotal = $sellerItems->sum(fn($item)=>$item->price* $item->quantity);
+        $order = Order::create([
+        'buyer_id' => $user->id,
+        'status' => 'unpaid',
+        'total_price' => $orderTotal,
+        'seller_id' => $sellerId,
+        'buyer_name' => $user->name,
+        'buyer_email' => $user->email,
+        'buyer_phone' => $user->phoneNumber,
+        'session_id' => $session->id,
+        'shipping_address' => $user->address, // Allow override at checkout  
+        // Other order details: total, items (via relationships), etc.
+    ]);
+     // Lưu từng item
+        foreach ($sellerItems as $item) {
         $order->items()->create([
             'product_id' => $item->product_id,
             'quantity' => $item->quantity,
             'price' => $item->price,
         ]);
     }
+
+    
+    
+    
+    }
+    
 
     return redirect($session->url);
 }
@@ -187,24 +206,30 @@ public function success(Request $request)
 
         $customer = \Stripe\Customer::retrieve($session->customer);
 
-        $order = Order::with('items.product')
-            ->where('session_id', $session->id)
-            ->firstOrFail();
-
-        if($order->status ==='unpaid')
-        {
-            $order->status='paid';
-            $order->save();
-            foreach($order->items as $item)
+        $orders = Order::with('items.product')
+                ->where('session_id', $session->id)
+                ->get();
+            foreach($orders as $order)
+            {
+                if($order && $order->status === 'unpaid')
+            {
+                $order->status='paid';
+                $order->save();
+                foreach($order->items as $item)
                 {
                     $product = $item->product;
                     if($product)
                     {
+                        if($product->stock < $item->quantity)
+                        {
+                            continue;
+                        }
                         $product->stock -= $item->quantity;
                         $product->save();
                     }
                 }
-        }
+            }
+            }
         
 
         return view('buyer.checkouts.success', compact('customer'));
@@ -245,11 +270,12 @@ public function webhook()
         case 'checkout.session.completed':
             $session = $event->data->object;
 
-            $order = Order::with('items.product')
+            $orders = Order::with('items.product')
                 ->where('session_id', $session->id)
-                ->first();
-
-            if($order && $order->status === 'unpaid')
+                ->get();
+            foreach($orders as $order)
+            {
+                if($order && $order->status === 'unpaid')
             {
                 $order->status='paid';
                 $order->save();
@@ -267,6 +293,8 @@ public function webhook()
                     }
                 }
             }
+            }
+            
             // chỗ này mày có thể gửi mail hoặc notification
             // Send email to customer
             // ...
