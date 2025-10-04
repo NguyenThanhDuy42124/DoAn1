@@ -137,7 +137,7 @@
                                     @if(Auth::user()->role == 'admin')
                                     <a href="{{ route('users.edit', Auth::user()->id) }}" class="btn btn-primary">Chỉnh sửa thông tin</a>   
                                     @elseif(Auth::user()->role == 'buyer' || Auth::user()->role == 'seller')
-                                    <a href="{{ route('general.users.edit', Auth::user()->id) }}" class="btn btn-primary">Chỉnh sửa thông tin</a> 
+                                    <a href="{{ route('general.users.edit', ['id' => Auth::user()->id, 'absolute' => true]) }}" class="btn btn-primary">Chỉnh sửa thông tin</a>
                                     @endif
                                 </div>
 

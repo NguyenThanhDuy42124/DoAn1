@@ -83,9 +83,6 @@ Route::prefix('admin')->middleware('role:admin')->group(function () {
 // Route riêng cho seller
 Route::prefix('seller')->middleware('role:seller')->group(function () {
     // Sửa thành SellerController::dashboard
-    Route::get('general//users/{id}/edit', [UserInfoController::class, 'edit'])->name('general.users.edit');
-    Route::put('general/users/{id}', [UserInfoController::class, 'update'])->name('general.users.update');
-
 
     Route::get('/dashboard', [SellerController::class, 'dashboard'])->name('seller.dashboard');
     Route::resource('products', ProductController::class, ['names' => 'seller.products']);
@@ -113,8 +110,6 @@ Route::post('/webhook', [CartController::class, 'webhook'])->name('buyer.checkou
 
 
 Route::prefix('buyer')->middleware('role:buyer')->group(function () {
-    Route::get('general/users/{id}/edit', [UserInfoController::class, 'edit'])->name('general.users.edit');
-    Route::put('general/users/{id}', [UserInfoController::class, 'update'])->name('general.users.update');
 
     Route::get('/carts', [CartController::class, 'index'])->name('buyer.carts.index');
     Route::post('/carts', [CartController::class, 'store'])->name('buyer.carts.store');
@@ -124,3 +119,7 @@ Route::prefix('buyer')->middleware('role:buyer')->group(function () {
 });
 
 
+Route::middleware('auth')->group(function () {
+    Route::get('general/users/{id}/edit', [UserInfoController::class, 'edit'])->name('general.users.edit');
+    Route::put('general/users/{id}', [UserInfoController::class, 'update'])->name('general.users.update');
+});
