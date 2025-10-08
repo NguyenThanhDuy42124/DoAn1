@@ -193,7 +193,7 @@
                                 </div>
                             -->
                                 <div class="text-center mt-4">
-                                    <button class="btn btn-outline-primary">Xem tất cả đơn hàng</button>
+                                    <a href="{{ route('buyer.checkouts.purchase_history') }}" class="btn btn-outline-primary">Xem tất cả đơn hàng</a>
                                 </div>
                             </div>
 

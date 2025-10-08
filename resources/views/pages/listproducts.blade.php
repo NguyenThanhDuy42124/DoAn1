@@ -12,7 +12,7 @@
       </div>
       <div class="col-md-6 text-md-end">
        
-        <a href="#" class="btn btn-light"><i class="fas fa-shopping-cart me-2"></i>Giỏ hàng (3)</a>
+        <a href="{{route('buyer.carts.index')}}" class="btn btn-light"><i class="fas fa-shopping-cart me-2"></i>Giỏ hàng {{ $totalItems }}</a>
       </div>
     </div>
   </div>
@@ -83,7 +83,7 @@
 
                 @if (Auth::check())
                   @if (empty(Auth::user()->phoneNumber) || empty(Auth::user()->email || empty(Auth::user()->address)))
-                    <a href="{{ route('users.edit', Auth::user()->id) }}" class="btn btn-warning btn-sm">
+                    <a href="{{ route('general.users.edit', Auth::user()->id) }}" class="btn btn-warning btn-sm">
                       <i class="fas fa-user-edit"></i> Cập nhật thông tin
                     </a>
                   @else

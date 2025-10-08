@@ -70,6 +70,26 @@ class CartController extends Controller
             ->with('success', 'Product added to cart successfully.');
     }
 
+   public function purchaseHistory()
+{
+    $user = Auth::user();
+    
+    // Fetch orders for the authenticated buyer
+    $orders = Order::where('buyer_id', $user->id)
+        ->with('items.product') // Assuming Order has a relationship to OrderItem and Product
+        ->orderBy('created_at', 'desc')
+        ->get();
+
+    // Gộp theo session_id + seller_id
+    $ordersGrouped = $orders->groupBy(function($order) {
+        return $order->session_id . '-' . $order->seller_id;
+    });
+    
+    // Truyền $ordersGrouped xuống view thay vì $orders
+    return view('buyer.checkouts.purchase_history', compact('ordersGrouped'));
+}
+
+
     public function edit($id)
     {
         $cart = Cart::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
@@ -182,10 +202,6 @@ public function checkout()
             'price' => $item->price,
         ]);
     }
-
-    
-    
-    
     }
     
 

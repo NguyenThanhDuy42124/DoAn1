@@ -2,6 +2,7 @@
 
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Console\Scheduling\Schedule;
 use App\Exceptions\Handler;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 
@@ -27,6 +28,11 @@ $builder->withMiddleware(function (Middleware $middleware): void {
         'webhook',
         'buyer/checkout/webhook',
     ]);
+});
+
+$builder->withSchedule(function (Schedule $schedule) {
+    // chạy mỗi tiếng, xoá đơn hàng unpaid quá 6 tiếng
+    $schedule->command('orders:clear-unpaid')->hourly();
 });
 
 // tạo Application thực sự

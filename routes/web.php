@@ -101,10 +101,7 @@ Route::prefix('seller')->middleware('role:seller')->group(function () {
 Route::get('/products', [ProductController::class, 'listProducts'])->name('products.list');
 Route::get('/vouchers', [VoucherController::class, 'listVouchers'])->name('vouchers.list');
 
-Route::post('/checkout', [CartController::class, 'checkout'])->name('buyer.checkouts.checkout');
-Route::get('/checkout/success', [CartController::class, 'success'])->name('buyer.checkouts.success');
-Route::get('/checkout/cancel', [CartController::class, 'cancel'])->name('buyer.checkouts.cancel');
-Route::post('/webhook', [CartController::class, 'webhook'])->name('buyer.checkout.webhook');
+
 
 
 
@@ -116,6 +113,13 @@ Route::prefix('buyer')->middleware('role:buyer')->group(function () {
     Route::get('/cart-items/{id}/edit', [CartItemController::class, 'edit'])->name('buyer.cart_items.edit');
     Route::put('/cart-items/{id}', [CartItemController::class, 'update'])->name('buyer.cart_items.update');
     Route::delete('/cart/item/{id}', [CartItemController::class, 'destroy'])->name('buyer.cart_items.destroy');
+
+    Route::post('/checkout', [CartController::class, 'checkout'])->name('buyer.checkouts.checkout');
+    Route::get('/checkout/success', [CartController::class, 'success'])->name('buyer.checkouts.success');
+    Route::get('/checkout/cancel', [CartController::class, 'cancel'])->name('buyer.checkouts.cancel');
+    Route::post('/webhook', [CartController::class, 'webhook'])->name('buyer.checkout.webhook');
+
+    Route::get('/checkouts/purchase-history', [CartController::class, 'purchaseHistory'])->name('buyer.checkouts.purchase_history');
 });
 
 

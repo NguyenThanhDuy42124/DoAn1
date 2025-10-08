@@ -1,7 +1,9 @@
 <?php
 
 namespace App\Providers;
-
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Cart;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -36,5 +38,13 @@ class AppServiceProvider extends ServiceProvider
                 ->line('Nếu không phải bạn yêu cầu, bạn có thể bỏ qua email này.')
                 ->salutation('Trân trọng, TenShop Team.');
         });
+        View::composer('*', function ($view) {
+        $totalItems = 0;
+        if(Auth::check()) {
+            $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
+            $totalItems = $cart->items()->sum('quantity');
+        }
+        $view->with('totalItems', $totalItems);
+    });
     }
 }
