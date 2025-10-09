@@ -30,7 +30,7 @@ class AppServiceProvider extends ServiceProvider
             ]);
             return (new MailMessage)
                 ->from(config('mail.from.address'), config('mail.from.name')) // có thể đổi FROM tại đây
-                ->subject('Khôi phục mật khẩu - DuManMinh Cinema')
+                ->subject('Khôi phục mật khẩu - TenShop')
                 ->greeting('Xin chào '.($notifiable->username ?? 'bạn').'!')
                 ->line('Chúng tôi nhận được yêu cầu đặt lại mật khẩu cho tài khoản của bạn.')
                 ->action('Xác nhận', $url)
