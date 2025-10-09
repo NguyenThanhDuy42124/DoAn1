@@ -14,7 +14,6 @@ return new class extends Migration
             $table->foreignId('seller_id')->nullable()->constrained('users');
             $table->string('status')->default('unpaid');
             $table->double('total_price', 12, 2)->default(0);
-            $table->string('session_id')->nullable(); // 👈 chỉ cần thế thôi
             $table->timestamps();
         });
     }
