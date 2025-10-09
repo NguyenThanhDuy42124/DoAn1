@@ -9,6 +9,9 @@
     <title>Lịch sử mua hàng - TechStore</title>
 </head>
 <body>
+    @extends('layouts.app')
+    
+    @section('content')
     <div class="container mt-4">
         <h3>Lịch sử mua hàng</h3>
         
@@ -66,7 +69,7 @@
         
         <a href="{{ route('dashboard') }}" class="btn btn-primary mt-3">Quay lại Dashboard</a>
     </div>
-
+@endsection
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"></script>

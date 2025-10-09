@@ -7,7 +7,11 @@
     <title>Document</title>
 </head>
 <body>
+    @extends('layouts.app')
+    
+    @section('content')
     <h1>Canceled</h1>
     <a href="{{ route('products.list') }}" class="btn btn-primary">Continue Shopping</a>
+    @endsection
 </body>
 </html>
