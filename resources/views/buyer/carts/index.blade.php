@@ -2,7 +2,7 @@
     @section('title', 'Giỏ hàng')
     @section('content')
     <div class="container">
-        <h1>My Cart</h1>
+        <h1>Giỏ hàng của tôi</h1>
 
         @if (session('success'))
             <div class="alert alert-success">{{ session('success') }}</div>
@@ -47,15 +47,15 @@
                                     <form action="{{ route('buyer.cart_items.destroy', $item->id) }}" method="POST" style="display:inline;">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm">Delete Item</button>
+                                        <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
                                     </form>
                                 @else
-                                    <a href="{{ route('buyer.cart_items.edit', $item->id) }}" class="btn btn-primary btn-sm">Edit</a>
+                                    <a href="{{ route('buyer.cart_items.edit', $item->id) }}" class="btn btn-primary btn-sm">Sửa</a>
 
                                     <form action="{{ route('buyer.cart_items.destroy', $item->id) }}" method="POST" style="display:inline;">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm">Delete Item</button>
+                                        <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
                                     </form>
                                 @endif
                             </td>
@@ -73,11 +73,11 @@
                 @endphp
 
                 <button type="submit" class="btn btn-success" @if(!$hasItems) disabled @endif>
-                    Checkout
+                    Thanh toán
                 </button>
             </form>
         </p>
 
-        <a href="{{ route('products.list') }}" class="btn btn-primary">Continue Shopping</a>
+        <a href="{{ route('products.list') }}" class="btn btn-primary">Tiếp tục mua hàng</a>
     </div>
     @endsection
