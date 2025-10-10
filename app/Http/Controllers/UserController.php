@@ -47,7 +47,7 @@ class UserController extends Controller
         }
 
         return back()->withErrors([
-            'login' => 'Tên hoặc mật khẩu không đúng.',
+            'login' => 'email hoặc mật khẩu không đúng.',
         ])->onlyInput('email');
     }
     // hàm này để load trang dashboard của seller và admin
