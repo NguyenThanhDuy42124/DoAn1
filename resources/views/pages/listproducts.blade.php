@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Danh sách voucher')
+@section('title', 'Danh sách sản phẩm')
 @section('content')
 <div class="container">
    
