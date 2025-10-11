@@ -14,6 +14,8 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CartItemController;
+use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\UserInfoController;
 
 Route::get('/', function () {
@@ -105,8 +107,9 @@ Route::get('/vouchers', [VoucherController::class, 'listVouchers'])->name('vouch
 
 
 
-
-Route::prefix('buyer')->middleware('role:buyer')->group(function () {
+Route::middleware('auth')->group(function () {
+    Route::get('general/users/{id}/edit', [UserInfoController::class, 'edit'])->name('general.users.edit');
+    Route::put('general/users/{id}', [UserInfoController::class, 'update'])->name('general.users.update');
 
     Route::get('/carts', [CartController::class, 'index'])->name('buyer.carts.index');
     Route::post('/carts', [CartController::class, 'store'])->name('buyer.carts.store');
@@ -114,16 +117,10 @@ Route::prefix('buyer')->middleware('role:buyer')->group(function () {
     Route::put('/cart-items/{id}', [CartItemController::class, 'update'])->name('buyer.cart_items.update');
     Route::delete('/cart/item/{id}', [CartItemController::class, 'destroy'])->name('buyer.cart_items.destroy');
 
-    Route::post('/checkout', [CartController::class, 'checkout'])->name('buyer.checkouts.checkout');
-    Route::get('/checkout/success', [CartController::class, 'success'])->name('buyer.checkouts.success');
-    Route::get('/checkout/cancel', [CartController::class, 'cancel'])->name('buyer.checkouts.cancel');
-    Route::post('/webhook', [CartController::class, 'webhook'])->name('buyer.checkout.webhook');
+    Route::post('/checkout', [CheckoutController::class, 'checkout'])->name('buyer.checkouts.checkout');
+    Route::get('/checkout/success', [CheckoutController::class, 'success'])->name('buyer.checkouts.success');
+    Route::get('/checkout/cancel', [CheckoutController::class, 'cancel'])->name('buyer.checkouts.cancel');
+    Route::post('/webhook', [CheckoutController::class, 'webhook'])->name('buyer.checkout.webhook');
 
-    Route::get('/checkouts/purchase-history', [CartController::class, 'purchaseHistory'])->name('buyer.checkouts.purchase_history');
-});
-
-
-Route::middleware('auth')->group(function () {
-    Route::get('general/users/{id}/edit', [UserInfoController::class, 'edit'])->name('general.users.edit');
-    Route::put('general/users/{id}', [UserInfoController::class, 'update'])->name('general.users.update');
+    Route::get('/checkouts/purchase-history', [OrderController::class, 'purchaseHistory'])->name('buyer.checkouts.purchase_history');
 });
