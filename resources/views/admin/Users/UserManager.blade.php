@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
      @vite(['resources/css/usermanager.css', 'resources/js/app.js'])
     <title>Quản lý người dùng - TechStore</title>
-    
+
 </head>
 
 <body style="padding-top: 0">
@@ -145,7 +145,7 @@
 
             <!-- Main Content -->
             <div class="container-fluid py-4">
-                <div class="row justify-content-center"> 
+                <div class="row justify-content-center">
                     <div class="col-12">
                         <div class="dashboard-card">
                             <div class="card-header d-flex justify-content-between align-items-center">
@@ -184,7 +184,7 @@
                                     </button>
                                 </div>
                                 @endif
-                                
+
                                 <div class="table-responsive">
                                     <table class="table table-hover user-table">
                                         <thead>
@@ -213,7 +213,11 @@
                                                         <option value="Admin" {{ $user->role == 'admin' ? 'selected' : '' }}>Admin</option>
                                                     </select>-->
                                                 </td>
-                                                <td><span class="badge badge-success">Active</span></td>
+                                                @if($user->status == 'inactive')
+                                                    <td><span class="badge badge-warning">Inactive</span></td>
+                                                @else
+                                                    <td><span class="badge badge-success">Active</span></td>
+                                                @endif
                                                 <td>
                                                     <a class="btn btn-sm btn-info"
                                                         href="{{ route('users.edit', $user->id) }}">

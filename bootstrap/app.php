@@ -18,6 +18,7 @@ $builder->withRouting(
 $builder->withMiddleware(function (Middleware $middleware): void {
     $middleware->alias([
         'role' => \App\Http\Middleware\RoleMiddleware::class,
+        'check.status' => \App\Http\Middleware\CheckStatus::class,
     ]);
 
     $middleware->web(append: [

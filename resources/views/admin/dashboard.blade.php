@@ -269,7 +269,11 @@
                                                         <option value="Admin" {{ $user->role == 'admin' ? 'selected' : '' }}>Admin</option>
                                                     </select>-->
                                                 </td>
-                                                <td><span class="badge badge-success">Active</span></td>
+                                                @if($user->status == 'inactive')
+                                                    <td><span class="badge badge-warning">Inactive</span></td>
+                                                @else
+                                                    <td><span class="badge badge-success">Active</span></td>
+                                                @endif
                                                 <td>
                                                     <a class="btn btn-sm btn-info"
                                                         href="{{ route('users.edit', $user->id) }}">

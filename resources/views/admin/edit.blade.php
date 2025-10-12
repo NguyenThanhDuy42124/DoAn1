@@ -190,6 +190,14 @@
                 <option value="buyer" {{ $user->role === 'buyer' ? 'selected' : '' }}>Buyer</option>
                 <option value="seller" {{ $user->role === 'seller' ? 'selected' : '' }}>Seller</option>
             </select>
+        <div class="form-group">
+            <label for="status">Trạng thái</label>
+            <select id="status" name="status" required>
+                <option value="active" {{ $user->status === 'active' ? 'selected' : '' }}>Active</option>
+                <option value="inactive" {{ $user->status === 'inactive' ? 'selected' : '' }}>Inactive</option>
+            </select>
+
+        </div>
 
         </div>
         <button type="submit" class="btn btn-register">Lưu lại thông tin</button>

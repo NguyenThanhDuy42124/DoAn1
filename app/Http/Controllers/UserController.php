@@ -19,8 +19,10 @@ class UserController extends Controller
             "phoneNumber" => "nullable|string|max:15",
             "dateOfBirth" => "nullable|date",
             "gender" => "nullable|string|in:male,female,other",
+
         ]);
         $incomingData["password"] = bcrypt($incomingData["password"]);
+        $incomingData["status"] = "active";
         $user = User::create($incomingData);
         Auth::login($user);
         return redirect('/dashboard');

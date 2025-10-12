@@ -38,7 +38,7 @@ Route::get('/register', function () {
 
 Route::get('/dashboard', function () {
     return view('buyer.dashboard');
-})->middleware('auth')->name('dashboard');
+})->middleware('auth', 'check.status')->name('dashboard');
 
 // route của forget password
 Route::post('/forgotPassword', [ForgetPasswordController::class, 'sendResetLink'])
