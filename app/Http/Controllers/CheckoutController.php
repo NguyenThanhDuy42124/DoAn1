@@ -77,7 +77,6 @@ class CheckoutController extends Controller
         'user_id' => $user->id,
         'status' => 'Pending',
         'payment_status' => 'unpaid',
-        'product_id' => $sellerItems->first()->product_id,
         'total_price' => $orderTotal,
         'seller_id' => $sellerId,
         'buyer_name' => $user->name,
@@ -124,7 +123,7 @@ public function success(Request $request)
             {
                 if($order && $order->payment_status === 'unpaid')
             {
-                $order->status='paid';
+                $order->payment_status='paid';
                 $order->save();
                 foreach($order->items as $item)
                 {
