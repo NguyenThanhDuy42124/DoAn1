@@ -62,7 +62,7 @@ class CheckoutController extends Controller
         'line_items' => $lineItems,
         'mode' => 'payment',
         'success_url' => route('buyer.checkouts.success', [], true)."?session_id={CHECKOUT_SESSION_ID}",
-        'cancel_url' => route('buyer.checkouts.cancel', [], true),
+        'cancel_url' => route('buyer.checkouts.cancel', [], true)."?session_id={CHECKOUT_SESSION_ID}",
         'customer' => $customer->id,
     ]);
 
@@ -132,11 +132,23 @@ public function success(Request $request)
                     {
                         if($product->stock < $item->quantity)
                         {
-                            continue;
+                            $hasInsufficientStock = true;
                         }
                         $product->stock -= $item->quantity;
                         $product->save();
                     }
+                }
+
+                if ($hasInsufficientStock)
+                {
+                    $order->status = 'Cancelled';
+                    $order->cancellation_reason = 'Insuffcient stock after payment';
+                    $order->save();
+                }
+                else
+                {
+                    $order->status = 'Confirmed';
+                    $order->save();
                 }
             }
             }
@@ -148,9 +160,41 @@ public function success(Request $request)
     }
 }
 
-public function cancel()
+public function cancel(Request $request)
 {
-    return view('buyer.checkouts.cancel');
+    \Stripe\Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
+    $sessionId = $request->query('session_id');
+
+    if ($sessionId)
+    {
+        $session = \Stripe\Checkout\Session::retrieve($sessionId);
+        if($session)
+        {
+            $orders = Order::where('session_id', $session->id)
+                ->where('status', 'Pending')
+                ->where('payment_status', 'unpaid')
+                ->get();
+            
+                foreach($orders as $order)
+                {
+                    $order->status = 'Cancelled';
+                    $order->cancellation_reason = 'User cancelled payment';
+                    $order->save();
+                }
+
+                foreach ($order->items as $item)
+                {
+                    $product = $item->product;
+                    if($product)
+                    {
+                        $product->stock += $item->quantity;
+                        $product->save();
+                    }
+                }
+        }
+    }
+
+    return view('buyer.checkouts.cancel')->with('success', 'Đơn hàng đã bị hủy.');
 }
 
 public function webhook()
