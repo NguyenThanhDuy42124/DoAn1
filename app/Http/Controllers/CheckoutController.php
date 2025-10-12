@@ -6,6 +6,8 @@ use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\User;
+use App\Notifications\NewOrderNotification;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -92,8 +94,10 @@ class CheckoutController extends Controller
             'quantity' => $item->quantity,
             'price' => $item->price,
         ]);
+
     }
     }
+    
     
 
     return redirect($session->url);

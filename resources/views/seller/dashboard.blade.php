@@ -72,12 +72,14 @@
 
                                 <div class="row mb-4">
                                     <div class="col-md-3">
-                                        <div class="stats-card">
-                                            <div class="stats-icon">
-                                                <i class="fas fa-shopping-bag"></i>
+                                        <a href="{{ route('seller.orders.index') }}" style="text-decoration:none; color:inherit;">
+                                            <div class="stats-card">
+                                                <div class="stats-icon">
+                                                    <i class="fas fa-shopping-bag"></i>
+                                                </div>
+                                                <div class="stats-label">Đơn hàng</div>
                                             </div>
-                                            <div class="stats-label">Đơn hàng</div>
-                                        </div>
+                                        </a>
                                     </div>
                                     <div class="col-md-3">
                                         <a href="{{ route('seller.products.index') }}" style="text-decoration:none; color:inherit;">

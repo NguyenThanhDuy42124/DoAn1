@@ -98,6 +98,12 @@ Route::prefix('seller')->middleware('role:seller')->group(function () {
     Route::get('/vouchers/{id}/edit', [VoucherController::class, 'edit'])->name('vouchers.edit');
     Route::put('/vouchers/{id}', [VoucherController::class, 'update'])->name('vouchers.update');
     Route::delete('/vouchers/{id}', [VoucherController::class, 'destroy'])->name('vouchers.destroy');
+
+
+    Route::get('/orders', [SellerController::class, 'orders'])->name('seller.orders.index');
+    Route::get('/orders/{id}', [SellerController::class, 'show'])->name('seller.orders.show');
+
+    Route::post('/orders/bulk-approve', [SellerController::class, 'bulkApprove'])->name('seller.orders.bulk_approve');
 });
 
 Route::get('/products', [ProductController::class, 'listProducts'])->name('products.list');
