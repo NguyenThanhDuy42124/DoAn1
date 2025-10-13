@@ -191,7 +191,7 @@
                                 </div>
                             -->
                                 <div class="text-center mt-4">
-                                    <a href="{{ route('buyer.checkouts.purchase_history') }}" class="btn btn-outline-primary">Xem tất cả đơn hàng</a>
+                                    <a href="{{ route('buyer.orders.index') }}" class="btn btn-outline-primary">Xem tất cả đơn hàng</a>
                                 </div>
                             </div>
 
