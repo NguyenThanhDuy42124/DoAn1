@@ -6,9 +6,24 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Order;
+use App\Models\User;
+
 
 class SellerController extends Controller
+{   
+   public function index()
 {
+    // Lấy top 4 cửa hàng uy tín (seller)
+    $shops = User::where('role', 'seller')->take(4)->get();
+
+    // Lấy top 8 sản phẩm nổi bật (có thể dựa theo lượt mua hoặc rating)
+    $products = Product::with('seller')
+                ->orderByDesc('created_at')
+                ->take(8)
+                ->get();
+
+    return view('MainPage', compact('shops', 'products'));
+}
     public function dashboard()
     {
         // Lấy sản phẩm của seller hiện tại

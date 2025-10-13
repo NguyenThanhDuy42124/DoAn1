@@ -108,7 +108,7 @@ Route::prefix('seller')->middleware('role:seller')->group(function () {
 
 Route::get('/products', [ProductController::class, 'listProducts'])->name('products.list');
 Route::get('/vouchers', [VoucherController::class, 'listVouchers'])->name('vouchers.list');
-
+Route::get('/', [SellerController::class, 'index'])->name('home');
 
 
 

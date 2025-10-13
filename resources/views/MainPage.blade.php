@@ -87,37 +87,52 @@
         <h2 class="fw-bold">TOP SẢN PHẨM NỔI BẬT</h2>
         <a href="/products" class="text-primary">Xem thêm ></a>
     </div>
+
     <div class="row g-4">
-        
-        <div class="col-6 col-md-3">
-            <div class="card border-0 shadow-sm h-100 text-center">
-                <img src="https://cdn.tgdd.vn/Products/Images/42/309821/iphone-15-pro-max-blue-thumbnew-600x600.jpg" class="card-img-top p-3" alt="SP">
-                <div class="card-body">
-                    <h6 class="fw-semibold">tên sản phẩm</h6>
-                    <p class="text-danger fw-bold">giá</p>
-                    <p class="small text-muted mb-2">Được bán bởi <strong>Người nào đó</strong></p>
-                    <a href="#" class="btn btn-outline-primary btn-sm w-100">Xem chi tiết</a>
+        @forelse ($products as $product)
+            <div class="col-6 col-md-3">
+                <div class="card border-0 shadow-sm h-100 text-center">
+                    <img src="{{ $product->image ?? 'https://cdn-icons-png.flaticon.com/512/679/679720.png' }}" 
+                         class="card-img-top p-3" 
+                         alt="{{ $product->name }}">
+                    <div class="card-body">
+                        <h6 class="fw-semibold">{{ $product->name }}</h6>
+                        <p class="text-danger fw-bold">
+                            {{ number_format($product->price, 0, ',', '.') }}₫
+                        </p>
+                        <p class="small text-muted mb-2">
+                            Được bán bởi <strong>{{ $product->seller->name ?? 'Không rõ' }}</strong>
+                        </p>
+                        <a href="/products/{{ $product->id }}" 
+                           class="btn btn-outline-primary btn-sm w-100">
+                           Xem chi tiết
+                        </a>
+                    </div>
                 </div>
             </div>
-        </div>
-      
+        @empty
+            <p class="text-center text-muted">Chưa có sản phẩm nổi bật nào.</p>
+        @endforelse
     </div>
 </section>
+
 
 <!-- 🏬 TOP CỬA HÀNG UY TÍN -->
 <section class="container my-5">
     <h2 class="fw-bold text-center mb-4">TOP CỬA HÀNG UY TÍN</h2>
     <div class="row g-4">
-        
-        <div class="col-6 col-md-3 text-center">
-            <div class="p-4 bg-light rounded shadow-sm">
-                <img src="https://cdn-icons-png.flaticon.com/512/891/891462.png" height="50" alt="shop">
-                <h6 class="mt-3">tenshop</h6>
-                <p class="text-muted small">đánh giá</p>
-                <a href="#" class="btn btn-sm btn-outline-primary">Xem cửa hàng</a>
+        @forelse ($shops as $shop)
+            <div class="col-6 col-md-3 text-center">
+                <div class="p-4 bg-light rounded shadow-sm">
+                    <img src="https://cdn-icons-png.flaticon.com/512/891/891462.png" height="50" alt="shop">
+                    <h6 class="mt-3">{{ $shop->name }}</h6>
+                    <p class="text-muted small">Đánh giá: {{ $shop->rating ?? 'Chưa có' }}</p>
+                    <a href="#" class="btn btn-sm btn-outline-primary">Xem cửa hàng</a>
+                </div>
             </div>
-        </div>
-        
+        @empty
+            <p class="text-center text-muted">Chưa có cửa hàng nào.</p>
+        @endforelse
     </div>
 </section>
 
