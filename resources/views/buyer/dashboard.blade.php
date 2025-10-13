@@ -5,9 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-   
+
     @vite(['resources/css/dashboard_user.css', 'resources/js/app.js'])
-   
+
 </head>
 
 <body>
@@ -34,8 +34,11 @@
         <div class="profile-card">
             <div class="profile-header">
                 <div class="d-flex align-items-center">
-                    <img src="https://ui-avatars.com/api/?name=Nguyễn+Văn+A&background=ff6600&color=fff&size=120"
-                        alt="Avatar" class="profile-avatar mr-4">
+                @if(Auth::user()->img == "")
+                    <img src="{{ asset('storage/profile_images/default.jpg') }}" alt="none default Image" class="profile-avatar mr-4">
+                @else
+                    <img src="{{ asset('storage/' . Auth::user()->img) }}" alt="Profile Image" class="profile-avatar mr-4">
+                @endif
                     <div>
                         <h2 class="mb-1">{{ Auth::user()->name }}</h2>
                         <p class="mb-0">Thành viên từ: {{ Auth::user()->created_at->format('d/m/Y') }}</p>
@@ -133,7 +136,7 @@
                                 </div>
                                 <div>
                                     @if(Auth::user()->role == 'admin')
-                                    <a href="{{ route('users.edit', Auth::user()->id) }}" class="btn btn-primary">Chỉnh sửa thông tin</a>   
+                                    <a href="{{ route('users.edit', Auth::user()->id) }}" class="btn btn-primary">Chỉnh sửa thông tin</a>
                                     @elseif(Auth::user()->role == 'buyer' || Auth::user()->role == 'seller')
                                     <a href="{{ route('general.users.edit', ['id' => Auth::user()->id, 'absolute' => true]) }}" class="btn btn-primary">Chỉnh sửa thông tin</a>
                                     @endif
@@ -313,7 +316,7 @@
     @endsection
 
 
-  
+
 </body>
 
 </html>
