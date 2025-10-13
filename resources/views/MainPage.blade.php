@@ -1,133 +1,136 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+@extends('layouts.app')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-   
-    @vite(['resources/css/welcome.css', 'resources/js/app.js'])
-    <title>Trang chủ</title>
-</head>
+@section('content')
 
-<body>
-    @extends('layouts.app')
-    @section('content')
-    <!-- Hero Section -->
-    <section class="hero-section">
-        <div class="container">
-            <div class="hero-content">
-                <h1 class="hero-title">Công Nghệ Mới Nhất - Giá Tốt Nhất</h1>
-                <p class="hero-subtitle">Khám phá các sản phẩm điện thoại thông minh với ưu đãi đặc biệt chỉ có tại
-                    tenshop</p>
-                <a href="#products" class="btn btn-light btn-lg">Mua ngay <i class="fas fa-arrow-right ml-2"></i></a>
+<!-- 🌈 Banner chính -->
+<section class="container-fluid px-0">
+    <div id="mainCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="https://cdn.tgdd.vn/Files/2024/09/15/banner-iphone-16-1200x400.jpg" class="d-block w-100" alt="Banner 1">
+            </div>
+            <div class="carousel-item">
+                <img src="https://cdn.cellphones.com.vn/media/ltsoft/promotion/slider-macbook-1200x400.jpg" class="d-block w-100" alt="Banner 2">
+            </div>
+            <div class="carousel-item">
+                <img src="https://cdn.cellphones.com.vn/media/ltsoft/promotion/xiaomi-13t-1200x400.jpg" class="d-block w-100" alt="Banner 3">
             </div>
         </div>
-    </section>
+        <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon"></span>
+        </button>
+    </div>
+</section>
 
-    <!-- Categories Section -->
-    <section class="container">
-        <div class="section-title">
-            <h2>CÁC THƯƠNG HIỆU NỔI BẬT</h2>
-        </div>
+<!-- ⚡ FLASH SALE -->
+<section class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="fw-bold text-danger"><i class="fas fa-bolt"></i> FLASH SALE TOÀN SÀN</h2>
+        <a href="#" class="text-primary">Xem tất cả ></a>
+    </div>
+    <div class="row g-3">
 
-        <div class="row">
-            <div class="col-md-4">
-                <div class="category-card">
-                    <div class="category-icon">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/2/24/Samsung_Logo.svg" alt="Samsung"
-                            class="brand-logo">
-                    </div>
-                    <h3 class="category-title">SAMSUNG</h3>
-                    <p>Điện thoại Samsung với nhiều dòng sản phẩm từ phổ thông đến cao cấp</p>
-                    <a href="#" class="btn btn-outline-primary">Xem ngay</a>
+        <div class="col-6 col-md-3">
+            <div class="card h-100 border-0 shadow-sm text-center">
+                <div class="position-relative">
+                    <img src="https://cdn.tgdd.vn/Products/Images/42/309821/iphone-15-pro-max-blue-thumbnew-600x600.jpg" class="card-img-top p-3" alt="SP">
+                    <span class="badge bg-danger position-absolute top-0 start-0 m-2">-15%</span>
                 </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="category-card">
-                    <div class="category-icon">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="Apple"
-                            class="brand-logo" style="height: 40px;">
-                    </div>
-                    <h3 class="category-title">APPLE</h3>
-                    <p>iPhone chính hãng với thiết kế sang trọng và hiệu năng vượt trội</p>
-                    <a href="#" class="btn btn-outline-primary">Xem ngay</a>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="category-card">
-                    <div class="category-icon">
-                        <i class="fas fa-mobile-alt"></i>
-                    </div>
-                    <h3 class="category-title">CÁC HÃNG KHÁC</h3>
-                    <p>Điện thoại đến từ nhiều thương hiệu khác nhau, đa dạng mẫu mã và giá thành</p>
-                    <a href="#" class="btn btn-outline-primary">Xem ngay</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Featured Products -->
-    <section class="container" id="products">
-        <div class="section-title">
-            <h2>Sản Phẩm Nổi Bật</h2>
-        </div>
-
-        <div class="row">
-            <div class="col-md-3">
-                <div class="product-card">
-                    <!-- <img src="https://images.unsplash.com/photo-1598327105666-5b89351aff97?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="iPhone 14 Pro Max" class="product-img">
-                    <div class="product-body">
-                        <h3 class="product-title">iPhone 14 Pro Max 128GB</h3>
-                        <div class="product-price">
-                            <span class="current-price">28.990.000₫</span>
-                            <span class="old-price">32.990.000₫</span>
-                            <span class="discount-badge">-12%</span>
-                        </div>
-                        <a href="#" class="btn btn-primary btn-block">Thêm vào giỏ</a>
-                    </div> -->
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="product-card">
-
-                </div>
-            </div>
-
-            <div class="col-md-3">
-                <div class="product-card">
-
-                </div>
-            </div>
-
-            <div class="col-md-3">
-                <div class="product-card">
-
+                <div class="card-body">
+                    <h6 class="fw-semibold">iPhone 15 Pro Max 256GB</h6>
+                    <p class="text-danger fw-bold mb-1">28.990.000₫ 
+                        <span class="text-muted text-decoration-line-through small">31.990.000₫</span>
+                    </p>
+                    <p class="small text-muted mb-2">Được bán bởi <strong>TechZoneVN</strong></p>
+                    <button class="btn btn-outline-primary btn-sm w-100">Thêm vào giỏ</button>
                 </div>
             </div>
         </div>
 
-        <div class="text-center mt-4">
-            <a href="#" class="btn btn-outline-primary btn-lg">Xem tất cả sản phẩm</a>
-        </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Promotional Banner -->
-    <section class="container">
-        <div class="promo-banner">
-            <div class="promo-content">
-                <div class="promo-text">
-                    <h2 class="promo-title">Giảm giá đến 30% cho các sản phẩm Apple</h2>
-                    <p>Ưu đãi đặc biệt chỉ diễn ra trong tháng này. Đừng bỏ lỡ!</p>
-                </div>
-                <a href="#" class="btn btn-light btn-lg">Xem ngay <i class="fas fa-arrow-right ml-2"></i></a>
+<!-- 🏷️ DANH MỤC SẢN PHẨM -->
+<section class="container my-5 text-center">
+    <h2 class="fw-bold mb-4">KHÁM PHÁ DANH MỤC</h2>
+    <div class="row g-4">
+        @php
+        $categories = [
+            ['name' => 'Điện thoại', 'icon' => ''],
+            ['name' => 'Laptop', 'icon' => ''],
+            ['name' => 'Tablet', 'icon' => ''],
+            ['name' => 'Phụ kiện', 'icon' => ''],
+            ['name' => 'Âm thanh', 'icon' => ''],
+            ['name' => 'Đồng hồ', 'icon' => ''],
+            ['name' => 'Máy tính bảng', 'icon' => ''],
+            ['name' => 'Gaming gear', 'icon' => ''],
+        ];
+        @endphp
+
+        @foreach ($categories as $cat)
+        <div class="col-6 col-md-3">
+            <div class="p-4 bg-light rounded shadow-sm category-item">
+                <img src="{{ $cat['icon'] }}" height="60" alt="{{ $cat['name'] }}">
+                <h6 class="mt-3">{{ $cat['name'] }}</h6>
             </div>
         </div>
-    </section>
-    @endsection
-    
-</body>
+        @endforeach
+    </div>
+</section>
 
-</html>
+<!-- 💎 SẢN PHẨM NỔI BẬT -->
+<section class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="fw-bold">TOP SẢN PHẨM NỔI BẬT</h2>
+        <a href="/products" class="text-primary">Xem thêm ></a>
+    </div>
+    <div class="row g-4">
+        
+        <div class="col-6 col-md-3">
+            <div class="card border-0 shadow-sm h-100 text-center">
+                <img src="https://cdn.tgdd.vn/Products/Images/42/309821/iphone-15-pro-max-blue-thumbnew-600x600.jpg" class="card-img-top p-3" alt="SP">
+                <div class="card-body">
+                    <h6 class="fw-semibold">tên sản phẩm</h6>
+                    <p class="text-danger fw-bold">giá</p>
+                    <p class="small text-muted mb-2">Được bán bởi <strong>Người nào đó</strong></p>
+                    <a href="#" class="btn btn-outline-primary btn-sm w-100">Xem chi tiết</a>
+                </div>
+            </div>
+        </div>
+      
+    </div>
+</section>
+
+<!-- 🏬 TOP CỬA HÀNG UY TÍN -->
+<section class="container my-5">
+    <h2 class="fw-bold text-center mb-4">TOP CỬA HÀNG UY TÍN</h2>
+    <div class="row g-4">
+        
+        <div class="col-6 col-md-3 text-center">
+            <div class="p-4 bg-light rounded shadow-sm">
+                <img src="https://cdn-icons-png.flaticon.com/512/891/891462.png" height="50" alt="shop">
+                <h6 class="mt-3">tenshop</h6>
+                <p class="text-muted small">đánh giá</p>
+                <a href="#" class="btn btn-sm btn-outline-primary">Xem cửa hàng</a>
+            </div>
+        </div>
+        
+    </div>
+</section>
+
+<!-- 🎉 ƯU ĐÃI & QUẢNG CÁO -->
+<section class="container my-5">
+    <div class="row g-3">
+        <div class="col-md-6">
+            <img src="https://cdn.cellphones.com.vn/media/ltsoft/promotion/uu-dai-thang-10-1.jpg" class="w-100 rounded shadow" alt="promo">
+        </div>
+        <div class="col-md-6">
+            <img src="https://cdn.cellphones.com.vn/media/ltsoft/promotion/uu-dai-thang-10-2.jpg" class="w-100 rounded shadow" alt="promo">
+        </div>
+    </div>
+</section>
+
+@endsection
