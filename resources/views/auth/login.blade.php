@@ -39,10 +39,12 @@
                         <button type="submit" class="btn btn-login">Đăng Nhập</button>
 
                         {{-- Hiển thị lỗi đăng nhập --}}
-                        @if (session('error'))
-                            <div class="alert alert-danger">{{ session('error') }}</div>@endif
+
                         @if($errors->has('login'))
                         <div class="alert alert-danger">{{ $errors->first('login') }}</div>
+                        @endif
+                        @if (session('error'))
+                            <div class="alert alert-danger">{{ session('error') }}</div>
                         @endif
                     </form>
 

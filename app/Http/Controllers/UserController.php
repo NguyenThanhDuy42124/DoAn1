@@ -19,8 +19,9 @@ class UserController extends Controller
             "phoneNumber" => "nullable|string|max:15",
             "dateOfBirth" => "nullable|date",
             "gender" => "nullable|string|in:male,female,other",
-
+            "address" => "nullable|string|max:255",
         ]);
+        $incomingData['img'] = null; // default null for profile image
         $incomingData["password"] = bcrypt($incomingData["password"]);
         $incomingData["status"] = "active";
         $user = User::create($incomingData);

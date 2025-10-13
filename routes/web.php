@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SellerController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\BuyerController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PasswordResetController;
@@ -102,6 +103,7 @@ Route::prefix('seller')->middleware('role:seller')->group(function () {
 
     Route::get('/orders', [SellerController::class, 'orders'])->name('seller.orders.index');
     Route::get('/orders/{id}', [SellerController::class, 'show'])->name('seller.orders.show');
+    Route::post('/orders/{id}/update-status', [SellerController::class, 'updateStatus'])->name('seller.orders.update_status');
 
     Route::post('/orders/bulk-approve', [SellerController::class, 'bulkApprove'])->name('seller.orders.bulk_approve');
 });
@@ -129,4 +131,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/webhook', [CheckoutController::class, 'webhook'])->name('buyer.checkout.webhook');
 
     Route::get('/checkouts/purchase-history', [OrderController::class, 'purchaseHistory'])->name('buyer.checkouts.purchase_history');
+
+    Route::get('/buyer/orders', [BuyerController::class, 'orders'])->name('buyer.orders.index');
+    Route::patch('/buyer/orders/{id}/cancel', [BuyerController::class, 'cancelOrder'])->name('buyer.orders.cancel');
+    Route::post('/buyer/orders/{id}/confirm', [BuyerController::class, 'confirmOrder'])->name('buyer.orders.confirm');
+    Route::post('buyer/orders/{{id}/return', [BuyerController::class, 'returnOrder'])->name('buyer.orders.return');
+
 });
+
+    
