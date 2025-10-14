@@ -27,7 +27,7 @@
                     <li class="nav-item">
                         <a class="nav-link active" href="/gioi-thieu">GIỚI THIỆU</a>
                     </li>
-                    <li class="nav-item dropdown">
+                    <!--      <li class="nav-item dropdown">
                         <a class="nav-link active dropdown-toggle bg-light" href="#" role="button" id="dropdownMenuLink"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             TÀI KHOẢN
@@ -38,11 +38,10 @@
                             <a class="dropdown-item" href="/login">Đăng nhập</a>
                             <a class="dropdown-item" href="/register">Đăng ký</a>
                         </div>
-            </div>
-
-            </li>  
-            <a href="{{route('buyer.carts.index')}}" class="btn btn-light"><i class="fas fa-shopping-cart me-2"></i>Giỏ hàng {{ $totalItems }}</a>
-            </ul>
+           </li>  -->
+               </ul> </div>
+                    
+           
 
             <!-- Form tìm kiếm phải -->
             <form class="d-flex ms-auto">
@@ -51,6 +50,66 @@
                     <i class="fas fa-search"></i>
                 </button>
             </form>
+<!-- Góc phải navbar -->
+<div class="d-flex align-items-center ms-auto">
+
+  
+
+    <!-- Kiểm tra đăng nhập -->
+    @if(Auth::check())
+        <div class="dropdown">
+            <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                @if(Auth::user()->img == "")
+                    <img src="{{ asset('storage/profile_images/default.jpg') }}"
+                        alt="Default Profile Image"
+                        class="rounded-circle"
+                        style="width: 40px; height: 40px; object-fit: cover;">
+                @else
+                    <img src="{{ asset('storage/' . Auth::user()->img) }}"
+                        alt="Profile Image"
+                        class="rounded-circle"
+                        style="width: 40px; height: 40px; object-fit: cover;">
+                @endif
+                <span class="ms-2 fw-semibold text-dark">{{ Auth::user()->name }}</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                <li><a class="dropdown-item" href="/dashboard">Tài khoản của tôi</a></li>
+                <li><a href="{{ route('buyer.carts.index') }}" class="dropdown-item">
+        <i class="fas fa-shopping-cart me-2"></i>Giỏ hàng {{ $totalItems }}
+    </a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <form action="/logout" method="POST" class="m-0">
+                        @csrf
+                        <button class="dropdown-item text-danger" type="submit">Đăng xuất</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    @else
+        <div class="dropdown">
+    <a href="#" 
+       class="d-flex align-items-center text-decoration-none dropdown-toggle" 
+       id="guestDropdown" 
+       data-bs-toggle="dropdown" 
+       aria-expanded="false">
+        <img src="{{ asset('storage/profile_images/default.jpg') }}"
+            alt="Default Profile Image"
+            class="rounded-circle"
+            style="width: 40px; height: 40px; object-fit: cover; opacity: 0.7;">
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end"
+        aria-labelledby="guestDropdown"
+        style="right: 0; left: auto; transform: translateX(5%);">
+        <li><a class="dropdown-item" href="/login">Đăng nhập</a></li>
+        <li><a class="dropdown-item" href="/register">Đăng ký</a></li>
+    </ul>
+</div>
+
+    @endif
+</div>
+
+
         </div>
         </div>
     </nav>
