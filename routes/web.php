@@ -101,11 +101,12 @@ Route::prefix('seller')->middleware('role:seller')->group(function () {
     Route::delete('/vouchers/{id}', [VoucherController::class, 'destroy'])->name('vouchers.destroy');
 
 
-    Route::get('/orders', [SellerController::class, 'orders'])->name('seller.orders.index');
     Route::get('/orders/{id}', [SellerController::class, 'show'])->name('seller.orders.show');
-    Route::post('/orders/{id}/update-status', [SellerController::class, 'updateStatus'])->name('seller.orders.update_status');
+    Route::get('/orders', function () {
+    return view('seller.orders.index');
+    })->name('seller.orders.index');
 
-    Route::post('/orders/bulk-approve', [SellerController::class, 'bulkApprove'])->name('seller.orders.bulk_approve');
+
 });
 
 Route::get('/products', [ProductController::class, 'listProducts'])->name('products.list');
@@ -136,6 +137,12 @@ Route::middleware('auth')->group(function () {
     Route::patch('/buyer/orders/{id}/cancel', [BuyerController::class, 'cancelOrder'])->name('buyer.orders.cancel');
     Route::post('/buyer/orders/{id}/confirm', [BuyerController::class, 'confirmOrder'])->name('buyer.orders.confirm');
     Route::post('buyer/orders/{{id}/return', [BuyerController::class, 'returnOrder'])->name('buyer.orders.return');
+
+
+        // routes/web.php
+    Route::get('/buyer/orders', function () {
+        return view('buyer.orders.index');
+    })->name('buyer.orders.index');
 
 });
 
