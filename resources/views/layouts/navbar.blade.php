@@ -1,4 +1,5 @@
-   <nav class="navbar navbar-expand-lg navbar-light bg-light rounded fixed-top" aria-label="Eleventh navbar example">
+ <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+ <nav class="navbar navbar-expand-lg navbar-light bg-light rounded fixed-top" aria-label="Eleventh navbar example">
         <div class="container-fluid d-flex">
             <!-- Logo -->
             <a class="navbar-brand fw-bold" href="/">
@@ -87,24 +88,13 @@
             </ul>
         </div>
     @else
-        <div class="dropdown">
-    <a href="#" 
-       class="d-flex align-items-center text-decoration-none dropdown-toggle" 
-       id="guestDropdown" 
-       data-bs-toggle="dropdown" 
-       aria-expanded="false">
-        <img src="{{ asset('storage/profile_images/default.jpg') }}"
-            alt="Default Profile Image"
-            class="rounded-circle"
-            style="width: 40px; height: 40px; object-fit: cover; opacity: 0.7;">
-    </a>
-    <ul class="dropdown-menu dropdown-menu-end"
-        aria-labelledby="guestDropdown"
-        style="right: 0; left: auto; transform: translateX(5%);">
-        <li><a class="dropdown-item" href="/login">Đăng nhập</a></li>
-        <li><a class="dropdown-item" href="/register">Đăng ký</a></li>
-    </ul>
-</div>
+      <a href="/login" 
+   class="nav-link d-flex align-items-center px-3 py-2 rounded" 
+   style="color: black; font-weight: 500; transition: 0.3s;">
+   <i class="bi bi-person-circle me-2" style="font-size: 1.1rem;"></i>
+     ĐĂNG NHẬP  
+</a>
+
 
     @endif
 </div>
