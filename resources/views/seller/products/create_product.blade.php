@@ -33,10 +33,10 @@
         @endif
 
         <div class="form-container">
-            <form action="{{ route('seller.products.store') }}" method="POST">
+            <form action="{{ route('seller.products.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="seller_id" value="{{ auth()->id() }}">
-                
+
                 <div class="form-group">
                     <label for="category_id">Danh mục</label>
                     <select name="category_id" id="category_id" class="form-control" required>
@@ -48,7 +48,7 @@
                         @endforeach
                     </select>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="name">Tên sản phẩm</label>
                     <input type="text" name="name" id="name" class="form-control" value="{{ old('name') }}" required>
@@ -72,6 +72,10 @@
                 <div class="form-group">
                     <label for="description">Mô tả</label>
                     <textarea name="description" id="description" class="form-control">{{ old('description') }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="file">Ảnh sản phẩm</label>
+                    <input type="file" name="images[]" id="file" class="form-control" multiple>
                 </div>
 
                 <div class="d-flex justify-content-end mt-4">
