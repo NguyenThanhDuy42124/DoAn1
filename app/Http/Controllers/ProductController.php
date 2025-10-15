@@ -155,7 +155,7 @@ public function update(Request $request, $id)
 
             DB::commit();
 
-            return redirect()->route('seller.products.edit', $product->id)->with('success', 'Sản phẩm đã được cập nhật thành công.');
+            return redirect()->route('seller.products.index', $product->id)->with('success', 'Sản phẩm đã được cập nhật thành công.');
 
         } catch (\Exception $e) {
             DB::rollBack();

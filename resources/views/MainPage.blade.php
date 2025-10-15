@@ -58,23 +58,13 @@
     <h2 class="fw-bold mb-4">KHÁM PHÁ DANH MỤC</h2>
     <div class="row g-4">
         @php
-        $categories = [
-            ['name' => 'Điện thoại', 'icon' => ''],
-            ['name' => 'Laptop', 'icon' => ''],
-            ['name' => 'Tablet', 'icon' => ''],
-            ['name' => 'Phụ kiện', 'icon' => ''],
-            ['name' => 'Âm thanh', 'icon' => ''],
-            ['name' => 'Đồng hồ', 'icon' => ''],
-            ['name' => 'Máy tính bảng', 'icon' => ''],
-            ['name' => 'Gaming gear', 'icon' => ''],
-        ];
+        $categories = app(App\Http\Controllers\CategoryController::class)->getCategories();
         @endphp
 
         @foreach ($categories as $cat)
         <div class="col-6 col-md-3">
             <div class="p-4 bg-light rounded shadow-sm category-item">
-                <img src="{{ $cat['icon'] }}" height="60" alt="{{ $cat['name'] }}">
-                <h6 class="mt-3">{{ $cat['name'] }}</h6>
+                <h6 class="mt-3">{{ $cat->name }}</h6>
             </div>
         </div>
         @endforeach
