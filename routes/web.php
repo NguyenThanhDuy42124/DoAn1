@@ -18,6 +18,9 @@ use App\Http\Controllers\CartItemController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\UserInfoController;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Auth\Middleware\Authenticate;
 
 Route::get('/', function () {
     return view('MainPage');
@@ -113,6 +116,15 @@ Route::get('/products', [ProductController::class, 'listProducts'])->name('produ
 Route::get('/vouchers', [VoucherController::class, 'listVouchers'])->name('vouchers.list');
 Route::get('/', [SellerController::class, 'index'])->name('home');
 
+Route::post('/webhook', [CheckoutController::class, 'webhook'])
+    ->name('buyer.checkout.webhook')
+    ->withoutMiddleware([
+        'web',  // Skip entire 'web' group (session + CSRF + etc.)
+        // Hoặc explicit classes nếu 'web' không work
+        StartSession::class,
+        VerifyCsrfToken::class,
+        Authenticate::class,  // Nếu route inherit auth
+    ]);
 
 
 
@@ -129,8 +141,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/checkout', [CheckoutController::class, 'checkout'])->name('buyer.checkouts.checkout');
     Route::get('/checkout/success', [CheckoutController::class, 'success'])->name('buyer.checkouts.success');
     Route::get('/checkout/cancel', [CheckoutController::class, 'cancel'])->name('buyer.checkouts.cancel');
-    Route::post('/webhook', [CheckoutController::class, 'webhook'])->name('buyer.checkout.webhook');
-
+    
     Route::get('/checkouts/purchase-history', [OrderController::class, 'purchaseHistory'])->name('buyer.checkouts.purchase_history');
 
     Route::get('/buyer/orders', [BuyerController::class, 'orders'])->name('buyer.orders.index');

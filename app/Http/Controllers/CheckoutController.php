@@ -96,8 +96,6 @@ class CheckoutController extends Controller
 
     }
     }
-    
-    
 
     return redirect($session->url);
 }
@@ -125,6 +123,8 @@ public function success(Request $request)
             {
                 $order->payment_status='paid';
                 $order->save();
+                $hasInsufficientStock = false;
+
                 foreach($order->items as $item)
                 {
                     $product = $item->product;
