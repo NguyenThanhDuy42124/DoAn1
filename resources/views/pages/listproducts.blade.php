@@ -67,7 +67,7 @@
                 </button>
 
                 @if (Auth::check())
-                  @if (empty(Auth::user()->phoneNumber) || empty(Auth::user()->email || empty(Auth::user()->address)))
+                  @if (empty(Auth::user()->phoneNumber) || empty(Auth::user()->email) || empty(Auth::user()->address))
                     <a href="{{ route('general.users.edit', Auth::user()->id) }}" class="btn btn-warning btn-sm">
                       <i class="fas fa-user-edit"></i> Cập nhật thông tin
                     </a>

@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     @vite(['resources/css/layouts.css'])
     <title>@yield('title', 'Trang chủ cửa hàng')</title>
+
 </head>
 
 <body class="d-flex flex-column min-vh-100">
@@ -18,7 +19,11 @@
 
 
     <main class="container flex-fill mt-5 pt-4">
-        @yield('content')
+        @if (isset($slot))
+        {{ $slot }}
+        @else
+            @yield('content')
+        @endif
     </main>
 
     <footer class="py-4 mt-auto">

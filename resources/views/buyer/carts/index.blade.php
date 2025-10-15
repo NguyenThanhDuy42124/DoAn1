@@ -1,83 +1,21 @@
-@extends('layouts.app')
-    @section('title', 'Giỏ hàng')
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    @vite(['resources/css/usermanager.css', 'resources/js/app.js'])
+    <title>Quản lý giỏ hàng - TechStore</title>
+    @livewireStyles
+</head>
+<body>
+    @extends('layouts.app')
+
     @section('content')
-    <div class="container">
-        <h1>Giỏ hàng của tôi</h1>
-
-        @if (session('success'))
-            <div class="alert alert-success">{{ session('success') }}</div>
-        @endif
-
-        @if (session('error'))
-            <div class="alert alert-danger">{{ session('error') }}</div>
-        @endif
-
-        @if ($cartItems->isEmpty())
-            <p>Your cart is empty.</p>
-        @else
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Product</th>
-                        <th>Price</th>
-                        <th>Quantity</th>
-                        <th>Total</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($cartItems as $item)
-                        @php
-                            // Lấy stock hiện tại của sản phẩm
-                            $maxStock = $item->product->stock;
-                            // Nếu số lượng trong cart > stock thì set tạm quantity = stock
-                            $displayQuantity = min($item->quantity, $maxStock);
-                            // Kiểm tra hết hàng
-                            $outOfStock = $maxStock == 0;
-                        @endphp
-
-                        <tr class="{{ $outOfStock ? 'text-muted' : '' }}">
-                            <td>{{ $item->product->name }}</td>
-                            <td>{{ number_format($item->price, 0, ',', '.') }}₫</td>
-                            <td>{{ $displayQuantity }}</td>
-                            <td>{{ number_format($item->price * $displayQuantity, 0, ',', '.') }}₫</td>
-                            <td>
-                                @if($outOfStock)
-                                    <span class="badge bg-danger">Hết hàng, vui lòng xoá</span>
-                                    <form action="{{ route('buyer.cart_items.destroy', $item->id) }}" method="POST" style="display:inline;">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
-                                    </form>
-                                @else
-                                    <a href="{{ route('buyer.cart_items.edit', $item->id) }}" class="btn btn-primary btn-sm">Sửa</a>
-
-                                    <form action="{{ route('buyer.cart_items.destroy', $item->id) }}" method="POST" style="display:inline;">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
-                                    </form>
-                                @endif
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        @endif
-
-        <p>
-            <form action="{{ route('buyer.checkouts.checkout') }}" method="POST">
-                @csrf
-                @php
-                $hasItems = $cartItems->where('quantity', '>', 0)->count() > 0;
-                @endphp
-
-                <button type="submit" class="btn btn-success" @if(!$hasItems) disabled @endif>
-                    Thanh toán
-                </button>
-            </form>
-        </p>
-
-        <a href="{{ route('products.list') }}" class="btn btn-primary">Tiếp tục mua hàng</a>
-    </div>
+        @livewire('cart-manager')
     @endsection
+
+    @livewireScripts
+</body>
+</html>

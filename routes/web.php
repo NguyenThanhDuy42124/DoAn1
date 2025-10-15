@@ -132,13 +132,14 @@ Route::middleware('auth')->group(function () {
     Route::get('general/users/{id}/edit', [UserInfoController::class, 'edit'])->name('general.users.edit');
     Route::put('general/users/{id}', [UserInfoController::class, 'update'])->name('general.users.update');
 
-    Route::get('/carts', [CartController::class, 'index'])->name('buyer.carts.index');
+    Route::get('/carts', \App\Livewire\CartManager::class)->name('buyer.carts.index');
+    
     Route::post('/carts', [CartController::class, 'store'])->name('buyer.carts.store');
     Route::get('/cart-items/{id}/edit', [CartItemController::class, 'edit'])->name('buyer.cart_items.edit');
     Route::put('/cart-items/{id}', [CartItemController::class, 'update'])->name('buyer.cart_items.update');
     Route::delete('/cart/item/{id}', [CartItemController::class, 'destroy'])->name('buyer.cart_items.destroy');
 
-    Route::post('/checkout', [CheckoutController::class, 'checkout'])->name('buyer.checkouts.checkout');
+    Route::get('/checkout', [CheckoutController::class, 'checkout'])->name('buyer.checkouts.checkout');
     Route::get('/checkout/success', [CheckoutController::class, 'success'])->name('buyer.checkouts.success');
     Route::get('/checkout/cancel', [CheckoutController::class, 'cancel'])->name('buyer.checkouts.cancel');
     
@@ -147,13 +148,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/buyer/orders', [BuyerController::class, 'orders'])->name('buyer.orders.index');
     Route::patch('/buyer/orders/{id}/cancel', [BuyerController::class, 'cancelOrder'])->name('buyer.orders.cancel');
     Route::post('/buyer/orders/{id}/confirm', [BuyerController::class, 'confirmOrder'])->name('buyer.orders.confirm');
-    Route::post('buyer/orders/{{id}/return', [BuyerController::class, 'returnOrder'])->name('buyer.orders.return');
+    Route::post('buyer/orders/{id}/return', [BuyerController::class, 'returnOrder'])->name('buyer.orders.return');
 
 
-        // routes/web.php
-    Route::get('/buyer/orders', function () {
-        return view('buyer.orders.index');
-    })->name('buyer.orders.index');
+   
 
 });
 
