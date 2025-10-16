@@ -74,18 +74,34 @@
                 <span class="ms-2 fw-semibold text-dark">{{ Auth::user()->name }}</span>
             </a>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                <li><a class="dropdown-item" href="/dashboard">Tài khoản của tôi</a></li>
-                <li><a href="{{ route('buyer.carts.index') }}" class="dropdown-item">
-        <i class="fas fa-shopping-cart me-2"></i>Giỏ hàng {{ $totalItems }}
-    </a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li>
-                    <form action="/logout" method="POST" class="m-0">
-                        @csrf
-                        <button class="dropdown-item text-danger" type="submit">Đăng xuất</button>
-                    </form>
-                </li>
-            </ul>
+    <li><a class="dropdown-item" href="/dashboard">Tài khoản của tôi</a></li>
+    <li>
+        <a href="{{ route('buyer.carts.index') }}" class="dropdown-item">
+            <i class="fas fa-shopping-cart me-2"></i>Giỏ hàng {{ $totalItems }}
+        </a>
+    </li>
+    
+    <!-- Mục thông báo -->
+    <li>
+        <a class="dropdown-item" href="{{ route('notifications.index') }}">
+            <i class="fas fa-bell me-2"></i>Thông báo
+            @php
+                $unreadCount = \App\Models\Notification::where('user_id', auth()->id())->where('is_read', false)->count();
+            @endphp
+            @if($unreadCount > 0)
+                <span class="badge bg-danger ms-2">{{ $unreadCount }}</span>
+            @endif
+        </a>
+    </li>
+
+    <li><hr class="dropdown-divider"></li>
+    <li>
+        <form action="/logout" method="POST" class="m-0">
+            @csrf
+            <button class="dropdown-item text-danger" type="submit">Đăng xuất</button>
+        </form>
+    </li>
+</ul>
         </div>
     @else
       <a href="/login" 

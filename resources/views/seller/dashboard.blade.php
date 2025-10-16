@@ -59,6 +59,16 @@
                                 role="tab" aria-controls="v-pills-settings" aria-selected="false">
                                 <i class="fas fa-cog mr-2"></i> Cài đặt
                             </a>
+                           <a class="nav-link" href="{{ route('notifications.index') }}" 
+   role="button" aria-selected="false">
+    <i class="fas fa-bell mr-2"></i> Thông báo
+    @php
+        $unreadCount = \App\Models\Notification::where('user_id', auth()->id())->where('is_read', false)->count();
+    @endphp
+    @if($unreadCount > 0)
+        <span class="badge bg-danger ms-2">{{ $unreadCount }}</span>
+    @endif
+</a>
                         </div>
                     </div>
 

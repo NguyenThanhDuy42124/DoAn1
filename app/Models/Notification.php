@@ -19,7 +19,7 @@ class Notification extends Model
         'user_id',
         'type',
         'message',
-        'read',
+        'is_read',
     ];
 
     /**
@@ -28,7 +28,7 @@ class Notification extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'read' => 'boolean',
+        'is_read' => 'boolean',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',

@@ -6,7 +6,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Order;
-
+use App\Models\Notification; 
 class SellerOrderManager extends Component
 {
     use WithPagination;
@@ -23,7 +23,7 @@ class SellerOrderManager extends Component
     public function updateStatus($orderId, $newStatus)
     {
         $order = Order::where('seller_id', Auth::id())->findOrFail($orderId);
-
+          $oldStatus = $order->status;
         if ($newStatus === 'Shipping' && $order->status === 'Pending') {
             $order->status = 'Shipping';
         } elseif ($newStatus === 'Delivered' && $order->status === 'Shipping') {
@@ -34,6 +34,19 @@ class SellerOrderManager extends Component
         }
 
         $order->save();
+        $statusMessages = [
+            'Shipping' => 'đang được vận chuyển',
+            'Delivered' => 'đã được giao hàng'
+        ];
+        
+        if (isset($statusMessages[$newStatus])) {
+            Notification::create([
+                'user_id' => $order->user_id,
+                'type' => 'order_status_updated',
+                'message' => "Đơn hàng #{$order->id} của bạn {$statusMessages[$newStatus]}",
+                'is_read' => false,
+            ]);
+        }
         session()->flash('success', 'Cập nhật trạng thái thành công!');
         $this->resetPage();
         $this->dispatch('statusUpdated');
@@ -51,6 +64,12 @@ class SellerOrderManager extends Component
             if ($order->status === 'Pending') {
                 $order->status = 'Shipping';
                 $order->save();
+                 Notification::create([
+                    'user_id' => $order->user_id,
+                    'type' => 'order_status_updated',
+                    'message' => "Đơn hàng #{$order->id} của bạn đã được xác nhận và đang được vận chuyển",
+                    'is_read' => false,
+                ]);
             }
         }
 

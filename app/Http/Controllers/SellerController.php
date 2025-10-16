@@ -76,6 +76,12 @@ class SellerController extends Controller
             if($order->status === 'Pending') {
                 $order->status = 'Shipped';
                 $order->save();
+                Notification::create([
+                    'user_id' => $order->user_id,
+                    'type' => 'order_status_updated',
+                    'message' => "Đơn hàng #{$order->id} của bạn đã được xác nhận và đang được vận chuyển",
+                    'is_read' => false,
+                ]);
             }
         }
         return redirect()->route('seller.orders.index', ['status' => $currentStatusQuery])->with('success', 'Đã phê duyệt đơn hàng thành công!');
@@ -92,7 +98,7 @@ class SellerController extends Controller
 
     $newStatus = $request->input('status');
     $currentStatusQuery = $request->query('status', 'Pending');
-
+      $oldStatus = $order->status; 
     if ($newStatus === 'Shipped' && $order->status === 'Pending') {
         $order->status = 'Shipped';
     } elseif ($newStatus === 'Delivered' && $order->status === 'Shipped') {

@@ -166,6 +166,12 @@ class CheckoutController extends Controller
                     {
                         $order->status = 'Pending';
                         $order->save();
+                             \App\Models\Notification::create([
+                        'user_id' => $order->seller_id,
+                        'type' => 'new_order',
+                        'message' => "Bạn có đơn hàng mới #{$order->id} từ {$order->buyer_name} với tổng giá " . number_format($order->total_price) . " VND",
+                        'is_read' => false,
+                    ]);
                     }
                 }
                 }
