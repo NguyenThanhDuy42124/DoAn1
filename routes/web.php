@@ -94,6 +94,7 @@ Route::prefix('seller')->middleware('role:seller')->group(function () {
     Route::resource('products', ProductController::class, ['names' => 'seller.products']);
     Route::get('/seller/products/{id}/edit', [ProductController::class, 'edit'])->name('seller.products.edit');
     Route::put('/seller/products/{id}', [ProductController::class, 'update'])->name('seller.products.update');
+    Route::get('/seller/products', [ProductController::class, 'createMultiple'])->name('seller.products.CreateMulti_product');
 
     //route vouchers
     Route::get('/vouchers', [VoucherController::class, 'index'])->name('vouchers.index');
@@ -133,7 +134,7 @@ Route::middleware('auth')->group(function () {
     Route::put('general/users/{id}', [UserInfoController::class, 'update'])->name('general.users.update');
 
     Route::get('/carts', \App\Livewire\CartManager::class)->name('buyer.carts.index');
-    
+
     Route::post('/carts', [CartController::class, 'store'])->name('buyer.carts.store');
     Route::get('/cart-items/{id}/edit', [CartItemController::class, 'edit'])->name('buyer.cart_items.edit');
     Route::put('/cart-items/{id}', [CartItemController::class, 'update'])->name('buyer.cart_items.update');
@@ -142,7 +143,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/checkout', [CheckoutController::class, 'checkout'])->name('buyer.checkouts.checkout');
     Route::get('/checkout/success', [CheckoutController::class, 'success'])->name('buyer.checkouts.success');
     Route::get('/checkout/cancel', [CheckoutController::class, 'cancel'])->name('buyer.checkouts.cancel');
-    
+
     Route::get('/checkouts/purchase-history', [OrderController::class, 'purchaseHistory'])->name('buyer.checkouts.purchase_history');
 
     Route::get('/buyer/orders', [BuyerController::class, 'orders'])->name('buyer.orders.index');
@@ -150,13 +151,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/buyer/orders/{id}/confirm', [BuyerController::class, 'confirmOrder'])->name('buyer.orders.confirm');
     Route::post('buyer/orders/{id}/return', [BuyerController::class, 'returnOrder'])->name('buyer.orders.return');
 
-     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
-    Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
-    Route::post('/notifications/{notification}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
-    Route::post('/notifications/{notification}/mark-as-unread', [NotificationController::class, 'markAsUnread'])->name('notifications.markAsUnread');
-    Route::delete('/notifications/{notification}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
-   
+
+
 
 });
 
-    
+

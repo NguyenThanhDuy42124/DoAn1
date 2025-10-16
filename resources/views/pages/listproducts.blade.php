@@ -2,7 +2,7 @@
 @section('title', 'Danh sách sản phẩm')
 @section('content')
 <div class="container">
-   
+
 <!-- Filter Section -->
 <div class="container">
   <div class="filter-section">
@@ -51,17 +51,22 @@
       <div class="col-md-4">
         <div class="card product-card">
           <span class="badge-discount">- X%</span>
-          <img src="https://images.unsplash.com/photo-1598327105666-5b89351aff97?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" 
-               class="product-img" alt="{{ $product->name }}">
+          
+          <img src="{{ $product->images->isNotEmpty() ?
+          asset('storage/' . $product->images->first()->image_path) :
+          asset('storage/product_images/default.jpg') }}"
+     alt="{{ $product->name }}"
+     class="card-img-top product-img">
+
           <div class="card-body">
-            <h5 class="card-title">{{ $product->name }}</h5>  
+            <h5 class="card-title">{{ $product->name }}</h5>
             <p class="card-text text-muted">{{ Str::limit($product->description, 100) }}</p>
             <div class="d-flex justify-content-between align-items-center">
               <div>
                 <span class="product-price">{{ number_format($product->price, 0, ',', '.') }}₫</span>
               </div>
               <div class="d-flex">
-                <button class="btn btn-outline-primary btn-sm me-2" data-bs-toggle="modal" 
+                <button class="btn btn-outline-primary btn-sm me-2" data-bs-toggle="modal"
                         data-bs-target="#detailModal-{{ $product->id }}">
                   <i class="fas fa-eye"></i>
                 </button>

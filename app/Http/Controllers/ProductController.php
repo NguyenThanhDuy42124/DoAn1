@@ -31,7 +31,7 @@ class ProductController extends Controller
             'status'      => 'nullable|string',
             'image.*'       => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
         ]);
-         // Sử dụng Transaction để đảm bảo tính toàn vẹn dữ liệu
+        // Sử dụng Transaction để đảm bảo tính toàn vẹn dữ liệu
         DB::beginTransaction();
         try {
             // 2. Tạo sản phẩm mới và lưu vào bảng products
@@ -72,13 +72,23 @@ class ProductController extends Controller
     }
     public function index()
     {
-        $products = Product::where('seller_id', auth()->id())->paginate(8);
+        // Lấy sản phẩm của người bán hiện tại và tải kèm hình ảnh của chúng.
+        $products = Product::with('images')
+            ->where('seller_id', auth()->id())
+            ->paginate(8);
+
         return view('seller.products.index', compact('products'));
+    }
+    public function createMultiple()
+    {
+        return view('seller.products.CreateMulti_product');
     }
 
     public function listProducts()
     {
-        $products = Product::paginate(9);
+        // Lấy tất cả sản phẩm và tải kèm hình ảnh, sau đó phân trang.
+        $products = Product::with('images')->paginate(9);
+
         return view('pages.listproducts', compact('products'));
     }
     public function destroy($id)
@@ -100,7 +110,7 @@ class ProductController extends Controller
         return view('seller.products.edit_product', compact('product', 'categories'));
     }
 
-public function update(Request $request, $id)
+    public function update(Request $request, $id)
     {
         // 1. Validate dữ liệu sản phẩm và hình ảnh mới
         $request->validate([
@@ -155,8 +165,7 @@ public function update(Request $request, $id)
 
             DB::commit();
 
-            return redirect()->route('seller.products.index', $product->id)->with('success', 'Sản phẩm đã được cập nhật thành công.');
-
+            return redirect()->route('seller.products.edit', $product->id)->with('success', 'Sản phẩm đã được cập nhật thành công.');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('error', 'Đã xảy ra lỗi khi cập nhật sản phẩm. Vui lòng thử lại.')->withInput();
