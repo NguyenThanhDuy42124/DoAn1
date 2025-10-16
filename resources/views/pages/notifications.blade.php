@@ -20,6 +20,13 @@
                 </div>
 
                 <div class="card-body">
+                    @if(session('success'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+
                     @if($notifications->count() > 0)
                         <div class="list-group">
                             @foreach($notifications as $notification)
@@ -39,6 +46,11 @@
                                                 <form action="{{ route('notifications.markAsRead', $notification->id) }}" method="POST" class="d-inline">
                                                     @csrf
                                                     <button type="submit" class="btn btn-sm btn-outline-success">Đánh dấu đã đọc</button>
+                                                </form>
+                                            @else
+                                                <form action="{{ route('notifications.markAsUnread', $notification->id) }}" method="POST" class="d-inline">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-sm btn-outline-secondary">Đánh dấu chưa đọc</button>
                                                 </form>
                                             @endif
                                             <form action="{{ route('notifications.destroy', $notification->id) }}" method="POST" class="d-inline">

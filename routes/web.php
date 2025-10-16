@@ -75,7 +75,7 @@ Route::prefix('admin')->middleware('role:admin')->group(function () {
     Route::resource('categories', CategoryController::class, ['names' => 'admin.categories']);
 
     //route thong bao
-    Route::get('/notifications', [NotificationController::class, 'index'])->name('admin.notifications.index');
+   Route::get('/notifications', [NotificationController::class, 'index'])->name('admin.notifications.index');
     Route::get('/notifications/create', [NotificationController::class, 'create'])->name('admin.notifications.create');
     Route::post('/notifications', [NotificationController::class, 'store'])->name('admin.notifications.store');
     Route::get('/notifications/{notification}', [NotificationController::class, 'show'])->name('admin.notifications.show');
@@ -150,9 +150,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/buyer/orders/{id}/confirm', [BuyerController::class, 'confirmOrder'])->name('buyer.orders.confirm');
     Route::post('buyer/orders/{id}/return', [BuyerController::class, 'returnOrder'])->name('buyer.orders.return');
 
-    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
-    Route::post('/notifications/mark-as-read/{id}', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
+    Route::post('/notifications/{notification}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+    Route::post('/notifications/{notification}/mark-as-unread', [NotificationController::class, 'markAsUnread'])->name('notifications.markAsUnread');
     Route::delete('/notifications/{notification}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
    
 

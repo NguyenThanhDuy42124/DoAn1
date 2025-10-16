@@ -22,7 +22,7 @@
 
             <ul class="list-unstyled components">
                 <li>
-                    <a href="{{ route('admin.dashboard') }}" class="active">
+                    <a href="{{ route('admin.dashboard') }}">
                         <i class="fas fa-tachometer-alt"></i>
                         Tổng quan
                     </a>
@@ -46,9 +46,9 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="{{ route('admin.notifications.index') }}">
                         <i class="fas fa-bell"></i>
-                        Gửi thông báo
+                        Quản lý thông báo
                     </a>
                 </li>
                 <li>
@@ -143,13 +143,13 @@
                     </div>
                 </div>
             </nav>
-        </div>
-    </div>
 
             <!-- Main Content -->
-            @yield('content')
-
-
+            <div class="container-fluid">
+             @yield('content')
+            </div>
+        </div>
+    </div>
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
