@@ -270,7 +270,28 @@
             border-color: rgba(0, 102, 204, 0.3);
             color: var(--primary);
         }
-        
+         #mainCarousel .carousel-control-prev,
+        #mainCarousel .carousel-control-next {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 50%;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0.8;
+            transition: all 0.3s ease;
+        }
+        #mainCarousel .carousel-control-prev {
+            left: 15px;
+        }
+        #mainCarousel .carousel-control-next {
+            right: 15px;
+        }
+        #mainCarousel .carousel-control-prev:hover,
+        #mainCarousel .carousel-control-next:hover {
+            background-color: rgba(0, 0, 0, 0.6);
+            opacity: 1;
+        }
         /* Responsive adjustments */
         @media (max-width: 768px) {
             .navbar-nav {
