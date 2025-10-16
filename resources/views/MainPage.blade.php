@@ -7,20 +7,20 @@
     <div id="mainCarousel" class="carousel slide" data-bs-ride="carousel">
         <div class="carousel-inner">
             <div class="carousel-item active">
-                <img src="https://cdn.tgdd.vn/Files/2024/09/15/banner-iphone-16-1200x400.jpg" class="d-block w-100" alt="Banner 1">
+                <img src="https://cdn2.cellphones.com.vn/insecure/rs:fill:1036:450/q:90/plain/https://dashboard.cellphones.com.vn/storage/AW11-opensale.png" class="d-block w-100" alt="Banner 1">
             </div>
             <div class="carousel-item">
-                <img src="https://cdn.cellphones.com.vn/media/ltsoft/promotion/slider-macbook-1200x400.jpg" class="d-block w-100" alt="Banner 2">
+                <img src="https://cdn2.cellphones.com.vn/insecure/rs:fill:1036:450/q:90/plain/https://dashboard.cellphones.com.vn/storage/690x300_Teasing-Sliding_20.png" class="d-block w-100" alt="Banner 2">
             </div>
             <div class="carousel-item">
-                <img src="https://cdn.cellphones.com.vn/media/ltsoft/promotion/xiaomi-13t-1200x400.jpg" class="d-block w-100" alt="Banner 3">
+                <img src="https://cdn2.cellphones.com.vn/insecure/rs:fill:1036:450/q:90/plain/https://dashboard.cellphones.com.vn/storage/690x300_iPhone_17_Pro_Opensale_v3.png" class="d-block w-100" alt="Banner 3">
             </div>
         </div>
         <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon"></span>
+            <span class="carousel-control-prev-icon" style="width: 20px; height: 20px;"></span>
         </button>
         <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel" data-bs-slide="next">
-            <span class="carousel-control-next-icon"></span>
+            <span class="carousel-control-next-icon" style="width: 20px; height: 20px;"></span>
         </button>
     </div>
 </section>
@@ -130,10 +130,10 @@
 <section class="container my-5">
     <div class="row g-3">
         <div class="col-md-6">
-            <img src="https://cdn.cellphones.com.vn/media/ltsoft/promotion/uu-dai-thang-10-1.jpg" class="w-100 rounded shadow" alt="promo">
+            <img src="https://cdnv2.tgdd.vn/mwg-static/tgdd/Banner/8f/04/8f0489b955b6830ca76cf81d88c637b1.png" class="w-100 rounded shadow" alt="promo">
         </div>
         <div class="col-md-6">
-            <img src="https://cdn.cellphones.com.vn/media/ltsoft/promotion/uu-dai-thang-10-2.jpg" class="w-100 rounded shadow" alt="promo">
+            <img src="https://cdnv2.tgdd.vn/mwg-static/tgdd/Banner/05/5b/055b9ec5647886f88b0b64f14b1b5971.png" class="w-100 rounded shadow" alt="promo">
         </div>
     </div>
 </section>
