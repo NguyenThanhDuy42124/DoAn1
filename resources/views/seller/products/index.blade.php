@@ -17,8 +17,8 @@
             <div class="d-flex justify-content-between align-items-center">
                 <h2 class="page-title"><i class="fas fa-boxes mr-2"></i>Danh sách sản phẩm</h2>
                 <div class="mb-3 d-flex">
-                    <a href="{{ route('seller.products.CreateMulti_product') }}" class="btn btn-primary">
-                        <i class="fas fa-plus mr-2"></i>Thêm sản phẩm
+                    <a href="{{ route('seller.products.import.form') }}" class="btn btn-primary">
+                        <i class="fas fa-plus mr-2"></i>Thêm sản phẩm bằng File excel
                     </a>
                     <a href="{{ route('seller.products.create') }}" class="btn btn-primary">
                         <i class="fas fa-plus mr-2"></i>Thêm sản phẩm

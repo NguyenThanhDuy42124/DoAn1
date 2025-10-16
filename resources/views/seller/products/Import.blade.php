@@ -21,40 +21,70 @@
             </div>
         </div>
 
-<form action="{{ route('seller.products.import') }}" method="POST" enctype="multipart/form-data">
-    @csrf
 
-    <div class="form-group">
-        <label for="category_id">Áp dụng cho Danh mục</label>
-        <select name="category_id" id="category_id" class="form-control" required>
-            <option value="">-- Chọn danh mục --</option>
-            @foreach($categories as $category)
-                <option value="{{ $category->id }}">{{ $category->name }}</option>
-            @endforeach
-        </select>
-        @error('category_id') <span class="text-danger">{{ $message }}</span> @enderror
+<div class="container">
+    <div class="page-header">
+        <h2 class="page-title"><i class="fas fa-file-import mr-2"></i>Nhập Sản Phẩm Hàng Loạt</h2>
     </div>
 
-    <div class="form-group">
-        <label for="excel_file">File Excel Sản phẩm (*.xlsx, *.csv)</label>
-        <input type="file" name="excel_file" id="excel_file" class="form-control-file" required>
-        <small class="form-text text-muted">File Excel chỉ cần chứa các cột: name, price, brand, stock, description, image_1, image_2,...</small>
-        @error('excel_file') <span class="text-danger">{{ $message }}</span> @enderror
-    </div>
+    @if (session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+    @if (session('error'))
+        <div class="alert alert-danger">{{ session('error') }}</div>
+    @endif
 
-    <div class="form-group">
-        <label for="images">Các file ảnh liên quan</label>
-        <input type="file" name="images[]" id="images" class="form-control-file" multiple>
-        <small class="form-text text-muted">Tên các file ảnh phải khớp với tên bạn đã điền trong file Excel (ví dụ: `aothun1.jpg`).</small>
-        @error('images.*') <span class="text-danger">{{ $message }}</span> @enderror
-    </div>
+    @if ($errors->any())
+        <div class="alert alert-warning">
+            Vui lòng kiểm tra lại dữ liệu nhập. Đảm bảo file Excel và các tệp đính kèm hợp lệ.
+            <ul class="mb-0">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
-    <button type="submit" class="btn btn-primary mt-3">Nhập dữ liệu</button>
-</form>
+    <div class="form-container">
+        <form action="{{ route('seller.products.import') }}" method="POST" enctype="multipart/form-data">
+            @csrf
 
+            <div class="form-group">
+                <label for="category_id">Áp dụng cho Danh mục</label>
+                <select name="category_id" style="height: 50px;" id="category_id" class="form-control @error('category_id') is-invalid @enderror" required>
+                    <option value="" >-- Chọn danh mục --</option>
+                    @foreach($categories as $category)
+                        <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
+                            {{ $category->name }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('category_id') <span class="text-danger">{{ $message }}</span> @enderror
+            </div>
 
+            <div class="form-group">
+                <label for="excel_file">File Excel Sản phẩm (*.xlsx, *.csv)</label>
+                <input type="file" name="excel_file" id="excel_file" class="form-control-file @error('excel_file') is-invalid @enderror" required>
+                <small class="form-text text-danger">File Excel cần có các cột: name, price, brand, stock, description, image_1, image_2, v.v...</small>
+                <a href="{{ asset('storage/Sample_excel/sample.xlsx') }}" class="btn btn-link">Tải mẫu file Excel</a>
+                @error('excel_file') <span class="text-danger">{{ $message }}</span> @enderror
+            </div>
+
+            <div class="form-group">
+                <label for="images">Các file ảnh liên quan</label>
+                <input type="file" name="images[]" id="images" class="form-control-file @error('images.*') is-invalid @enderror" multiple>
+                <small class="form-text text-danger">Tên file ảnh phải khớp với tên trong các cột image_X của file Excel.</small>
+                <small class="form-text text-danger">Tức cột image_1 có tên là <strong>image_1.jpg</strong> thì file phải có tên là <strong>image_1.jpg</strong></small>
+                @error('images.*') <span class="text-danger">{{ $message }}</span> @enderror
+            </div>
+
+            <button type="submit" class="btn btn-primary mt-4">
+                <i class="fas fa-upload mr-2"></i>Thực hiện Nhập dữ liệu
+            </button>
+        </form>
     </div>
-    </div>
+</div>
+
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>

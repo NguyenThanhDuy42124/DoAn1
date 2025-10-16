@@ -135,29 +135,35 @@ class ProductController extends Controller
                         'description' => $row['description'] ?? null,
                     ]);
 
-                    // --- XỬ LÝ HÌNH ẢNH (Từ cột image_1, image_2, v.v.) ---
+                    //  --- XỬ LÝ HÌNH ẢNH  ---
 
-                    // Tìm tất cả các cột ảnh trong dòng hiện tại
-                    $imageColumns = array_filter($row, function($key) {
-                        return str_contains(strtolower($key), 'image_');
-                    }, ARRAY_FILTER_USE_KEY);
+                    // Chỉ chạy logic xử lý ảnh NẾU CÓ BẤT KỲ FILE NÀO ĐƯỢC UPLOAD.
+                    // Nếu không có ảnh nào được upload, $uploadedImages là Collection rỗng,
+                    // code sẽ bỏ qua toàn bộ khối này.
+                    /** @phpstan-ignore-next-line */
+                    if ($uploadedImages->isNotEmpty()) {
+                        // Tìm tất cả các cột ảnh trong dòng hiện tại
+                        $imageColumns = array_filter($row, function($key) {
+                            return str_contains(strtolower($key), 'image_');
+                        }, ARRAY_FILTER_USE_KEY);
 
-                    foreach ($imageColumns as $imageName) {
-                        $imageName = trim($imageName);
-                        // Kiểm tra tên file ảnh có trong danh sách ảnh đã upload không
-                        if ($imageName && $uploadedImages->has($imageName)) {
-                            $imageFile = $uploadedImages->get($imageName);
+                        foreach ($imageColumns as $imageName) {
+                            $imageName = trim($imageName);
+                            // Kiểm tra tên file ảnh có trong danh sách ảnh đã upload không
+                            if ($imageName && $uploadedImages->has($imageName)) {
+                                $imageFile = $uploadedImages->get($imageName);
 
-                            // Lưu file ảnh vào storage và tạo bản ghi DB
-                            $path = $imageFile->store('product_images', 'public');
+                                // Lưu file ảnh vào storage và tạo bản ghi DB
+                                $path = $imageFile->store('product_images', 'public');
 
-                            ProductImage::create([
-                                'product_id' => $product->id,
-                                'image_path' => $path,
-                            ]);
+                                ProductImage::create([
+                                    'product_id' => $product->id,
+                                    'image_path' => $path,
+                                ]);
+                            }
                         }
                     }
-
+                    //  KẾT THÚC KHỐI XỬ LÝ ẢNH
                     $importedCount++;
                     return $product;
                 });

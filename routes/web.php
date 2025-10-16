@@ -94,11 +94,13 @@ Route::prefix('seller')->middleware('role:seller')->group(function () {
     Route::resource('products', ProductController::class, ['names' => 'seller.products']);
     Route::get('/seller/products/{id}/edit', [ProductController::class, 'edit'])->name('seller.products.edit');
     Route::put('/seller/products/{id}', [ProductController::class, 'update'])->name('seller.products.update');
-    // Route để hiển thị form
-    Route::get('/seller/products/import/form', [ProductController::class, 'showImportForm'])->name('seller.products.import.form');
 
-    // Route xử lý import dữ liệu
-    Route::post('/seller/products/import', [ProductController::class, 'import'])->name('seller.products.import');
+    // [GET] Route để hiển thị trang form
+    Route::get('/products/import/form', [ProductController::class, 'showImportForm'])->name('seller.products.import.form');
+
+    // [POST] Route để xử lý dữ liệu từ form
+    Route::post('/products/import', [ProductController::class, 'import'])->name('seller.products.import');
+
 
     //route vouchers
     Route::get('/vouchers', [VoucherController::class, 'index'])->name('vouchers.index');
