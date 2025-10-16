@@ -21,23 +21,36 @@
             </div>
         </div>
 
-        @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul class="mb-0">
-                @foreach ($errors->all() as $e)
-                <li>{{ $e }}</li>
-                @endforeach
-            </ul>
-        </div>
-        @endif
-        <form action="" method="POST" enctype="multipart/form-data">
-            @csrf
-            <div class="form-group">
-                <label for="file">Tải lên file Excel sản phẩm</label>
-                <input type="file" name="file" id="file" class="form-control-file">
-            </div>
-            <button type="submit" class="btn btn-primary">Nhập sản phẩm</button>
-        </form>
+<form action="{{ route('seller.products.import') }}" method="POST" enctype="multipart/form-data">
+    @csrf
+
+    <div class="form-group">
+        <label for="category_id">Áp dụng cho Danh mục</label>
+        <select name="category_id" id="category_id" class="form-control" required>
+            <option value="">-- Chọn danh mục --</option>
+            @foreach($categories as $category)
+                <option value="{{ $category->id }}">{{ $category->name }}</option>
+            @endforeach
+        </select>
+        @error('category_id') <span class="text-danger">{{ $message }}</span> @enderror
+    </div>
+
+    <div class="form-group">
+        <label for="excel_file">File Excel Sản phẩm (*.xlsx, *.csv)</label>
+        <input type="file" name="excel_file" id="excel_file" class="form-control-file" required>
+        <small class="form-text text-muted">File Excel chỉ cần chứa các cột: name, price, brand, stock, description, image_1, image_2,...</small>
+        @error('excel_file') <span class="text-danger">{{ $message }}</span> @enderror
+    </div>
+
+    <div class="form-group">
+        <label for="images">Các file ảnh liên quan</label>
+        <input type="file" name="images[]" id="images" class="form-control-file" multiple>
+        <small class="form-text text-muted">Tên các file ảnh phải khớp với tên bạn đã điền trong file Excel (ví dụ: `aothun1.jpg`).</small>
+        @error('images.*') <span class="text-danger">{{ $message }}</span> @enderror
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">Nhập dữ liệu</button>
+</form>
 
 
     </div>

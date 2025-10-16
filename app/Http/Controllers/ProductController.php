@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+
 use App\Models\ProductImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Rap2hpoutre\FastExcel\FastExcel;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 use App\Models\Product;     // nếu có model
 use App\Models\Category;    // nếu cần load danh mục
 
@@ -79,11 +83,97 @@ class ProductController extends Controller
 
         return view('seller.products.index', compact('products'));
     }
-    public function createMultiple()
+// Phương thức hiển thị form (Bước 3)
+    public function showImportForm()
     {
-        return view('seller.products.CreateMulti_product');
+        // Lấy danh sách danh mục để hiển thị trong select box
+        $categories = Category::all();
+        return view('seller.products.Import', compact('categories'));
     }
 
+    // Phương thức xử lý Import (Bước 4)
+    public function import(Request $request)
+    {
+        // 1. Validation
+        $request->validate([
+            'category_id' => 'required|exists:categories,id', // Đảm bảo category_id hợp lệ
+            'excel_file' => 'required|file|mimes:xlsx,xls,csv|max:5120',
+            'images.*'   => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
+        ]);
+
+        $categoryId = $request->input('category_id');
+        $sellerId = Auth::id(); // Lấy ID của người bán đang đăng nhập
+        $filePath = $request->file('excel_file')->path();
+
+        // Tạo Collection các file ảnh đã tải lên, dùng tên file làm key
+        $uploadedImages = collect($request->file('images'))->keyBy(function($file) {
+            return $file->getClientOriginalName();
+        });
+
+        DB::beginTransaction();
+        $importedCount = 0;
+
+        try {
+            // 2. Import dữ liệu với fast-excel
+            (new FastExcel())
+                ->import($filePath, function ($row) use ($categoryId, $sellerId, $uploadedImages, &$importedCount) {
+
+                    // --- ÁNH XẠ DỮ LIỆU SẢN PHẨM TỪ EXCEL VÀ FORM ---
+
+                    // Kiểm tra dữ liệu cơ bản từ Excel
+                    if (empty($row['name']) || empty($row['price'])) {
+                         return null; // Bỏ qua dòng thiếu dữ liệu bắt buộc
+                    }
+
+                    $product = Product::create([
+                        'seller_id'   => $sellerId,
+                        'category_id' => $categoryId, // LẤY TỪ FORM
+                        'name'        => $row['name'],
+                        'price'       => (float)($row['price']),
+                        'brand'       => $row['brand'] ?? null,
+                        'stock'       => (int)($row['stock'] ?? 0),
+                        'description' => $row['description'] ?? null,
+                    ]);
+
+                    // --- XỬ LÝ HÌNH ẢNH (Từ cột image_1, image_2, v.v.) ---
+
+                    // Tìm tất cả các cột ảnh trong dòng hiện tại
+                    $imageColumns = array_filter($row, function($key) {
+                        return str_contains(strtolower($key), 'image_');
+                    }, ARRAY_FILTER_USE_KEY);
+
+                    foreach ($imageColumns as $imageName) {
+                        $imageName = trim($imageName);
+                        // Kiểm tra tên file ảnh có trong danh sách ảnh đã upload không
+                        if ($imageName && $uploadedImages->has($imageName)) {
+                            $imageFile = $uploadedImages->get($imageName);
+
+                            // Lưu file ảnh vào storage và tạo bản ghi DB
+                            $path = $imageFile->store('product_images', 'public');
+
+                            ProductImage::create([
+                                'product_id' => $product->id,
+                                'image_path' => $path,
+                            ]);
+                        }
+                    }
+
+                    $importedCount++;
+                    return $product;
+                });
+
+            DB::commit();
+
+            return redirect()->back()->with('success', 'Đã nhập thành công ' . $importedCount . ' sản phẩm.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            // Ghi log lỗi để dễ dàng debug
+            Log::error("Import Error: " . $e->getMessage() . " on line " . $e->getLine());
+
+            return redirect()->back()->with('error', 'Lỗi nhập dữ liệu: Đã xảy ra lỗi nghiêm trọng. Vui lòng kiểm tra file Excel và Log hệ thống.');
+        }
+    }
     public function listProducts()
     {
         // Lấy tất cả sản phẩm và tải kèm hình ảnh, sau đó phân trang.

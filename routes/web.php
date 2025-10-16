@@ -75,7 +75,7 @@ Route::prefix('admin')->middleware('role:admin')->group(function () {
     Route::resource('categories', CategoryController::class, ['names' => 'admin.categories']);
 
     //route thong bao
-   Route::get('/notifications', [NotificationController::class, 'index'])->name('admin.notifications.index');
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('admin.notifications.index');
     Route::get('/notifications/create', [NotificationController::class, 'create'])->name('admin.notifications.create');
     Route::post('/notifications', [NotificationController::class, 'store'])->name('admin.notifications.store');
     Route::get('/notifications/{notification}', [NotificationController::class, 'show'])->name('admin.notifications.show');
@@ -94,7 +94,11 @@ Route::prefix('seller')->middleware('role:seller')->group(function () {
     Route::resource('products', ProductController::class, ['names' => 'seller.products']);
     Route::get('/seller/products/{id}/edit', [ProductController::class, 'edit'])->name('seller.products.edit');
     Route::put('/seller/products/{id}', [ProductController::class, 'update'])->name('seller.products.update');
-    Route::get('/seller/products', [ProductController::class, 'createMultiple'])->name('seller.products.CreateMulti_product');
+    // Route để hiển thị form
+    Route::get('/seller/products/import/form', [ProductController::class, 'showImportForm'])->name('seller.products.import.form');
+
+    // Route xử lý import dữ liệu
+    Route::post('/seller/products/import', [ProductController::class, 'import'])->name('seller.products.import');
 
     //route vouchers
     Route::get('/vouchers', [VoucherController::class, 'index'])->name('vouchers.index');
@@ -107,10 +111,8 @@ Route::prefix('seller')->middleware('role:seller')->group(function () {
 
     Route::get('/orders/{id}', [SellerController::class, 'show'])->name('seller.orders.show');
     Route::get('/orders', function () {
-    return view('seller.orders.index');
+        return view('seller.orders.index');
     })->name('seller.orders.index');
-
-
 });
 
 Route::get('/products', [ProductController::class, 'listProducts'])->name('products.list');
@@ -150,10 +152,4 @@ Route::middleware('auth')->group(function () {
     Route::patch('/buyer/orders/{id}/cancel', [BuyerController::class, 'cancelOrder'])->name('buyer.orders.cancel');
     Route::post('/buyer/orders/{id}/confirm', [BuyerController::class, 'confirmOrder'])->name('buyer.orders.confirm');
     Route::post('buyer/orders/{id}/return', [BuyerController::class, 'returnOrder'])->name('buyer.orders.return');
-
-
-
-
 });
-
-
