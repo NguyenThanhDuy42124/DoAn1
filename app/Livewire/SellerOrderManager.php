@@ -24,9 +24,9 @@ class SellerOrderManager extends Component
     {
         $order = Order::where('seller_id', Auth::id())->findOrFail($orderId);
 
-        if ($newStatus === 'Shipped' && $order->status === 'Pending') {
-            $order->status = 'Shipped';
-        } elseif ($newStatus === 'Delivered' && $order->status === 'Shipped') {
+        if ($newStatus === 'Shipping' && $order->status === 'Pending') {
+            $order->status = 'Shipping';
+        } elseif ($newStatus === 'Delivered' && $order->status === 'Shipping') {
             $order->status = 'Delivered';
         } else {
             session()->flash('error', 'Không thể cập nhật trạng thái. Vui lòng kiểm tra trạng thái hiện tại.');
@@ -49,7 +49,7 @@ class SellerOrderManager extends Component
         $orders = Order::where('seller_id', Auth::id())->whereIn('id', $this->selectedOrders)->get();
         foreach ($orders as $order) {
             if ($order->status === 'Pending') {
-                $order->status = 'Shipped';
+                $order->status = 'Shipping';
                 $order->save();
             }
         }
@@ -78,7 +78,7 @@ class SellerOrderManager extends Component
         $seller = Auth::user();
 
         $pendingCount = Order::where('seller_id', $seller->id)->where('status', 'Pending')->count();
-        $shippedCount = Order::where('seller_id', $seller->id)->where('status', 'Shipped')->count();
+        $shippingCount = Order::where('seller_id', $seller->id)->where('status', 'Shipping')->count();
         $deliveredCount = Order::where('seller_id', $seller->id)->where('status', 'Delivered')->count();
         $completedCount = Order::where('seller_id', $seller->id)->where('status', 'Completed')->count();
 
@@ -91,7 +91,7 @@ class SellerOrderManager extends Component
         return view('seller.orders.seller-order-manager', [
             'orders' => $orders,
             'pendingCount' => $pendingCount,
-            'shippedCount' => $shippedCount,
+            'shippingCount' => $shippingCount,
             'deliveredCount' => $deliveredCount,
             'completedCount' => $completedCount,
             'status' => $this->status,

@@ -25,7 +25,7 @@
             <a class="nav-link {{ $status === 'Pending' ? 'active' : '' }}" wire:navigate href="{{ route('seller.orders.index', ['status' => 'Pending']) }}">Pending ({{ $pendingCount }})</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link {{ $status === 'Shipped' ? 'active' : '' }}" wire:navigate href="{{ route('seller.orders.index', ['status' => 'Shipped']) }}">Shipped ({{ $shippedCount }})</a>
+            <a class="nav-link {{ $status === 'Shipping' ? 'active' : '' }}" wire:navigate href="{{ route('seller.orders.index', ['status' => 'Shipping']) }}">Shipping ({{ $shippingCount }})</a>
         </li>
         <li class="nav-item">
             <a class="nav-link {{ $status === 'Delivered' ? 'active' : '' }}" wire:navigate href="{{ route('seller.orders.index', ['status' => 'Delivered']) }}">Delivered ({{ $deliveredCount }})</a>
@@ -76,8 +76,8 @@
                             <td>
                                 <a href="{{ route('seller.orders.show', $order->id) }}" class="btn btn-info btn-sm">Xem chi tiết</a>
                                 @if ($order->status === 'Pending')
-                                    <button type="button" wire:click="updateStatus({{ $order->id }}, 'Shipped')" class="btn btn-primary btn-sm ml-2">Xác nhận</button>
-                                @elseif ($order->status === 'Shipped')
+                                    <button type="button" wire:click="updateStatus({{ $order->id }}, 'Shipping')" class="btn btn-primary btn-sm ml-2">Xác nhận</button>
+                                @elseif ($order->status === 'Shipping')
                                     <button type="button" wire:click="updateStatus({{ $order->id }}, 'Delivered')" class="btn btn-success btn-sm ml-2">Giao hàng</button>
                                 @endif
                             </td>

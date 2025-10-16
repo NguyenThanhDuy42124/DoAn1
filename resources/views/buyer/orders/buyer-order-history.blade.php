@@ -25,7 +25,7 @@
             <a class="nav-link {{ $status === 'Pending' ? 'active' : '' }}" wire:navigate href="{{ route('buyer.orders.index', ['status' => 'Pending']) }}">Chờ xác nhận ({{ $pendingCount }})</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link {{ $status === 'Shipped' ? 'active' : '' }}" wire:navigate href="{{ route('buyer.orders.index', ['status' => 'Shipped']) }}">Đang giao ({{ $shippedCount }})</a>
+            <a class="nav-link {{ $status === 'Shipping' ? 'active' : '' }}" wire:navigate href="{{ route('buyer.orders.index', ['status' => 'Shipping']) }}">Đang giao ({{ $shippingCount }})</a>
         </li>
         <li class="nav-item">
             <a class="nav-link {{ $status === 'Delivered' ? 'active' : '' }}" wire:navigate href="{{ route('buyer.orders.index', ['status' => 'Delivered']) }}">Đã giao ({{ $deliveredCount }})</a>

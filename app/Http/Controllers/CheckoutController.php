@@ -164,7 +164,7 @@ class CheckoutController extends Controller
                     }
                     else
                     {
-                        $order->status = 'Confirmed';
+                        $order->status = 'Pending';
                         $order->save();
                     }
                 }
