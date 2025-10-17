@@ -154,6 +154,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/buyer/orders/{id}/cancel', [BuyerController::class, 'cancelOrder'])->name('buyer.orders.cancel');
     Route::post('/buyer/orders/{id}/confirm', [BuyerController::class, 'confirmOrder'])->name('buyer.orders.confirm');
     Route::post('buyer/orders/{id}/return', [BuyerController::class, 'returnOrder'])->name('buyer.orders.return');
+    Route::post('/orders/{order}/repurchase', [App\Http\Controllers\OrderController::class, 'repurchase'])->name('orders.repurchase');
 
      Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');

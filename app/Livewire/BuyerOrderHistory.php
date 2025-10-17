@@ -76,16 +76,20 @@ class BuyerOrderHistory extends Component
         // Counts riêng (tất cả orders của buyer, không filtered)
         $pendingCount = Order::where('user_id', $buyer->id)->where('status', 'Pending')->count();
         $shippingCount = Order::where('user_id', $buyer->id)->where('status', 'Shipping')->count();
-        $deliveredCount = Order::where('user_id', $buyer->id)->where('status', 'Delivered')->count();
+        $deliveredCount = Order::where('user_id', $buyer->id)->whereIn('status', ['Delivered', 'Completed'])->count();
         $cancelledCount = Order::where('user_id', $buyer->id)->where('status', 'Cancelled')->count();
         $returnedCount = Order::where('user_id', $buyer->id)->where('status', 'Returned')->count();
+        
+        $query = Order::where('user_id', $buyer->id)->with('items.product');
 
-        // Orders paginated, with items
-        $orders = Order::where('user_id', $buyer->id)
-            ->with('items.product')
-            ->where('status', $this->status)
-            ->latest()  // Mới nhất top, đổi ASC nếu cần
-            ->paginate(10);
+        if($this->status === 'Delivered')
+        {
+            $query->whereIn('status', ['Delivered', 'Completed']);
+        }else
+        {
+            $query->where('status', $this->status);
+        }
+        $orders = $query->latest()->paginate(10);
 
         return view('buyer.orders.buyer-order-history', [
             'orders' => $orders,

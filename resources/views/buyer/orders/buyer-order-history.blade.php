@@ -71,9 +71,22 @@
                                     <td rowspan="{{ count($order->items) }}">
                                         @if ($order->status === 'Pending')
                                             <button type="button" wire:click.prevent="cancelOrder({{ $order->id }})" onclick="if(!confirm('Bạn có chắc muốn hủy đơn hàng?')) return false;" class="btn btn-danger btn-sm">Hủy đơn</button>
-                                        @elseif ($order->status === 'Delivered')
+                                        @elseif ($order->status === 'Delivered' || $order->status === 'Completed')
+                                            @if($order->status === 'Delivered')
                                             <button type="button" wire:click.prevent="confirmOrder({{ $order->id }})" onclick="if(!confirm('Xác nhận đã nhận hàng?')) return false;" class="btn btn-success btn-sm">Đã nhận</button>
                                             <button type="button" wire:click.prevent="returnOrder({{ $order->id }})" onclick="if(!confirm('Yêu cầu trả hàng?')) return false;" class="btn btn-warning btn-sm mt-1">Trả hàng</button>
+                                            @elseif($order->status === 'Completed')
+                                            <a href="#" class="btn btn-info btn-sm">Đánh giá</a>
+                                            <form action="{{ route('orders.repurchase', $order->id) }}" method="POST">
+                                                @csrf
+                                                <button type="submit" class="btn btn-warning btn-sm">Mua lại</button>
+                                            </form>
+                                            @endif
+                                        @elseif ($order->status == 'Cancelled')
+                                            <form action="{{ route('orders.repurchase', $order->id) }}" method="POST">
+                                                @csrf
+                                                <button type="submit" class="btn btn-warning btn-sm">Mua lại</button>
+                                            </form>
                                         @endif
                                     </td>
                                 @endif
