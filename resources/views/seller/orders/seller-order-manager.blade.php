@@ -1,5 +1,5 @@
 <div class="container mt-4">
-    <h3>Quản lý đơn hàng</h3>
+    
     
     <!-- Flash messages -->
     @if(session()->has('success'))
@@ -20,7 +20,7 @@
     @endif
 
     <!-- Tabs -->
-    <ul class="nav nav-tabs" id="orderTabs" role="tablist">
+    <ul class="nav nav-tabs mt-4" id="orderTabs" role="tablist">
         <li class="nav-item">
             <a class="nav-link {{ $status === 'Pending' ? 'active' : '' }}" wire:navigate href="{{ route('seller.orders.index', ['status' => 'Pending']) }}">Pending ({{ $pendingCount }})</a>
         </li>
@@ -96,7 +96,3 @@
     </div>
 </div>
 
-<!-- Bootstrap JS (giữ để alert dismiss work, nhưng Livewire handle main) -->
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"></script>
