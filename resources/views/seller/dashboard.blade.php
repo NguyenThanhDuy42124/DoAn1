@@ -31,17 +31,26 @@
 
         <!-- Dashboard Card -->
         <div class="dashboard-card">
-            <div class="dashboard-header">
-                <div class="d-flex align-items-center">
-                    <img src="https://ui-avatars.com/api/?name=Nguyễn+Văn+B&background=ff6600&color=fff&size=120"
-                        alt="Avatar" class="seller-avatar mr-4">
-                    <div>
-                        <h2 class="mb-1">{{ Auth::user()->name }}</h2>
-                        <p class="mb-0">Nhà bán hàng từ: {{ Auth::user()->created_at->format('d/m/Y') }}</p>
-                        <p class="mb-0">Đánh giá: {{ Auth::user()->rating }} ({{ Auth::user()->reviews_count }} đánh giá)</p>
-                    </div>
-                </div>
-            </div>
+           <div class="dashboard-header">
+    <div class="d-flex align-items-center">
+        @if(Auth::user()->img == "")
+            <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=ff6600&color=fff&size=120" 
+                 alt="Avatar" 
+                 class="seller-avatar mr-4"
+                 style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover;">
+        @else
+            <img src="{{ asset('storage/' . Auth::user()->img) }}" 
+                 alt="Profile Image" 
+                 class="seller-avatar mr-4"
+                 style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover;">
+        @endif
+        <div>
+            <h2 class="mb-1">{{ Auth::user()->name }}</h2>
+            <p class="mb-0">Nhà bán hàng từ: {{ Auth::user()->created_at->format('d/m/Y') }}</p>
+            <p class="mb-0">Đánh giá: {{ Auth::user()->rating }} ({{ Auth::user()->reviews_count }} đánh giá)</p>
+        </div>
+    </div>
+</div>
 
             <div class="dashboard-body">
                 <div class="row">

@@ -116,12 +116,12 @@
         @forelse ($shops as $shop)
             <div class="col-6 col-md-3 text-center">
                 <div class="p-4 bg-light rounded shadow-sm">
-                    <img src="{{ !empty($shop->user) && !empty($shop->user->img)
-    ? asset('storage/' . $shop->user->img)
-    : asset('storage/profile_images/default.jpg') }}"
-    alt="{{ $shop->name }}"
-    class="rounded-circle"
-    style="width: 80px; height: 80px; object-fit: cover;">
+                    <img src="{{ !empty($shop->img)
+                        ? asset('storage/' . $shop->img)
+                        : asset('storage/profile_images/default.jpg') }}"
+                        alt="{{ $shop->name }}"
+                        class="rounded-circle"
+                        style="width: 80px; height: 80px; object-fit: cover;">
 
                     <h6 class="mt-3">{{ $shop->name }}</h6>
                     <p class="text-muted small">Đánh giá: {{ $shop->rating ?? 'Chưa có' }}</p>
