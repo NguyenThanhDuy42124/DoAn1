@@ -146,7 +146,11 @@
 
             <!-- Main Content -->
             <div class="container-fluid">
-             @yield('content')
+             @if (isset($slot))
+        {{ $slot }}
+        @else
+            @yield('content')
+        @endif
             </div>
         </div>
     </div>

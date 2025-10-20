@@ -1,4 +1,4 @@
-@extends('layouts.AdminDashboard')
+@extends('layouts.AdminDashBoard')
 @section('content')
  <!-- Stats Row -->
                 <div class="row mb-4">

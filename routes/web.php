@@ -68,7 +68,7 @@ Route::prefix('admin')->middleware('role:admin')->group(function () {
     Route::get('/usersManager', [AdminController::class, 'userDashboard'])->name('admin.users.manager');
 
     // khai báo tài nguyên CRUD cho UserController
-    Route::resource('users', AdminController::class, ['name' => 'admin']);
+    Route::resource('users', AdminController::class);
     Route::get('/products', [ProductController::class, 'index'])->name('admin.products.index');
     Route::resource('products', ProductController::class, ['name' => 'admin.products']);
     Route::get('/categories', [CategoryController::class, 'index'])->name('admin.categories.index');

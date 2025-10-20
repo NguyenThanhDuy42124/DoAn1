@@ -23,7 +23,6 @@ class SellerOrderManager extends Component
     public function updateStatus($orderId, $newStatus)
     {
         $order = Order::where('seller_id', Auth::id())->findOrFail($orderId);
-          $oldStatus = $order->status;
         if ($newStatus === 'Shipping' && $order->status === 'Pending') {
             $order->status = 'Shipping';
         } elseif ($newStatus === 'Delivered' && $order->status === 'Shipping') {
