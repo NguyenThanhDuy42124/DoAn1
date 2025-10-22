@@ -19,6 +19,18 @@ class Product extends Model
         'description',
         'status',
     ];
+
+    const STATUS_PENDING = 'Pending';
+    const STATUS_APPROVED = 'Approved';
+    const STATUS_HIDDEN = 'Hidden';
+    const STATUS_REJECTED = 'Rejected';
+    const STATUS_DELETED = 'Deleted';
+
+    public function scopePending($query)
+    {
+        return $query->where('status', self::STATUS_PENDING);
+    }
+
     public function seller()
     {
         return $this->belongsTo(User::class, 'seller_id');

@@ -69,8 +69,15 @@ Route::prefix('admin')->middleware('role:admin')->group(function () {
 
     // khai báo tài nguyên CRUD cho UserController
     Route::resource('users', AdminController::class);
-    Route::get('/products', [ProductController::class, 'index'])->name('admin.products.index');
-    Route::resource('products', ProductController::class, ['name' => 'admin.products']);
+    // 1. ĐẶT TRƯỚC resource
+    Route::get('/products', function () {
+        return view('admin.products.index');
+    })->name('admin.products.index');
+
+    // 2. Resource chỉ dùng cho CRUD chi tiết (create, edit, …)
+    Route::resource('products', ProductController::class, ['names' => 'admin.products'])
+         ->except(['index']);   // <-- loại bỏ GET /admin/products
+
     Route::get('/categories', [CategoryController::class, 'index'])->name('admin.categories.index');
     Route::resource('categories', CategoryController::class, ['names' => 'admin.categories']);
 

@@ -34,9 +34,15 @@
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('admin.categories.index') }}">
+                    <a href="{{ route('admin.products.index') }}">
                         <i class="fas fa-box"></i>
                         Quản lý sản phẩm
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.categories.index') }}">
+                        <i class="fas fa-box"></i>
+                        Quản lý danh mục
                     </a>
                 </li>
                 <li>

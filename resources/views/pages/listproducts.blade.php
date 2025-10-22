@@ -48,6 +48,7 @@
 <div class="container">
   <div class="row g-4">
     @foreach($products as $product)
+    @if($product->status === "Approved")
       <div class="col-md-4">
         <div class="card product-card">
           <span class="badge-discount">- X%</span>
@@ -100,6 +101,7 @@
           </div>
         </div>
       </div>
+      @endif
     @endforeach
   </div>
 </div>
