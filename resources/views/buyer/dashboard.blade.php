@@ -313,6 +313,14 @@
             </div>
         </div>
     </div>
+    <button
+    type="button"
+    id="chat-bubble"
+    class="btn btn-primary shadow rounded-circle"
+    onclick="window.location.href='{{ route('chatify') }}'">
+    <i class="bi bi-chat-dots-fill"></i>
+    </button>
+    
     @endsection
 
 
