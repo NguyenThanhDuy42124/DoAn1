@@ -58,4 +58,9 @@ class CategoryController extends Controller
         return redirect()->route('admin.categories.index')
               ->with('success', 'Category deleted successfully.');
     }
+     public function getCategories()
+    {
+        $categories = ModelsCategory::select('name', 'description')->get();
+        return $categories;
+    }
 }

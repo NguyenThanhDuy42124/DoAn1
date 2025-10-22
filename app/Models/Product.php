@@ -1,11 +1,12 @@
 <?php
 
 namespace App\Models;
-use Illuminate\Database\Eloquent\Factories\HasFactory;  
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
-{   
+{
     use HasFactory;
 
     protected $fillable = [
@@ -18,6 +19,18 @@ class Product extends Model
         'description',
         'status',
     ];
+
+    const STATUS_PENDING = 'Pending';
+    const STATUS_APPROVED = 'Approved';
+    const STATUS_HIDDEN = 'Hidden';
+    const STATUS_REJECTED = 'Rejected';
+    const STATUS_DELETED = 'Deleted';
+
+    public function scopePending($query)
+    {
+        return $query->where('status', self::STATUS_PENDING);
+    }
+
     public function seller()
     {
         return $this->belongsTo(User::class, 'seller_id');
@@ -29,5 +42,9 @@ class Product extends Model
     public function reviews()
     {
         return $this->hasMany(Review::class);
+    }
+    public function images()
+    {
+        return $this->hasMany(ProductImage::class);
     }
 }

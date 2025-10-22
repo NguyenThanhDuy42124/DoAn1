@@ -5,20 +5,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
-        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
     @vite(['resources/css/dashboard_user.css', 'resources/js/app.js'])
-    <title>Dashboard Buyer </title>
+
 </head>
 
 <body>
     @extends('layouts.app')
+    @section('title', 'Dashboard Buyer')
     @section('content')
     <div class="container profile-container">
         <!-- Header -->
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <div class="store-logo">USER Ở ĐÂY NÈ</div>
+            <div class="store-logo">USER</div>
             <div class="d-flex align-items-center justify-content-between" style="width: 250px;">
                 <a href="/" class="btn btn-outline-primary mr-2"><i class="fas fa-home"></i> Trang chủ</a>
                 <div>
@@ -35,8 +34,11 @@
         <div class="profile-card">
             <div class="profile-header">
                 <div class="d-flex align-items-center">
-                    <img src="https://ui-avatars.com/api/?name=Nguyễn+Văn+A&background=ff6600&color=fff&size=120"
-                        alt="Avatar" class="profile-avatar mr-4">
+                @if(Auth::user()->img == "")
+                    <img src="{{ asset('storage/profile_images/default.jpg') }}" alt="none default Image" class="profile-avatar mr-4">
+                @else
+                    <img src="{{ asset('storage/' . Auth::user()->img) }}" alt="Profile Image" class="profile-avatar mr-4">
+                @endif
                     <div>
                         <h2 class="mb-1">{{ Auth::user()->name }}</h2>
                         <p class="mb-0">Thành viên từ: {{ Auth::user()->created_at->format('d/m/Y') }}</p>
@@ -110,7 +112,7 @@
                                     <div class="info-label">Giới tính:</div>
                                     <div class="info-value">{{ Auth::user()->gender }}</div>
                                 </div>
-                                @if(Auth::user()->role == 'buyer' && auth()->user()->address != null)
+                                @if(Auth::user()->role !== 'admin' && auth()->user()->address != null)
                                     <div class="info-item">
                                     <div class="info-label">Địa chỉ:</div>
                                     <div class="info-value">{{ Auth::user()->address }}</div>
@@ -132,9 +134,12 @@
                                     @endif
 
                                 </div>
-                                <div><button class="btn btn-primary mt-3"><i class="fas fa-edit mr-2"></i> Chỉnh sửa
-                                        thông
-                                        tin</button>
+                                <div>
+                                    @if(Auth::user()->role == 'admin')
+                                    <a href="{{ route('users.edit', Auth::user()->id) }}" class="btn btn-primary">Chỉnh sửa thông tin</a>
+                                    @elseif(Auth::user()->role == 'buyer' || Auth::user()->role == 'seller')
+                                    <a href="{{ route('general.users.edit', ['id' => Auth::user()->id, 'absolute' => true]) }}" class="btn btn-primary">Chỉnh sửa thông tin</a>
+                                    @endif
                                 </div>
 
 
@@ -189,7 +194,7 @@
                                 </div>
                             -->
                                 <div class="text-center mt-4">
-                                    <button class="btn btn-outline-primary">Xem tất cả đơn hàng</button>
+                                    <a href="{{ route('buyer.orders.index') }}" class="btn btn-outline-primary">Xem tất cả đơn hàng</a>
                                 </div>
                             </div>
 
@@ -308,18 +313,18 @@
             </div>
         </div>
     </div>
+    <button
+    type="button"
+    id="chat-bubble"
+    class="btn btn-primary shadow rounded-circle"
+    onclick="window.location.href='{{ route('chatify') }}'">
+    <i class="bi bi-chat-dots-fill"></i>
+    </button>
+    
     @endsection
 
 
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"
-        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"
-        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
-    </script>
+
 </body>
 
 </html>

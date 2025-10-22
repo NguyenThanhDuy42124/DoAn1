@@ -4,10 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>Thanh toán thành công</title>
 </head>
 <body>
-    <h1>Success</h1>
+    @extends('layouts.app')
+    
+    @section('content')
+    <h1>Thanh toán thành công!</h1>
     <p>{{ $customer->name}}</p>
+    <a href="{{ route('products.list') }}" class="btn btn-primary">Tiếp tục mua hàng</a>
+    @endsection
 </body>
 </html>

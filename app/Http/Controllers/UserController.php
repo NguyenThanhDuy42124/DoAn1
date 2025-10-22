@@ -19,8 +19,11 @@ class UserController extends Controller
             "phoneNumber" => "nullable|string|max:15",
             "dateOfBirth" => "nullable|date",
             "gender" => "nullable|string|in:male,female,other",
+            "address" => "nullable|string|max:255",
         ]);
+        $incomingData['img'] = null; // default null for profile image
         $incomingData["password"] = bcrypt($incomingData["password"]);
+        $incomingData["status"] = "active";
         $user = User::create($incomingData);
         Auth::login($user);
         return redirect('/dashboard');
@@ -47,7 +50,7 @@ class UserController extends Controller
         }
 
         return back()->withErrors([
-            'login' => 'Tên hoặc mật khẩu không đúng.',
+            'login' => 'email hoặc mật khẩu không đúng.',
         ])->onlyInput('email');
     }
     // hàm này để load trang dashboard của seller và admin

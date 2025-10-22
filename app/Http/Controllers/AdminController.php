@@ -69,7 +69,7 @@ class AdminController extends Controller
     {
         $user = User::findOrFail($id);
 
-    $data = $request->only(['name', 'email', 'password', 'role','phoneNumber', 'dateOfBirth','gender']);
+    $data = $request->only(['name', 'email', 'password', 'role','phoneNumber', 'dateOfBirth','gender','address','status']);
 
     // Nếu password không nhập lại thì bỏ qua
     if (empty($data['password'])) {
@@ -80,7 +80,7 @@ class AdminController extends Controller
 
     $user->update($data);
 
-    return redirect()->route('admin.dashboard')->with('message', 'Cập nhật thành công');
+    return redirect()->route('admin.users.manager')->with('message', 'Cập nhật thành công');
     }
 
     // hàm này để load trang tạo user
@@ -99,6 +99,6 @@ class AdminController extends Controller
         ]);
         $incomingData["password"] = bcrypt($incomingData["password"]);
         User::create($incomingData);
-        return redirect()->route('admin.dashboard')->with('message', $message);
+        return redirect()->route('admin.users.manager')->with('message', $message);
     }
 }

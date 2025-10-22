@@ -1,18 +1,6 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
-        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    @vite(['resources/css/products.css', 'resources/js/app.js'])
-    <title>Chỉnh sửa sản phẩm</title>
-   </head>
-<body>
-   <div class="container">
+@extends('layouts.SellerDashBoard')
+@section('content')
+ <div class="container">
         <div class="page-header">
             <div class="d-flex justify-content-between align-items-center">
                 <h2 class="page-title"><i class="fas fa-edit mr-2"></i>Chỉnh sửa Sản Phẩm</h2>
@@ -23,40 +11,40 @@
         </div>
 
         @if ($errors->any())
-          <div class="alert alert-danger">
+        <div class="alert alert-danger">
             <ul class="mb-0">
                 @foreach ($errors->all() as $e)
-                    <li>{{ $e }}</li>
+                <li>{{ $e }}</li>
                 @endforeach
             </ul>
-          </div>
+        </div>
         @endif
 
         <div class="form-container">
             <form action="{{ route('seller.products.update', $product->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
-                
+
                 <div class="form-group">
                     <label for="category_id">Danh mục</label>
                     @if(isset($categories) && count($categories) > 0)
-                        <select name="category_id" id="category_id" class="form-control" required>
-                            <option value="">-- Chọn danh mục --</option>
-                            @foreach($categories as $category)
-                                <option value="{{ $category->id }}" {{ old('category_id', $product->category_id) == $category->id ? 'selected' : '' }}>
-                                    {{ $category->name }}
-                                </option>
-                            @endforeach
-                        </select>
+                    <select name="category_id" id="category_id" class="form-control" required>
+                        <option value="">-- Chọn danh mục --</option>
+                        @foreach($categories as $category)
+                        <option value="{{ $category->id }}" {{ old('category_id', $product->category_id) == $category->id ? 'selected' : '' }}>
+                            {{ $category->name }}
+                        </option>
+                        @endforeach
+                    </select>
                     @else
-                        <div class="alert alert-warning">
-                            <i class="fas fa-exclamation-triangle mr-2"></i>Không có danh mục nào khả dụng.
-                        </div>
-                        <input type="hidden" name="category_id" value="{{ $product->category_id }}">
-                        <p class="text-muted">Danh mục hiện tại: {{ $product->category->name ?? 'Không xác định' }}</p>
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>Không có danh mục nào khả dụng.
+                    </div>
+                    <input type="hidden" name="category_id" value="{{ $product->category_id }}">
+                    <p class="text-muted">Danh mục hiện tại: {{ $product->category->name ?? 'Không xác định' }}</p>
                     @endif
                 </div>
-                
+
                 <div class="form-group">
                     <label for="name">Tên sản phẩm</label>
                     <input type="text" name="name" id="name" class="form-control" value="{{ old('name', $product->name) }}" required>
@@ -101,14 +89,26 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="image">Ảnh sản phẩm</label>
-                    <input type="file" name="image" id="image" class="form-control-file">
-                    @if($product->image)
-                        <div class="mt-3">
-                            <p>Ảnh hiện tại:</p>
-                            <img src="{{ asset('storage/'.$product->image) }}" alt="{{ $product->name }}" class="image-preview">
+                    <label for="images">Thêm ảnh mới</label>
+                    <input type="file" name="images[]" id="images" class="form-control-file" multiple>
+                </div>
+                <div class="form-group">
+                    <label>Ảnh sản phẩm hiện tại</label>
+                    <div class="row">
+                        @foreach($product->images as $image)
+                        <div class="col-md-3 mb-3">
+                            <div class="image-preview-container">
+                                <img src="{{ asset('storage/' . $image->image_path) }}" class="img-fluid" alt="Product Image">
+                                <div class="form-check mt-2">
+                                    <input class="form-check-input" type="checkbox" name="deleted_images[]" value="{{ $image->id }}" id="deleteImage-{{ $image->id }}">
+                                    <label class="form-check-label" for="deleteImage-{{ $image->id }}">
+                                        Xóa ảnh này
+                                    </label>
+                                </div>
+                            </div>
                         </div>
-                    @endif
+                        @endforeach
+                    </div>
                 </div>
 
                 <div class="d-flex justify-content-end mt-4">
@@ -120,9 +120,4 @@
             </form>
         </div>
     </div>
-
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-</body>
-</html>
+@endsection

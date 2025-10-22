@@ -1,58 +1,21 @@
 <!DOCTYPE html>
-<html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
-    <title>My Cart</title>
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    @vite(['resources/css/usermanager.css', 'resources/js/app.js'])
+    <title>Quản lý giỏ hàng - TechStore</title>
+    @livewireStyles
 </head>
 <body>
-    <div class="container">
-        <h1>My Cart</h1>
-        @if (session('success'))
-            <div class="alert alert-success">{{ session('success') }}</div>
-        @endif
-        @if (session('error'))
-            <div class="alert alert-danger">{{ session('error') }}</div>
-        @endif
-        @if ($cartItems->isEmpty())
-            <p>Your cart is empty.</p>
-        @else
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Product</th>
-                        <th>Price</th>
-                        <th>Quantity</th>
-                        <th>Total</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($cartItems as $item)
-                        <tr>
-                            <td>{{ $item->product->name }}</td>
-                            <td>{{ number_format($item->price, 0, ',', '.') }}₫</td>
-                            <td>{{ $item->quantity }}</td>
-                            <td>{{ number_format($item->price * $item->quantity, 0, ',', '.') }}₫</td>
-                            <td>
-                                <a href="{{ route('buyer.carts.edit', $item->cart_id) }}" class="btn btn-primary btn-sm">Edit</a>
-                                <form action="{{ route('buyer.cart_items.destroy', $item->id) }}" method="POST" style="display:inline;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm">Delete Item</button>
-                                </form>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        @endif
-        <p>
-            <form action="{{route('buyer.checkouts.checkout')}}" method="POST">
-                @csrf
-                <button>Check out</button>
-            </form>
-        </p>
-        <a href="{{ route('products.list') }}" class="btn btn-primary">Continue Shopping</a>
-    </div>
+    @extends('layouts.app')
+
+    @section('content')
+        @livewire('cart-manager')
+    @endsection
+
+    @livewireScripts
 </body>
 </html>
