@@ -18,20 +18,28 @@ class SellerController extends Controller
     $shops = User::where('role', 'seller')->take(4)->get();
 
     // Lấy top 8 sản phẩm nổi bật (có thể dựa theo lượt mua hoặc rating)
-    $products = Product::with('seller')
-                ->orderByDesc('created_at')
-                ->take(8)
-                ->get();
+    $featured = Product::with('seller')->orderByDesc('created_at')->take(8)->get();
+    $products = Product::with('seller')->orderByDesc('created_at')->paginate(12);
 
-    return view('MainPage', compact('shops', 'products'));
+
+    return view('MainPage', compact('shops', 'products','featured'));
 }
     public function dashboard()
-    {
-        // Lấy sản phẩm của seller hiện tại
-        $products = Product::where('seller_id', Auth::id())->get();
-        
-        return view('seller.dashboard', compact('products'));
-    }
+{
+    // Lấy sản phẩm của seller hiện tại (bạn có thể giữ lại nếu cần dùng)
+    $products = Product::where('seller_id', Auth::id())->get();
+    // Đếm số lượng sản phẩm đang bán (Approved)
+    $approvedProductCount = Product::where('seller_id',Auth::id())
+                                   ->where('status', 'Approved') //
+                                   ->count();
+    // THÊM MỚI: Đếm số lượng sản phẩm đang chờ duyệt
+    $pendingProductCount = Product::where('seller_id', Auth::id())
+                                  ->where('status', 'Pending') //
+                                  ->count();
+    
+    // Trả về view, thêm 'pendingProductCount' vào compact
+    return view('seller.dashboard', compact('products', 'pendingProductCount','approvedProductCount'));
+}
 
     public function orders(Request $request)
 {

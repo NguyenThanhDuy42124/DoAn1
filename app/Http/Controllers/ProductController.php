@@ -74,13 +74,28 @@ class ProductController extends Controller
         return redirect()->route('seller.products.index')
             ->with('success', 'Thêm sản phẩm thành công!');
     }
-    public function index()
+    public function index(Request $request) // <-- Thêm 'Request $request' vào đây
     {
-        // Lấy sản phẩm của người bán hiện tại và tải kèm hình ảnh của chúng.
-        $products = Product::with('images')
-            ->where('seller_id', auth()->id())
-            ->paginate(8);
+        // Bắt đầu query cơ bản: lấy sản phẩm của người bán và tải kèm hình ảnh
+        $query = Product::with('images')
+                      ->where('seller_id', auth()->id());
 
+        // 1. Xử lý tìm kiếm theo tên (search)
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->input('search') . '%');
+        }
+
+        // 2. Xử lý lọc theo trạng thái (status)
+        if ($request->filled('status')) {
+            $query->where('status', $request->input('status'));
+        }
+
+        // Sắp xếp kết quả (mới nhất lên trước) và thực hiện phân trang
+        $products = $query->orderBy('created_at', 'desc')
+                         ->paginate(99) // Bạn có thể đổi số 99 thành số nhỏ hơn (ví dụ: 12 hoặc 24)
+                         ->withQueryString(); // <-- Rất quan trọng!
+
+        // Trả về view với dữ liệu sản phẩm đã lọc
         return view('seller.products.index', compact('products'));
     }
 // Phương thức hiển thị form (Bước 3)
@@ -180,13 +195,61 @@ class ProductController extends Controller
             return redirect()->back()->with('error', 'Lỗi nhập dữ liệu: Đã xảy ra lỗi nghiêm trọng. Vui lòng kiểm tra file Excel và Log hệ thống.');
         }
     }
-    public function listProducts()
-    {
-        // Lấy tất cả sản phẩm và tải kèm hình ảnh, sau đó phân trang.
-        $products = Product::with('images')->paginate(9);
+    public function listProducts(Request $request) // <-- Thêm Request $request
+{
+    // Bắt đầu query: Chỉ lấy sản phẩm "Approved" (vì Blade của bạn đang lọc)
+    $query = Product::with('images')->where('status', 'Approved');
 
-        return view('pages.listproducts', compact('products'));
+    // 1. Lọc theo Khoảng giá (price_range)
+    if ($request->filled('price_range')) {
+        $range = $request->input('price_range');
+        $parts = explode('-', $range); // Tách chuỗi (vd: "5000000-10000000")
+
+        $minPrice = $parts[0];
+        $maxPrice = $parts[1] ?? null; // Phần tử thứ 2 có thể rỗng (vd: "20000000-")
+
+        if ($minPrice > 0) {
+            $query->where('price', '>=', $minPrice);
+        }
+        if ($maxPrice !== null && $maxPrice > 0) {
+            $query->where('price', '<=', $maxPrice);
+        }
     }
+
+    // 2. Lọc theo Thương hiệu (brand)
+    if ($request->filled('brand')) {
+        $query->where('brand', $request->input('brand'));
+    }
+
+    // 3. Lọc theo "Đang giảm giá" (discount)
+    // (Giả định: sản phẩm giảm giá khi có 'sale_price' và < 'price')
+    if ($request->filled('discount')) {
+        $query->whereNotNull('sale_price')
+              ->whereColumn('sale_price', '<', 'price');
+        // Ghi chú: Nếu logic của bạn khác, hãy sửa dòng trên
+    }
+
+    // 4. Lọc theo "Còn hàng" (in_stock)
+    if ($request->filled('in_stock')) {
+        $query->where('stock', '>', 0);
+    }
+
+    // Lấy danh sách thương hiệu ĐỘNG để hiển thị trong filter
+    // (Chỉ lấy từ các sản phẩm đã "Approved")
+    $brands = Product::where('status', 'Approved')
+                    ->select('brand')
+                    ->whereNotNull('brand') // Bỏ qua brand bị null
+                    ->distinct()
+                    ->pluck('brand');
+
+    // Thực thi query, sắp xếp mới nhất, phân trang và GIỮ LẠI BỘ LỌC
+    $products = $query->latest() // Sắp xếp mới nhất lên đầu
+                     ->paginate(9) // Phân 9 sản phẩm/trang
+                     ->withQueryString(); // <-- RẤT QUAN TRỌNG
+
+    // Trả về view với cả $products và $brands
+    return view('pages.listproducts', compact('products', 'brands'));
+}
     public function destroy($id)
     {
         // Tìm sản phẩm theo id

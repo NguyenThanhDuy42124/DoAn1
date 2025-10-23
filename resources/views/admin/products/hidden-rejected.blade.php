@@ -2,11 +2,11 @@
     {{-- Tabs --}}
     <div class="flex border-b mb-4 text-sm font-medium">
         <button wire:click="switchTab('hidden')"
-                class="px-4 py-2 border-b-2 {{ $tab === 'hidden' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-600' }}">
+                class="btn-primary rounded px-4 py-2 border-b-2 {{ $tab === 'hidden' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-600' }}">
             Ẩn
         </button>
         <button wire:click="switchTab('rejected')"
-                class="px-4 py-2 border-b-2 {{ $tab === 'rejected' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-600' }}">
+                class="btn-danger rounded px-4 py-2 border-b-2 {{ $tab === 'rejected' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-600' }}">
             Từ chối
         </button>
     </div>

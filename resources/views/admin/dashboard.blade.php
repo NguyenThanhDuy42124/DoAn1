@@ -1,5 +1,6 @@
 @extends('layouts.AdminDashBoard')
 @section('content')
+<div class="container">
  <!-- Stats Row -->
                 <div class="row mb-4">
                     <div class="col-md-3">
@@ -10,23 +11,23 @@
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="stats-card" style="background: linear-gradient(to right, var(--success), #1e7e34);">
-                            <i class="fas fa-shopping-cart"></i>
-                            <div class="stats-value">10</div>
-                            <div class="stats-label">Đơn hàng</div>
-                        </div>
+                      <div class="stats-card" style="background: linear-gradient(to right, var(--success), #1e7e34);">
+                       <i class="fas fa-shopping-cart"></i>
+                           <div class="stats-value">{{ $totalOrders }}</div>
+                           <div class="stats-label">Đơn hàng</div>
+                      </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="stats-card" style="background: linear-gradient(to right, var(--info), #138496);">
-                            <i class="fas fa-box"></i>
-                            <div class="stats-value">50</div>
-                            <div class="stats-label">Sản phẩm</div>
-                        </div>
-                    </div>
+    <div class="stats-card" style="background: linear-gradient(to right, var(--info), #138496);">
+        <i class="fas fa-box"></i>
+        <div class="stats-value">{{ $totalProducts }}</div>
+        <div class="stats-label">Sản phẩm</div>
+    </div>
+</div>
                     <div class="col-md-3">
                         <div class="stats-card" style="background: linear-gradient(to right, var(--warning), #d39e00);">
                             <i class="fas fa-money-bill-wave"></i>
-                            <div class="stats-value">10.3 triệu</div>
+                            <div class="stats-value">...</div>
                             <div class="stats-label">Doanh thu</div>
                         </div>
                     </div>
@@ -182,4 +183,5 @@
                         </div>
                     </div>
                 </div>
-@endsection
+</div>
+                @endsection
