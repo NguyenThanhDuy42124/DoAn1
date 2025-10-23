@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Order;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -25,10 +27,12 @@ class AdminController extends Controller
         }
 
         $users = $query->paginate(10)->appends($request->query());
-
-
+        // --- THÊM LOGIC ĐẾM ĐƠN HÀNG ---
+    $totalOrders = Order::count(); //
+    $totalProducts = Product::count();
         // Trả view dashboard, luôn truyền $users
-        return view('admin.dashboard', compact('users', 'role'));
+        return view('admin.dashboard', compact('users', 'role', 'totalOrders', 
+        'totalProducts'));
     }
     public function userDashboard(Request $request){
         $role = session('current_role', Auth::user()->role);

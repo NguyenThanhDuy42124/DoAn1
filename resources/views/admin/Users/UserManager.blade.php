@@ -1,8 +1,6 @@
 @extends('layouts.AdminDashBoard')
 @section('content')
-   <div class="row justify-content-center">
-                    <div class="col-12">
-                        <div class="dashboard-card">
+                        <div class="container">
                             <div class="card-header d-flex justify-content-between align-items-center">
                                 <span>Quản lý người dùng</span>
                                 <div>
@@ -93,6 +91,5 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                   
 @endsection

@@ -49,11 +49,12 @@
             </div>
 
             <div style="margin-top: 15px;">
-                <button wire:click="export">
-                    Export Excel
+                <button wire:click="export" class="btn btn-primary btn-sm me-2">
+                   Export Excel
                 </button>
-                <button wire:click="$set('search', '')">
-                    Xóa bộ lọc
+
+                <button wire:click="$set('search', '')" class="btn btn-danger btn-sm">
+                   Xóa bộ lọc
                 </button>
             </div>
         </fieldset>
@@ -146,8 +147,18 @@
                                 </span>
                             </td>
                             <td>
-                                <a href="{{ route('admin.products.edit', $product) }}">Sửa</a>
-                                <button wire:click="confirmDelete({{ $product->id }})">Xóa</button>
+                               <div class="d-flex flex-column flex-md-row">
+    
+                                <a href="{{ route('admin.products.edit', $product) }}"
+                                    class="btn btn-primary btn-sm me-2">
+                                          Sửa
+                                </a>
+    
+                               <button wire:click="confirmDelete({{ $product->id }})" 
+                                    class="btn btn-danger btn-sm ">
+                                          Xóa
+                               </button>
+                              </div>
                             </td>
                         </tr>
                     @empty

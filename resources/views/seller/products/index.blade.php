@@ -3,72 +3,122 @@
     @extends('layouts.SellerDashBoard')
     @section('content')
     <div class="container">
-     <div class="page-header mt-4">
-    <div class="d-flex justify-content-between align-items-center">
-        
-        <div class="mb-3 d-flex">
-            <a href="{{ route('seller.products.import.form') }}" class="btn btn-primary mr-2">
+   <div class="page-header mt-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center">
+        <!-- Nhóm nút bên trái -->
+        <div class="mb-3 d-flex flex-wrap">
+            <a href="{{ route('seller.products.import.form') }}" class="btn btn-primary mr-2 mb-2 flex-fill text-nowrap">
                 <i class="fas fa-plus mr-2"></i>Thêm sản phẩm bằng File excel
             </a>
-            <a href="{{ route('seller.products.create') }}" class="btn btn-primary">
+            <a href="{{ route('seller.products.create') }}" class="btn btn-primary mb-2 flex-fill text-nowrap">
                 <i class="fas fa-plus mr-2"></i>Thêm sản phẩm
             </a>
         </div>
-        
-              <div class="mb-3">
-            <a href="{{ route('seller.dashboard') }}" class="btn btn-primary">
+
+        <!-- Nút quay lại bên phải -->
+        <div class="mb-3">
+            <a href="{{ route('seller.dashboard') }}" class="btn btn-primary mb-2 flex-fill text-nowrap">
                 <i class="fas fa-home me-2"></i>Quay lại
             </a>
         </div>
     </div>
 </div>
+ <div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <form action="{{ route('seller.products.index') }}" method="GET">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-5">
+                    <label for="search" class="form-label fw-bold">Tìm theo tên</label>
+                    <input type="text" class="form-control" id="search" name="search"
+                           placeholder="Nhập tên sản phẩm..." value="{{ request('search') }}">
+                </div>
 
-@if($products && count($products) > 0)
-    <div class="row gy-4">
-        @foreach($products as $product)
-            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-                <div class="card h-100 product-card position-relative shadow-sm">
-                    @if($product->status === 'active')
-                        <span class="status-badge status-active">Đang bán</span>
-                    @else
-                        <span class="status-badge status-inactive">Ngừng bán</span>
-                    @endif
+                <div class="col-md-3">
+                    <label for="status" class="form-label fw-bold">Trạng thái</label>
+                    <select class="form-select" id="status" name="status">
+                        <option value="">Tất cả</option>
+                        <option value="Pending" @if(request('status') == 'Pending') selected @endif>Pending</option>
+                        <option value="Approved" @if(request('status') == 'Approved') selected @endif>Approved</option>
+                        <option value="Hidden" @if(request('status') == 'Hidden') selected @endif>Hidden</option>
+                        <option value="Rejected" @if(request('status') == 'Rejected') selected @endif>Rejected</option>
+                        <option value="Deleted" @if(request('status') == 'Deleted') selected @endif>Deleted</option>
+                    </select>
+                </div>
 
-                    <img src="{{ $product->images->isNotEmpty() ? asset('storage/' . $product->images->first()->image_path) : asset('storage/product_images/default.jpg') }}"
-                         alt="{{ $product->name }}"
-                         class="card-img-top product-img">
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-filter me-1"></i> Lọc
+                    </button>
+                </div>
 
-                    <div class="card-body product-body d-flex flex-column justify-content-between">
-                        <div>
-                            <h5 class="card-title product-title">{{ $product->name }}</h5>
-
-                            <div class="product-meta small mb-2">
-                                <div><i class="fas fa-box me-2"></i>Tồn kho: {{ $product->stock }}</div>
-                                <div><i class="fas fa-tag me-2"></i>Thương hiệu: {{ $product->brand ?? 'Chưa có' }}</div>
-                            </div>
-
-                            <div class="product-price fw-bold text-primary mb-3">
-                                {{ number_format($product->price, 0, ',', '.') }}₫
-                            </div>
-                        </div>
-
-                        <div class="mt-auto">
-                            <a href="{{ route('seller.products.edit', $product->id) }}" class="btn btn-primary w-100 mb-2">
-                                <i class="fas fa-edit me-2"></i>Sửa
-                            </a>
-
-                            <form action="{{ route('seller.products.destroy', $product->id) }}" method="POST">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger w-100">
-                                    <i class="fas fa-trash me-2"></i>Xóa
-                                </button>
-                            </form>
-                        </div>
-                    </div>
+                <div class="col-md-2">
+                    <a href="{{ route('seller.products.index') }}" class="btn btn-outline-secondary w-100">
+                        <i class="fas fa-times me-1"></i> Xóa lọc
+                    </a>
                 </div>
             </div>
-        @endforeach
+        </form>
+    </div>
+</div>
+@if($products && count($products) > 0)
+    <div class="row gy-4">
+       @foreach($products as $product)
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+        <div class="card h-100 product-card position-relative shadow-sm">
+
+            {{-- Badge trạng thái --}}
+            @php
+                $status = $product->status;
+                $badgeClass = match($status) {
+                    'Pending' => 'bg-secondary',   // xám
+                    'Approved' => 'bg-success',    // xanh lá
+                    'Hidden' => 'bg-dark',         // đen
+                    'Rejected' => 'bg-danger',     // đỏ
+                    'Deleted' => 'bg-muted',       // mờ hoặc nhạt
+                    default => 'bg-light text-dark'
+                };
+            @endphp
+
+            <span class="status-badge badge {{ $badgeClass }} position-absolute top-0 start-0 m-2 p-2">
+                {{ ucfirst($status) }}
+            </span>
+
+            <img src="{{ $product->images->isNotEmpty() ? asset('storage/' . $product->images->first()->image_path) : asset('storage/product_images/default.jpg') }}"
+                 alt="{{ $product->name }}"
+                 class="card-img-top product-img">
+
+            <div class="card-body product-body d-flex flex-column justify-content-between">
+                <div>
+                    <h5 class="card-title product-title">{{ $product->name }}</h5>
+
+                    <div class="product-meta small mb-2">
+                        <div><i class="fas fa-box me-2"></i>Tồn kho: {{ $product->stock }}</div>
+                        <div><i class="fas fa-tag me-2"></i>Thương hiệu: {{ $product->brand ?? 'Chưa có' }}</div>
+                    </div>
+
+                    <div class="product-price fw-bold text-primary mb-3">
+                        {{ number_format($product->price, 0, ',', '.') }}₫
+                    </div>
+                </div>
+
+                <div class="mt-auto">
+                    <a href="{{ route('seller.products.edit', $product->id) }}" class="btn btn-primary w-100 mb-2">
+                        <i class="fas fa-edit me-2"></i>Sửa
+                    </a>
+
+                    <form action="{{ route('seller.products.destroy', $product->id) }}" method="POST">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger w-100">
+                            <i class="fas fa-trash me-2"></i>Xóa
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+@endforeach
+
     </div>
 @else
     <div class="empty-state text-center my-5">

@@ -12,13 +12,11 @@
     <title>Dashboard Admin - TechStore</title>
 </head>
 
-<body style="padding-top: 0">
-    <div class="wrapper pt-0">
+<body class="admin-dashboard">
+    <div class="wrapper">
         <!-- Sidebar -->
         <nav id="sidebar">
-            <div class="sidebar-header">
-                <h3>tenshop Admin</h3>
-            </div>
+         
 
             <ul class="list-unstyled components">
                 <li>
@@ -41,7 +39,7 @@
                 </li>
                 <li>
                     <a href="{{ route('admin.categories.index') }}">
-                        <i class="fas fa-box"></i>
+                        <i class="fas fa-list"></i>
                         Quản lý danh mục
                     </a>
                 </li>
@@ -65,12 +63,6 @@
                 </li>
                 <li>
                     <a href="#">
-                        <i class="fas fa-user-shield"></i>
-                        Phân quyền
-                    </a>
-                </li>
-                <li>
-                    <a href="#">
                         <i class="fas fa-chart-bar"></i>
                         Báo cáo & Thống kê
                     </a>
@@ -79,16 +71,9 @@
 
             <ul class="list-unstyled CTAs">
                 <li>
-                    <a href="/" class="btn btn-light btn-block">
-                        <i class="fas fa-home"></i> Về trang chủ
+                    <a href="/" class="btn btn-block text-white fw-bold">
+                        <i class="fas fa-home me-2"></i>Về trang chủ
                     </a>
-                </li>
-                <li>
-                    <form action="/logout" method="POST">
-                        <button type="submit" class="btn btn-light btn-block hover-green">
-                            <i class="fas fa-sign-out-alt"></i> Đăng xuất
-                        </button>
-                    </form>
                 </li>
             </ul>
         </nav>
@@ -96,55 +81,52 @@
         <!-- Content -->
         <div id="content">
             <!-- Header -->
-            <nav class="navbar navbar-expand-lg">
-                <div class="container-fluid">
-                    <button type="button" id="sidebarCollapse" class="btn btn-primary">
-                        <i class="fas fa-bars"></i>
-                        <span>Menu</span>
-                    </button>
+            <nav class="navbar navbar-expand-lg px-3">
+                <button type="button" id="sidebarCollapse">
+                    <i class="fas fa-bars"></i>
+                </button>
 
-                    <div class="ml-auto d-flex align-items-center">
-                        <div class="dropdown mr-3">
-                            <button class="btn btn-light dropdown-toggle" type="button" id="notificationDropdown"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-bell"></i>
-                                <span class="badge badge-danger">3</span>
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="notificationDropdown">
-                                <h6 class="dropdown-header">Thông báo</h6>
-                                <a class="dropdown-item" href="#">Đơn hàng mới #12345</a>
-                                <a class="dropdown-item" href="#">Người dùng mới đăng ký</a>
-                                <a class="dropdown-item" href="#">Sản phẩm sắp hết hàng</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item text-center" href="#">Xem tất cả</a>
-                            </div>
+                <div class="ml-auto d-flex align-items-center">
+                    <!-- Notification -->
+                    <div class="dropdown mr-3">
+                        <button class="btn btn-light dropdown-toggle" type="button" id="notificationDropdown"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-bell"></i>
+                            <span class="badge badge-danger">3</span>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="notificationDropdown">
+                            <h6 class="dropdown-header">Thông báo</h6>
+                            <a class="dropdown-item" href="#">Đơn hàng mới #12345</a>
+                            <a class="dropdown-item" href="#">Người dùng mới đăng ký</a>
+                            <a class="dropdown-item" href="#">Sản phẩm sắp hết hàng</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item text-center" href="#">Xem tất cả</a>
                         </div>
+                    </div>
 
-                        <div class="dropdown">
-                            <button class="btn btn-light dropdown-toggle" type="button" id="userDropdown"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <img src="https://ui-avatars.com/api/?name=Admin+User&background=ff6600&color=fff"
-                                    width="30" height="30" class="rounded-circle mr-2">
-                                Admin User
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-user-circle mr-2"></i> Hồ sơ
-                                </a>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-cog mr-2"></i> Cài đặt
-                                </a>
-                                <div class="dropdown-divider"></div>
-                                <!-- Logout form lưu ý phần này vì có thể tái xử dung -->
-                                <form id="logout-form" action="/logout" method="POST" style="display: none;">
-                                    @csrf
-                                </form>
-                                <a class="dropdown-item" href="#"
-                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                    <i class="fas fa-sign-out-alt mr-2"></i> Đăng xuất
-                                </a>
-
-                            </div>
+                    <!-- User Dropdown -->
+                    <div class="dropdown">
+                        <button class="btn btn-light dropdown-toggle d-flex align-items-center" type="button" id="userDropdown"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <img src="https://ui-avatars.com/api/?name=Admin+User&background=ff6600&color=fff"
+                                width="30" height="30" class="rounded-circle mr-2">
+                            Admin User
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                            <a class="dropdown-item" href="#">
+                                <i class="fas fa-user-circle mr-2"></i> Hồ sơ
+                            </a>
+                            <a class="dropdown-item" href="#">
+                                <i class="fas fa-cog mr-2"></i> Cài đặt
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <form id="logout-form" action="/logout" method="POST" style="display: none;">
+                                @csrf
+                            </form>
+                            <a class="dropdown-item" href="#"
+                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                <i class="fas fa-sign-out-alt mr-2"></i> Đăng xuất
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -152,11 +134,11 @@
 
             <!-- Main Content -->
             <div class="container-fluid">
-             @if (isset($slot))
-        {{ $slot }}
-        @else
-            @yield('content')
-        @endif
+                @if (isset($slot))
+                    {{ $slot }}
+                @else
+                    @yield('content')
+                @endif
             </div>
         </div>
     </div>
@@ -172,6 +154,31 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+    <script>
+      // Sidebar toggle
+$(document).ready(function () {
+    $('#sidebarCollapse').on('click', function () {
+        $('#sidebar').toggleClass('active');
+        $('#content').toggleClass('sidebar-open'); // Thêm dòng này
+        
+        // Thêm/xóa overlay trên mobile
+        if ($(window).width() < 992) {
+            if ($('#sidebar').hasClass('active')) {
+                $('<div class="overlay active"></div>').appendTo('body');
+            } else {
+                $('.overlay').remove();
+            }
+        }
+    });
+    
+    // Đóng sidebar khi click overlay
+    $(document).on('click', '.overlay', function() {
+        $('#sidebar').removeClass('active');
+        $('#content').removeClass('sidebar-open'); // Thêm dòng này
+        $('.overlay').remove();
+    });
+});
+    </script>
 </body>
 
 </html>

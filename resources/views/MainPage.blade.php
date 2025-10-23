@@ -79,24 +79,29 @@
     </div>
 
     <div class="row g-4">
-        @forelse ($products as $product)
+        @forelse ($featured as $featured)
             <div class="col-6 col-md-3">
                 <div class="card border-0 shadow-sm h-100 text-center">
-                    <img src="{{ $product->images->isNotEmpty() ?
-                    asset('storage/' . $product->images->first()->image_path) :
+                    <img src="{{ $featured->images->isNotEmpty() ?
+                    asset('storage/'. $featured->images->first()->image_path) :
                     asset('storage/product_images/default.jpg') }}" 
                          class="card-img-top p-3" 
-                         alt="{{ $product->name }}">
-                    <div class="card-body">
-                        <h6 class="fw-semibold">{{ $product->name }}</h6>
-                        <p class="text-danger fw-bold">
-                            {{ number_format($product->price, 0, ',', '.') }}₫
-                        </p>
-                        <p class="small text-muted mb-2">
-                            Được bán bởi <strong>{{ $product->seller->name ?? 'Không rõ' }}</strong>
-                        </p>
-                        <a href="/products/{{ $product->id }}" 
-                           class="btn btn-outline-primary btn-sm w-100">
+                         alt="{{ $featured->name }}">
+                    
+                    <div class="card-body <strong>d-flex flex-column</strong>">
+                        
+                        <div>
+                            <h6 class="fw-semibold">{{ $featured->name }}</h6>
+                            <p class="text-danger fw-bold">
+                                {{ number_format($featured->price, 0, ',', '.') }}₫
+                            </p>
+                            <p class="small text-muted mb-2">
+                                Được bán bởi <strong>{{ $featured->seller->name ?? 'Không rõ' }}</strong>
+                            </p>
+                        </div>
+
+                        <a href="/products/{{ $featured->id }}" 
+                           class="btn btn-outline-primary btn-sm w-100 <strong>mt-auto</strong>">
                            Xem chi tiết
                         </a>
                     </div>
@@ -107,7 +112,6 @@
         @endforelse
     </div>
 </section>
-
 
 <!-- 🏬 TOP CỬA HÀNG UY TÍN -->
 <section class="container my-5">

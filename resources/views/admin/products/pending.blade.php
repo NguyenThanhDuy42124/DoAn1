@@ -12,8 +12,8 @@
     <div x-data="{ open: false }" class="mb-4">
         <input type="text" wire:model="reason" placeholder="Lý do từ chối (cho bulk)" class="border p-2 w-full rounded" x-show="open">
     </div>
-
-    <table class="min-w-full bg-white border">
+   <div class="table-responsive">
+    <table class="table table-striped">
         <thead>
             <tr>
                 <th class="border px-4 py-2"><input type="checkbox" wire:model.live="selectAll"></th>
@@ -40,13 +40,23 @@
                     <td class="border px-4 py-2">{{ $product->category->name }}</td>
                     <td class="border px-4 py-2">{{ $product->created_at->format('d/m/Y') }}</td>
                     <td class="border px-4 py-2">
-                        <button wire:click="approve({{ $product->id }})" class="bg-green-500 btn-primary px-2 py-1 rounded">Duyệt</button>
-                        <button wire:click="reject({{ $product->id }})" class="bg-red-500 btn-danger px-2 py-1 rounded ml-2">Từ chối</button>
-                    </td>
+    <div class="d-flex flex-column flex-md-row">
+        
+        <button wire:click="approve({{ $product->id }})" 
+                class="bg-green-500 btn-primary px-2 py-1 rounded mb-1 mb-md-0 me-md-1">
+            Duyệt
+        </button>
+        
+        <button wire:click="reject({{ $product->id }})" 
+                class="bg-red-500 btn-danger px-2 py-1 rounded">
+            Từ chối
+        </button>
+    </div>
+</td>
                 </tr>
             @endforeach
         </tbody>
     </table>
-
+   </div>
     {{ $products->links() }}
 </div>
