@@ -5,68 +5,81 @@
 
 <!-- Filter Section -->
 <div class="container">
-<div class="filter-section card shadow-sm">
-        <div class="card-body">
-            <form action="{{ url()->current() }}" method="GET">
-                <div class="row g-3 align-items-end">
+<div class="filter-section card shadow-sm mb-4">
+    <div class="card-body">
+        <form action="{{ url()->current() }}" method="GET">
+            <div class="row g-3 align-items-end">
 
-                    <div class="col-md-3">
-                        <h6><i class="fas fa-dollar-sign me-2"></i>Khoảng giá</h6>
-                        <select class="form-select" name="price_range">
-                            <option value="">Tất cả</option>
-                            <option value="0-5000000" {{ request('price_range') == '0-5000000' ? 'selected' : '' }}>
-                                Dưới 5 triệu
-                            </option>
-                            <option value="5000000-10000000" {{ request('price_range') == '5000000-10000000' ? 'selected' : '' }}>
-                                5 - 10 triệu
-                            </option>
-                            <option value="10000000-20000000" {{ request('price_range') == '10000000-20000000' ? 'selected' : '' }}>
-                                10 - 20 triệu
-                            </option>
-                            <option value="20000000-" {{ request('price_range') == '20000000-' ? 'selected' : '' }}>
-                                Trên 20 triệu
-                            </option>
-                        </select>
-                    </div>
+                <div class="col-md-2">
+                    <h6><i class="fas fa-dollar-sign me-2"></i>Khoảng giá</h6>
+                    <select class="form-select" name="price_range">
+                        <option value="">Tất cả</option>
+                        <option value="0-5000000" {{ request('price_range') == '0-5000000' ? 'selected' : '' }}>
+                            Dưới 5 triệu
+                        </option>
+                        <option value="5000000-10000000" {{ request('price_range') == '5000000-10000000' ? 'selected' : '' }}>
+                            5 - 10 triệu
+                        </option>
+                        <option value="10000000-20000000" {{ request('price_range') == '10000000-20000000' ? 'selected' : '' }}>
+                            10 - 20 triệu
+                        </option>
+                        <option value="20000000-" {{ request('price_range') == '20000000-' ? 'selected' : '' }}>
+                            Trên 20 triệu
+                        </option>
+                    </select>
+                </div>
 
-                    <div class="col-md-3">
-                        <h6><i class="fas fa-tag me-2"></i>Thương hiệu</h6>
-                        <select class="form-select" name="brand">
-                            <option value="">Tất cả</option>
-                            {{-- Biến $brands này được truyền từ Controller --}}
-                            @isset($brands)
-                                @foreach($brands as $brand)
-                                    <option value="{{ $brand }}" {{ request('brand') == $brand ? 'selected' : '' }}>
-                                        {{ $brand }}
-                                    </option>
-                                @endforeach
-                            @endisset
-                        </select>
-                    </div>
+                <div class="col-md-2">
+                    <h6><i class="fas fa-tag me-2"></i>Thương hiệu</h6>
+                    <select class="form-select" name="brand">
+                        <option value="">Tất cả</option>
+                        @isset($brands)
+                            @foreach($brands as $brand)
+                                <option value="{{ $brand }}" {{ request('brand') == $brand ? 'selected' : '' }}>
+                                    {{ $brand }}
+                                </option>
+                            @endforeach
+                        @endisset
+                    </select>
+                </div>
 
-                    <div class="col-md-3">
-                        <h6><i class="fas fa-sliders-h me-2"></i>Tùy chọn</h6>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="discount" id="discount" value="1"
-                                   {{ request('discount') ? 'checked' : '' }}>
-                            <label class="form-check-label" for="discount">Đang giảm giá</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="in_stock" id="stock" value="1"
-                                   {{ request('in_stock') ? 'checked' : '' }}>
-                            <label class="form-check-label" for="stock">Còn hàng</label>
-                        </div>
+                <div class="col-md-2">
+                    <h6><i class="fas fa-list-ul me-2"></i>Danh mục</h6>
+                    <select class="form-select" name="category">
+                        <option value="">Tất cả</doption>
+                        {{-- Biến $categories này được truyền từ Controller --}}
+                        @isset($categories)
+                            @foreach($categories as $category)
+                                <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
+                                    {{ $category->name }}
+                                </option>
+                            @endforeach
+                        @endisset
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <h6><i class="fas fa-sliders-h me-2"></i>Tùy chọn</h6>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="discount" id="discount" value="1"
+                               {{ request('discount') ? 'checked' : '' }}>
+                        <label class="form-check-label" for="discount">Đang giảm giá</label>
                     </div>
-                    
-                    <div class="col-md-3 d-flex">
-                        <button type="submit" class="btn btn-primary me-2 w-100">
-                            <i class="fas fa-filter me-1"></i> Lọc
-                        </button>
-                        <a href="{{ url()->current() }}" class="btn btn-outline-secondary w-100">Xóa lọc</a>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="in_stock" id="stock" value="1"
+                               {{ request('in_stock') ? 'checked' : '' }}>
+                        <label class="form-check-label" for="stock">Còn hàng</label>
                     </div>
                 </div>
-            </form>
-        </div>
+                
+                <div class="col-md-4 d-flex">
+                    <button type="submit" class="btn btn-primary me-2 w-100">
+                        <i class="fas fa-filter me-1"></i> Lọc
+                    </button>
+                    <a href="{{ url()->current() }}" class="btn btn-outline-secondary w-100">Xóa lọc</a>
+                </div>
+                
+            </div>
+        </form>
     </div>
 </div>
 
@@ -80,8 +93,8 @@
        {{-- 
     THAY ĐỔI 1: Thêm class "h-100" (height: 100%)
     Điều này buộc card phải lấp đầy 100% chiều cao của cột (col) chứa nó.
---}}
-<div class="card product-card h-100 shadow-sm">
+               --}}
+      <div class="card product-card h-100 shadow-sm">
     <span class="badge-discount">- X%</span>
     
     <img src="{{ $product->images->isNotEmpty() ?
@@ -102,6 +115,9 @@
         --}}
         <div>
             <h5 class="card-title">{{ $product->name }}</h5>
+             <p class="text-muted small mb-1"> Danh mục: 
+                                           <span class="fw-semibold text-dark">{{ $product->category->name ?? 'Chưa phân loại' }}</span>
+                                      </p>
             <p class="card-text text-muted">{{ Str::limit($product->description, 100) }}</p>
             
             <div class="d-flex justify-content-between align-items-center mb-2">
@@ -168,12 +184,12 @@
         </div>
         
     </div>
-</div>
+    </div>
       </div>
       @endif
     @endforeach
   </div>
-</div>
+    </div>
 
 </div>
 @endsection

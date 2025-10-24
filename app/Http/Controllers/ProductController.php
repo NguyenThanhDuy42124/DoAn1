@@ -195,61 +195,69 @@ class ProductController extends Controller
             return redirect()->back()->with('error', 'Lỗi nhập dữ liệu: Đã xảy ra lỗi nghiêm trọng. Vui lòng kiểm tra file Excel và Log hệ thống.');
         }
     }
-    public function listProducts(Request $request) // <-- Thêm Request $request
-{
-    // Bắt đầu query: Chỉ lấy sản phẩm "Approved" (vì Blade của bạn đang lọc)
-    $query = Product::with('images')->where('status', 'Approved');
+   public function listProducts(Request $request) // <-- Dùng hàm bạn đã cung cấp
+    {
+        // Bắt đầu query: Tải kèm cả ảnh, seller và category
+        // (Cần 'category' để hiển thị tên danh mục trên card)
+        $query = Product::with(['images', 'seller', 'category']) 
+                        ->where('status', 'Approved');
 
-    // 1. Lọc theo Khoảng giá (price_range)
-    if ($request->filled('price_range')) {
-        $range = $request->input('price_range');
-        $parts = explode('-', $range); // Tách chuỗi (vd: "5000000-10000000")
+        // 1. Lọc theo Khoảng giá (price_range)
+        if ($request->filled('price_range')) {
+            $range = $request->input('price_range');
+            $parts = explode('-', $range); 
+            $minPrice = $parts[0];
+            $maxPrice = $parts[1] ?? null; 
 
-        $minPrice = $parts[0];
-        $maxPrice = $parts[1] ?? null; // Phần tử thứ 2 có thể rỗng (vd: "20000000-")
-
-        if ($minPrice > 0) {
-            $query->where('price', '>=', $minPrice);
+            if ($minPrice > 0) {
+                $query->where('price', '>=', $minPrice);
+            }
+            if ($maxPrice !== null && $maxPrice > 0) {
+                $query->where('price', '<=', $maxPrice);
+            }
         }
-        if ($maxPrice !== null && $maxPrice > 0) {
-            $query->where('price', '<=', $maxPrice);
+
+        // 2. Lọc theo Thương hiệu (brand)
+        if ($request->filled('brand')) {
+            $query->where('brand', $request->input('brand'));
         }
+
+        // 3. Lọc theo "Đang giảm giá" (discount)
+        if ($request->filled('discount')) {
+            $query->whereNotNull('sale_price')
+                  ->whereColumn('sale_price', '<', 'price');
+            // Ghi chú: Logic 'sale_price' là tôi giả định
+        }
+
+        // 4. Lọc theo "Còn hàng" (in_stock)
+        if ($request->filled('in_stock')) {
+            $query->where('stock', '>', 0);
+        }
+
+        // 5. *** THÊM MỚI: Lọc theo Danh mục (category) ***
+        if ($request->filled('category')) {
+            $query->where('category_id', $request->input('category'));
+        }
+
+        // Lấy danh sách thương hiệu ĐỘNG
+        $brands = Product::where('status', 'Approved')
+                         ->select('brand')
+                         ->whereNotNull('brand')
+                         ->distinct()
+                         ->pluck('brand');
+                         
+        // *** THÊM MỚI: Lấy danh sách danh mục ĐỘNG ***
+        $categories = Category::all();
+
+        // Thực thi query, sắp xếp mới nhất, phân trang và GIỮ LẠI BỘ LỌC
+        $products = $query->latest() 
+                         ->paginate(9) 
+                         ->withQueryString(); // <-- Giữ nguyên, rất tốt!
+
+        // *** CẬP NHẬT: Trả về view với cả $categories ***
+        // (Sửa 'pages.listproducts' thành 'listproducts' nếu file của bạn nằm ở resources/views/listproducts.blade.php)
+        return view('pages.listproducts', compact('products', 'brands', 'categories'));
     }
-
-    // 2. Lọc theo Thương hiệu (brand)
-    if ($request->filled('brand')) {
-        $query->where('brand', $request->input('brand'));
-    }
-
-    // 3. Lọc theo "Đang giảm giá" (discount)
-    // (Giả định: sản phẩm giảm giá khi có 'sale_price' và < 'price')
-    if ($request->filled('discount')) {
-        $query->whereNotNull('sale_price')
-              ->whereColumn('sale_price', '<', 'price');
-        // Ghi chú: Nếu logic của bạn khác, hãy sửa dòng trên
-    }
-
-    // 4. Lọc theo "Còn hàng" (in_stock)
-    if ($request->filled('in_stock')) {
-        $query->where('stock', '>', 0);
-    }
-
-    // Lấy danh sách thương hiệu ĐỘNG để hiển thị trong filter
-    // (Chỉ lấy từ các sản phẩm đã "Approved")
-    $brands = Product::where('status', 'Approved')
-                    ->select('brand')
-                    ->whereNotNull('brand') // Bỏ qua brand bị null
-                    ->distinct()
-                    ->pluck('brand');
-
-    // Thực thi query, sắp xếp mới nhất, phân trang và GIỮ LẠI BỘ LỌC
-    $products = $query->latest() // Sắp xếp mới nhất lên đầu
-                     ->paginate(9) // Phân 9 sản phẩm/trang
-                     ->withQueryString(); // <-- RẤT QUAN TRỌNG
-
-    // Trả về view với cả $products và $brands
-    return view('pages.listproducts', compact('products', 'brands'));
-}
     public function destroy($id)
     {
         // Tìm sản phẩm theo id

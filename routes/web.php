@@ -99,8 +99,7 @@ Route::prefix('seller')->middleware('role:seller')->group(function () {
 
     Route::get('/dashboard', [SellerController::class, 'dashboard'])->name('seller.dashboard');
     Route::resource('products', ProductController::class, ['names' => 'seller.products']);
-    Route::get('/seller/products/{id}/edit', [ProductController::class, 'edit'])->name('seller.products.edit');
-    Route::put('/seller/products/{id}', [ProductController::class, 'update'])->name('seller.products.update');
+   
 
     // [GET] Route để hiển thị trang form
     Route::get('/products/import/form', [ProductController::class, 'showImportForm'])->name('seller.products.import.form');
@@ -123,7 +122,7 @@ Route::prefix('seller')->middleware('role:seller')->group(function () {
         return view('seller.orders.index');
     })->name('seller.orders.index');
 });
-
+Route::get('/shop/{id}', [SellerController::class, 'showShop'])->name('shop.show');
 Route::get('/products', [ProductController::class, 'listProducts'])->name('products.list');
 Route::get('/vouchers', [VoucherController::class, 'listVouchers'])->name('vouchers.list');
 Route::get('/', [SellerController::class, 'index'])->name('home');

@@ -7,6 +7,7 @@ use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Order;
 use App\Models\User;
+use App\Models\Category;
 use Illuminate\Support\Facades\Log;
 
 
@@ -17,12 +18,15 @@ class SellerController extends Controller
     // Lấy top 4 cửa hàng uy tín (seller)
     $shops = User::where('role', 'seller')->take(4)->get();
 
-    // Lấy top 8 sản phẩm nổi bật (có thể dựa theo lượt mua hoặc rating)
-    $featured = Product::with('seller')->orderByDesc('created_at')->take(8)->get();
-    $products = Product::with('seller')->orderByDesc('created_at')->paginate(12);
+    // Lấy sản phẩm (đã lọc status)
+    // Tải kèm 'seller' và 'images' để dùng ở view
+    $products = Product::with(['seller', 'images']) 
+                       ->where('status', 'Approved') // Chỉ lấy sản phẩm đã duyệt
+                       ->orderByDesc('created_at')
+                       ->paginate(12); // Phân trang
 
-
-    return view('MainPage', compact('shops', 'products','featured'));
+    // Trả về view, chỉ truyền 'shops' và 'products'
+    return view('MainPage', compact('shops', 'products'));
 }
     public function dashboard()
 {
@@ -40,7 +44,56 @@ class SellerController extends Controller
     // Trả về view, thêm 'pendingProductCount' vào compact
     return view('seller.dashboard', compact('products', 'pendingProductCount','approvedProductCount'));
 }
+public function showShop(Request $request, $id)
+    {
+        // 1. Lấy thông tin cửa hàng
+        $shop = User::where('role', 'seller')->findOrFail($id);
 
+        // 2. Lấy tham số 'sort' và 'category' từ URL
+        $sort = $request->query('sort', 'newest');
+        $selectedCategory = $request->query('category'); // <-- THÊM MỚI
+
+        // 3. THÊM MỚI: Lấy tất cả danh mục để hiển thị ở sidebar
+        // (Giả sử bạn có model App\Models\Category)
+        $categories = Category::all();
+
+        // 4. Xây dựng câu truy vấn sản phẩm
+        $productQuery = Product::with(['images', 'category']) 
+                               ->where('seller_id', $shop->id)
+                               ->where('status', 'Approved');
+
+        // 5. THÊM MỚI: Lọc theo danh mục nếu được chọn
+        if ($selectedCategory) {
+            $productQuery->where('category_id', $selectedCategory); //
+        }
+
+        // 6. Áp dụng logic sắp xếp
+        switch ($sort) {
+            case 'price_asc':
+                $productQuery->orderBy('price', 'asc');
+                break;
+            case 'price_desc':
+                $productQuery->orderBy('price', 'desc');
+                break;
+            case 'newest':
+            default:
+                $productQuery->orderByDesc('created_at');
+                break;
+        }
+
+        // 7. Lấy kết quả (phân trang)
+        // Dùng appends() để giữ nguyên tham số ?sort=... và ?category=...
+        $products = $productQuery->paginate(12)->appends($request->query());
+
+        // 8. Trả về view, truyền thêm $categories và $selectedCategory
+        return view('pages.shop', compact(
+            'shop', 
+            'products', 
+            'sort', 
+            'categories', 
+            'selectedCategory'
+        ));
+    }
     public function orders(Request $request)
 {
     $seller = Auth::user(); 
