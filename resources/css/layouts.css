@@ -8,64 +8,108 @@
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f7fb;
+             background-color: #f5f7fb;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-            margin: 0;
-            padding: 0;
+              margin: 0;
+               padding: 0;
+                padding-top: 70px; /* <-- THÊM DÒNG NÀY */
         }
-        
-        /* Navbar styling */
-        .navbar {
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            padding: 0.5rem 0;
-        }
-        
-        .navbar-brand {
-            font-weight: bold;
-            font-size: 24px;
-        }
-        
-        .navbar-brand span:first-child {
-            color: var(--primary);
-        }
-        
-        .navbar-brand span:last-child {
-            color: var(--secondary);
-        }
-        
-        .navbar-nav .nav-link {
-            font-weight: 500;
-            padding: 0.5rem 1rem;
-            color: var(--dark-text);
-        }
-        
-        .navbar-nav .nav-link:hover,
-        .navbar-nav .nav-link.active {
-            color: var(--primary);
-        }
-        
-        .dropdown-menu {
-            border: none;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            border-radius: var(--border-radius);
-        }
-        
-        .dropdown-item {
-            padding: 0.5rem 1rem;
-        }
-        
-        .dropdown-item:hover {
-            background-color: #f8f9fa;
-            color: var(--primary);
-        }
-        
-        .form-control {
-            border-radius: 20px;
-            padding: 0.5rem 1rem;
-        }
-        
+       /* ===== NAVBAR STYLING - GIỐNG SELLER DASHBOARD ===== */
+/* ===== NAVBAR STYLING (Giống Seller Dashboard) ===== */
+.navbar {
+    /* Style lấy từ dashboard_seller.css */
+    background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+    border-bottom: none;
+    height: 70px;
+    box-shadow: 0 4px 12px rgba(25, 118, 210, 0.15);
+    /* 'fixed-top' đã có trong HTML, không cần 'position: fixed' ở đây */
+    z-index: 1030;
+    padding: 0 20px;
+    transition: all 0.3s ease;
+}
+
+/* Ghi đè CSS của layouts.css để đảm bảo chữ màu trắng */
+.navbar-dark .navbar-brand,
+.navbar-dark .navbar-brand span {
+    color: #fff !important; /* Ghi đè màu primary/secondary */
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color:rgba(255, 255, 255, 0.85) !important; /* Ghi đè màu dark-text */
+    font-weight: 500;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    margin: 0 2px;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover,
+.navbar-dark .navbar-nav .nav-link.active {
+    color: #fff !important;
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Style cho Dropdown (giữ nguyên) */
+.dropdown-menu {
+    border: none;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    border-radius: var(--border-radius);
+}
+
+.dropdown-item {
+    padding: 10px 20px; /* Tăng padding cho đẹp hơn */
+    transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background-color: var(--primary); /* Dùng màu --primary của bạn */
+    color: white;
+}
+ /* Form styling (giữ nguyên) */
+.form-control {
+    border-radius: 20px;
+    padding: 0.75rem 1rem; /* Cập nhật từ file css mới của bạn */
+    border: 1px solid #dce1e6;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 0.2rem rgba(0, 102, 204, 0.15);
+}
+  /* ===== Location Display Styling (MỚI) ===== */
+.location-display {
+    /* Nền trắng để nổi bật trên navbar xanh */
+    background-color: #fff; 
+    /* Chữ màu xanh (lấy từ biến --primary của bạn) */
+    color: var(--primary); 
+    padding: 8px 15px;
+    border-radius: 20px; /* Bo tròn giống thanh search */
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    /* Ngăn không cho rớt dòng trên màn hình hẹp */
+    white-space: nowrap; 
+}
+
+/* Hiệu ứng khi hover */
+.location-display:hover {
+    background-color: #f8f9fa; /* Hơi xám lại 1 chút */
+    color: var(--primary);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Style cho các icon bên trong */
+.location-display i {
+    color: var(--primary);
+}
+
+.location-display .location-chevron {
+    font-size: 0.7rem; /* Thu nhỏ icon chevron */
+    opacity: 0.7;
+}      
         /* Main content */
         main {
             flex: 1;
@@ -309,3 +353,54 @@
                 margin-bottom: 1.5rem;
             }
         }
+        /* ===== Fix Responsive Navbar (MỚI) ===== */
+@media (max-width: 991.98px) {
+    
+    /* Thêm nền xanh cho menu khi mở */
+    .navbar .navbar-collapse {
+        background-color: #1565c0; /* Màu xanh đậm của gradient */
+        padding: 15px;
+        margin-top: 10px;
+        border-radius: 8px;
+        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Bắt buộc các nhóm dãn 100% và xếp dọc */
+    .navbar-collapse .navbar-nav,
+    .navbar-collapse .d-flex {
+        align-items: stretch !important;
+        flex-direction: column;
+        width: 100%;
+        gap: 0; /* Reset gap */
+    }
+
+    /* Sắp xếp lại nhóm search/location */
+    .navbar-collapse .d-flex {
+        margin: 15px 0; /* Khoảng cách giữa các nhóm */
+    }
+
+    /* Nút location dãn 100% */
+    .navbar-collapse .location-display {
+       margin: 0 0 10px 0 !important; /* Xóa margin cũ, thêm margin dưới */
+       justify-content: center; /* Căn giữa chữ */
+    }
+    
+    /* Form dãn 100% */
+    .navbar-collapse .d-flex form {
+        width: 100%;
+    }
+
+    /* Căn giữa các link */
+    .navbar-collapse .navbar-nav .nav-item {
+        margin: 5px 0;
+        text-align: center;
+    }
+
+    /* Sửa nền cho dropdown bên trong menu (nếu có) */
+    .navbar-collapse .dropdown-menu {
+        background-color: #f8f9fa; 
+    }
+    .navbar-collapse .dropdown-item:hover {
+        color: white;
+    }
+}

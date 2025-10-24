@@ -25,66 +25,74 @@
     </div>
 
     {{-- Table --}}
-    <div class="bg-white rounded border overflow-hidden">
-        <table class="w-full text-sm">
-            <thead class="bg-gray-50 border-b">
-                <tr>
-                    <th class="px-3 py-2 text-left">Sản phẩm</th>
-                    <th class="px-3 py-2 text-left">Seller</th>
-                    <th class="px-3 py-2 text-left">Cập nhật</th>
-                    <th class="px-3 py-2 text-center">Hành động</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($products as $product)
-                    <tr class="border-b hover:bg-gray-50 cursor-pointer" wire:click="toggleExpand({{ $product->id }})">
-                        <td class="px-3 py-2">
-                            <div class="font-medium">{{ Str::limit($product->name, 35) }}</div>
-                            <div class="text-xs text-gray-500">ID: {{ $product->id }}</div>
-                        </td>
-                        <td class="px-3 py-2 text-gray-600">
-                            {{ $product->seller?->name ?? '—' }}
-                        </td>
-                        <td class="px-3 py-2 text-xs text-gray-500">
-                            {{ $product->updated_at->format('d/m/Y') }}
-                        </td>
-                        <td class="px-3 py-2 text-center">
-                            <button wire:click.stop="restore({{ $product->id }})"
-                                    class="text-green-600 hover:text-green-800 text-xs font-medium">
-                                Khôi phục
-                            </button>
-                        </td>
-                    </tr>
+     <div class="table-responsive">
+        <table class="table table-striped ">
+    
+    <thead class="table-light">
+        <tr class="border px-4 py-2">
+            <th class="text-left border px-4 py-2">Sản phẩm</th>
+            <th class="text-left border px-4 py-2">Seller</th>
+            <th class="text-left border px-4 py-2">Cập nhật</th>
+            <th class="text-center border px-4 py-2">Hành động</th>
+        </tr>
+    </thead>
+    <tbody class="border px-4 py-2">
+        @forelse($products as $product)
+            
+            <tr wire:click="toggleExpand({{ $product->id }})" style="cursor: pointer;">
+                
+                <td class="border px-4 py-2">
+                    <div class="fw-medium">{{ Str::limit($product->name, 35) }}</div>
+                    <div class="small text-muted">ID: {{ $product->id }}</div>
+                </td>
+                
+                <td class="text-body-secondary border px-4 py-2">
+                    {{ $product->seller?->name ?? '—' }}
+                </td>
+                
+                <td class="small text-muted border px-4 py-2">
+                    {{ $product->updated_at->format('d/m/Y') }}
+                </td>
+                
+                <td class="text-center border px-4 py-2">
+                    <button wire:click.stop="restore({{ $product->id }})"
+                            class="btn btn-link text-success text-decoration-none p-0 small fw-medium">
+                        Khôi phục
+                    </button>
+                </td>
+            </tr>
 
-                    @if($selectedProduct && $selectedProduct->id === $product->id)
-                        <tr>
-                            <td colspan="4" class="p-3 bg-gray-50 text-xs">
-                                <div><strong>Lý do:</strong>
-                                    <span class="text-red-600">
-                                        {{ $selectedProduct->notifications->first()?->message ?? 'Không có lý do' }}
-                                    </span>
+            {{-- Hàng chi tiết (khi bấm vào) --}}
+            @if($selectedProduct && $selectedProduct->id === $product->id)
+                <tr>
+                    <td colspan="4" class="p-3 bg-light small">
+                        <div>
+                            <strong>Lý do:</strong>
+                            <span class="text-danger">
+                                {{ $selectedProduct->notifications->first()?->message ?? 'Không có lý do' }}
+                            </span>
+                        </div>
+                        <div class="mt-1">
+                            <strong>Lịch sử:</strong>
+                            @foreach(\App\Models\ModerationLog::where('product_id', $product->id)->latest()->take(2)->get() as $log)
+                                <div class="text-body-secondary">
+                                    {{ $log->admin->name }} → {{ $log->action }}
+                                    <span class="text-muted">({{ $log->created_at->diffForHumans() }})</span>
                                 </div>
-                                <div class="mt-1">
-                                    <strong>Lịch sử:</strong>
-                                    @foreach(\App\Models\ModerationLog::where('product_id', $product->id)->latest()->take(2)->get() as $log)
-                                        <div class="text-gray-600">
-                                            {{ $log->admin->name }} → {{ $log->action }}
-                                            <span class="text-gray-400">({{ $log->created_at->diffForHumans() }})</span>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            </td>
-                        </tr>
-                    @endif
-                @empty
-                    <tr>
-                        <td colspan="4" class="text-center py-8 text-gray-500">
-                            Không có sản phẩm nào {{ $tab === 'hidden' ? 'bị ẩn' : 'bị từ chối' }}.
-                        </td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
+                            @endforeach
+                        </div>
+                    </td>
+                </tr>
+            @endif
+        @empty
+            <tr>
+                <td colspan="4" class="text-center p-5 text-muted">
+                    Không có sản phẩm nào {{ $tab === 'hidden' ? 'bị ẩn' : 'bị từ chối' }}.
+                </td>
+            </tr>
+        @endforelse
+    </tbody>
+</table>
 
         <div class="p-2 text-center">
             {{ $products->links() }}

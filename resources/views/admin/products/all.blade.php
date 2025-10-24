@@ -99,29 +99,29 @@
 
     {{-- Table --}}
     <div>
-        <div>
-            <table border="1" cellpadding="5" cellspacing="0" style="width: 100%; border-collapse: collapse;">
+        <div class="table-responsive">
+        <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th wire:click="sortBy('name')" style="cursor: pointer;">
+                        <th wire:click="sortBy('name')" class="border px-4 py-2" style="cursor: pointer;">
                             Tên sản phẩm
                             @if($sortField === 'name') @if($sortDirection === 'asc') &uarr; @else &darr; @endif @endif
                         </th>
-                        <th wire:click="sortBy('price')" style="cursor: pointer;">
+                        <th wire:click="sortBy('price')" class="border px-4 py-2" style="cursor: pointer;">
                             Giá
                             @if($sortField === 'price') @if($sortDirection === 'asc') &uarr; @else &darr; @endif @endif
                         </th>
-                        <th>
+                        <th class="border px-4 py-2">
                             Danh mục
                         </th>
-                        <th>
+                        <th class="border px-4 py-2">
                             Seller
                         </th>
-                        <th wire:click="sortBy('status')" style="cursor: pointer;">
+                        <th wire:click="sortBy('status')" class="border px-4 py-2" style="cursor: pointer;">
                             Trạng thái
                             @if($sortField === 'status') @if($sortDirection === 'asc') &uarr; @else &darr; @endif @endif
                         </th>
-                        <th>
+                        <th class="border px-4 py-2">
                             Hành động
                         </th>
                     </tr>
@@ -129,24 +129,24 @@
                 <tbody>
                     @forelse($products as $product)
                         <tr>
-                            <td>
+                            <td class="border px-4 py-2">
                                 {{ Str::limit($product->name, 50) }}
                             </td>
-                            <td>
+                            <td class="border px-4 py-2">
                                 {{ number_format($product->price) }}đ
                             </td>
-                            <td>
+                            <td class="border px-4 py-2">
                                 {{ $product->category?->name ?? '-' }}
                             </td>
-                            <td>
+                            <td class="border px-4 py-2">
                                 {{ $product->seller?->name ?? '-' }}
                             </td>
-                            <td>
+                            <td class="border px-4 py-2">
                                 <span>
                                     {{ ucfirst($product->status) }}
                                 </span>
                             </td>
-                            <td>
+                            <td class="border px-4 py-2">
                                <div class="d-flex flex-column flex-md-row">
     
                                 <a href="{{ route('admin.products.edit', $product) }}"
@@ -163,7 +163,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" style="text-align: center;">Không có sản phẩm nào.</td>
+                            <td colspan="6" class="border px-4 py-2" style="text-align: center;">Không có sản phẩm nào.</td>
                         </tr>
                     @endforelse
                 </tbody>
