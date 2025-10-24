@@ -74,11 +74,11 @@ class ProductController extends Controller
         return redirect()->route('seller.products.index')
             ->with('success', 'Thêm sản phẩm thành công!');
     }
-    public function index(Request $request) // <-- Thêm 'Request $request' vào đây
+    public function index(Request $request) // <-- Giữ nguyên Request $request
     {
         // Bắt đầu query cơ bản: lấy sản phẩm của người bán và tải kèm hình ảnh
         $query = Product::with('images')
-                      ->where('seller_id', auth()->id());
+                        ->where('seller_id', auth()->id());
 
         // 1. Xử lý tìm kiếm theo tên (search)
         if ($request->filled('search')) {
@@ -89,14 +89,22 @@ class ProductController extends Controller
         if ($request->filled('status')) {
             $query->where('status', $request->input('status'));
         }
+        
+        // 3. THÊM MỚI: Xử lý lọc theo danh mục (category)
+        if ($request->filled('category')) {
+            $query->where('category_id', $request->input('category'));
+        }
+
+        // THÊM MỚI: Lấy tất cả danh mục để truyền ra view
+        $categories = Category::all();
 
         // Sắp xếp kết quả (mới nhất lên trước) và thực hiện phân trang
         $products = $query->orderBy('created_at', 'desc')
-                         ->paginate(99) // Bạn có thể đổi số 99 thành số nhỏ hơn (ví dụ: 12 hoặc 24)
-                         ->withQueryString(); // <-- Rất quan trọng!
+                         ->paginate(99) 
+                         ->withQueryString(); 
 
-        // Trả về view với dữ liệu sản phẩm đã lọc
-        return view('seller.products.index', compact('products'));
+        // CẬP NHẬT: Trả về view, thêm $categories
+        return view('seller.products.index', compact('products', 'categories'));
     }
 // Phương thức hiển thị form (Bước 3)
     public function showImportForm()
@@ -251,7 +259,7 @@ class ProductController extends Controller
 
         // Thực thi query, sắp xếp mới nhất, phân trang và GIỮ LẠI BỘ LỌC
         $products = $query->latest() 
-                         ->paginate(9) 
+                         ->paginate(30) 
                          ->withQueryString(); // <-- Giữ nguyên, rất tốt!
 
         // *** CẬP NHẬT: Trả về view với cả $categories ***
@@ -281,12 +289,13 @@ class ProductController extends Controller
     {
         // 1. Validate dữ liệu sản phẩm và hình ảnh mới
         $request->validate([
+            'category_id' => 'required|exists:categories,id',
             'name'        => 'required|string|max:255',
             'price'       => 'required|numeric|min:0',
             'brand'       => 'nullable|string|max:255',
             'stock'       => 'required|integer|min:0',
             'description' => 'nullable|string',
-            'status'      => 'required|in:active,inactive',
+            'status'      => 'required|in:' . Product::STATUS_APPROVED . ',' . Product::STATUS_HIDDEN,
             'images.*'    => 'nullable|image|max:2048|mimes:jpeg,png,jpg,gif,svg', // Đổi 'image' thành 'images.*'
             'deleted_images' => 'nullable|array',
             'deleted_images.*' => 'exists:product_images,id', // Đảm bảo ID hình ảnh tồn tại
@@ -298,6 +307,7 @@ class ProductController extends Controller
         try {
             // 2. Cập nhật thông tin sản phẩm
             $product->update([
+                'category_id' => $request->category_id,
                 'name'        => $request->name,
                 'price'       => $request->price,
                 'brand'       => $request->brand,
@@ -332,7 +342,7 @@ class ProductController extends Controller
 
             DB::commit();
 
-            return redirect()->route('seller.products.edit', $product->id)->with('success', 'Sản phẩm đã được cập nhật thành công.');
+            return redirect()->route('seller.products.index', $product->id)->with('success', 'Sản phẩm đã được cập nhật thành công.');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('error', 'Đã xảy ra lỗi khi cập nhật sản phẩm. Vui lòng thử lại.')->withInput();

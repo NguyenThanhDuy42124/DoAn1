@@ -23,17 +23,18 @@
         </div>
     </div>
 </div>
- <div class="card shadow-sm mb-4">
+<div class="card shadow-sm mb-4">
     <div class="card-body">
         <form action="{{ route('seller.products.index') }}" method="GET">
             <div class="row g-3 align-items-end">
-                <div class="col-md-5">
+                
+                <div class="col-md-4">
                     <label for="search" class="form-label fw-bold">Tìm theo tên</label>
                     <input type="text" class="form-control" id="search" name="search"
                            placeholder="Nhập tên sản phẩm..." value="{{ request('search') }}">
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <label for="status" class="form-label fw-bold">Trạng thái</label>
                     <select class="form-select" id="status" name="status">
                         <option value="">Tất cả</option>
@@ -46,17 +47,30 @@
                 </div>
 
                 <div class="col-md-2">
-                    <button type="submit" class="btn btn-primary w-100">
-                        <i class="fas fa-filter me-1"></i> Lọc
-                    </button>
+                    <label for="category" class="form-label fw-bold">Danh mục</label>
+                    <select class="form-select" id="category" name="category">
+                        <option value="">Tất cả</option>
+                        @isset($categories)
+                            @foreach($categories as $category)
+                                <option value="{{ $category->id }}" @if(request('category') == $category->id) selected @endif>
+                                    {{ $category->name }}
+                                </option>
+                            @endforeach
+                        @endisset
+                    </select>
                 </div>
 
-                <div class="col-md-2">
-                    <a href="{{ route('seller.products.index') }}" class="btn btn-outline-secondary w-100">
-                        <i class="fas fa-times me-1"></i> Xóa lọc
-                    </a>
+                <div class="col-md-4">
+                    <div class="d-flex">
+                        <button type="submit" class="btn btn-primary w-100 me-2">
+                            <i class="fas fa-filter me-1"></i> Lọc
+                        </button>
+                        <a href="{{ route('seller.products.index') }}" class="btn btn-outline-secondary w-100">
+                            <i class="fas fa-times me-1"></i> Xóa lọc
+                        </a>
+                    </div>
                 </div>
-            </div>
+                </div>
         </form>
     </div>
 </div>
@@ -90,7 +104,9 @@
             <div class="card-body product-body d-flex flex-column justify-content-between">
                 <div>
                     <h5 class="card-title product-title">{{ $product->name }}</h5>
-
+                    <p class="product-meta small mb-2"><i class="fas fa-box me-2"></i> Danh mục: 
+                                           <span class="fw-semibold text-dark">{{ $product->category->name ?? 'Chưa phân loại' }}</span>
+                                      </p>
                     <div class="product-meta small mb-2">
                         <div><i class="fas fa-box me-2"></i>Tồn kho: {{ $product->stock }}</div>
                         <div><i class="fas fa-tag me-2"></i>Thương hiệu: {{ $product->brand ?? 'Chưa có' }}</div>

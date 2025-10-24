@@ -69,13 +69,13 @@
                     <label for="status">Trạng thái</label>
                     <div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="status" id="status_active" value="active" {{ old('status', $product->status) == 'active' ? 'checked' : '' }}>
+                            <input class="form-check-input" type="radio" name="status" id="status_active" value="{{ App\Models\Product::STATUS_APPROVED }}" {{ old('status', $product->status) == App\Models\Product::STATUS_APPROVED ? 'checked' : '' }}>
                             <label class="form-check-label" for="status_active">
                                 Đang bán
                             </label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="status" id="status_inactive" value="inactive" {{ old('status', $product->status) == 'inactive' ? 'checked' : '' }}>
+                            <input class="form-check-input" type="radio" name="status" id="status_inactive" value="{{ App\Models\Product::STATUS_HIDDEN }}" {{ old('status', $product->status) == App\Models\Product::STATUS_HIDDEN ? 'checked' : '' }}>
                             <label class="form-check-label" for="status_inactive">
                                 Ngừng bán
                             </label>
