@@ -1,15 +1,15 @@
 <div class="p-4 max-w-5xl mx-auto">
     {{-- Tabs --}}
-    <div class="flex border-b mb-4 text-sm font-medium">
-        <button wire:click="switchTab('hidden')"
-                class="btn-primary rounded px-4 py-2 border-b-2 {{ $tab === 'hidden' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-600' }}">
-            Ẩn
-        </button>
-        <button wire:click="switchTab('rejected')"
-                class="btn-danger rounded px-4 py-2 border-b-2 {{ $tab === 'rejected' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-600' }}">
-            Từ chối
-        </button>
-    </div>
+    {{-- Tabs (dạng select thay vì button) --}}
+<div class="mb-4">
+    <select
+        wire:model.live="tab"
+        class="border rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+    >
+        <option value="hidden">Ẩn</option>
+        <option value="rejected">Từ chối</option>
+    </select>
+</div>
 
     {{-- Search + Filter Lý do --}}
     <div class="mb-4 flex gap-2 flex-wrap">

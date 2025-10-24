@@ -18,6 +18,11 @@ class Pending extends Component
     public $reason = ''; // Cho reject
 
     protected $queryString = ['search'];
+    public $selectedProductId;
+    public $actionType = 'reject'; // reject | hidden
+    public $reasonModalOpen = false;
+
+
 
     public function updatedSelectAll($value)
     {
@@ -120,10 +125,10 @@ class Pending extends Component
             ->with(['seller', 'images', 'category'])
             ->when($this->search, function ($query) {
                 $query->where('name', 'like', "%{$this->search}%")
-                      ->orWhere('description', 'like', "%{$this->search}%")
-                      ->orWhereHas('seller', function ($q) {
-                          $q->where('name', 'like', "%{$this->search}%");
-                      });
+                    ->orWhere('description', 'like', "%{$this->search}%")
+                    ->orWhereHas('seller', function ($q) {
+                        $q->where('name', 'like', "%{$this->search}%");
+                    });
             })
             ->latest();
     }
@@ -133,5 +138,45 @@ class Pending extends Component
         $products = $this->getProductsQuery()->paginate(10);
 
         return view('admin.products.pending', compact('products'));
+    }
+
+    public function openRejectModal($id)
+    {
+        $this->selectedProductId = $id;
+        $this->reasonModalOpen = true;
+    }
+    public function closeRejectModal()
+    {
+        $this->reasonModalOpen = false;
+        $this->reason = '';
+        $this->selectedProductId = null;
+    }
+    public function confirmReject()
+    {
+        $this->validate([
+            'reason' => 'required|string|max:255',
+            'actionType' => 'required|in:reject,hidden',
+        ]);
+
+        $product = Product::findOrFail($this->selectedProductId);
+
+        if ($this->actionType === 'reject') {
+            $product->update(['status' => Product::STATUS_REJECTED]);
+        } else {
+            $product->update(['status' => Product::STATUS_HIDDEN]);
+        }
+
+        Notification::create([
+            'user_id' => $product->seller_id,
+            'type' => 'product_' . $this->actionType,
+            'message' => "Sản phẩm '{$product->name}' bị {$this->actionType}: {$this->reason}",
+            'is_read' => false,
+        ]);
+
+        // Reset
+        $this->reason = '';
+        $this->reasonModalOpen = false;
+        $this->selectedProductId = null;
+        session()->flash('success', 'Đã xử lý sản phẩm!');
     }
 }
