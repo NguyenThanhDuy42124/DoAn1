@@ -124,7 +124,7 @@
                             {{ Auth::user()->name }}
                         </button>
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                            <a class="dropdown-item" href="#"><i class="fas fa-user-circle mr-2"></i> Hồ sơ</a>
+                            <a class="dropdown-item" href="/dashboard"><i class="fas fa-user-circle mr-2"></i> Hồ sơ</a>
                             <a class="dropdown-item" href="#"><i class="fas fa-cog mr-2"></i> Cài đặt</a>
                             <div class="dropdown-divider"></div>
                             <form id="logout-form" action="/logout" method="POST" style="display: none;">@csrf</form>

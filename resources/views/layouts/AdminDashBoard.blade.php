@@ -113,7 +113,7 @@
                             Admin User
                         </button>
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                            <a class="dropdown-item" href="#">
+                            <a class="dropdown-item" href="/dashboard">
                                 <i class="fas fa-user-circle mr-2"></i> Hồ sơ
                             </a>
                             <a class="dropdown-item" href="#">
