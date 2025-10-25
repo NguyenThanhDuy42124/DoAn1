@@ -27,7 +27,7 @@
                 <li><a href="{{ route('seller.products.index') }}"><i class="fas fa-box"></i> Quản lý sản phẩm</a></li>
                 <li><a href="{{ route('seller.orders.index') }}"><i class="fas fa-shopping-cart"></i> Quản lý đơn hàng</a></li>
                 <li><a href="{{ route('vouchers.index') }}"><i class="fas fa-percent"></i> Khuyến mãi</a></li>
-                <li><a href="#"><i class="fas fa-chart-bar"></i> Thống kê & Báo cáo</a></li>
+                <li><a href="{{ route('seller.reports.index') }}"><i class="fas fa-chart-bar"></i> Thống kê & Báo cáo</a></li>
                 <li><a href="#"><i class="fas fa-cog"></i> Cài đặt</a></li>
             </ul>
 
@@ -125,7 +125,7 @@
                         </button>
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
                             <a class="dropdown-item" href="/dashboard"><i class="fas fa-user-circle mr-2"></i> Hồ sơ</a>
-                            <a class="dropdown-item" href="#"><i class="fas fa-cog mr-2"></i> Cài đặt</a>
+                            
                             <div class="dropdown-divider"></div>
                             <form id="logout-form" action="/logout" method="POST" style="display: none;">@csrf</form>
                             <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">

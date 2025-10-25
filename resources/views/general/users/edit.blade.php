@@ -1,148 +1,166 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
-        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    @vite(['resources/css/usermanager.css', 'resources/js/app.js'])
-    <title>Quản lý người dùng - TechStore</title>
-
-</head>
-
-<body style="padding-top: 0">
-    <div class="wrapper pt-0">
-        <!-- Content -->
-        <div id="content">
-
-            <!-- Main Content -->
+@extends('layouts.app')
+@section('content')
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            
             @if (session()->has('message'))
-            <h3 style="align-self: center">{{ session('message') }}</h3>
+                <div class="alert alert-success shadow-sm">
+                    {{ session('message') }}
+                </div>
             @endif
-            <form action="{{ route('general.users.update', $user->id) }}" method="POST" class="form-sample" enctype="multipart/form-data">
-                @csrf
-                @method('PUT')
-                <h5>Chỉnh sửa thông tin người dùng</h5>
 
-                <div class="form-group">
-                    <label for="name">Họ và tên</label>
-                    <input type="text" id="name" name="name" value="{{ $user->name }}"
-                        placeholder="Nhập họ và tên đầy đủ" required>
-                    @error('name') <span class="text-danger">{{ $message }}</span> @enderror
-                </div>
+            <div class="card profile-card">
+                <div class="card-body">
+                    <form action="{{ route('general.users.update', $user->id) }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        @method('PUT')
 
-                <div class="form-group">
-                    <label for="phoneNumber">Số điện thoại</label>
-                    <input type="text" id="phoneNumber" name="phoneNumber" value="{{ $user->phoneNumber }}"
-                        placeholder="Nhập số điện thoại" required>
-                    @error('phoneNumber') <span class="text-danger">{{ $message }}</span> @enderror
-                </div>
+                        <div class="avatar-preview-wrapper">
+                            
+                            @if($user->img == "" || $user->img == null)
+                                <img id="preview" src="{{ asset('storage/profile_images/default.jpg') }}" alt="Ảnh đại diện mặc định" class="avatar-preview">
+                            @else
+                                <img id="preview" src="{{ asset('storage/' . $user->img) }}" alt="Ảnh đại diện" class="avatar-preview">
+                            @endif
 
-                <div class="form-group">
-                    <label for="dateOfBirth">Ngày sinh</label>
-                    <input type="date" id="dateOfBirth" name="dateOfBirth" value="{{ $user->dateOfBirth }}" required>
-                    @error('dateOfBirth') <span class="text-danger">{{ $message }}</span> @enderror
-                </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="img">Thay đổi ảnh đại diện</label>
+                            <input type="file" class="form-control-file" id="img" name="img" accept="image/*">
+                            @error('img') <span class="text-danger">{{ $message }}</span> @enderror
+                        </div>
 
-                <div class="form-group">
-                    <label for="gender">Giới tính</label>
-                    <select id="gender" name="gender" required>
-                        <option value="male" {{ $user->gender === 'male' ? 'selected' : '' }}>Nam</option>
-                        <option value="female" {{ $user->gender === 'female' ? 'selected' : '' }}>Nữ</option>
-                        <option value="other" {{ $user->gender === 'other' ? 'selected' : '' }}>Khác</option>
-                    </select>
-                    @error('gender') <span class="text-danger">{{ $message }}</span> @enderror
-                </div>
-                @if(Auth::user()->role == 'buyer')
-                <div class="form-group">
-                    <label for="address">Địa chỉ giao hàng</label>
-                    <input type="address" id="address" name="address" value="{{ $user->address }}"
-                        placeholder="Nhập địa chỉ giao hàng" required>
-                    @error('email') <span class="text-danger">{{ $message }}</span> @enderror
-                </div>
-                @elseif (Auth::user()->role == 'seller')
-                <div class="form-group">
-                    <label for="address">Nhập địa chỉ shop</label>
-                    <input type="address" id="address" name="address" value="{{ $user->address }}"
-                        placeholder="Nhập địa chỉ shop" required>
-                    @error('email') <span class="text-danger">{{ $message }}</span> @enderror
-                </div>
-                @endif
+                        <hr class="my-4">
 
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" value="{{ $user->email }}"
-                        placeholder="Nhập địa chỉ email" required>
-                    @error('email') <span class="text-danger">{{ $message }}</span> @enderror
-                </div>
-                <div class="form-group">
-                    <label for="img">Ảnh đại diện</label>
-                    <input type="file" class="form-control" id="img" name="img" value="{{ $user->img }}"
-                        placeholder="Chọn ảnh đại diện" style="height: 60px" accept="image/*">
-                </div>
-                <div class="mb-3">
-                    <img id="preview" src="#" alt="Xem trước ảnh" class="img-fluid rounded"
-                        style="max-height: 250px; display: none;">
-                </div>
+                        <div class="form-group">
+                            <label for="name">Họ và tên</label>
+                            <input type="text" class="form-control" id="name" name="name" value="{{ old('name', $user->name) }}"
+                                placeholder="Nhập họ và tên đầy đủ" required>
+                            @error('name') <span class="text-danger">{{ $message }}</span> @enderror
+                        </div>
 
-                <!-- Remove password field -->
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" value="{{ old('email', $user->email) }}"
+                                placeholder="Nhập địa chỉ email" required>
+                            @error('email') <span class="text-danger">{{ $message }}</span> @enderror
+                        </div>
 
-                <button type="submit" class="btn btn-register">Lưu lại thông tin</button>
-            </form>
-            <!-- <form class="form-e" action="" method="POST">
-                            @csrf
-                            <div class="form-group">
-                                <label for="name" >họ và tên</label>
-                                <input type="text" class="form-control" id="name" name="name" value="" placeholder="Nhập họ và tên đầy đủ" required>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="phoneNumber">Số điện thoại</label>
+                                    <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" value="{{ old('phoneNumber', $user->phoneNumber) }}"
+                                        placeholder="Nhập số điện thoại" required>
+                                    @error('phoneNumber') <span class="text-danger">{{ $message }}</span> @enderror
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="email" >Email</label>
-                                <input type="email" class="form-control" id="email" name="email" value="" placeholder="Nhập địa chỉ email" required>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="dateOfBirth">Ngày sinh</label>
+                                    <input type="date" class="form-control" id="dateOfBirth" name="dateOfBirth" value="{{ old('dateOfBirth', $user->dateOfBirth) }}" required>
+                                    @error('dateOfBirth') <span class="text-danger">{{ $message }}</span> @enderror
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="password">Mật Khẩu</label>
-                                <input type="password" class="form-control" id="password" value="" name="password" placeholder="Tạo mật khẩu mạnh" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="gender">Giới tính</label>
+                            <select id="gender" name="gender" class="form-control" required>
+                                <option value="male" {{ old('gender', $user->gender) === 'male' ? 'selected' : '' }}>Nam</option>
+                                <option value="female" {{ old('gender', $user->gender) === 'female' ? 'selected' : '' }}>Nữ</option>
+                                <option value="other" {{ old('gender', $user->gender) === 'other' ? 'selected' : '' }}>Khác</option>
+                            </select>
+                            @error('gender') <span class="text-danger">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div class="form-group">
+                            
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <label for="address" class="m-0">
+                                    @if(Auth::user()->role == 'buyer')
+                                        Địa chỉ giao hàng
+                                    @elseif (Auth::user()->role == 'seller')
+                                        Địa chỉ shop
+                                    @endif
+                                </label>
+                                <button type="button" class="btn btn-link btn-sm" id="use-current-location" style="text-decoration: none;">
+                                    <i class="fas fa-map-marker-alt me-1"></i> Dùng vị trí hiện tại
+                                </button>
                             </div>
-                            <button type="submit" class="btn btn-register">Mới</button>
-                        </form> -->
+                            @if(Auth::user()->role == 'buyer')
+                                <input type="text" class="form-control" id="address" name="address" value="{{ old('address', $user->address) }}"
+                                    placeholder="Nhập địa chỉ giao hàng" required>
+                            @elseif (Auth::user()->role == 'seller')
+                                <input type="text" class="form-control" id="address" name="address" value="{{ old('address', $user->address) }}"
+                                    placeholder="Nhập địa chỉ shop" required>
+                            @endif
+                            @error('address') <span class="text-danger">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-update-profile">Lưu lại thông tin</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
+</div>
 
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"
-        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"
-        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
-    </script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
+</script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+</script>
 
-    <script>
-        $(document).ready(function () {
-            $('#sidebarCollapse').on('click', function () {
-                $('#sidebar').toggleClass('active');
-                $('#content').toggleClass('active');
-            });
+<script>
+    // Script cho sidebar (giữ nguyên)
+    $(document).ready(function () {
+        $('#sidebarCollapse').on('click', function () {
+            $('#sidebar').toggleClass('active');
+            $('#content').toggleClass('active');
         });
-    </script>
-    <script>
-        const input = document.getElementById('img');
-  const preview = document.getElementById('preview');
+    });
+    $('#use-current-location').on('click', function() {
+            // 1. Lấy vị trí đã lưu từ sessionStorage (do navbar lưu)
+            const detectedLocation = sessionStorage.getItem('userDetectedLocation');
 
-  input.addEventListener('change', (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      preview.src = URL.createObjectURL(file);
-      preview.style.display = 'block';
-    } else {
-      preview.style.display = 'none';
-    }
-  });
-    </script>
-</body>
+            if (detectedLocation) {
+                const addressInput = $('#address');
+                const currentAddress = addressInput.val();
 
-</html>
+                // 2. Chỉ thêm tên Tỉnh/Thành phố nếu nó CHƯA có trong địa chỉ
+                // (Kiểm tra không phân biệt hoa thường)
+                if (currentAddress && !currentAddress.toLowerCase().includes(detectedLocation.toLowerCase())) {
+                    // Nếu đã có địa chỉ, nối thêm vào
+                    addressInput.val(currentAddress + ', ' + detectedLocation);
+                } else if (!currentAddress) {
+                    // Nếu ô trống, điền vị trí vào
+                    addressInput.val(detectedLocation);
+                }
+                // (Nếu đã có rồi thì không làm gì cả)
+                
+            } else {
+                // 3. Nếu không tìm thấy vị trí
+                alert('Không tìm thấy vị trí tự động. Vui lòng quay lại trang chủ và cho phép truy cập vị trí, sau đó thử lại.');
+            }
+        });
+    // Script xem trước ảnh (giữ nguyên)
+    const input = document.getElementById('img');
+    const preview = document.getElementById('preview');
+
+    input.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            preview.src = URL.createObjectURL(file);
+            preview.style.display = 'block'; // Đảm bảo ảnh hiển thị khi chọn
+        }
+    });
+</script>
+@endsection

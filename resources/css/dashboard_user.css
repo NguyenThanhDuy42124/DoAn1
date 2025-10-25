@@ -37,13 +37,29 @@
         }
 
         .profile-header {
-            background: linear-gradient(to right, var(--primary), #004d99);
-            color: white;
-            border-radius: var(--border-radius) var(--border-radius) 0 0;
-            padding: 25px;
-            position: relative;
-        }
+    /* 1. Áp dụng nền gradient giống hệt navbar */
+    background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+    
+    /* 2. Đổi màu chữ chính sang màu trắng */
+    color: #fff; 
 
+    /* Các thuộc tính khác (padding, bo góc) có thể đã có, 
+       đoạn code trên chỉ thay đổi nền và màu chữ. 
+       Hãy giữ lại các thuộc tính padding/border-radius cũ của bạn.
+       Nếu chưa có, bạn có thể tham khảo: */
+    padding: 2rem;
+    border-top-left-radius: var(--border-radius);
+    border-top-right-radius: var(--border-radius);
+}
+
+/* 3. Đảm bảo các thẻ con bên trong cũng có màu trắng */
+.profile-header h2 {
+    color: #fff;
+}
+
+.profile-header p {
+    color: rgba(255, 255, 255, 0.85); /* Màu trắng mờ, giống nav-link */
+}
         .profile-card {
             background: white;
             border-radius: var(--border-radius);

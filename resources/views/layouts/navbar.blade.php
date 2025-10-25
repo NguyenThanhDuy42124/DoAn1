@@ -145,6 +145,8 @@
                     
                     if (locationName) {
                         locationTextElement.textContent = locationName;
+                        // Lưu vị trí vào sessionStorage để trang edit.blade.php có thể dùng
+                        sessionStorage.setItem('userDetectedLocation', locationName);
                     } else {
                         locationTextElement.textContent = defaultLocation;
                     }

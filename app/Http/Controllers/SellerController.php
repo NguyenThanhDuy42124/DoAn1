@@ -9,6 +9,8 @@ use App\Models\Order;
 use App\Models\User;
 use App\Models\Category;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB; // <-- Thêm dòng này
+use Carbon\Carbon; // <-- Thêm dòng này
 
 
 class SellerController extends Controller
@@ -40,9 +42,20 @@ class SellerController extends Controller
     $pendingProductCount = Product::where('seller_id', Auth::id())
                                   ->where('status', 'Pending') //
                                   ->count();
-    
+    // Logic của bạn: chỉ cần payment_status = 'paid'
+    $todayRevenue = Order::where('seller_id',  Auth::id())
+                             ->where('payment_status', 'paid')
+                             ->whereDate('updated_at', Carbon::today()) // Chỉ lấy các đơn trong hôm nay
+                             ->sum('total_price');
+    $todayOrderCount = Order::where('seller_id', Auth::id())
+                            ->whereDate('created_at', Carbon::today()) // Dựa trên ngày tạo
+                            ->count();      
+    $latestOrders = Order::where('seller_id', Auth::id())
+                         ->orderByDesc('created_at') // Sắp xếp mới nhất lên đầu
+                         ->take(5) // Chỉ lấy 5 đơn
+                         ->get();                                           
     // Trả về view, thêm 'pendingProductCount' vào compact
-    return view('seller.dashboard', compact('products', 'pendingProductCount','approvedProductCount'));
+    return view('seller.dashboard', compact('products','pendingProductCount','approvedProductCount','todayRevenue','todayOrderCount','latestOrders'));
 }
 public function showShop(Request $request, $id)
     {
@@ -80,7 +93,9 @@ public function showShop(Request $request, $id)
                 $productQuery->orderByDesc('created_at');
                 break;
         }
-
+        $totalProductCount = Product::where('seller_id', $shop->id)
+                                    ->where('status', 'Approved')
+                                    ->count(); // <-- Dùng count()
         // 7. Lấy kết quả (phân trang)
         // Dùng appends() để giữ nguyên tham số ?sort=... và ?category=...
         $products = $productQuery->paginate(12)->appends($request->query());
@@ -91,7 +106,8 @@ public function showShop(Request $request, $id)
             'products', 
             'sort', 
             'categories', 
-            'selectedCategory'
+            'selectedCategory',
+            'totalProductCount'
         ));
     }
     public function orders(Request $request)
@@ -180,6 +196,151 @@ public function showShop(Request $request, $id)
     return redirect()->route('seller.orders.index', ['status' => $currentStatusQuery])->with('success', 'Cập nhật trạng thái thành công.');
 }
 
+// ... (Hàm showReportPage() của bạn ở đây) ...
 
+    /**
+     * Cung cấp dữ liệu doanh thu cho API (Biểu đồ 2)
+     * Chấp nhận tham số: ?range=7d, ?range=1m, ?range=1y
+     */
+    public function getRevenueReport(Request $request)
+    {
+        $sellerId = Auth::id();
+
+        // --- KIỂM TRA REQUEST MỚI (TỪ TRANG BÁO CÁO) ---
+        if ($request->has('range')) {
+            
+            $range = $request->input('range', '7d');
+            $labels = [];
+            $values = [];
+            $query = Order::where('seller_id', $sellerId)
+                          ->where('payment_status', 'paid');
+
+            switch ($range) {
+                case '1y':
+                    // --- 1 NĂM (12 tháng qua, nhóm theo tháng) ---
+                    $startDate = Carbon::now()->subMonths(11)->startOfMonth();
+                    $endDate = Carbon::now()->endOfMonth();
+                    
+                    $dbData = $query->whereBetween('updated_at', [$startDate, $endDate])
+                        ->select(
+                            DB::raw('SUM(total_price) as revenue'),
+                            DB::raw("DATE_FORMAT(updated_at, '%Y-%m') as month")
+                        )
+                        ->groupBy('month')->orderBy('month', 'ASC')->pluck('revenue', 'month');
+
+                    // Lặp 12 tháng để lấp đầy dữ liệu
+                    for ($i = 0; $i < 12; $i++) {
+                        $date = Carbon::now()->subMonths(11 - $i);
+                        $labelFormat = $date->format('Y-m'); // "2025-10"
+                        $labels[] = $date->format('m/Y');    // "10/2025"
+                        $values[] = $dbData->get($labelFormat, 0);
+                    }
+                    break;
+
+                case '1m':
+                    // --- 1 THÁNG (30 ngày qua, nhóm theo ngày) ---
+                    $startDate = Carbon::now()->subDays(29)->startOfDay();
+                    $endDate = Carbon::now()->endOfDay();
+
+                    $dbData = $query->whereBetween('updated_at', [$startDate, $endDate])
+                        ->select(
+                            DB::raw('SUM(total_price) as revenue'),
+                            DB::raw("DATE(updated_at) as date")
+                        )
+                        ->groupBy('date')->orderBy('date', 'ASC')->pluck('revenue', 'date');
+
+                    // Lặp 30 ngày để lấp đầy dữ liệu
+                    for ($i = 0; $i < 30; $i++) {
+                        $date = Carbon::now()->subDays(29 - $i);
+                        $labelFormat = $date->format('Y-m-d'); // "2025-10-25"
+                        $labels[] = $date->format('d/m');    // "25/10"
+                        $values[] = $dbData->get($labelFormat, 0);
+                    }
+                    break;
+                
+                case '7d':
+                default:
+                    // --- 7 NGÀY (7 ngày qua, nhóm theo ngày) ---
+                    $startDate = Carbon::now()->subDays(6)->startOfDay();
+                    $endDate = Carbon::now()->endOfDay();
+
+                    $dbData = $query->whereBetween('updated_at', [$startDate, $endDate])
+                        ->select(
+                            DB::raw('SUM(total_price) as revenue'),
+                            DB::raw("DATE(updated_at) as date")
+                        )
+                        ->groupBy('date')->orderBy('date', 'ASC')->pluck('revenue', 'date');
+
+                    // Lặp 7 ngày để lấp đầy dữ liệu
+                    for ($i = 0; $i < 7; $i++) {
+                        $date = Carbon::now()->subDays(6 - $i);
+                        $labelFormat = $date->format('Y-m-d');
+                        $labels[] = $date->format('d/m');
+                        $values[] = $dbData->get($labelFormat, 0);
+                    }
+                    break;
+            }
+
+            // Trả về JSON KIỂU MỚI cho trang Báo cáo
+            return response()->json(['labels' => $labels, 'values' => $values]);
+
+        } 
+        
+        // --- REQUEST CŨ (TỪ TRANG TỔNG QUAN) ---
+        else {
+            
+            // Đây là logic 7 ngày GỐC của bạn
+            $salesData = Order::where('seller_id', $sellerId)
+                ->where('payment_status', 'paid')
+                ->where('updated_at', '>=', Carbon::now()->subDays(6)->startOfDay())
+                ->select(
+                    DB::raw('DATE(updated_at) as date'),
+                    DB::raw('SUM(total_price) as revenue')
+                )
+                ->groupBy('date')
+                ->orderBy('date', 'ASC')
+                ->get()
+                ->pluck('revenue', 'date');
+
+            $reportData = [];
+            $startDate = Carbon::now()->subDays(6);
+
+            for ($i = 0; $i < 7; $i++) {
+                $date = $startDate->copy()->addDays($i)->format('Y-m-d');
+                $reportData[] = [
+                    'date' => $date,
+                    'revenue' => $salesData->get($date, 0)
+                ];
+            }
+
+            // Trả về JSON KIỂU CŨ cho trang Tổng quan
+            return response()->json($reportData);
+        }
+    }
+  
+    public function showReportPage()
+    {
+        $sellerId = Auth::id();
+
+        // 1. LẤY DỮ LIỆU TOP 5 KHÁCH HÀNG (THEO DOANH THU)
+        // Truy vấn này đơn giản hơn, chỉ cần query bảng 'orders'
+        $topCustomersData = Order::where('seller_id', $sellerId)
+            ->where('payment_status', 'paid') //
+            ->select(
+                'buyer_name', //
+                DB::raw('SUM(total_price) as total_spent') //
+            )
+            ->groupBy('buyer_name')
+            ->orderByDesc('total_spent') // Sắp xếp theo tổng chi tiêu
+            ->take(5) // Lấy 5 người cao nhất
+            ->get();
+        
+        // 2. Xử lý dữ liệu cho Chart.js
+        $topCustomerLabels = $topCustomersData->pluck('buyer_name');
+        $topCustomerValues = $topCustomersData->pluck('total_spent');
+
+        // 3. Trả về view
+        return view('seller.reports.index', compact('topCustomerLabels', 'topCustomerValues'));
+    }
 
 }

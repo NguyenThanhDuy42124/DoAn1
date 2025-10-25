@@ -79,6 +79,64 @@
     border-color: var(--primary);
     box-shadow: 0 0 0 0.2rem rgba(0, 102, 204, 0.15);
 }
+
+/* Căn chỉnh lại form-group của Bootstrap 4 */
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: var(--dark-text); /* Lấy từ layouts.css */
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+/* Nút submit */
+.btn-update-profile {
+    /* Sử dụng lại style của .btn-primary nhưng làm nó to hơn */
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: white;
+    padding: 12px 20px;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    width: 100%; /* Dãn hết chiều rộng */
+}
+
+.btn-update-profile:hover {
+    background-color: #0052a3; /* Lấy từ :hover của .btn-primary */
+    border-color: #0052a3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 102, 204, 0.25);
+}
+
+/* Căn chỉnh ảnh preview */
+.avatar-preview-wrapper {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.avatar-preview {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 50%; /* Làm tròn ảnh đại diện */
+    border: 5px solid #fff;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    background-color: #f8f9fa; /* Nền mờ khi chưa có ảnh */
+    margin: 0 auto;
+}
+
+/* Ẩn thẻ img nếu không có src (tránh icon vỡ) */
+.avatar-preview[src="#"] {
+    display: none;
+}
+/* Hiển thị ảnh nếu có (kể cả ảnh cũ hoặc ảnh mới) */
+.avatar-preview:not([src="#"]) {
+    display: block;
+}
   /* ===== Location Display Styling (MỚI) ===== */
 .location-display {
     /* Nền trắng để nổi bật trên navbar xanh */

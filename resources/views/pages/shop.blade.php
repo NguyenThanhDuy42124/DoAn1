@@ -30,7 +30,7 @@
 
                 <div class="ms-md-auto mt-4 mt-md-0 d-flex text-center">
                     <div class="px-3 px-lg-4">
-                        <div class="fs-4 fw-bold">{{ $products->total() }}</div>
+                        <div class="fs-4 fw-bold">{{ $totalProductCount }}</div>
                         <div class="text-muted small">Sản phẩm</div>
                     </div>
                     <div class="px-3 px-lg-4">

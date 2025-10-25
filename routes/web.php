@@ -121,6 +121,9 @@ Route::prefix('seller')->middleware('role:seller')->group(function () {
     Route::get('/orders', function () {
         return view('seller.orders.index');
     })->name('seller.orders.index');
+    Route::get('/reports', [SellerController::class, 'showReportPage'])->name('seller.reports.index');
+    Route::get('/seller/api/revenue-report', [SellerController::class, 'getRevenueReport'])
+     ->name('seller.api.revenue.report');
 });
 Route::get('/shop/{id}', [SellerController::class, 'showShop'])->name('shop.show');
 Route::get('/products', [ProductController::class, 'listProducts'])->name('products.list');
