@@ -146,7 +146,11 @@ Route::middleware('auth')->group(function () {
     Route::get('general/users/{id}/edit', [UserInfoController::class, 'edit'])->name('general.users.edit');
     Route::put('general/users/{id}', [UserInfoController::class, 'update'])->name('general.users.update');
 
-    Route::get('/carts', \App\Livewire\CartManager::class)->name('buyer.carts.index');
+    Route::get('/carts', function () {
+        // Đảm bảo 'buyer.carts.index' trỏ đến file:
+        // resources/views/buyer/carts/index.blade.php
+        return view('buyer.carts.index');
+    })->name('buyer.carts.index');
 
     Route::post('/carts', [CartController::class, 'store'])->name('buyer.carts.store');
     Route::get('/cart-items/{id}/edit', [CartItemController::class, 'edit'])->name('buyer.cart_items.edit');

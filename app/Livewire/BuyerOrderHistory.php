@@ -17,7 +17,16 @@ class BuyerOrderHistory extends Component
     {
         $this->status = request()->query('status', 'Pending');
     }
-
+    public function updateStatus($newStatus)
+    {
+        $this->status = $newStatus;
+        
+        // Nếu bạn đang dùng $queryString, Livewire sẽ tự động cập nhật URL
+        // Nếu không, bạn chỉ cần gán lại $status là đủ.
+        
+        // Bạn không cần làm gì thêm ở đây. 
+        // Livewire sẽ tự động gọi lại hàm render() với $status mới.
+    }
     // Action: Hủy đơn (Pending -> Cancelled)
     public function cancelOrder($orderId)
     {

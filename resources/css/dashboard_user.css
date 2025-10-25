@@ -22,15 +22,6 @@
         z-index: 1050;
     }
 
-
-        body {
-            background-color: #f5f7fb;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            min-height: 100vh;
-            padding-top: 20px;
-            padding-bottom: 50px;
-        }
-
         .profile-container {
             max-width: 1000px;
             margin: 0 auto;

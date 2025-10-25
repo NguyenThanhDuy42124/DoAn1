@@ -100,7 +100,7 @@
 
         </div> </div>
 </nav>
-<script>
+<script data-livewire-eval="false">
     // Chờ cho toàn bộ nội dung trang được tải
     document.addEventListener("DOMContentLoaded", function() {
         
@@ -165,4 +165,3 @@
         }
     });
 </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

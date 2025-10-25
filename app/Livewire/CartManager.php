@@ -24,7 +24,7 @@ class CartManager extends Component
     {
         $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
         $items = CartItem::with('product')->where('cart_id', $cart->id)->get();
-
+        $items = CartItem::with('product.images')->where('cart_id', $cart->id)->get();
         // Convert to array và add stock_status để view dùng
         $this->cartItems = $items->map(function ($item) {
             $maxStock = $item->product->stock;

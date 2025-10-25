@@ -10,9 +10,9 @@
     @livewireStyles
 </head>
 <body>
-    @extends('layouts.app')
+    @extends('layouts.account')
 
-    @section('content')
+    @section('account_content')
         @livewire('cart-manager')
     @endsection
 

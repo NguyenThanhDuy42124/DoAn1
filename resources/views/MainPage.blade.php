@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-
+<div class="container">
 <!-- 🌈 Banner chính -->
 <section class="container-fluid px-0">
     <div id="mainCarousel" class="carousel slide" data-bs-ride="carousel">
@@ -204,5 +204,5 @@
         </div>
     </div>
 </section>
-
+</div>
 @endsection
