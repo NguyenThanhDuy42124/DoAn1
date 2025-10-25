@@ -1,0 +1,70 @@
+[33m027057a[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeature/dev-kien[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{0}: reset: moving to origin/main
+[33m3d879ec[m[33m ([m[1;31morigin/feature/dev-kien[m[33m)[m HEAD@{1}: pull origin feature/dev-kien: Fast-forward
+[33me272a42[m HEAD@{2}: checkout: moving from dev to feature/dev-kien
+[33mcdd25a7[m[33m ([m[1;31morigin/dev[m[33m, [m[1;32mdev[m[33m)[m HEAD@{3}: reset: moving to HEAD
+[33mcdd25a7[m[33m ([m[1;31morigin/dev[m[33m, [m[1;32mdev[m[33m)[m HEAD@{4}: commit: Sườn cơ bản cho tính năng quản lý sản phẩm của admin
+[33m4c2f4ad[m HEAD@{5}: pull --rebase origin dev (finish): returning to refs/heads/dev
+[33m4c2f4ad[m HEAD@{6}: pull --rebase origin dev (pick): Sửa lỗi không vào được trang admin
+[33m8b9d4df[m HEAD@{7}: pull --rebase origin dev (start): checkout 8b9d4dfd044d6cc1c3095d2b4cf611cc853dd0cd
+[33mfba9deb[m HEAD@{8}: commit: Sửa lỗi không vào được trang admin
+[33m210cb62[m HEAD@{9}: pull origin dev --rebase (finish): returning to refs/heads/dev
+[33m210cb62[m HEAD@{10}: pull origin dev --rebase (pick): Cập nhật nút mua lại trong quản lý đơn hàng của buyer
+[33m19652dc[m HEAD@{11}: pull origin dev --rebase (start): checkout 19652dcb393879e7c534b2f657066f3df1f0eb1a
+[33m8516584[m HEAD@{12}: commit: Cập nhật nút mua lại trong quản lý đơn hàng của buyer
+[33m620dee3[m HEAD@{13}: pull origin dev: Fast-forward
+[33mcf18709[m HEAD@{14}: commit: Sửa lỗi không thể thấy đơn hàng ở mục chờ xác nhận của buyer
+[33m75cb950[m HEAD@{15}: pull origin dev: Fast-forward
+[33m024f032[m HEAD@{16}: commit: Cập nhật xử lý động cho trang carts
+[33m7c60885[m HEAD@{17}: commit: fix lỗi webhook
+[33m32c9ee0[m HEAD@{18}: commit: Cơ bản hoàn thành tính năng duyệt đơn hàng cho seller
+[33md7cc2b3[m HEAD@{19}: pull origin dev: Fast-forward
+[33mc2d3161[m HEAD@{20}: pull origin dev: Fast-forward
+[33mecf5aed[m HEAD@{21}: rebase (finish): returning to refs/heads/dev
+[33mecf5aed[m HEAD@{22}: rebase (continue): làm dở tính năng xét duyệt đơn hàng cho seller
+[33m8051e5d[m HEAD@{23}: pull --rebase origin dev (start): checkout 8051e5d4f91a997349f0409ca3c629f42fdab99b
+[33m98321d7[m HEAD@{24}: commit: làm dở tính năng xét duyệt đơn hàng cho seller
+[33m2ff56b8[m HEAD@{25}: commit: Cập nhật cancel trong checkout
+[33ma792b0e[m HEAD@{26}: commit: Fix lỗi payment_status và status khi thanh toán thành công
+[33m5a2a84d[m HEAD@{27}: commit: Xóa product_id khỏi order
+[33md224999[m HEAD@{28}: commit: Cho seller xem danh sách đơn hàng
+[33m463123a[m HEAD@{29}: commit: Cập nhật lại orders: tách status thành status và payment status. Cập nhật số lượng trạng thái status (trạng thái sau khi đặt hàng của thanh toán online của sản phẩm payment_status='paid',status = 'pending'
+[33maa13c11[m HEAD@{30}: pull origin dev: Fast-forward
+[33m63d2ff4[m HEAD@{31}: pull origin dev: Fast-forward
+[33m07c6713[m HEAD@{32}: reset: moving to HEAD
+[33m07c6713[m HEAD@{33}: commit: Xem lịch sử mua hàng
+[33m0ca5cb1[m HEAD@{34}: commit: Update self-edit information
+[33m051a03b[m HEAD@{35}: commit: update checkout - orders - edit information pages
+[33md0ebe3d[m HEAD@{36}: commit: edit personal information in dashboard
+[33m94dcc3b[m HEAD@{37}: commit: cart and checkout update
+[33m4c86530[m HEAD@{38}: pull origin dev: Fast-forward
+[33me272a42[m HEAD@{39}: merge feature/dev-kien: Fast-forward
+[33m17f01db[m[33m ([m[1;31morigin/test-merge-dev-to-new-feature[m[33m)[m HEAD@{40}: checkout: moving from feature/dev-kien to dev
+[33me272a42[m HEAD@{41}: commit: WIP: changes ready to merge to dev
+[33mfd571de[m[33m ([m[1;31morigin/test-merge[m[33m)[m HEAD@{42}: reset: moving to HEAD
+[33mfd571de[m[33m ([m[1;31morigin/test-merge[m[33m)[m HEAD@{43}: reset: moving to feature/dev-kien
+[33mfd571de[m[33m ([m[1;31morigin/test-merge[m[33m)[m HEAD@{44}: commit: configure webhook for checkout
+[33m50e3c82[m HEAD@{45}: commit: checkout full flow
+[33ma461abb[m HEAD@{46}: commit: basic checkout
+[33m4564521[m HEAD@{47}: commit: cart update
+[33m89bab6a[m HEAD@{48}: commit: Basic Cart
+[33m17f01db[m[33m ([m[1;31morigin/test-merge-dev-to-new-feature[m[33m)[m HEAD@{49}: checkout: moving from feature/dev-kien to feature/dev-kien
+[33m17f01db[m[33m ([m[1;31morigin/test-merge-dev-to-new-feature[m[33m)[m HEAD@{50}: branch: Reset to dev
+[33m2c58748[m HEAD@{51}: reset: moving to HEAD
+[33m2c58748[m HEAD@{52}: checkout: moving from dev to feature/dev-kien
+[33m17f01db[m[33m ([m[1;31morigin/test-merge-dev-to-new-feature[m[33m)[m HEAD@{53}: reset: moving to HEAD
+[33m17f01db[m[33m ([m[1;31morigin/test-merge-dev-to-new-feature[m[33m)[m HEAD@{54}: reset: moving to origin/dev
+[33m17f01db[m[33m ([m[1;31morigin/test-merge-dev-to-new-feature[m[33m)[m HEAD@{55}: pull origin dev: Fast-forward
+[33mdd8f138[m HEAD@{56}: pull origin dev: Fast-forward
+[33m7fe3d2f[m HEAD@{57}: checkout: moving from feature/dev-kien to dev
+[33m2c58748[m HEAD@{58}: commit: Category crud
+[33m7fe3d2f[m HEAD@{59}: checkout: moving from dev to feature/dev-kien
+[33m7fe3d2f[m HEAD@{60}: checkout: moving from feature/dev-kien to dev
+[33m7fe3d2f[m HEAD@{61}: checkout: moving from dev to feature/dev-kien
+[33m7fe3d2f[m HEAD@{62}: pull origin dev: Fast-forward
+[33m45d0d4c[m[33m ([m[1;32mmain[m[33m)[m HEAD@{63}: checkout: moving from dev to dev
+[33m45d0d4c[m[33m ([m[1;32mmain[m[33m)[m HEAD@{64}: reset: moving to origin/dev
+[33m45d0d4c[m[33m ([m[1;32mmain[m[33m)[m HEAD@{65}: checkout: moving from main to dev
+[33m45d0d4c[m[33m ([m[1;32mmain[m[33m)[m HEAD@{66}: reset: moving to origin/dev
+[33m027057a[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeature/dev-kien[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{67}: pull origin main: Fast-forward
+[33mcf4ca0d[m HEAD@{68}: reset: moving to HEAD
+[33mcf4ca0d[m HEAD@{69}: clone: from github.com:NguyenThanhDuy42124/tesing-login.git
