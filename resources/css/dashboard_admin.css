@@ -21,7 +21,7 @@
 }
 
 .admin-dashboard body {
-    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     background-color: var(--light);
     color: #37474f;
     overflow-x: hidden;
@@ -33,7 +33,11 @@
 
 /* ===== Admin Navbar - CỐ ĐỊNH KHÔNG CO GIÃN ===== */
 .admin-dashboard .navbar {
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    background: linear-gradient(
+        135deg,
+        var(--primary) 0%,
+        var(--primary-dark) 100%
+    );
     border-bottom: none;
     height: var(--header-height);
     box-shadow: 0 4px 12px rgba(25, 118, 210, 0.15);
@@ -136,7 +140,7 @@
 }
 
 .admin-dashboard #sidebar ul li a:hover,
-.admin-dashboard #sidebar ul li.active>a {
+.admin-dashboard #sidebar ul li.active > a {
     background: rgba(255, 255, 255, 0.05);
     color: white;
     border-left: 4px solid var(--secondary);
@@ -267,7 +271,11 @@
     margin-bottom: 25px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease;
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    background: linear-gradient(
+        135deg,
+        var(--primary) 0%,
+        var(--primary-light) 100%
+    );
 }
 
 .admin-dashboard .stats-card:hover {
@@ -458,7 +466,6 @@
 
 /* Large devices (desktops, 992px and up) */
 @media (min-width: 992px) {
-
     .admin-dashboard .container,
     .admin-dashboard .container-fluid {
         padding-top: 20px;
@@ -480,7 +487,6 @@
 
 /* Medium devices (tablets, 768px - 991px) */
 @media (max-width: 991.98px) {
-
     .admin-dashboard .container,
     .admin-dashboard .container-fluid {
         padding-top: 15px;
@@ -509,7 +515,6 @@
 
 /* Small devices (landscape phones, 576px - 767px) */
 @media (max-width: 767.98px) {
-
     .admin-dashboard .container,
     .admin-dashboard .container-fluid {
         padding-left: 15px;

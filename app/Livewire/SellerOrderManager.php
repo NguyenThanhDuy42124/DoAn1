@@ -50,7 +50,11 @@ class SellerOrderManager extends Component
         $this->resetPage();
         $this->dispatch('statusUpdated');
     }
-
+    public function filterByStatus($newStatus)
+    {
+        $this->status = $newStatus;
+        $this->resetPage(); // Reset phân trang về trang 1 khi đổi tab
+    }
     public function bulkApprove()
     {
         if (empty($this->selectedOrders)) {

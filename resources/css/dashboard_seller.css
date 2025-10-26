@@ -25,7 +25,7 @@
 }
 
 .seller-dashboard body {
-    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     background-color: var(--light);
     color: #37474f;
     padding-top: var(--header-height);
@@ -34,7 +34,11 @@
 /* ===== Seller Navbar ===== */
 .seller-dashboard .seller-navbar,
 .seller-dashboard .navbar {
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    background: linear-gradient(
+        135deg,
+        var(--primary) 0%,
+        var(--primary-dark) 100%
+    );
     border-bottom: none;
     height: var(--header-height);
     box-shadow: 0 4px 12px rgba(25, 118, 210, 0.15);
@@ -134,7 +138,7 @@
 }
 
 .seller-dashboard #sidebar ul li a:hover,
-.seller-dashboard #sidebar ul li.active>a {
+.seller-dashboard #sidebar ul li.active > a {
     background: rgba(255, 255, 255, 0.05);
     color: white;
     border-left: 4px solid var(--secondary);
@@ -238,7 +242,11 @@
     margin-bottom: 25px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease;
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    background: linear-gradient(
+        135deg,
+        var(--primary) 0%,
+        var(--primary-light) 100%
+    );
 }
 
 .seller-dashboard .stats-card:hover {
@@ -521,7 +529,11 @@
 }
 
 .seller-dashboard .product-card .btn-primary {
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    background: linear-gradient(
+        135deg,
+        var(--primary) 0%,
+        var(--primary-light) 100%
+    );
     box-shadow: 0 4px 12px rgba(25, 118, 210, 0.2);
 }
 
