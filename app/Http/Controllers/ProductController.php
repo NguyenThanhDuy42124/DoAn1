@@ -12,105 +12,133 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use App\Models\Product;     // nếu có model
 use App\Models\Category;    // nếu cần load danh mục
+use App\Models\Brand; // *** THÊM MỚI ***
+use App\Models\ProductAttributeValue; // *** THÊM MỚI ***
+use App\Models\Attribute; // *** THÊM MỚI ***
+
 
 class ProductController extends Controller
 {
     public function create()
     {
-        // nếu cần truyền dữ liệu như danh mục
-        $categories = Category::all();
-        return view('seller.products.create_product', compact('categories'));
+        // *** CẬP NHẬT: Load thêm Brands ***
+        $categories = Category::whereDoesntHave('children') // Chỉ lấy category KHÔNG CÓ con
+                      ->orderBy('name') // Sắp xếp theo tên cho dễ nhìn
+                      ->get();
+        $brands = Brand::orderBy('name')->get(); // Lấy danh sách thương hiệu
+        
+        // Mày sẽ cần một view phức tạp hơn (tốt nhất là Livewire)
+        // để load thuộc tính động khi chọn category.
+        // Tạm thời, ta chỉ truyền 2 cái này.
+        return view('seller.products.create_product', compact('categories', 'brands'));
     }
 
     public function store(Request $request)
     {
+        // *** CẬP NHẬT: Sửa validation cho brand_id và thêm 'attributes' ***
         $validated = $request->validate([
             'seller_id'   => 'required|exists:users,id',
             'category_id' => 'required|exists:categories,id',
+            'brand_id'    => 'nullable|exists:brands,id', // <-- Đổi từ 'brand'
             'name'        => 'required|string|max:255',
             'price'       => 'required|numeric',
-            'brand'       => 'nullable|string|max:255',
             'stock'       => 'nullable|integer',
             'description' => 'nullable|string',
             'status'      => 'nullable|string',
-            'image.*'       => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
+            'images.*'     => 'nullable|image|mimes:jpg,jpeg,png,gif|max:2048',
+            'attributes'  => 'nullable|array', // <-- Thêm cho EAV
+            'attributes.*' => 'nullable|string|max:255', // Giá trị của EAV
         ]);
-        // Sử dụng Transaction để đảm bảo tính toàn vẹn dữ liệu
+
         DB::beginTransaction();
         try {
-            // 2. Tạo sản phẩm mới và lưu vào bảng products
+            // 2. *** CẬP NHẬT: Dùng brand_id ***
             $product = Product::create([
                 'seller_id'   => $request->input('seller_id'),
                 'category_id' => $request->input('category_id'),
+                'brand_id'    => $request->input('brand_id'), // <-- Đổi
                 'name'        => $request->input('name'),
                 'price'       => $request->input('price'),
-                'brand'       => $request->input('brand'),
                 'stock'       => $request->input('stock'),
                 'description' => $request->input('description'),
             ]);
 
-            // 3. Xử lý tải lên và lưu hình ảnh
+            // 3. Xử lý tải lên và lưu hình ảnh (Giữ nguyên)
             if ($request->hasFile('images')) {
                 foreach ($request->file('images') as $image) {
                     $path = $image->store('product_images', 'public');
-
-                    // Lưu đường dẫn hình ảnh cùng với product_id vừa tạo
                     ProductImage::create([
                         'product_id' => $product->id,
                         'image_path' => $path,
                     ]);
                 }
             }
+            
+            // 4. *** THÊM MỚI: Xử lý lưu thuộc tính EAV ***
+            if ($request->has('attributes')) {
+                foreach ($request->input('attributes') as $attribute_id => $value) {
+                    if (!empty($value)) { // Chỉ lưu nếu có giá trị
+                        ProductAttributeValue::create([
+                            'product_id' => $product->id,
+                            'attribute_id' => $attribute_id,
+                            'value' => $value,
+                        ]);
+                    }
+                }
+            }
 
-            // Commit transaction nếu mọi thứ thành công
             DB::commit();
         } catch (\Exception $e) {
-            // Rollback transaction nếu có lỗi xảy ra
             DB::rollBack();
+            Log::error("Store Product Error: " . $e->getMessage()); // Ghi log
             return redirect()->back()->withErrors('Có lỗi xảy ra, vui lòng thử lại.');
         }
 
-        // Nếu đang trong seller
         return redirect()->route('seller.products.index')
             ->with('success', 'Thêm sản phẩm thành công!');
     }
-    public function index(Request $request) // <-- Giữ nguyên Request $request
+
+    public function index(Request $request) // (Seller Dashboard)
     {
-        // Bắt đầu query cơ bản: lấy sản phẩm của người bán và tải kèm hình ảnh
-        $query = Product::with('images')
+        $query = Product::with('images', 'category') // Thêm category
                         ->where('seller_id', auth()->id());
 
-        // 1. Xử lý tìm kiếm theo tên (search)
         if ($request->filled('search')) {
             $query->where('name', 'like', '%' . $request->input('search') . '%');
         }
 
-        // 2. Xử lý lọc theo trạng thái (status)
         if ($request->filled('status')) {
             $query->where('status', $request->input('status'));
         }
         
-        // 3. THÊM MỚI: Xử lý lọc theo danh mục (category)
         if ($request->filled('category')) {
             $query->where('category_id', $request->input('category'));
         }
+        
+        // *** THÊM MỚI: Lọc theo brand_id ***
+        if ($request->filled('brand_id')) {
+            $query->where('brand_id', $request->input('brand_id'));
+        }
 
-        // THÊM MỚI: Lấy tất cả danh mục để truyền ra view
-        $categories = Category::all();
+        // *** CẬP NHẬT: Lấy categories và brands cho bộ lọc ***
+        $categories = Category::whereDoesntHave('children') // Chỉ lấy category KHÔNG CÓ con
+                      ->orderBy('name') // Sắp xếp theo tên cho dễ nhìn
+                      ->get();
+        $brands = Brand::orderBy('name')->get(); // Lấy từ bảng brands
 
-        // Sắp xếp kết quả (mới nhất lên trước) và thực hiện phân trang
         $products = $query->orderBy('created_at', 'desc')
                          ->paginate(99) 
                          ->withQueryString(); 
 
-        // CẬP NHẬT: Trả về view, thêm $categories
-        return view('seller.products.index', compact('products', 'categories'));
+        // *** CẬP NHẬT: Trả về view, thêm $brands ***
+        return view('seller.products.index', compact('products', 'categories', 'brands'));
     }
-// Phương thức hiển thị form (Bước 3)
+
     public function showImportForm()
     {
-        // Lấy danh sách danh mục để hiển thị trong select box
-        $categories = Category::all();
+        $categories = Category::whereDoesntHave('children') // Chỉ lấy category KHÔNG CÓ con
+                      ->orderBy('name') // Sắp xếp theo tên cho dễ nhìn
+                      ->get();
         return view('seller.products.Import', compact('categories'));
     }
 
@@ -128,6 +156,11 @@ class ProductController extends Controller
         $sellerId = Auth::id(); // Lấy ID của người bán đang đăng nhập
         $filePath = $request->file('excel_file')->path();
 
+        // *** THÊM MỚI: Lấy danh sách thuộc tính của danh mục này ***
+        $categoryAttributes = Attribute::whereHas('categories', function($q) use ($categoryId) {
+            $q->where('category_id', $categoryId);
+        })->get();
+
         // Tạo Collection các file ảnh đã tải lên, dùng tên file làm key
         $uploadedImages = collect($request->file('images'))->keyBy(function($file) {
             return $file->getClientOriginalName();
@@ -139,7 +172,7 @@ class ProductController extends Controller
         try {
             // 2. Import dữ liệu với fast-excel
             (new FastExcel())
-                ->import($filePath, function ($row) use ($categoryId, $sellerId, $uploadedImages, &$importedCount) {
+                ->import($filePath, function ($row) use ($categoryId, $sellerId, $uploadedImages, &$importedCount, $categoryAttributes) {
 
                     // --- ÁNH XẠ DỮ LIỆU SẢN PHẨM TỪ EXCEL VÀ FORM ---
 
@@ -148,17 +181,40 @@ class ProductController extends Controller
                          return null; // Bỏ qua dòng thiếu dữ liệu bắt buộc
                     }
 
+                    // *** CẬP NHẬT: Xử lý Brand Name từ Excel ***
+                    $brand_id = null;
+                    if (!empty($row['brand'])) {
+                        // Tìm hoặc Tạo Mới Brand và lấy ID
+                        $brand = Brand::firstOrCreate(['name' => trim($row['brand'])]);
+                        $brand_id = $brand->id;
+                    }
+
                     $product = Product::create([
                         'seller_id'   => $sellerId,
                         'category_id' => $categoryId, // LẤY TỪ FORM
+                        'brand_id'    => $brand_id, // <-- Dùng brand_id
                         'name'        => $row['name'],
                         'price'       => (float)($row['price']),
-                        'brand'       => $row['brand'] ?? null,
                         'stock'       => (int)($row['stock'] ?? 0),
                         'description' => $row['description'] ?? null,
                     ]);
 
                     //  --- XỬ LÝ HÌNH ẢNH  ---
+
+                    // *** THÊM MỚI: Xử lý nhập thuộc tính EAV từ Excel ***
+                    foreach ($categoryAttributes as $attribute) {
+                        $columnName = $attribute->name; // Tên cột trong Excel (VD: "RAM", "CPU")
+                        
+                        // Kiểm tra xem cột có tồn tại và có giá trị không
+                        if (isset($row[$columnName]) && !empty($row[$columnName])) {
+                            ProductAttributeValue::create([
+                                'product_id' => $product->id,
+                                'attribute_id' => $attribute->id,
+                                'value' => $row[$columnName],
+                            ]);
+                        }
+                    }
+
 
                     // Chỉ chạy logic xử lý ảnh NẾU CÓ BẤT KỲ FILE NÀO ĐƯỢC UPLOAD.
                     // Nếu không có ảnh nào được upload, $uploadedImages là Collection rỗng,
@@ -203,69 +259,71 @@ class ProductController extends Controller
             return redirect()->back()->with('error', 'Lỗi nhập dữ liệu: Đã xảy ra lỗi nghiêm trọng. Vui lòng kiểm tra file Excel và Log hệ thống.');
         }
     }
-   public function listProducts(Request $request) // <-- Dùng hàm bạn đã cung cấp
-    {
-        // Bắt đầu query: Tải kèm cả ảnh, seller và category
-        // (Cần 'category' để hiển thị tên danh mục trên card)
-        $query = Product::with(['images', 'seller', 'category']) 
-                        ->where('status', 'Approved');
+   public function listProducts(Request $request)
+{
+    // Bắt đầu query: Tải kèm 'brand' (model)
+    $query = Product::with([
+            'images', 
+            'seller', 
+            'category', 
+            'brand', 
+            'attributeValues.attribute' // <-- THÊM DÒNG NÀY
+        ]) 
+        ->where('status', 'Approved');
+    // 1. Lọc theo Khoảng giá (Giữ nguyên)
+    if ($request->filled('price_range')) {
+        $range = $request->input('price_range');
+        $parts = explode('-', $range); 
+        $minPrice = $parts[0];
+        $maxPrice = $parts[1] ?? null; 
 
-        // 1. Lọc theo Khoảng giá (price_range)
-        if ($request->filled('price_range')) {
-            $range = $request->input('price_range');
-            $parts = explode('-', $range); 
-            $minPrice = $parts[0];
-            $maxPrice = $parts[1] ?? null; 
-
-            if ($minPrice > 0) {
-                $query->where('price', '>=', $minPrice);
-            }
-            if ($maxPrice !== null && $maxPrice > 0) {
-                $query->where('price', '<=', $maxPrice);
-            }
+        if ($minPrice > 0) {
+            $query->where('price', '>=', $minPrice);
         }
-
-        // 2. Lọc theo Thương hiệu (brand)
-        if ($request->filled('brand')) {
-            $query->where('brand', $request->input('brand'));
+        if ($maxPrice !== null && $maxPrice > 0) {
+            $query->where('price', '<=', $maxPrice);
         }
-
-        // 3. Lọc theo "Đang giảm giá" (discount)
-        if ($request->filled('discount')) {
-            $query->whereNotNull('sale_price')
-                  ->whereColumn('sale_price', '<', 'price');
-            // Ghi chú: Logic 'sale_price' là tôi giả định
-        }
-
-        // 4. Lọc theo "Còn hàng" (in_stock)
-        if ($request->filled('in_stock')) {
-            $query->where('stock', '>', 0);
-        }
-
-        // 5. *** THÊM MỚI: Lọc theo Danh mục (category) ***
-        if ($request->filled('category')) {
-            $query->where('category_id', $request->input('category'));
-        }
-
-        // Lấy danh sách thương hiệu ĐỘNG
-        $brands = Product::where('status', 'Approved')
-                         ->select('brand')
-                         ->whereNotNull('brand')
-                         ->distinct()
-                         ->pluck('brand');
-                         
-        // *** THÊM MỚI: Lấy danh sách danh mục ĐỘNG ***
-        $categories = Category::all();
-
-        // Thực thi query, sắp xếp mới nhất, phân trang và GIỮ LẠI BỘ LỌC
-        $products = $query->latest() 
-                         ->paginate(30) 
-                         ->withQueryString(); // <-- Giữ nguyên, rất tốt!
-
-        // *** CẬP NHẬT: Trả về view với cả $categories ***
-        // (Sửa 'pages.listproducts' thành 'listproducts' nếu file của bạn nằm ở resources/views/listproducts.blade.php)
-        return view('pages.listproducts', compact('products', 'brands', 'categories'));
     }
+
+    // 2. Lọc theo Thương hiệu (brand) <-- *** ĐÃ SỬA ***
+    if ($request->filled('brand')) {
+        // Dùng brand_id để lọc
+        $query->where('brand_id', $request->input('brand'));
+    }
+
+    // 3. Lọc "Đang giảm giá" (Giữ nguyên)
+    /*if ($request->filled('discount')) {
+        $query->whereNotNull('sale_price')
+              ->whereColumn('sale_price', '<', 'price');
+    }*/
+
+    // 4. Lọc "Còn hàng" (Giữ nguyên)
+    if ($request->filled('in_stock')) {
+        $query->where('stock', '>', 0);
+    }
+
+    // 5. Lọc theo Danh mục (Giữ nguyên)
+    if ($request->filled('category')) {
+        $query->where('category_id', $request->input('category'));
+    }
+
+    // Lấy danh sách thương hiệu ĐỘNG <-- *** ĐÃ SỬA ***
+    // Lấy thẳng từ bảng `brands` thay vì 'pluck'
+    $brands = Brand::orderBy('name')->get();
+                     
+    // Lấy danh sách danh mục ĐỘNG (Giữ nguyên)
+    $categories = Category::whereDoesntHave('children') // Chỉ lấy category KHÔNG CÓ con
+                      ->orderBy('name') // Sắp xếp theo tên cho dễ nhìn
+                      ->get();
+
+    // Thực thi query (Giữ nguyên)
+    $products = $query->latest() 
+                     ->paginate(30) 
+                     ->withQueryString(); 
+
+    // Trả về view (Giữ nguyên)
+    return view('pages.listproducts', compact('products', 'brands', 'categories'));
+}
     public function destroy($id)
     {
         // Tìm sản phẩm theo id
@@ -280,42 +338,59 @@ class ProductController extends Controller
     }
     public function edit($id)
     {
+        // *** CẬP NHẬT: Load tất cả dữ liệu cần thiết ***
         $categories = Category::orderBy('name')->get();
-        $product = Product::findOrFail($id);
-        return view('seller.products.edit_product', compact('product', 'categories'));
+        $brands = Brand::orderBy('name')->get();
+        
+        // Load sản phẩm KÈM các giá trị thuộc tính hiện có
+        $product = Product::with('attributeValues.attribute')->findOrFail($id);
+
+        // Load tất cả thuộc tính (và options) mà danh mục này YÊU CẦU
+        // (Để render ra form cho đúng)
+        $categoryAttributes = Attribute::whereHas('categories', function($q) use ($product) {
+            $q->where('category_id', $product->category_id);
+        })->with('options')->get(); // Load kèm options cho 'select'
+
+        return view('seller.products.edit_product', compact(
+            'product', 
+            'categories', 
+            'brands', 
+            'categoryAttributes'
+        ));
     }
 
     public function update(Request $request, $id)
     {
-        // 1. Validate dữ liệu sản phẩm và hình ảnh mới
+        // *** CẬP NHẬT: Validation ***
         $request->validate([
             'category_id' => 'required|exists:categories,id',
+            'brand_id'    => 'nullable|exists:brands,id', // <-- Đổi
             'name'        => 'required|string|max:255',
             'price'       => 'required|numeric|min:0',
-            'brand'       => 'nullable|string|max:255',
             'stock'       => 'required|integer|min:0',
             'description' => 'nullable|string',
-            'status'      => 'required|in:' . Product::STATUS_APPROVED . ',' . Product::STATUS_HIDDEN,
-            'images.*'    => 'nullable|image|max:2048|mimes:jpeg,png,jpg,gif,svg', // Đổi 'image' thành 'images.*'
+            'status'      => 'required|string', // Mày có thể validate 'in:...'
+            'images.*'    => 'nullable|image|max:2048',
             'deleted_images' => 'nullable|array',
-            'deleted_images.*' => 'exists:product_images,id', // Đảm bảo ID hình ảnh tồn tại
+            'deleted_images.*' => 'exists:product_images,id',
+            'attributes'  => 'nullable|array', // <-- Thêm cho EAV
+            'attributes.*' => 'nullable|string|max:255',
         ]);
 
         $product = Product::findOrFail($id);
 
         DB::beginTransaction();
         try {
-            // 2. Cập nhật thông tin sản phẩm
+            // 2. *** CẬP NHẬT: Dùng brand_id ***
             $product->update([
                 'category_id' => $request->category_id,
+                'brand_id'    => $request->brand_id, // <-- Đổi
                 'name'        => $request->name,
                 'price'       => $request->price,
-                'brand'       => $request->brand,
                 'stock'       => $request->stock,
                 'description' => $request->description,
                 'status'      => $request->status,
             ]);
-
             // 3. Xóa các hình ảnh đã chọn (nếu có)
             if ($request->has('deleted_images')) {
                 $deletedImageIds = $request->input('deleted_images');
@@ -340,9 +415,23 @@ class ProductController extends Controller
                 }
             }
 
+            $product->attributeValues()->delete(); // Xóa hết
+            
+            if ($request->has('attributes')) {
+                foreach ($request->input('attributes') as $attribute_id => $value) {
+                    if (!empty($value)) { // Chỉ lưu nếu có giá trị
+                        ProductAttributeValue::create([
+                            'product_id' => $product->id,
+                            'attribute_id' => $attribute_id,
+                            'value' => $value,
+                        ]);
+                    }
+                }
+            }
+
             DB::commit();
 
-            return redirect()->route('seller.products.index', $product->id)->with('success', 'Sản phẩm đã được cập nhật thành công.');
+            return redirect()->route('seller.products.index')->with('success', 'Sản phẩm đã được cập nhật thành công.');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('error', 'Đã xảy ra lỗi khi cập nhật sản phẩm. Vui lòng thử lại.')->withInput();

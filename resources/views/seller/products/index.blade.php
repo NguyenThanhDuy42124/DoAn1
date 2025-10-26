@@ -1,11 +1,10 @@
+@extends('layouts.SellerDashBoard')
+@section('title', 'Danh sách sản phẩm') {{-- Thêm title --}}
 
-    <title>Danh sách sản phẩm</title>
-    @extends('layouts.SellerDashBoard')
-    @section('content')
-    <div class="container">
+@section('content')
+<div class="container">
    <div class="page-header mt-4">
     <div class="d-flex flex-wrap justify-content-between align-items-center">
-        <!-- Nhóm nút bên trái -->
         <div class="mb-3 d-flex flex-wrap">
             <a href="{{ route('seller.products.import.form') }}" class="btn btn-primary mr-2 mb-2 flex-fill text-nowrap">
                 <i class="fas fa-plus mr-2"></i>Thêm sản phẩm bằng File excel
@@ -15,7 +14,6 @@
             </a>
         </div>
 
-        <!-- Nút quay lại bên phải -->
         <div class="mb-3">
             <a href="{{ route('seller.dashboard') }}" class="btn btn-primary mb-2 flex-fill text-nowrap">
                 <i class="fas fa-home me-2"></i>Quay lại
@@ -23,17 +21,20 @@
         </div>
     </div>
 </div>
+
 <div class="card shadow-sm mb-4">
     <div class="card-body">
         <form action="{{ route('seller.products.index') }}" method="GET">
-            <div class="row g-3 align-items-end">
-                
-                <div class="col-md-4">
+            <div class="row g-3 align-items-end"> {{-- Giữ align-items-end --}}
+
+                {{-- Tìm tên (OK) --}}
+                <div class="col-md-3"> {{-- Giảm cột --}}
                     <label for="search" class="form-label fw-bold">Tìm theo tên</label>
                     <input type="text" class="form-control" id="search" name="search"
                            placeholder="Nhập tên sản phẩm..." value="{{ request('search') }}">
                 </div>
 
+                {{-- Trạng thái (OK) --}}
                 <div class="col-md-2">
                     <label for="status" class="form-label fw-bold">Trạng thái</label>
                     <select class="form-select" id="status" name="status">
@@ -42,10 +43,10 @@
                         <option value="Approved" @if(request('status') == 'Approved') selected @endif>Approved</option>
                         <option value="Hidden" @if(request('status') == 'Hidden') selected @endif>Hidden</option>
                         <option value="Rejected" @if(request('status') == 'Rejected') selected @endif>Rejected</option>
-                        <option value="Deleted" @if(request('status') == 'Deleted') selected @endif>Deleted</option>
                     </select>
                 </div>
 
+                {{-- Danh mục (OK) --}}
                 <div class="col-md-2">
                     <label for="category" class="form-label fw-bold">Danh mục</label>
                     <select class="form-select" id="category" name="category">
@@ -60,7 +61,23 @@
                     </select>
                 </div>
 
-                <div class="col-md-4">
+                {{-- *** THÊM BỘ LỌC THƯƠNG HIỆU *** --}}
+                <div class="col-md-2">
+                    <label for="brand_id" class="form-label fw-bold">Thương hiệu</label>
+                    <select class="form-select" id="brand_id" name="brand_id"> {{-- Dùng name="brand_id" --}}
+                        <option value="">Tất cả</option>
+                        @isset($brands)
+                            @foreach($brands as $brand)
+                                <option value="{{ $brand->id }}" @if(request('brand_id') == $brand->id) selected @endif>
+                                    {{ $brand->name }}
+                                </option>
+                            @endforeach
+                        @endisset
+                    </select>
+                </div>
+
+                {{-- Nút lọc (OK) --}}
+                <div class="col-md-3"> {{-- Tăng cột --}}
                     <div class="d-flex">
                         <button type="submit" class="btn btn-primary w-100 me-2">
                             <i class="fas fa-filter me-1"></i> Lọc
@@ -70,73 +87,78 @@
                         </a>
                     </div>
                 </div>
-                </div>
+            </div> {{-- Đóng thẻ div class="row g-3 align-items-end" --}}
         </form>
     </div>
 </div>
+
 @if($products && count($products) > 0)
     <div class="row gy-4">
        @foreach($products as $product)
-    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-        <div class="card h-100 product-card position-relative shadow-sm">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="card h-100 product-card position-relative shadow-sm">
 
-            {{-- Badge trạng thái --}}
-            @php
-                $status = $product->status;
-                $badgeClass = match($status) {
-                    'Pending' => 'bg-secondary',   // xám
-                    'Approved' => 'bg-success',    // xanh lá
-                    'Hidden' => 'bg-dark',         // đen
-                    'Rejected' => 'bg-danger',     // đỏ
-                    'Deleted' => 'bg-muted',       // mờ hoặc nhạt
-                    default => 'bg-light text-dark'
-                };
-            @endphp
+                {{-- Badge trạng thái (OK) --}}
+                @php
+                    $status = $product->status;
+                    $badgeClass = match($status) {
+                        'Pending' => 'bg-secondary',
+                        'Approved' => 'bg-success',
+                        'Hidden' => 'bg-dark',
+                        'Rejected' => 'bg-danger',
+                        'Deleted' => 'bg-muted',
+                        default => 'bg-light text-dark'
+                    };
+                @endphp
+                <span class="status-badge badge {{ $badgeClass }} position-absolute top-0 start-0 m-2 p-2">
+                    {{ ucfirst($status) }}
+                </span>
 
-            <span class="status-badge badge {{ $badgeClass }} position-absolute top-0 start-0 m-2 p-2">
-                {{ ucfirst($status) }}
-            </span>
+                {{-- Ảnh (OK) --}}
+                <img src="{{ $product->images->isNotEmpty() ? asset('storage/' . $product->images->first()->image_path) : asset('storage/product_images/default.jpg') }}"
+                     alt="{{ $product->name }}"
+                     class="card-img-top product-img">
 
-            <img src="{{ $product->images->isNotEmpty() ? asset('storage/' . $product->images->first()->image_path) : asset('storage/product_images/default.jpg') }}"
-                 alt="{{ $product->name }}"
-                 class="card-img-top product-img">
+                <div class="card-body product-body d-flex flex-column justify-content-between">
+                    <div>
+                        <h5 class="card-title product-title">{{ $product->name }}</h5>
+                        {{-- Danh mục (OK) --}}
+                        <p class="product-meta small mb-2"><i class="fas fa-box me-2"></i> Danh mục:
+                            <span class="fw-semibold text-dark">{{ $product->category->name ?? 'Chưa phân loại' }}</span>
+                        </p>
+                        <div class="product-meta small mb-2">
+                            {{-- Tồn kho (OK) --}}
+                            <div><i class="fas fa-box me-2"></i>Tồn kho: {{ $product->stock }}</div>
+                            {{-- *** SỬA THƯƠNG HIỆU Ở ĐÂY *** --}}
+                            <div><i class="fas fa-tag me-2"></i>Thương hiệu: {{ $product->brand->name ?? 'Chưa có' }}</div> {{-- Sửa thành $product->brand->name --}}
+                        </div>
 
-            <div class="card-body product-body d-flex flex-column justify-content-between">
-                <div>
-                    <h5 class="card-title product-title">{{ $product->name }}</h5>
-                    <p class="product-meta small mb-2"><i class="fas fa-box me-2"></i> Danh mục: 
-                                           <span class="fw-semibold text-dark">{{ $product->category->name ?? 'Chưa phân loại' }}</span>
-                                      </p>
-                    <div class="product-meta small mb-2">
-                        <div><i class="fas fa-box me-2"></i>Tồn kho: {{ $product->stock }}</div>
-                        <div><i class="fas fa-tag me-2"></i>Thương hiệu: {{ $product->brand ?? 'Chưa có' }}</div>
+                        {{-- Giá (OK) --}}
+                        <div class="product-price fw-bold text-primary mb-3">
+                            {{ number_format($product->price, 0, ',', '.') }}₫
+                        </div>
                     </div>
 
-                    <div class="product-price fw-bold text-primary mb-3">
-                        {{ number_format($product->price, 0, ',', '.') }}₫
+                    {{-- Nút Sửa/Xóa (OK) --}}
+                    <div class="mt-auto">
+                        <a href="{{ route('seller.products.edit', $product->id) }}" class="btn btn-primary w-100 mb-2">
+                            <i class="fas fa-edit me-2"></i>Sửa
+                        </a>
+                        <form action="{{ route('seller.products.destroy', $product->id) }}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger w-100">
+                                <i class="fas fa-trash me-2"></i>Xóa
+                            </button>
+                        </form>
                     </div>
-                </div>
-
-                <div class="mt-auto">
-                    <a href="{{ route('seller.products.edit', $product->id) }}" class="btn btn-primary w-100 mb-2">
-                        <i class="fas fa-edit me-2"></i>Sửa
-                    </a>
-
-                    <form action="{{ route('seller.products.destroy', $product->id) }}" method="POST">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger w-100">
-                            <i class="fas fa-trash me-2"></i>Xóa
-                        </button>
-                    </form>
                 </div>
             </div>
         </div>
-    </div>
-@endforeach
-
+        @endforeach
     </div>
 @else
+    {{-- Thông báo rỗng (OK) --}}
     <div class="empty-state text-center my-5">
         <i class="fas fa-box-open fa-3x mb-3 text-muted"></i>
         <h4>Chưa có sản phẩm nào</h4>
@@ -147,6 +169,5 @@
     </div>
 @endif
 
-    </div>
-    @endsection
-   
+</div> {{-- Đóng thẻ div class="container" --}}
+@endsection

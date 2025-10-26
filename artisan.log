@@ -3,9 +3,42 @@
 
   Press Ctrl+C to stop the server
 
-  2025-10-26 09:58:38 / ................................................ ~ 1s
-  2025-10-26 09:58:43 / ............................................ ~ 0.28ms
-  2025-10-26 09:58:43 /storage/product_images/default.jpg .......... ~ 0.19ms
-  2025-10-26 09:58:43 /storage/profile_images/nNTgofai8XaVLm1ATlaq5JleftcJNADgILmdU22y.jpg  ~ 0.10ms
-  2025-10-26 09:58:43 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.23ms
-  2025-10-26 09:58:43 /favicon.ico ................................. ~ 0.06ms
+  2025-10-26 16:46:41 / ................................................ ~ 2s
+  2025-10-26 16:46:45 / ............................................ ~ 0.17ms
+  2025-10-26 16:46:45 /storage/product_images/default.jpg .......... ~ 0.09ms
+  2025-10-26 16:46:45 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.55ms
+  2025-10-26 16:46:45 /storage/profile_images/nNTgofai8XaVLm1ATlaq5JleftcJNADgILmdU22y.jpg  ~ 0.67ms
+  2025-10-26 16:46:50 /dashboard ................................. ~ 500.43ms
+  2025-10-26 16:46:50 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.07ms
+  2025-10-26 16:46:51 /switch-role/seller .......................... ~ 0.13ms
+  2025-10-26 16:46:51 /seller/dashboard ............................ ~ 0.07ms
+  2025-10-26 16:46:52 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.08ms
+  2025-10-26 16:46:52 /seller/seller/api/revenue-report ............ ~ 0.05ms
+  2025-10-26 16:46:54 /seller/products ............................. ~ 0.12ms
+  2025-10-26 16:46:54 /storage/product_images/default.jpg .......... ~ 0.09ms
+  2025-10-26 16:46:54 /storage/product_images/aYa4avlszdBKJhxFPyB2u3Dmhe1I72oA2I5paUD7.jpg  ~ 0.37ms
+  2025-10-26 16:46:54 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.13ms
+  2025-10-26 16:46:55 /seller/products/create ...................... ~ 0.16ms
+  2025-10-26 16:46:58 /seller/products/create ...................... ~ 0.14ms
+  2025-10-26 16:52:26 /seller/products/create ...................... ~ 0.20ms
+  2025-10-26 16:55:43 /seller/products/create ...................... ~ 0.23ms
+  2025-10-26 16:55:43 /seller/products/create ...................... ~ 0.23ms
+  2025-10-26 16:55:44 /seller/products/create ...................... ~ 0.13ms
+  2025-10-26 16:55:46 /seller/products/create ...................... ~ 0.15ms
+  2025-10-26 16:55:56 /seller/products/create ...................... ~ 0.13ms
+  2025-10-26 16:55:56 /seller/products/create ...................... ~ 0.11ms
+  2025-10-26 16:55:57 /seller/products/create ...................... ~ 0.22ms
+  2025-10-26 16:55:57 /seller/products/create ...................... ~ 0.20ms
+  2025-10-26 16:55:57 /seller/products/create ...................... ~ 0.10ms
+  2025-10-26 16:55:58 /seller/products/create ...................... ~ 0.13ms
+  2025-10-26 16:56:50 .............................................. ~ 0.17ms
+  2025-10-26 16:56:51 /seller/products/18/edit ................... ~ 500.62ms
+  2025-10-26 16:56:52 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.07ms
+  2025-10-26 16:57:07 /seller/products/18/edit ..................... ~ 0.19ms
+  2025-10-26 16:57:07 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.05ms
+  2025-10-26 16:57:12 /seller/products/18/edit ..................... ~ 0.23ms
+  2025-10-26 16:57:12 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.14ms
+  2025-10-26 16:57:17 /seller/products ............................. ~ 0.14ms
+  2025-10-26 16:57:21 /seller/products/import/form ................. ~ 0.20ms
+  2025-10-26 16:57:21 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.07ms
+  2025-10-26 16:57:24 /seller/products/create .................... ~ 500.47ms

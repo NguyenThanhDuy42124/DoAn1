@@ -11,6 +11,8 @@ use App\Models\Category;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB; // <-- Thêm dòng này
 use Carbon\Carbon; // <-- Thêm dòng này
+use App\Models\Brand;
+
 
 
 class SellerController extends Controller
@@ -68,10 +70,12 @@ public function showShop(Request $request, $id)
 
         // 3. THÊM MỚI: Lấy tất cả danh mục để hiển thị ở sidebar
         // (Giả sử bạn có model App\Models\Category)
-        $categories = Category::all();
+        $categories = Category::whereDoesntHave('children')
+                              ->orderBy('name')
+                              ->get();
 
         // 4. Xây dựng câu truy vấn sản phẩm
-        $productQuery = Product::with(['images', 'category']) 
+        $productQuery = Product::with(['images', 'category', 'brand']) 
                                ->where('seller_id', $shop->id)
                                ->where('status', 'Approved');
 

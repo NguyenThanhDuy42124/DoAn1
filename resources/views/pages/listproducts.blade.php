@@ -2,7 +2,6 @@
 @section('title', 'Danh sách sản phẩm')
 
 @section('content')
-{{-- CHỈ SỬ DỤNG MỘT CONTAINER DUY NHẤT BỌC BÊN NGOÀI --}}
 <div class="container my-4">
 
     <div class="filter-section card shadow-sm mb-4">
@@ -35,8 +34,8 @@
                             <option value="">Tất cả</option>
                             @isset($brands)
                                 @foreach($brands as $brand)
-                                    <option value="{{ $brand }}" {{ request('brand') == $brand ? 'selected' : '' }}>
-                                        {{ $brand }}
+                                    <option value="{{ $brand->id }}" {{ request('brand') == $brand->id ? 'selected' : '' }}>
+                                        {{ $brand->name }}
                                     </option>
                                 @endforeach
                             @endisset
@@ -46,7 +45,7 @@
                     <div class="col-md-2">
                         <h6><i class="fas fa-list-ul me-2"></i>Danh mục</h6>
                         <select class="form-select" name="category">
-                            <option value="">Tất cả</doption>
+                            <option value="">Tất cả</option>
                             @isset($categories)
                                 @foreach($categories as $category)
                                     <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
@@ -84,12 +83,10 @@
     </div>
 
     <div class="row g-4">
-        {{-- DÙNG @forelse ĐỂ XỬ LÝ TRƯỜNG HỢP RỖNG --}}
         @forelse($products as $product)
-            {{-- BỎ @if($product->status === "Approved") VÌ CONTROLLER ĐÃ LỌC --}}
             <div class="col-md-4">
                 <div class="card product-card h-100 shadow-sm">
-                    <span class="badge-discount">- X%</span> {{-- Bạn có thể ẩn đi nếu chưa có logic giảm giá --}}
+                    <span class="badge-discount">- X%</span> 
                     
                     <img src="{{ $product->images->isNotEmpty() ?
                         asset('storage/' . $product->images->first()->image_path) :
@@ -109,7 +106,7 @@
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <div>
                                     <span class="text-muted small">Thương hiệu:</span>
-                                    <span class="fw-bold">{{ $product->brand ?? 'N/A' }}</span>
+                                    <span class="fw-bold">{{ $product->brand->name ?? 'N/A' }}</span>
                                 </div>
                                 <div>
                                     <span class="text-muted small">Tồn kho:</span>
@@ -161,7 +158,6 @@
                 </div>
             </div>
         @empty
-            {{-- Thêm @empty để thông báo khi không có sản phẩm --}}
             <div class="col-12">
                 <div class="alert alert-info text-center">
                     Không tìm thấy sản phẩm nào phù hợp với bộ lọc.
@@ -170,7 +166,12 @@
         @endforelse
     </div> 
     
-</div> {{-- (Tùy chọn) Bạn có thể giữ các modal chi tiết sản phẩm ở đây --}}
+    <div class="mt-4 d-flex justify-content-center">
+        {{ $products->links() }}
+    </div>
+    
+</div> 
+
 @foreach($products as $product)
     <div class="modal fade" id="detailModal-{{ $product->id }}" tabindex="-1" aria-labelledby="detailModalLabel-{{ $product->id }}" aria-hidden="true">
         <div class="modal-dialog modal-lg">

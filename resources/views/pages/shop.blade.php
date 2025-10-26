@@ -130,9 +130,9 @@
                                       
                                       <div class="d-flex justify-content-between align-items-center mb-2">
                                           <div>
-                                              <span class="text-muted small">Thương hiệu:</span>
-                                              <span class="fw-bold">{{ $product->brand ?? 'N/A' }}</span>
-                                          </div>
+                                            <span class="text-muted small">Thương hiệu:</span>
+                                            <span class="fw-bold">{{ $product->brand->name ?? 'N/A' }}</span>
+                                        </div>
                                           <div>
                                               <span class="text-muted small">Tồn kho:</span>
                                               <span class="fw-bold">{{ $product->stock }}</span>

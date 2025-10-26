@@ -29,6 +29,9 @@
                                             @else badge-warning @endif">
                                             {{ $attribute->type }}
                                         </span>
+                                        @if($attribute->unit)
+                                            <small class="text-muted">({{ $attribute->unit }})</small>
+                                        @endif
                                     </td>
                                     <td>
                                         <button class="btn btn-sm btn-warning" 
@@ -68,25 +71,67 @@
                     <div class="card-body">
                         <form wire:submit.prevent="saveAttribute">
                             <div class="form-group">
-                                <label>Tên Thuộc tính (ví dụ: RAM, CPU, Size...)</label>
+                                <label>Tên Thuộc tính</label>
                                 <input type="text" 
                                        class="form-control @error('state.name') is-invalid @enderror" 
                                        wire:model.defer="state.name"
-                                       placeholder="ví dụ: RAM">
+                                       placeholder="ví dụ: RAM, Kích thước màn hình...">
                                 @error('state.name') <span class="invalid-feedback">{{ $message }}</span> @enderror
                             </div>
                             
                             <div class="form-group mt-3">
                                 <label>Loại (Type)</label>
                                 <select class="form-control @error('state.type') is-invalid @enderror" 
-                                        wire:model.defer="state.type">
-                                    <option value="">— Chọn loại —</option>
-                                    <option value="text">Text (Người dùng tự nhập, ví dụ: Core i7)</option>
-                                    <option value="select">Select (Chọn từ danh sách, ví dụ: 8GB, 16GB)</option>
-                                    <option value="number">Number (Chỉ cho nhập số, ví dụ: 15.6 inch)</option>
+                                        wire:model.live="state.type">
+                                    <option value="text">Text (Người dùng tự nhập)</option>
+                                    <option value="select">Select (Chọn từ danh sách)</option>
+                                    <option value="number">Number (Nhập số)</option>
                                 </select>
                                 @error('state.type') <span class="invalid-feedback">{{ $message }}</span> @enderror
                             </div>
+
+                            @if(isset($state['type']) && $state['type'] == 'number')
+                            <div class="form-group mt-3" wire:key="unit-field">
+                                <label>Đơn vị (Unit)</label>
+                                <input type="text" 
+                                       class="form-control @error('state.unit') is-invalid @enderror" 
+                                       wire:model.defer="state.unit"
+                                       placeholder="ví dụ: inch, kg, mAh, GB (để trống nếu không cần)">
+                                @error('state.unit') <span class="invalid-feedback">{{ $message }}</span> @enderror
+                                <small class="form-text text-muted">Đây là hậu tố hiển thị cho người bán (ví dụ: 15.6 __inch__)</small>
+                            </div>
+                            @endif
+
+                            @if(isset($state['type']) && $state['type'] == 'select')
+                            <div class="mt-3" wire:key="options-field">
+                                <label>Quản lý Tùy chọn (Options)</label>
+                                <ul class="list-group mb-2">
+                                    @forelse($options as $index => $option)
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            {{ $option['value'] }}
+                                            <button type="button" class="btn btn-sm btn-danger" 
+                                                    wire:click.prevent="removeOption({{ $index }})">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </li>
+                                    @empty
+                                        <li class="list-group-item text-muted">Chưa có tùy chọn nào.</li>
+                                    @endforelse
+                                </ul>
+                                <div class="input-group">
+                                    <input type="text" 
+                                           class="form-control @error('newOptionValue') is-invalid @enderror" 
+                                           wire:model="newOptionValue" 
+                                           wire:keydown.enter.prevent="addOption"
+                                           placeholder="ví dụ: 8GB, 16GB, S, M...">
+                                    <button class="btn btn-outline-secondary" type="button" 
+                                            wire:click.prevent="addOption">
+                                        Thêm
+                                    </button>
+                                </div>
+                                @error('newOptionValue') <span class="invalid-feedback d-block">{{ $message }}</span> @enderror
+                            </div>
+                            @endif
                             
                             <hr>
                             
