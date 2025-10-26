@@ -2,16 +2,17 @@
 
 namespace App\Livewire\Admin\Products;
 
-use App\Models\Product;
-use App\Models\Category;
 use App\Models\User;
+use App\Models\Product;
 use Livewire\Component;
+use App\Models\Category;
+use Illuminate\Support\Str;
+use App\Models\Notification;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\DB;
-use Rappasoft\LaravelLivewireTables\DataTableComponent;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
 use Rap2hpoutre\FastExcel\FastExcel;
+use Illuminate\Support\Facades\Storage;
+use Rappasoft\LaravelLivewireTables\DataTableComponent;
 
 class All extends Component
 {
@@ -26,6 +27,10 @@ class All extends Component
     public $price_max = '';
     public $sortField = 'created_at';
     public $sortDirection = 'desc';
+    public $selectedProductId;
+    public $actionType = 'reject'; // reject | hidden
+    public $reasonModalOpen = false;
+    public $reason = ''; // Cho reject
 
     protected $queryString = [
         'search', 'status', 'category_id', 'seller_id',
@@ -115,5 +120,48 @@ class All extends Component
             'stats' => $stats,
             'chartData' => $chartData,
         ]);
+    }
+        public function openRejectModal($id)
+    {
+        $this->selectedProductId = $id;
+        $this->reasonModalOpen = true;
+    }
+    public function closeRejectModal()
+    {
+        $this->reasonModalOpen = false;
+        $this->reason = '';
+        $this->selectedProductId = null;
+    }
+    public function confirmReject()
+    {
+        $this->validate([
+            'reason' => 'required|string|max:255',
+            'actionType' => 'required|in:reject,hidden,approve',
+        ]);
+
+        $product = Product::findOrFail($this->selectedProductId);
+
+        if ($this->actionType === 'reject') {
+            $product->update(['status' => Product::STATUS_REJECTED]);
+        } else if ($this->actionType === 'hidden') {
+            $product->update(['status' => Product::STATUS_HIDDEN]);
+        }
+        else if ($this->actionType === 'approve') {
+            $product->update(['status' => Product::STATUS_APPROVED]);
+        }
+
+
+        Notification::create([
+            'user_id' => $product->seller_id,
+            'type' => 'product_' . $this->actionType,
+            'message' => "Sản phẩm '{$product->name}' bị {$this->actionType}: {$this->reason}",
+            'is_read' => false,
+        ]);
+
+        // Reset
+        $this->reason = '';
+        $this->reasonModalOpen = false;
+        $this->selectedProductId = null;
+        session()->flash('success', 'Đã xử lý sản phẩm!');
     }
 }
