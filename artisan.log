@@ -3,21 +3,9 @@
 
   Press Ctrl+C to stop the server
 
-  2025-10-22 16:39:06 / .......................................... ~ 500.52ms
-  2025-10-22 16:39:11 / ............................................ ~ 0.21ms
-  2025-10-22 16:39:31 /storage/product_images/default.jpg .......... ~ 0.20ms
-  2025-10-22 16:39:31 /storage/profile_images/nNTgofai8XaVLm1ATlaq5JleftcJNADgILmdU22y.jpg  ~ 0.82ms
-  2025-10-22 16:39:31 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 1.07ms
-  2025-10-22 16:39:33 /login ....................................... ~ 0.23ms
-  2025-10-22 16:39:36 /login ....................................... ~ 0.15ms
-  2025-10-22 16:39:36 /dashboard ................................... ~ 0.09ms
-  2025-10-22 16:39:37 /storage/profile_images/default.jpg .......... ~ 0.07ms
-  2025-10-22 16:39:38 /switch-role/admin ........................... ~ 0.23ms
-  2025-10-22 16:39:38 /admin/dashboard ............................. ~ 0.06ms
-  2025-10-22 16:39:39 /admin/usersManager .......................... ~ 0.11ms
-  2025-10-22 16:39:39 /admin/products .............................. ~ 0.24ms
-  2025-10-22 16:39:41 /admin/products .............................. ~ 0.17ms
-  2025-10-22 16:39:47 /livewire/update ............................. ~ 0.22ms
-  2025-10-22 16:39:50 /livewire/update ............................. ~ 0.24ms
-  2025-10-22 16:39:53 /livewire/update ............................. ~ 0.22ms
-  2025-10-22 16:39:55 /livewire/update ............................. ~ 0.24ms
+  2025-10-26 09:58:38 / ................................................ ~ 1s
+  2025-10-26 09:58:43 / ............................................ ~ 0.28ms
+  2025-10-26 09:58:43 /storage/product_images/default.jpg .......... ~ 0.19ms
+  2025-10-26 09:58:43 /storage/profile_images/nNTgofai8XaVLm1ATlaq5JleftcJNADgILmdU22y.jpg  ~ 0.10ms
+  2025-10-26 09:58:43 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.23ms
+  2025-10-26 09:58:43 /favicon.ico ................................. ~ 0.06ms

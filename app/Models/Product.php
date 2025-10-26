@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Product extends Model
 {
@@ -14,7 +16,7 @@ class Product extends Model
         'category_id',
         'name',
         'price',
-        'brand',
+        'brand_id',
         'stock',
         'description',
         'status',
@@ -35,6 +37,10 @@ class Product extends Model
     {
         return $this->belongsTo(User::class, 'seller_id');
     }
+    public function brand(): BelongsTo
+    {
+        return $this->belongsTo(Brand::class);
+    }
     public function category()
     {
         return $this->belongsTo(Category::class);
@@ -46,5 +52,9 @@ class Product extends Model
     public function images()
     {
         return $this->hasMany(ProductImage::class);
+    }
+    public function attributeValues(): HasMany
+    {
+        return $this->hasMany(ProductAttributeValue::class);
     }
 }

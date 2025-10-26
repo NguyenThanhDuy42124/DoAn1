@@ -2,7 +2,6 @@
     <div class="row">
         <div class="col-md-7">
             <h3>Quản lý Danh mục</h3>
-            <h2>{{ $testProperty }}</h2>
             <button class="btn btn-primary mb-3" wire:click="createNewCategory">
                 Thêm danh mục mới
             </button>
