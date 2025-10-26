@@ -1,571 +1,621 @@
  :root {
-            --primary: #0066cc;
-            --secondary: #ff6600;
-            --light-bg: #f8f9fa;
-            --dark-text: #333;
-            --border-radius: 12px;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-             background-color: #f5f7fb;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-              margin: 0;
-               padding: 0;
-                padding-top: 70px; /* <-- THÊM DÒNG NÀY */
-        }
-       /* ===== NAVBAR STYLING - GIỐNG SELLER DASHBOARD ===== */
-/* ===== NAVBAR STYLING (Giống Seller Dashboard) ===== */
-.navbar {
-    /* Style lấy từ dashboard_seller.css */
-    background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
-    border-bottom: none;
-    height: 70px;
-    box-shadow: 0 4px 12px rgba(25, 118, 210, 0.15);
-    /* 'fixed-top' đã có trong HTML, không cần 'position: fixed' ở đây */
-    z-index: 1030;
-    padding: 0 20px;
-    transition: all 0.3s ease;
-}
+     --primary: #0066cc;
+     --secondary: #ff6600;
+     --light-bg: #f8f9fa;
+     --dark-text: #333;
+     --border-radius: 12px;
+ }
 
-/* Ghi đè CSS của layouts.css để đảm bảo chữ màu trắng */
-.navbar-dark .navbar-brand,
-.navbar-dark .navbar-brand span {
-    color: #fff !important; /* Ghi đè màu primary/secondary */
-}
+ body {
+     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+     background-color: #f5f7fb;
+     display: flex;
+     flex-direction: column;
+     min-height: 100vh;
+     margin: 0;
+     padding: 0;
+     padding-top: 70px;
+     /* <-- THÊM DÒNG NÀY */
+ }
 
-.navbar-dark .navbar-nav .nav-link {
-    color:rgba(255, 255, 255, 0.85) !important; /* Ghi đè màu dark-text */
-    font-weight: 500;
-    padding: 0.75rem 1rem;
-    transition: all 0.3s ease;
-    border-radius: 8px;
-    margin: 0 2px;
-}
+ /* ===== NAVBAR STYLING - GIỐNG SELLER DASHBOARD ===== */
+ /* ===== NAVBAR STYLING (Giống Seller Dashboard) ===== */
+ .navbar {
+     /* Style lấy từ dashboard_seller.css */
+     background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+     border-bottom: none;
+     height: 70px;
+     box-shadow: 0 4px 12px rgba(25, 118, 210, 0.15);
+     /* 'fixed-top' đã có trong HTML, không cần 'position: fixed' ở đây */
+     z-index: 1030;
+     padding: 0 20px;
+     transition: all 0.3s ease;
+ }
 
-.navbar-dark .navbar-nav .nav-link:hover,
-.navbar-dark .navbar-nav .nav-link.active {
-    color: #fff !important;
-    background-color: rgba(255, 255, 255, 0.15);
-}
+ /* Ghi đè CSS của layouts.css để đảm bảo chữ màu trắng */
+ .navbar-dark .navbar-brand,
+ .navbar-dark .navbar-brand span {
+     color: #fff !important;
+     /* Ghi đè màu primary/secondary */
+ }
 
-/* Style cho Dropdown (giữ nguyên) */
-.dropdown-menu {
-    border: none;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    border-radius: var(--border-radius);
-}
+ .navbar-dark .navbar-nav .nav-link {
+     color: rgba(255, 255, 255, 0.85) !important;
+     /* Ghi đè màu dark-text */
+     font-weight: 500;
+     padding: 0.75rem 1rem;
+     transition: all 0.3s ease;
+     border-radius: 8px;
+     margin: 0 2px;
+ }
 
-.dropdown-item {
-    padding: 10px 20px; /* Tăng padding cho đẹp hơn */
-    transition: all 0.2s ease;
-}
+ .navbar-dark .navbar-nav .nav-link:hover,
+ .navbar-dark .navbar-nav .nav-link.active {
+     color: #fff !important;
+     background-color: rgba(255, 255, 255, 0.15);
+ }
 
-.dropdown-item:hover {
-    background-color: var(--primary); /* Dùng màu --primary của bạn */
-    color: white;
-}
+ /* Style cho Dropdown (giữ nguyên) */
+ .dropdown-menu {
+     border: none;
+     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+     border-radius: var(--border-radius);
+ }
+
+ .select {
+     height: 50px;
+ }
+
+ .dropdown-item {
+     padding: 10px 20px;
+     /* Tăng padding cho đẹp hơn */
+     transition: all 0.2s ease;
+ }
+
+ .dropdown-item:hover {
+     background-color: var(--primary);
+     /* Dùng màu --primary của bạn */
+     color: white;
+ }
+
  /* Form styling (giữ nguyên) */
-.form-control {
-    border-radius: 20px;
-    padding: 0.75rem 1rem; /* Cập nhật từ file css mới của bạn */
-    border: 1px solid #dce1e6;
-    transition: all 0.3s ease;
-}
+ .form-control {
+     border-radius: 20px;
+     padding: 0.75rem 1rem;
+     /* Cập nhật từ file css mới của bạn */
+     border: 1px solid #dce1e6;
+     transition: all 0.3s ease;
+ }
 
-.form-control:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 0 0.2rem rgba(0, 102, 204, 0.15);
-}
+ .form-control:focus {
+     border-color: var(--primary);
+     box-shadow: 0 0 0 0.2rem rgba(0, 102, 204, 0.15);
+ }
 
-/* Căn chỉnh lại form-group của Bootstrap 4 */
-.form-group {
-    margin-bottom: 1.25rem;
-}
+ /* Căn chỉnh lại form-group của Bootstrap 4 */
+ .form-group {
+     margin-bottom: 1.25rem;
+ }
 
-.form-group label {
-    font-weight: 600;
-    color: var(--dark-text); /* Lấy từ layouts.css */
-    margin-bottom: 0.5rem;
-    display: block;
-}
+ .form-group label {
+     font-weight: 600;
+     color: var(--dark-text);
+     /* Lấy từ layouts.css */
+     margin-bottom: 0.5rem;
+     display: block;
+ }
 
-/* Nút submit */
-.btn-update-profile {
-    /* Sử dụng lại style của .btn-primary nhưng làm nó to hơn */
-    background-color: var(--primary);
-    border-color: var(--primary);
-    color: white;
-    padding: 12px 20px;
-    font-weight: 600;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-    width: 100%; /* Dãn hết chiều rộng */
-}
+ /* Nút submit */
+ .btn-update-profile {
+     /* Sử dụng lại style của .btn-primary nhưng làm nó to hơn */
+     background-color: var(--primary);
+     border-color: var(--primary);
+     color: white;
+     padding: 12px 20px;
+     font-weight: 600;
+     border-radius: 8px;
+     transition: all 0.3s ease;
+     width: 100%;
+     /* Dãn hết chiều rộng */
+ }
 
-.btn-update-profile:hover {
-    background-color: #0052a3; /* Lấy từ :hover của .btn-primary */
-    border-color: #0052a3;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0, 102, 204, 0.25);
-}
+ .btn-update-profile:hover {
+     background-color: #0052a3;
+     /* Lấy từ :hover của .btn-primary */
+     border-color: #0052a3;
+     transform: translateY(-2px);
+     box-shadow: 0 4px 10px rgba(0, 102, 204, 0.25);
+ }
 
-/* Căn chỉnh ảnh preview */
-.avatar-preview-wrapper {
-    text-align: center;
-    margin-bottom: 1.5rem;
-}
+ /* Căn chỉnh ảnh preview */
+ .avatar-preview-wrapper {
+     text-align: center;
+     margin-bottom: 1.5rem;
+ }
 
-.avatar-preview {
-    width: 150px;
-    height: 150px;
-    object-fit: cover;
-    border-radius: 50%; /* Làm tròn ảnh đại diện */
-    border: 5px solid #fff;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    background-color: #f8f9fa; /* Nền mờ khi chưa có ảnh */
-    margin: 0 auto;
-}
+ .avatar-preview {
+     width: 150px;
+     height: 150px;
+     object-fit: cover;
+     border-radius: 50%;
+     /* Làm tròn ảnh đại diện */
+     border: 5px solid #fff;
+     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+     background-color: #f8f9fa;
+     /* Nền mờ khi chưa có ảnh */
+     margin: 0 auto;
+ }
 
-/* Ẩn thẻ img nếu không có src (tránh icon vỡ) */
-.avatar-preview[src="#"] {
-    display: none;
-}
-/* Hiển thị ảnh nếu có (kể cả ảnh cũ hoặc ảnh mới) */
-.avatar-preview:not([src="#"]) {
-    display: block;
-}
-/* Vùng chứa chính cho trang tài khoản, thêm khoảng cách với navbar */
-.account-container {
-    margin-top: 2rem;
-    margin-bottom: 2rem;
-}
+ /* Ẩn thẻ img nếu không có src (tránh icon vỡ) */
+ .avatar-preview[src="#"] {
+     display: none;
+ }
 
-/* Card chung cho sidebar và content */
-.account-card {
-    background-color: #fff;
-    border: none;
-    border-radius: var(--border-radius);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    overflow: hidden; /* Giúp bo góc .account-header */
-}
+ /* Hiển thị ảnh nếu có (kể cả ảnh cũ hoặc ảnh mới) */
+ .avatar-preview:not([src="#"]) {
+     display: block;
+ }
 
-/* (MỚI) Header chung chứa ảnh đại diện và tên */
-.account-header {
-    background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%); /* Đồng bộ với navbar */
-    padding: 1.5rem 2rem;
-    display: flex;
-    align-items: center;
-    color: #fff;
-}
+ /* Vùng chứa chính cho trang tài khoản, thêm khoảng cách với navbar */
+ .account-container {
+     margin-top: 2rem;
+     margin-bottom: 2rem;
+ }
 
-.account-avatar {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    border: 4px solid #fff;
-    object-fit: cover;
-    margin-right: 1.5rem;
-    background-color: #f8f9fa; /* Nền mờ khi chưa có ảnh */
-}
+ /* Card chung cho sidebar và content */
+ .account-card {
+     background-color: #fff;
+     border: none;
+     border-radius: var(--border-radius);
+     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+     overflow: hidden;
+     /* Giúp bo góc .account-header */
+ }
 
-.account-header h3 {
-    margin-bottom: 0.25rem;
-    font-weight: 700;
-    color: #fff;
-}
+ /* (MỚI) Header chung chứa ảnh đại diện và tên */
+ .account-header {
+     background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+     /* Đồng bộ với navbar */
+     padding: 1.5rem 2rem;
+     display: flex;
+     align-items: center;
+     color: #fff;
+ }
 
-.account-header p {
-    margin-bottom: 0;
-    color: rgba(255, 255, 255, 0.85);
-    font-size: 0.9rem;
-}
+ .account-avatar {
+     width: 80px;
+     height: 80px;
+     border-radius: 50%;
+     border: 4px solid #fff;
+     object-fit: cover;
+     margin-right: 1.5rem;
+     background-color: #f8f9fa;
+     /* Nền mờ khi chưa có ảnh */
+ }
 
-/* (MỚI) Sidebar menu */
-.account-sidebar .nav-pills .nav-link {
-    color: var(--dark-text);
-    padding: 0.85rem 1.25rem;
-    border-radius: 8px; /* Bo góc cho từng link */
-    margin-bottom: 5px;
-    font-weight: 500;
-    transition: all 0.2s ease-in-out;
-}
+ .account-header h3 {
+     margin-bottom: 0.25rem;
+     font-weight: 700;
+     color: #fff;
+ }
 
-.account-sidebar .nav-pills .nav-link i {
-    width: 20px; /* Căn chỉnh icon */
-    margin-right: 10px;
-    color: #888;
-    transition: all 0.2s ease-in-out;
-}
+ .account-header p {
+     margin-bottom: 0;
+     color: rgba(255, 255, 255, 0.85);
+     font-size: 0.9rem;
+ }
 
-.account-sidebar .nav-pills .nav-link:hover,
-.account-sidebar .nav-pills .nav-link.active {
-    background-color: #e8f4ff; /* Màu nền xanh nhạt khi active */
-    color: var(--primary);
-}
+ /* (MỚI) Sidebar menu */
+ .account-sidebar .nav-pills .nav-link {
+     color: var(--dark-text);
+     padding: 0.85rem 1.25rem;
+     border-radius: 8px;
+     /* Bo góc cho từng link */
+     margin-bottom: 5px;
+     font-weight: 500;
+     transition: all 0.2s ease-in-out;
+ }
 
-.account-sidebar .nav-pills .nav-link.active i,
-.account-sidebar .nav-pills .nav-link:hover i {
-    color: var(--primary);
-}
+ .account-sidebar .nav-pills .nav-link i {
+     width: 20px;
+     /* Căn chỉnh icon */
+     margin-right: 10px;
+     color: #888;
+     transition: all 0.2s ease-in-out;
+ }
 
-/* (MỚI) Vùng nội dung bên phải */
-.account-content {
-    padding: 2rem;
-}
+ .account-sidebar .nav-pills .nav-link:hover,
+ .account-sidebar .nav-pills .nav-link.active {
+     background-color: #e8f4ff;
+     /* Màu nền xanh nhạt khi active */
+     color: var(--primary);
+ }
 
-.account-content h4 {
-    font-weight: 700;
-    color: var(--dark-text);
-    border-bottom: 2px solid #f0f0f0;
-    padding-bottom: 10px;
-}
+ .account-sidebar .nav-pills .nav-link.active i,
+ .account-sidebar .nav-pills .nav-link:hover i {
+     color: var(--primary);
+ }
 
-/* (MỚI) Style cho các dòng thông tin */
-.info-item {
-    display: flex;
-    align-items: center;
-    margin-bottom: 1rem;
-    font-size: 1rem;
-    padding: 10px 0;
-    border-bottom: 1px solid #f4f4f4;
-}
-.info-item:last-of-type {
-    border-bottom: none;
-}
-.info-label {
-    font-weight: 600;
-    color: #555;
-    width: 150px; /* Cố định chiều rộng label */
-    flex-shrink: 0;
-}
-.info-value {
-    color: var(--dark-text);
-}
-  /* ===== Location Display Styling (MỚI) ===== */
-.location-display {
-    /* Nền trắng để nổi bật trên navbar xanh */
-    background-color: #fff; 
-    /* Chữ màu xanh (lấy từ biến --primary của bạn) */
-    color: var(--primary); 
-    padding: 8px 15px;
-    border-radius: 20px; /* Bo tròn giống thanh search */
-    font-size: 0.9rem;
-    transition: all 0.3s ease;
-    /* Ngăn không cho rớt dòng trên màn hình hẹp */
-    white-space: nowrap; 
-}
+ /* (MỚI) Vùng nội dung bên phải */
+ .account-content {
+     padding: 2rem;
+ }
 
-/* Hiệu ứng khi hover */
-.location-display:hover {
-    background-color: #f8f9fa; /* Hơi xám lại 1 chút */
-    color: var(--primary);
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
+ .account-content h4 {
+     font-weight: 700;
+     color: var(--dark-text);
+     border-bottom: 2px solid #f0f0f0;
+     padding-bottom: 10px;
+ }
 
-/* Style cho các icon bên trong */
-.location-display i {
-    color: var(--primary);
-}
+ /* (MỚI) Style cho các dòng thông tin */
+ .info-item {
+     display: flex;
+     align-items: center;
+     margin-bottom: 1rem;
+     font-size: 1rem;
+     padding: 10px 0;
+     border-bottom: 1px solid #f4f4f4;
+ }
 
-.location-display .location-chevron {
-    font-size: 0.7rem; /* Thu nhỏ icon chevron */
-    opacity: 0.7;
-}      
-        /* Main content */
-        main {
-            flex: 1;
-            padding: 2rem 0;
-        }
-        
-        /* Footer styling */
-        footer {
-            background-color: #f1f1f1;
-            color: #555;
-            padding: 2rem 0;
-            margin-top: auto;
-            width: 100%;
-        }
-        
-        footer h5 {
-            font-weight: 600;
-            color: var(--dark-text);
-            margin-bottom: 1rem;
-        }
-        
-        footer p {
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-        }
-        
-        /* Button styling */
-        .btn-primary {
-            background-color: var(--primary);
-            border-color: var(--primary);
-            border-radius: 6px;
-        }
-        
-        .btn-primary:hover {
-            background-color: #0052a3;
-            border-color: #0052a3;
-        }
-        
-        .btn-outline-primary {
-            color: var(--primary);
-            border-color: var(--primary);
-            border-radius: 6px;
-        }
-        
-        .btn-outline-primary:hover {
-            background-color: var(--primary);
-            color: white;
-        }
-        
-        /* Card styling */
-        .card {
-            border: none;
-            border-radius: var(--border-radius);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-        }
-        .page-header {
-      background: linear-gradient(to right, var(--primary), #004d99);
-      color: white;
-      padding: 40px 0;
-      margin-bottom: 30px;
-      border-radius: 0 0 20px 20px;
-    }
-   .product-card {
-    border: none;
-    border-radius: 12px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    overflow: hidden;
-    background: white;
-    }
-    
-    .product-card:hover {
-      transform: translateY(-8px);
-    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15) !important;
-    }
-    
-    .product-img {
-       height: 200px;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-    border-radius: 0;
-    }
-    .product-card:hover .product-img {
-    transform: scale(1.05);
-    }
-    .card-title {
-      font-weight: 600;
-      color: var(--dark-text);
-      margin-bottom: 10px;
-    }
-    
-    .product-price {
-      color: var(--primary);
-      font-weight: 700;
-      font-size: 1.2rem;
-    }
-    
-    .btn-primary {
-      background-color: var(--primary);
-      border-color: var(--primary);
-      border-radius: 6px;
-      font-weight: 500;
-    }
-    
-    .btn-primary:hover {
-      background-color: #0052a3;
-      border-color: #0052a3;
-    }
-    
-    .btn-success {
-      background-color: var(--secondary);
-      border-color: var(--secondary);
-      border-radius: 6px;
-      font-weight: 500;
-    }
-    
-    .btn-success:hover {
-      background-color: #e55a00;
-      border-color: #e55a00;
-    }
-    
-    .modal-header {
-      background-color: var(--primary);
-      color: white;
-    }
-    
-    .filter-section {
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-      margin-bottom: 30px;
-    }
-    
-    .pagination {
-      justify-content: center;
-      margin-top: 30px;
-    }
-    
-    .page-link {
-      color: var(--primary);
-    }
-    
-    .page-item.active .page-link {
-      background-color: var(--primary);
-      border-color: var(--primary);
-    }
-    
-    .empty-state {
-      text-align: center;
-      padding: 60px 20px;
-      color: #6c757d;
-    }
-    
-    .empty-state i {
-      font-size: 4rem;
-      margin-bottom: 15px;
-      color: #dee2e6;
-    }
-    
-    .badge-discount {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: var(--secondary);
-      color: white;
-      padding: 5px 10px;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 600;
-    }
-  
-        /* Form styling */
-        .form-control {
-            border: 1px solid #dce1e6;
-            border-radius: 6px;
-            padding: 12px 15px;
-            transition: all 0.3s;
-        }
-        
-        .form-control:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 0.2rem rgba(0, 102, 204, 0.25);
-        }
-        
-        /* Additional styles for consistency */
-        .section-title {
-            color: var(--primary);
-            font-weight: 600;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #eaeaea;
-        }
-        
-        .text-primary {
-            color: var(--primary) !important;
-        }
-        
-        .bg-primary {
-            background-color: var(--primary) !important;
-        }
-        
-        .alert-primary {
-            background-color: rgba(0, 102, 204, 0.1);
-            border-color: rgba(0, 102, 204, 0.3);
-            color: var(--primary);
-        }
-         #mainCarousel .carousel-control-prev,
-        #mainCarousel .carousel-control-next {
-            width: 40px;
-            height: 40px;
-            background-color: rgba(0, 0, 0, 0.3);
-            border-radius: 50%;
-            top: 50%;
-            transform: translateY(-50%);
-            opacity: 0.8;
-            transition: all 0.3s ease;
-        }
-        #mainCarousel .carousel-control-prev {
-            left: 15px;
-        }
-        #mainCarousel .carousel-control-next {
-            right: 15px;
-        }
-        #mainCarousel .carousel-control-prev:hover,
-        #mainCarousel .carousel-control-next:hover {
-            background-color: rgba(0, 0, 0, 0.6);
-            opacity: 1;
-        }
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .navbar-nav {
-                padding: 1rem 0;
-            }
-            
-            .navbar-nav .nav-item {
-                margin-bottom: 0.5rem;
-            }
-            
-            footer .col-4 {
-                width: 100%;
-                margin-bottom: 1.5rem;
-            }
-        }
-        /* ===== Fix Responsive Navbar (MỚI) ===== */
-@media (max-width: 991.98px) {
-    
-    /* Thêm nền xanh cho menu khi mở */
-    .navbar .navbar-collapse {
-        background-color: #1565c0; /* Màu xanh đậm của gradient */
-        padding: 15px;
-        margin-top: 10px;
-        border-radius: 8px;
-        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-    }
+ .info-item:last-of-type {
+     border-bottom: none;
+ }
 
-    /* Bắt buộc các nhóm dãn 100% và xếp dọc */
-    .navbar-collapse .navbar-nav,
-    .navbar-collapse .d-flex {
-        align-items: stretch !important;
-        flex-direction: column;
-        width: 100%;
-        gap: 0; /* Reset gap */
-    }
+ .info-label {
+     font-weight: 600;
+     color: #555;
+     width: 150px;
+     /* Cố định chiều rộng label */
+     flex-shrink: 0;
+ }
 
-    /* Sắp xếp lại nhóm search/location */
-    .navbar-collapse .d-flex {
-        margin: 15px 0; /* Khoảng cách giữa các nhóm */
-    }
+ .info-value {
+     color: var(--dark-text);
+ }
 
-    /* Nút location dãn 100% */
-    .navbar-collapse .location-display {
-       margin: 0 0 10px 0 !important; /* Xóa margin cũ, thêm margin dưới */
-       justify-content: center; /* Căn giữa chữ */
-    }
-    
-    /* Form dãn 100% */
-    .navbar-collapse .d-flex form {
-        width: 100%;
-    }
+ /* ===== Location Display Styling (MỚI) ===== */
+ .location-display {
+     /* Nền trắng để nổi bật trên navbar xanh */
+     background-color: #fff;
+     /* Chữ màu xanh (lấy từ biến --primary của bạn) */
+     color: var(--primary);
+     padding: 8px 15px;
+     border-radius: 20px;
+     /* Bo tròn giống thanh search */
+     font-size: 0.9rem;
+     transition: all 0.3s ease;
+     /* Ngăn không cho rớt dòng trên màn hình hẹp */
+     white-space: nowrap;
+ }
 
-    /* Căn giữa các link */
-    .navbar-collapse .navbar-nav .nav-item {
-        margin: 5px 0;
-        text-align: center;
-    }
+ /* Hiệu ứng khi hover */
+ .location-display:hover {
+     background-color: #f8f9fa;
+     /* Hơi xám lại 1 chút */
+     color: var(--primary);
+     transform: translateY(-1px);
+     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+ }
 
-    /* Sửa nền cho dropdown bên trong menu (nếu có) */
-    .navbar-collapse .dropdown-menu {
-        background-color: #f8f9fa; 
-    }
-    .navbar-collapse .dropdown-item:hover {
-        color: white;
-    }
-}
+ /* Style cho các icon bên trong */
+ .location-display i {
+     color: var(--primary);
+ }
+
+ .location-display .location-chevron {
+     font-size: 0.7rem;
+     /* Thu nhỏ icon chevron */
+     opacity: 0.7;
+ }
+
+ /* Main content */
+ main {
+     flex: 1;
+     padding: 2rem 0;
+ }
+
+ /* Footer styling */
+ footer {
+     background-color: #f1f1f1;
+     color: #555;
+     padding: 2rem 0;
+     margin-top: auto;
+     width: 100%;
+ }
+
+ footer h5 {
+     font-weight: 600;
+     color: var(--dark-text);
+     margin-bottom: 1rem;
+ }
+
+ footer p {
+     margin-bottom: 0.5rem;
+     font-size: 0.9rem;
+ }
+
+ /* Button styling */
+ .btn-primary {
+     background-color: var(--primary);
+     border-color: var(--primary);
+     border-radius: 6px;
+ }
+
+ .btn-primary:hover {
+     background-color: #0052a3;
+     border-color: #0052a3;
+ }
+
+ .btn-outline-primary {
+     color: var(--primary);
+     border-color: var(--primary);
+     border-radius: 6px;
+ }
+
+ .btn-outline-primary:hover {
+     background-color: var(--primary);
+     color: white;
+ }
+
+ /* Card styling */
+ .card {
+     border: none;
+     border-radius: var(--border-radius);
+     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+ }
+
+ .page-header {
+     background: linear-gradient(to right, var(--primary), #004d99);
+     color: white;
+     padding: 40px 0;
+     margin-bottom: 30px;
+     border-radius: 0 0 20px 20px;
+ }
+
+ .product-card {
+     border: none;
+     border-radius: 12px;
+     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+     overflow: hidden;
+     background: white;
+ }
+
+ .product-card:hover {
+     transform: translateY(-8px);
+     box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15) !important;
+ }
+
+ .product-img {
+     height: 200px;
+     object-fit: cover;
+     transition: transform 0.3s ease;
+     border-radius: 0;
+ }
+
+ .product-card:hover .product-img {
+     transform: scale(1.05);
+ }
+
+ .card-title {
+     font-weight: 600;
+     color: var(--dark-text);
+     margin-bottom: 10px;
+ }
+
+ .product-price {
+     color: var(--primary);
+     font-weight: 700;
+     font-size: 1.2rem;
+ }
+
+ .btn-primary {
+     background-color: var(--primary);
+     border-color: var(--primary);
+     border-radius: 6px;
+     font-weight: 500;
+ }
+
+ .btn-primary:hover {
+     background-color: #0052a3;
+     border-color: #0052a3;
+ }
+
+ .btn-success {
+     background-color: var(--secondary);
+     border-color: var(--secondary);
+     border-radius: 6px;
+     font-weight: 500;
+ }
+
+ .btn-success:hover {
+     background-color: #e55a00;
+     border-color: #e55a00;
+ }
+
+ .modal-header {
+     background-color: var(--primary);
+     color: white;
+ }
+
+ .filter-section {
+     background: white;
+     border-radius: 12px;
+     padding: 20px;
+     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+     margin-bottom: 30px;
+ }
+
+ .pagination {
+     justify-content: center;
+     margin-top: 30px;
+ }
+
+ .page-link {
+     color: var(--primary);
+ }
+
+ .page-item.active .page-link {
+     background-color: var(--primary);
+     border-color: var(--primary);
+ }
+
+ .empty-state {
+     text-align: center;
+     padding: 60px 20px;
+     color: #6c757d;
+ }
+
+ .empty-state i {
+     font-size: 4rem;
+     margin-bottom: 15px;
+     color: #dee2e6;
+ }
+
+ .badge-discount {
+     position: absolute;
+     top: 10px;
+     right: 10px;
+     background: var(--secondary);
+     color: white;
+     padding: 5px 10px;
+     border-radius: 20px;
+     font-size: 0.8rem;
+     font-weight: 600;
+ }
+
+ /* Form styling */
+ .form-control {
+     border: 1px solid #dce1e6;
+     border-radius: 6px;
+     padding: 12px 15px;
+     transition: all 0.3s;
+ }
+
+ .form-control:focus {
+     border-color: var(--primary);
+     box-shadow: 0 0 0 0.2rem rgba(0, 102, 204, 0.25);
+ }
+
+ /* Additional styles for consistency */
+ .section-title {
+     color: var(--primary);
+     font-weight: 600;
+     margin-bottom: 20px;
+     padding-bottom: 10px;
+     border-bottom: 2px solid #eaeaea;
+ }
+
+ .text-primary {
+     color: var(--primary) !important;
+ }
+
+ .bg-primary {
+     background-color: var(--primary) !important;
+ }
+
+ .alert-primary {
+     background-color: rgba(0, 102, 204, 0.1);
+     border-color: rgba(0, 102, 204, 0.3);
+     color: var(--primary);
+ }
+
+ #mainCarousel .carousel-control-prev,
+ #mainCarousel .carousel-control-next {
+     width: 40px;
+     height: 40px;
+     background-color: rgba(0, 0, 0, 0.3);
+     border-radius: 50%;
+     top: 50%;
+     transform: translateY(-50%);
+     opacity: 0.8;
+     transition: all 0.3s ease;
+ }
+
+ #mainCarousel .carousel-control-prev {
+     left: 15px;
+ }
+
+ #mainCarousel .carousel-control-next {
+     right: 15px;
+ }
+
+ #mainCarousel .carousel-control-prev:hover,
+ #mainCarousel .carousel-control-next:hover {
+     background-color: rgba(0, 0, 0, 0.6);
+     opacity: 1;
+ }
+
+ /* Responsive adjustments */
+ @media (max-width: 768px) {
+     .navbar-nav {
+         padding: 1rem 0;
+     }
+
+     .navbar-nav .nav-item {
+         margin-bottom: 0.5rem;
+     }
+
+     footer .col-4 {
+         width: 100%;
+         margin-bottom: 1.5rem;
+     }
+ }
+
+ /* ===== Fix Responsive Navbar (MỚI) ===== */
+ @media (max-width: 991.98px) {
+
+     /* Thêm nền xanh cho menu khi mở */
+     .navbar .navbar-collapse {
+         background-color: #1565c0;
+         /* Màu xanh đậm của gradient */
+         padding: 15px;
+         margin-top: 10px;
+         border-radius: 8px;
+         box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+     }
+
+     /* Bắt buộc các nhóm dãn 100% và xếp dọc */
+     .navbar-collapse .navbar-nav,
+     .navbar-collapse .d-flex {
+         align-items: stretch !important;
+         flex-direction: column;
+         width: 100%;
+         gap: 0;
+         /* Reset gap */
+     }
+
+     /* Sắp xếp lại nhóm search/location */
+     .navbar-collapse .d-flex {
+         margin: 15px 0;
+         /* Khoảng cách giữa các nhóm */
+     }
+
+     /* Nút location dãn 100% */
+     .navbar-collapse .location-display {
+         margin: 0 0 10px 0 !important;
+         /* Xóa margin cũ, thêm margin dưới */
+         justify-content: center;
+         /* Căn giữa chữ */
+     }
+
+     /* Form dãn 100% */
+     .navbar-collapse .d-flex form {
+         width: 100%;
+     }
+
+     /* Căn giữa các link */
+     .navbar-collapse .navbar-nav .nav-item {
+         margin: 5px 0;
+         text-align: center;
+     }
+
+     /* Sửa nền cho dropdown bên trong menu (nếu có) */
+     .navbar-collapse .dropdown-menu {
+         background-color: #f8f9fa;
+     }
+
+     .navbar-collapse .dropdown-item:hover {
+         color: white;
+     }
+ }

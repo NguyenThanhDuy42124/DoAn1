@@ -8,6 +8,7 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
 {
@@ -31,7 +32,7 @@ class AdminController extends Controller
     $totalOrders = Order::count(); //
     $totalProducts = Product::count();
         // Trả view dashboard, luôn truyền $users
-        return view('admin.dashboard', compact('users', 'role', 'totalOrders', 
+        return view('admin.dashboard', compact('users', 'role', 'totalOrders',
         'totalProducts'));
     }
     public function userDashboard(Request $request){
@@ -57,7 +58,7 @@ class AdminController extends Controller
     {
         $message = 'Cook 1 tài khoản thành công';
         $user->delete();
-        return redirect()->route('admin.dashboard')->with('success', 'User deleted successfully.')->with('message', $message);
+        return redirect()->route('admin.users.manager')->with('success', 'User deleted successfully.')->with('message', $message);
     }
     // hàm này để load trang edit user
     public function edit($id)
@@ -72,15 +73,15 @@ class AdminController extends Controller
     public function update(Request $request, $id)
     {
         $user = User::findOrFail($id);
-
-    $data = $request->only(['name', 'email', 'password', 'role','phoneNumber', 'dateOfBirth','gender','address','status']);
-
-    // Nếu password không nhập lại thì bỏ qua
-    if (empty($data['password'])) {
-        unset($data['password']);
-    } else {
-        $data['password'] = Hash::make($data['password']);
+    if ($request->has('delete_image') && $user->img) {
+        Storage::delete('public/' . $user->img);
+        $user->img = null;
     }
+
+
+    $data = $request->only(['role','status','img']);
+
+
 
     $user->update($data);
 

@@ -27,6 +27,10 @@
     overflow-x: hidden;
 }
 
+.select {
+    height: 50px;
+}
+
 /* ===== Admin Navbar - CỐ ĐỊNH KHÔNG CO GIÃN ===== */
 .admin-dashboard .navbar {
     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
@@ -37,9 +41,11 @@
     top: 0;
     left: 0;
     right: 0;
-    z-index: 1030; /* Z-index cao để luôn nằm trên */
+    z-index: 1030;
+    /* Z-index cao để luôn nằm trên */
     padding: 0 20px;
-    transition: none; /* Loại bỏ transition */
+    transition: none;
+    /* Loại bỏ transition */
 }
 
 .admin-dashboard .navbar .btn-light {
@@ -76,14 +82,17 @@
 /* ===== Admin Sidebar - TRƯỢT RA ĐÈ LÊN NỘI DUNG ===== */
 .admin-dashboard #sidebar {
     position: fixed;
-    top: var(--header-height); /* Bắt đầu từ dưới navbar */
+    top: var(--header-height);
+    /* Bắt đầu từ dưới navbar */
     left: -260px;
-    height: calc(100vh - var(--header-height)); /* Chiều cao trừ navbar */
+    height: calc(100vh - var(--header-height));
+    /* Chiều cao trừ navbar */
     width: var(--sidebar-width);
     background: linear-gradient(180deg, var(--dark) 0%, var(--darker) 100%);
     color: #fff;
     transition: all 0.3s ease;
-    z-index: 1020; /* Z-index thấp hơn navbar */
+    z-index: 1020;
+    /* Z-index thấp hơn navbar */
     box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
     overflow-y: auto;
 }
@@ -127,7 +136,7 @@
 }
 
 .admin-dashboard #sidebar ul li a:hover,
-.admin-dashboard #sidebar ul li.active > a {
+.admin-dashboard #sidebar ul li.active>a {
     background: rgba(255, 255, 255, 0.05);
     color: white;
     border-left: 4px solid var(--secondary);
@@ -193,7 +202,7 @@
 /* ===== Container Spacing ===== */
 .admin-dashboard .container,
 .admin-dashboard .container-fluid {
-     padding-top: 20px;
+    padding-top: 20px;
     padding-left: 30px;
     padding-right: 30px;
     padding-bottom: 30px;
@@ -449,6 +458,7 @@
 
 /* Large devices (desktops, 992px and up) */
 @media (min-width: 992px) {
+
     .admin-dashboard .container,
     .admin-dashboard .container-fluid {
         padding-top: 20px;
@@ -456,10 +466,12 @@
         padding-right: 30px;
         padding-bottom: 30px;
     }
+
     .admin-dashboard #content.sidebar-open {
         margin-left: var(--sidebar-width);
         width: calc(100% - var(--sidebar-width));
     }
+
     /* Ẩn overlay trên desktop */
     .admin-dashboard .overlay {
         display: none !important;
@@ -468,6 +480,7 @@
 
 /* Medium devices (tablets, 768px - 991px) */
 @media (max-width: 991.98px) {
+
     .admin-dashboard .container,
     .admin-dashboard .container-fluid {
         padding-top: 15px;
@@ -475,19 +488,20 @@
         padding-right: 20px;
         padding-bottom: 20px;
     }
-    
+
     .admin-dashboard .navbar {
         padding: 0 15px;
     }
-    
+
     .admin-dashboard .stats-card .stats-value {
         font-size: 1.8rem;
     }
-    
+
     .admin-dashboard .dashboard-card .card-body {
         padding: 20px;
     }
-     .admin-dashboard #content.sidebar-open {
+
+    .admin-dashboard #content.sidebar-open {
         margin-left: 0;
         width: 100%;
     }
@@ -495,43 +509,44 @@
 
 /* Small devices (landscape phones, 576px - 767px) */
 @media (max-width: 767.98px) {
+
     .admin-dashboard .container,
     .admin-dashboard .container-fluid {
         padding-left: 15px;
         padding-right: 15px;
     }
-    
+
     .admin-dashboard .navbar .dropdown-toggle {
         font-size: 0.9rem;
     }
-    
+
     .admin-dashboard .navbar .btn-light {
         padding: 6px 10px;
     }
-    
+
     .admin-dashboard .page-header {
         padding: 20px;
         margin: 20px 0;
     }
-    
+
     .admin-dashboard .stats-card {
         padding: 20px 15px;
     }
-    
+
     .admin-dashboard .stats-card i {
         font-size: 2rem;
     }
-    
+
     .admin-dashboard .stats-card .stats-value {
         font-size: 1.6rem;
     }
-    
+
     .admin-dashboard .table th,
     .admin-dashboard .table td {
         padding: 10px 8px;
         font-size: 0.9rem;
     }
-    
+
     .admin-dashboard .btn {
         padding: 8px 15px;
         font-size: 0.9rem;
@@ -543,28 +558,28 @@
     .admin-dashboard {
         --header-height: 60px;
     }
-    
+
     .admin-dashboard .navbar {
         padding: 0 10px;
         height: var(--header-height);
     }
-    
+
     .admin-dashboard #sidebar {
         width: 280px;
         top: var(--header-height);
         height: calc(100vh - var(--header-height));
     }
-    
+
     .admin-dashboard #sidebar .sidebar-header {
         padding: 20px 15px;
         font-size: 1.1rem;
     }
-    
+
     .admin-dashboard #sidebar ul li a {
         padding: 12px 15px;
         font-size: 0.95rem;
     }
-    
+
     .admin-dashboard .container,
     .admin-dashboard .container-fluid {
         padding-top: 10px;
@@ -572,42 +587,42 @@
         padding-right: 10px;
         padding-bottom: 15px;
     }
-    
+
     .admin-dashboard .page-header {
         padding: 15px;
         margin: 15px 0;
     }
-    
+
     .admin-dashboard .dashboard-card .card-body {
         padding: 15px;
     }
-    
+
     .admin-dashboard .stats-card {
         padding: 15px 10px;
         margin-bottom: 15px;
     }
-    
+
     .admin-dashboard .stats-card i {
         font-size: 1.8rem;
         margin-bottom: 10px;
     }
-    
+
     .admin-dashboard .stats-card .stats-value {
         font-size: 1.4rem;
     }
-    
+
     .admin-dashboard .stats-card .stats-label {
         font-size: 0.85rem;
     }
-    
+
     .admin-dashboard .dropdown-menu {
         min-width: 200px;
     }
-    
+
     .admin-dashboard .table-responsive table {
         font-size: 0.85rem;
     }
-    
+
     .admin-dashboard .form-control {
         padding: 10px 12px;
         font-size: 0.9rem;
@@ -620,7 +635,7 @@
         overflow-y: auto;
         padding-bottom: 80px;
     }
-    
+
     .admin-dashboard #sidebar ul.CTAs {
         position: relative;
     }
