@@ -24,6 +24,7 @@ use Illuminate\Auth\Middleware\Authenticate;
 use App\Livewire\Admin\Categories\Manager as CategoryManager;
 use App\Livewire\Admin\Attributes\Manager as AttributeManager;
 use App\Livewire\Admin\Brands\Manager as BrandManager;
+use App\Livewire\Seller\Products\ProductForm;
 
 Route::get('/', function () {
     return view('MainPage');
@@ -105,7 +106,14 @@ Route::prefix('seller')->middleware('role:seller')->group(function () {
     // Sửa thành SellerController::dashboard
 
     Route::get('/dashboard', [SellerController::class, 'dashboard'])->name('seller.dashboard');
-    Route::resource('products', ProductController::class, ['names' => 'seller.products']);
+    // THAY THẾ 2 ROUTE CŨ BẰNG 2 ROUTE NÀY
+    Route::get('/products/create', ProductForm::class)->name('seller.products.create');
+    // Laravel tự động tìm product dựa trên ID {product} và truyền vào mount()
+    Route::get('/products/{product}/edit', ProductForm::class)->name('seller.products.edit');
+
+    // Chỉ giữ lại index và destroy cho ProductController
+    Route::resource('products', ProductController::class, ['names' => 'seller.products'])
+         ->only(['index', 'destroy']);
    
 
     // [GET] Route để hiển thị trang form

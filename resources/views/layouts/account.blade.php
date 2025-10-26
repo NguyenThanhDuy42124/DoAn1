@@ -64,15 +64,7 @@
 </div>
 
 {{-- Giữ lại nút Chat nếu có (lấy từ file dashboard cũ) --}}
-@if(config('chatify.pusher.key') != null)
-    <button
-    type="button"
-    id="chat-bubble"
-    class="btn btn-primary shadow rounded-circle"
-    onclick="window.location.href='{{ route('chatify') }}'">
-    <i class="bi bi-chat-dots-fill"></i>
-    </button>
-@endif
+
 
 @endsection
 
