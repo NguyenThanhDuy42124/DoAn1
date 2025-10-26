@@ -141,7 +141,7 @@
                 .then(response => response.json())
                 .then(data => {
                     // Lấy tên Thành phố (city) hoặc tên Tỉnh (principalSubdivision)
-                    const locationName = data.city || data.principalSubdivision;
+                    const locationName = data.principalSubdivision || data.city;
                     
                     if (locationName) {
                         locationTextElement.textContent = locationName;

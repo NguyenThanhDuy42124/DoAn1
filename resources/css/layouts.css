@@ -254,8 +254,8 @@
      align-items: center;
      margin-bottom: 1rem;
      font-size: 1rem;
-     padding: 10px 0;
-     border-bottom: 1px solid #f4f4f4;
+     padding: 0.85rem 0;
+     border-bottom: 1px solid #e9ecef;
  }
 
  .info-item:last-of-type {
@@ -264,14 +264,17 @@
 
  .info-label {
      font-weight: 600;
-     color: #555;
+     color: #6c757d;
      width: 150px;
      /* Cố định chiều rộng label */
      flex-shrink: 0;
  }
 
  .info-value {
-     color: var(--dark-text);
+    color: var(--dark-text);
+    flex-grow: 1;
+    font-weight: 500;
+       
  }
 
  /* ===== Location Display Styling (MỚI) ===== */
@@ -545,7 +548,20 @@
      background-color: rgba(0, 0, 0, 0.6);
      opacity: 1;
  }
-
+ #chat-bubble {
+            position: fixed;   /* Cố định vị trí */
+            bottom: 2rem;      /* Cách lề dưới 2rem */
+            right: 2rem;       /* Cách lề phải 2rem */
+            width: 60px;       /* Tăng kích thước nút */
+            height: 60px;      /* Tăng kích thước nút */
+            font-size: 1.5rem; /* Tăng kích thước icon */
+            z-index: 1050;     /* Đảm bảo nổi trên các element khác (như footer) */
+            transition: all 0.3s ease;
+        }
+#chat-bubble:hover {
+            transform: scale(1.1); /* Hiệu ứng hover phóng to */
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+        }
  /* Responsive adjustments */
  @media (max-width: 768px) {
      .navbar-nav {

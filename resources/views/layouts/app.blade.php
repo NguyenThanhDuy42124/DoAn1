@@ -63,6 +63,16 @@
     </footer>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" data-livewire-eval="false"></script>
  @livewireScripts
+ @if(config('chatify.pusher.key') != null)
+    <button
+    type="button"
+    id="chat-bubble"
+    class="btn btn-primary shadow rounded-circle"
+    onclick="window.location.href='{{ route('chatify') }}'">
+    {{-- Nút chat đã dùng icon 'bi' từ navbar, ta giữ nguyên --}}
+    <i class="bi bi-chat-dots-fill"></i> 
+    </button>
+ @endif
 </body>
 
 </html>
