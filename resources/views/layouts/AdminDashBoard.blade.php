@@ -9,7 +9,7 @@
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     @vite(['resources/css/dashboard_admin.css', 'resources/js/app.js'])
-    <title>Dashboard Admin - TechStore</title>
+    @livewireStyles <title>Dashboard Admin - TechStore</title>
 </head>
 
 <body class="admin-dashboard">
@@ -38,10 +38,21 @@
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('admin.categories.index') }}">
-                        <i class="fas fa-list"></i>
-                        Quản lý danh mục
+                    <a href="#storeSetupSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                        <i class="fas fa-store"></i>
+                        Quản lý Cửa hàng
                     </a>
+                    <ul class="collapse list-unstyled" id="storeSetupSubmenu">
+                        <li>
+                            <a href="{{ route('admin.categories.manager') }}">Danh mục</a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.attributes.manager') }}">Thuộc tính</a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.brands.manager') }}">Thương hiệu</a>
+                        </li>
+                    </ul>
                 </li>
                 <li>
                     <a href="#">
@@ -179,6 +190,9 @@ $(document).ready(function () {
     });
 });
     </script>
+    @livewireScripts
+
+    @stack('scripts')
 </body>
 
 </html>

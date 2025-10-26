@@ -21,6 +21,9 @@ use App\Http\Controllers\UserInfoController;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Auth\Middleware\Authenticate;
+use App\Livewire\Admin\Categories\Manager as CategoryManager;
+use App\Livewire\Admin\Attributes\Manager as AttributeManager;
+use App\Livewire\Admin\Brands\Manager as BrandManager;
 
 Route::get('/', function () {
     return view('MainPage');
@@ -74,12 +77,16 @@ Route::prefix('admin')->middleware('role:admin')->group(function () {
         return view('admin.products.index');
     })->name('admin.products.index');
 
+
+    Route::get('/categories', CategoryManager::class)->name('admin.categories.manager');
+    Route::get('/attributes', AttributeManager::class)->name('admin.attributes.manager');
+    Route::get('/brands', BrandManager::class)->name('admin.brands.manager');
+
     // 2. Resource chỉ dùng cho CRUD chi tiết (create, edit, …)
     Route::resource('products', ProductController::class, ['names' => 'admin.products'])
          ->except(['index']);   // <-- loại bỏ GET /admin/products
 
-    Route::get('/categories', [CategoryController::class, 'index'])->name('admin.categories.index');
-    Route::resource('categories', CategoryController::class, ['names' => 'admin.categories']);
+
 
     //route thong bao
     Route::get('/notifications', [NotificationController::class, 'index'])->name('admin.notifications.index');
