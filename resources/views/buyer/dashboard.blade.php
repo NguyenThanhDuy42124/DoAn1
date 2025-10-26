@@ -65,24 +65,6 @@
             <div class="info-value text-capitalize">{{ Auth::user()->role }}</div>
         </div>
     </div>
-
-    {{-- Footer: Các nút chuyển vai trò (nếu có) --}}
-    @if(Auth::user()->role == 'seller' || Auth::user()->role == 'admin')
-        <div class="card-footer bg-white py-3">
-            {{-- Xóa thẻ div.mt-4 pt-4 border-top cũ --}}
-            
-            @if(Auth::user()->role == 'seller')
-            <a href="{{ route('switchRole', 'seller') }}" class="btn btn-primary mr-2">Chuyển sang Seller</a>
-            @endif
-
-            @if(Auth::user()->role == 'admin')
-            <a href="{{ route('switchRole', 'admin') }}" class="btn btn-danger mr-2">Chuyển sang Admin</a>
-            @endif
-            
-            {{-- Các nút chỉnh sửa đã được chuyển lên header --}}
-        </div>
-    @endif
-
 </div>
 
 @endsection
