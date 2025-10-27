@@ -108,7 +108,7 @@
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <div>
                                     <span class="text-muted small">Thương hiệu:</span>
-                                    <span class="fw-bold small">{{ $product->brand ?? 'N/A' }}</span>
+                                    <span class="fw-bold small">{{  $product->brand->name ?? 'N/A'  }}</span>
                                 </div>
                                 <div>
                                     <span class="text-muted small">Tồn kho:</span>
