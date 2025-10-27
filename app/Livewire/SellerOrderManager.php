@@ -101,25 +101,17 @@ class SellerOrderManager extends Component
     //modalreview
     public function openReviewModal($orderId)
     {
-        // Tải đơn hàng VỚI các sản phẩm, đánh giá (của buyer này), và người viết đánh giá
-        $order = Order::where('seller_id', Auth::id())->findOrFail($orderId);
-        $buyerId = $order->user_id; // Lấy ID của người mua từ đơn hàng
-
+        // Tải đơn hàng VỚI các review của CHÍNH NÓ
+        // và tải thông tin 'buyer' và 'product' cho TỪNG review.
         $this->orderForReview = Order::with([
-                'items.product.reviews' => function ($query) use ($buyerId) {
-                    // Chỉ tải các review được viết bởi chính người mua của đơn hàng này
-                    $query->where('buyer_id', $buyerId)
-                          ->orderBy('created_at', 'desc');
-                },
-                'items.product.reviews.buyer' // Tải thông tin người mua (User)
+                'reviews.buyer', // Tải người viết review
+                'reviews.product' // Tải sản phẩm được review
             ])
-            ->where('id', $orderId)
-            ->firstOrFail();
+            ->where('seller_id', Auth::id()) 
+            ->findOrFail($orderId);
 
-        // Lấy tất cả review đã lọc ở trên
-        $allReviews = $this->orderForReview->items->flatMap(function ($item) {
-            return $item->product->reviews;
-        });
+        // Lấy tất cả review của đơn hàng này
+        $allReviews = $this->orderForReview->reviews; // Đơn giản hơn nhiều!
 
         // Tải các phản hồi có sẵn vào mảng $replies
         if ($allReviews->isNotEmpty()) {

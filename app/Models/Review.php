@@ -12,7 +12,7 @@ class Review extends Model
         'rating',
         'comment',
         'reply', // Thêm 'reply' dựa trên CSDL của bạn
-        // 'order_id', // Bạn cũng nên xem xét thêm cột này
+        'order_id', // Bạn cũng nên xem xét thêm cột này
     ];
 
     /**
@@ -29,5 +29,10 @@ class Review extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class, 'product_id');
+    }
+    //lay thong tin don hang
+    public function order(): BelongsTo
+    {
+        return $this->belongsTo(Order::class, 'order_id');
     }
 }

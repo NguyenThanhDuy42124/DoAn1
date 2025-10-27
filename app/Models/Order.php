@@ -22,4 +22,9 @@ class Order extends Model
     {
         return $this->belongsTo(User::class, 'seller_id');
     }
+    public function reviews()
+{
+    // Giả định bạn đã thêm cột 'order_id' vào bảng 'reviews'
+    return $this->hasMany(Review::class); 
+}
 }

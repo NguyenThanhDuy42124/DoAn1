@@ -104,13 +104,16 @@ class BuyerOrderHistory extends Component
     public function openReviewModal($productId, $orderId)
     {
         $this->productToReview = Product::find($productId);
-        $this->current_order_id = $orderId;
+        $this->current_order_id = $orderId; // <-- Bạn đã có dòng này
         
-        // Kiểm tra xem đã đánh giá sản phẩm này chưa
+        // ==========================================================
+        // CẬP NHẬT LOGIC KIỂM TRA
+        // ==========================================================
         $existingReview = Review::where('buyer_id', Auth::id())
             ->where('product_id', $productId)
-            // ->where('order_id', $orderId) // Bật nếu bạn có cột order_id
+            ->where('order_id', $orderId) // <-- THÊM ĐIỀU KIỆN KIỂM TRA ĐƠN HÀNG
             ->first();
+        // ==========================================================
 
         if ($existingReview) {
             $this->alreadyReviewed = true;
@@ -119,10 +122,9 @@ class BuyerOrderHistory extends Component
         }
 
         $this->resetValidation();
-        $this->resetReviewFields(); // Reset field mỗi lần mở
+        $this->resetReviewFields();
         $this->showReviewModal = true;
     }
-
     /**
      * Đóng Modal
      */
@@ -136,21 +138,25 @@ class BuyerOrderHistory extends Component
     /**
      * Gửi Đánh giá
      */
-    public function submitReview()
+   public function submitReview()
     {
-        $this->validate(); // Validate các $rules ở trên
+        $this->validate();
 
         if (!$this->productToReview || $this->alreadyReviewed) {
-            return; // Ngăn chặn nếu có lỗi
+            return;
         }
 
+        // ==========================================================
+        // CẬP NHẬT LOGIC LƯU
+        // ==========================================================
         Review::create([
             'buyer_id' => Auth::id(),
             'product_id' => $this->productToReview->id,
+            'order_id' => $this->current_order_id, // <-- THÊM DÒNG NÀY
             'rating' => $this->rating,
             'comment' => $this->comment,
-            // 'order_id' => $this->current_order_id, // Gán nếu bạn có cột này
         ]);
+        // ==========================================================
 
         $this->closeReviewModal();
         session()->flash('success', 'Cảm ơn bạn đã đánh giá sản phẩm!');
@@ -181,11 +187,8 @@ class BuyerOrderHistory extends Component
         // THAY THẾ BẰNG DÒNG MỚI: Tải các đánh giá của SẢN PHẨM, nhưng CHỈ của buyer hiện tại
         $query = Order::where('user_id', $buyer->id)
             ->with([
-                'items.product' => function ($query) {
-                    $query->with(['reviews' => function ($q) {
-                        $q->where('buyer_id', Auth::id());
-                    }]);
-                }
+                'items.product', // Vẫn tải thông tin sản phẩm
+                'reviews'        // <-- TẢI CÁC REVIEW CỦA ĐƠN HÀNG
             ]);
 
         if($this->status === 'Delivered')

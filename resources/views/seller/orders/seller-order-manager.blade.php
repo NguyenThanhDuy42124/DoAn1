@@ -138,10 +138,8 @@
                         @endif
 
                         @php
-                            // Lấy tất cả review từ tất cả item trong đơn hàng
-                            $allReviews = $orderForReview->items->flatMap(function ($item) {
-                                return $item->product->reviews;
-                            });
+                            // Lấy tất cả review CỦA ĐƠN HÀNG NÀY (đã được tải trong openReviewModal)
+                            $allReviews = $orderForReview->reviews;
                         @endphp
 
                         @if ($allReviews->isEmpty())
@@ -151,6 +149,11 @@
                                 <p class="text-muted">Đơn hàng này chưa nhận được đánh giá nào từ người mua.</p>
                             </div>
                         @else
+                            {{-- 
+                                Vòng lặp này bây giờ đã đúng
+                                Vì $review->product và $review->buyer đã được tải 
+                                trong hàm openReviewModal() của SellerOrderManager.php
+                            --}}
                             @foreach ($allReviews as $review)
                                 <div class="border rounded p-3 mb-3">
                                     <div class="d-flex justify-content-between">
@@ -162,6 +165,7 @@
                                     </div>
                                     <hr class="my-2">
                                     <div class="d-flex">
+                                        {{-- Avatar người mua (Đã sửa theo yêu cầu trước) --}}
                                         <img src="{{ !empty($review->buyer->img)
                                             ? asset('storage/' . $review->buyer->img)
                                             : asset('storage/profile_images/default.jpg') }}"
@@ -171,6 +175,7 @@
 
                                         <div class="w-100">
                                             <strong>{{ $review->buyer->name ?? 'Người dùng' }}</strong>
+                                            
                                             <div class="text-warning mb-1">
                                                 @for ($i = 0; $i < 5; $i++)
                                                     <i
@@ -179,15 +184,14 @@
                                             </div>
                                             <p classs="mb-2">{{ $review->comment }}</p>
 
-                                            {{-- PHẦN PHẢN HỒI CỦA SELLER --}}
                                             <div class="bg-light p-3 rounded">
                                                 <form wire:submit.prevent="submitReply({{ $review->id }})">
-                                                    <label for="reply-{{ $review->id }}"
-                                                        class="form-label fw-bold">Phản hồi của bạn:</label>
+                                                    <label for="reply-{{ $review->id }}" class="form-label fw-bold">Phản hồi của
+                                                        bạn:</label>
                                                     <textarea class="form-control" id="reply-{{ $review->id }}" rows="3"
-                                                        placeholder="Viết phản hồi cho khách hàng..." wire:model.defer="replies.{{ $review->id }}">
-                                                </textarea>
-
+                                                        placeholder="Viết phản hồi cho khách hàng..."
+                                                        wire:model.defer="replies.{{ $review->id }}">
+                                                    </textarea>
                                                     <button type="submit" class="btn btn-primary btn-sm mt-2"
                                                         wire:loading.attr="disabled"
                                                         wire:target="submitReply({{ $review->id }})">
@@ -204,7 +208,7 @@
                                                     </button>
                                                 </form>
                                             </div>
-                                        </div>
+                                            </div>
                                     </div>
                                 </div>
                             @endforeach

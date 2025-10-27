@@ -116,22 +116,28 @@
                                                 @endif
                                                 
                                                 <td>
-                                                    @if ($order->status === 'Completed')
-                                                        {{-- 
-                                                            $item->product->reviews là collection đã được lọc 
-                                                            (chỉ chứa review của buyer này) nhờ câu query trong hàm render()
-                                                        --}}
-                                                        @if ($item->product->reviews->isNotEmpty())
-                                                            <span class="badge bg-success">Đã đánh giá</span>
-                                                        @else
-                                                            <button 
-                                                                type="button" 
-                                                                class="btn btn-info btn-sm"
-                                                                wire:click.prevent="openReviewModal({{ $item->product_id }}, {{ $order->id }})">
-                                                                Đánh giá
-                                                            </button>
-                                                        @endif
-                                                    @endif
+                                                   @if ($order->status === 'Completed')
+            
+            @php
+                // Kiểm tra xem collection $order->reviews (chỉ của đơn hàng này)
+                // có review nào khớp với product_id của item hiện tại không.
+                $reviewed = $order->reviews
+                    ->where('product_id', $item->product_id)
+                    ->isNotEmpty();
+            @endphp
+            
+            @if ($reviewed)
+                <span class="badge bg-success">Đã đánh giá</span>
+            @else
+                <button 
+                    type="button" 
+                    class="btn btn-info btn-sm"
+                    {{-- Logic này đã đúng (có order_id) --}}
+                    wire:click.prevent="openReviewModal({{ $item->product_id }}, {{ $order->id }})">
+                    Đánh giá
+                </button>
+            @endif
+            @endif
                                                 </td>
                                             </tr>
                                         @endforeach
