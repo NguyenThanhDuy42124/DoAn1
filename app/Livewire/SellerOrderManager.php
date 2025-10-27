@@ -7,6 +7,7 @@ use Livewire\WithPagination;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Order;
 use App\Models\Notification; 
+use App\Models\Review;
 class SellerOrderManager extends Component
 {
     use WithPagination;
@@ -14,7 +15,10 @@ class SellerOrderManager extends Component
     public $status = 'Pending';
     public $selectedOrders = [];
     public $selectAll = false;
-
+    //reply review
+    public $showReviewModal = false;
+    public $orderForReview;
+    public $replies = []; // Mảng để lưu các phản hồi, key là review_id
     public function mount()
     {
         $this->status = request()->query('status', 'Pending');
@@ -94,7 +98,98 @@ class SellerOrderManager extends Component
             $this->selectedOrders = [];
         }
     }
+    //modalreview
+    public function openReviewModal($orderId)
+    {
+        // Tải đơn hàng VỚI các sản phẩm, đánh giá (của buyer này), và người viết đánh giá
+        $order = Order::where('seller_id', Auth::id())->findOrFail($orderId);
+        $buyerId = $order->user_id; // Lấy ID của người mua từ đơn hàng
 
+        $this->orderForReview = Order::with([
+                'items.product.reviews' => function ($query) use ($buyerId) {
+                    // Chỉ tải các review được viết bởi chính người mua của đơn hàng này
+                    $query->where('buyer_id', $buyerId)
+                          ->orderBy('created_at', 'desc');
+                },
+                'items.product.reviews.buyer' // Tải thông tin người mua (User)
+            ])
+            ->where('id', $orderId)
+            ->firstOrFail();
+
+        // Lấy tất cả review đã lọc ở trên
+        $allReviews = $this->orderForReview->items->flatMap(function ($item) {
+            return $item->product->reviews;
+        });
+
+        // Tải các phản hồi có sẵn vào mảng $replies
+        if ($allReviews->isNotEmpty()) {
+            $this->replies = $allReviews->pluck('reply', 'id')->toArray();
+        } else {
+            $this->replies = [];
+        }
+
+        $this->showReviewModal = true;
+    }
+
+    /**
+     * Đóng Modal
+     */
+    public function closeReviewModal()
+    {
+        $this->showReviewModal = false;
+        $this->orderForReview = null;
+        $this->replies = [];
+        session()->forget('reply_success'); // Xóa session message
+        session()->forget('reply_error');
+    }
+
+    /**
+     * Lưu phản hồi của Seller
+     */
+    public function submitReply($reviewId)
+    {
+        // Tải kèm 'buyer' và 'product' để lấy thông tin
+        $review = Review::with('buyer', 'product')->find($reviewId); 
+        
+        // Kiểm tra quyền
+        if ($review && $review->product->seller_id == Auth::id()) {
+            
+            $replyContent = $this->replies[$reviewId] ?? null;
+
+            // 1. Cập nhật phản hồi vào bảng reviews
+            $review->update([
+                'reply' => $replyContent
+            ]);
+
+            session()->flash('reply_success', 'Đã lưu phản hồi cho đánh giá #' . $reviewId);
+
+            // ==========================================================
+            // BỔ SUNG: TẠO THÔNG BÁO CHO BUYER
+            // (Sử dụng model Notification.php bạn đã cung cấp)
+            // ==========================================================
+           $sellerName = htmlspecialchars_decode(Auth::user()->name, ENT_QUOTES); 
+            $productName = htmlspecialchars_decode($review->product->name, ENT_QUOTES);
+
+            $separator = "||---REPLY---||"; 
+            
+            // BỎ DẤU '...' xung quanh tên
+            $summary = "Người bán {$sellerName} đã phản hồi đánh giá của bạn cho sản phẩm {$productName}.";
+            
+            // Ghép tóm tắt và nội dung phản hồi
+            $fullMessage = $summary . $separator . $replyContent;
+
+            Notification::create([
+                'user_id' => $review->buyer_id, 
+                'type' => 'review_replied',
+                'message' => $fullMessage, // <-- Lưu nội dung sạch
+                'is_read' => false 
+            ]);
+            // ==========================================================
+
+        } else {
+            session()->flash('reply_error', 'Không thể lưu phản hồi. Đã có lỗi xảy ra.');
+        }
+    }
     public function render()
     {
         $seller = Auth::user();

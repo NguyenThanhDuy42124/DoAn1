@@ -95,6 +95,11 @@
                                 @elseif ($order->status === 'Shipping')
                                     <button type="button" wire:click="updateStatus({{ $order->id }}, 'Delivered')"
                                         class="btn btn-success btn-sm ml-2">Giao hàng</button>
+                                @elseif ($order->status === 'Completed')
+                                    <button type="button" wire:click.prevent="openReviewModal({{ $order->id }})"
+                                        class="btn btn-warning btn-sm ml-2">
+                                        Xem đánh giá
+                                    </button>
                                 @endif
                             </td>
                         </tr>
@@ -110,4 +115,110 @@
             @endif
         </div>
     </div>
+    @if ($showReviewModal && $orderForReview)
+        <div class="modal fade show" tabindex="-1" style="display: block; background-color: rgba(0,0,0,0.5);"
+            aria-labelledby="reviewModalLabel" aria-modal="true" role="dialog">
+            <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="reviewModalLabel">
+                            Đánh giá cho Đơn hàng #{{ $orderForReview->id }}
+                        </h5>
+                        <button type="button" class="btn-close" wire:click="closeReviewModal"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+
+                        {{-- Thông báo thành công/lỗi khi trả lời --}}
+                        @if (session()->has('reply_success'))
+                            <div class="alert alert-success">{{ session('reply_success') }}</div>
+                        @endif
+                        @if (session()->has('reply_error'))
+                            <div class="alert alert-danger">{{ session('reply_error') }}</div>
+                        @endif
+
+                        @php
+                            // Lấy tất cả review từ tất cả item trong đơn hàng
+                            $allReviews = $orderForReview->items->flatMap(function ($item) {
+                                return $item->product->reviews;
+                            });
+                        @endphp
+
+                        @if ($allReviews->isEmpty())
+                            <div class="text-center p-4">
+                                <i class="fas fa-comment-slash fa-3x text-muted mb-3"></i>
+                                <h5 class="text-muted">Chưa có đánh giá nào</h5>
+                                <p class="text-muted">Đơn hàng này chưa nhận được đánh giá nào từ người mua.</p>
+                            </div>
+                        @else
+                            @foreach ($allReviews as $review)
+                                <div class="border rounded p-3 mb-3">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <strong>Sản phẩm:</strong> {{ $review->product->name }}
+                                        </div>
+                                        <span
+                                            class="text-muted small">{{ $review->created_at->format('d/m/Y H:i') }}</span>
+                                    </div>
+                                    <hr class="my-2">
+                                    <div class="d-flex">
+                                        <img src="{{ !empty($review->buyer->img)
+                                            ? asset('storage/' . $review->buyer->img)
+                                            : asset('storage/profile_images/default.jpg') }}"
+                                            class="rounded-circle me-3"
+                                            style="width: 50px; height: 50px; object-fit: cover;"
+                                            alt="{{ $review->buyer->name }}">
+
+                                        <div class="w-100">
+                                            <strong>{{ $review->buyer->name ?? 'Người dùng' }}</strong>
+                                            <div class="text-warning mb-1">
+                                                @for ($i = 0; $i < 5; $i++)
+                                                    <i
+                                                        class="fas fa-star {{ $i < $review->rating ? '' : 'text-muted' }}"></i>
+                                                @endfor
+                                            </div>
+                                            <p classs="mb-2">{{ $review->comment }}</p>
+
+                                            {{-- PHẦN PHẢN HỒI CỦA SELLER --}}
+                                            <div class="bg-light p-3 rounded">
+                                                <form wire:submit.prevent="submitReply({{ $review->id }})">
+                                                    <label for="reply-{{ $review->id }}"
+                                                        class="form-label fw-bold">Phản hồi của bạn:</label>
+                                                    <textarea class="form-control" id="reply-{{ $review->id }}" rows="3"
+                                                        placeholder="Viết phản hồi cho khách hàng..." wire:model.defer="replies.{{ $review->id }}">
+                                                </textarea>
+
+                                                    <button type="submit" class="btn btn-primary btn-sm mt-2"
+                                                        wire:loading.attr="disabled"
+                                                        wire:target="submitReply({{ $review->id }})">
+                                                        <span wire:loading.remove
+                                                            wire:target="submitReply({{ $review->id }})">
+                                                            <i class="fas fa-save me-1"></i> Lưu Phản hồi
+                                                        </span>
+                                                        <span wire:loading
+                                                            wire:target="submitReply({{ $review->id }})">
+                                                            <span class="spinner-border spinner-border-sm"
+                                                                role="status" aria-hidden="true"></span>
+                                                            Đang lưu...
+                                                        </span>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        @endif
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" wire:click="closeReviewModal">Đóng</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{-- Lớp phủ (backdrop) cho modal --}}
+        <div class="modal-backdrop fade show"></div>
+    @endif
+</div>
 </div>

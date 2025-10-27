@@ -76,8 +76,7 @@
                                         <th>Giá</th>
                                         <th>Tổng tiền</th>
                                         <th>Trạng thái</th>
-                                        <th>Hành động</th>
-                                    </tr>
+                                        <th>Hành động (Đơn hàng)</th> <th>Đánh giá SP</th> </tr>
                                 </thead>
                                 <tbody>
                                     {{-- Giữ nguyên logic lồng ghép đơn hàng của bạn --}}
@@ -102,7 +101,6 @@
                                                             <button type="button" wire:click.prevent="confirmOrder({{ $order->id }})" onclick="if(!confirm('Xác nhận đã nhận hàng?')) return false;" class="btn btn-success btn-sm">Đã nhận</button>
                                                             <button type="button" wire:click.prevent="returnOrder({{ $order->id }})" onclick="if(!confirm('Yêu cầu trả hàng?')) return false;" class="btn btn-warning btn-sm mt-1">Trả hàng</button>
                                                             @elseif($order->status === 'Completed')
-                                                            <a href="#" class="btn btn-info btn-sm">Đánh giá</a>
                                                             <form action="{{ route('orders.repurchase', $order->id) }}" method="POST" class="d-inline mt-1">
                                                                 @csrf
                                                                 <button type="submit" class="btn btn-warning btn-sm">Mua lại</button>
@@ -116,6 +114,25 @@
                                                         @endif
                                                     </td>
                                                 @endif
+                                                
+                                                <td>
+                                                    @if ($order->status === 'Completed')
+                                                        {{-- 
+                                                            $item->product->reviews là collection đã được lọc 
+                                                            (chỉ chứa review của buyer này) nhờ câu query trong hàm render()
+                                                        --}}
+                                                        @if ($item->product->reviews->isNotEmpty())
+                                                            <span class="badge bg-success">Đã đánh giá</span>
+                                                        @else
+                                                            <button 
+                                                                type="button" 
+                                                                class="btn btn-info btn-sm"
+                                                                wire:click.prevent="openReviewModal({{ $item->product_id }}, {{ $order->id }})">
+                                                                Đánh giá
+                                                            </button>
+                                                        @endif
+                                                    @endif
+                                                </td>
                                             </tr>
                                         @endforeach
                                     @endforeach
@@ -133,4 +150,72 @@
             </div>
         </div>
     </div>
+
+    @if ($showReviewModal)
+    <div class="modal fade show" tabindex="-1" style="display: block; background-color: rgba(0,0,0,0.5);" aria-labelledby="reviewModalLabel" aria-modal="true" role="dialog">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="reviewModalLabel">Đánh giá & nhận xét</h5>
+                    <button type="button" class="btn-close" wire:click="closeReviewModal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @if ($alreadyReviewed)
+                        <div class="alert alert-warning">Bạn đã đánh giá sản phẩm này rồi.</div>
+                    
+                    @elseif ($productToReview)
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="{{ $productToReview->thumbnail_url ?? 'https://via.placeholder.com/100' }}" alt="{{ $productToReview->name }}" class="img-thumbnail" style="width: 80px; height: 80px; object-fit: contain;">
+                            <h6 class="ms-3">{{ $productToReview->name }}</h6>
+                        </div>
+
+                        <form wire:submit.prevent="submitReview">
+                            {{-- 
+                                GHI CHÚ: Hình ảnh modal (image_bb98a2.png) của bạn có 3 tiêu chí (Pin, Hiệu năng, Màn hình).
+                                Tuy nhiên, CSDL (image_bb991b.png) của bạn chỉ có 1 cột 'rating'.
+                                Do đó, tôi sẽ triển khai 1 "Đánh giá chung" duy nhất để khớp với CSDL.
+                            --}}
+                            <div class="mb-3 text-center">
+                                <label class="form-label d-block">Đánh giá chung</label>
+                                <div class="rating-stars">
+                                    @foreach(range(1, 5) as $star)
+                                        {{-- Bạn cần có Font Awesome để hiển thị icon 'fas fa-star' --}}
+                                        <i class="fas fa-star" 
+                                           wire:click="$set('rating', {{ $star }})" 
+                                           style="font-size: 2rem; cursor: pointer; color: {{ $rating >= $star ? '#ffc107' : '#e0e0e0' }}; transition: color 0.2s;">
+                                        </i>
+                                    @endforeach
+                                </div>
+                                @error('rating') <span class="text-danger d-block mt-1">{{ $message }}</span> @enderror
+                            </div>
+
+                            {{-- Nhận xét chi tiết --}}
+                            <div class="mb-3">
+                                <label for="commentText" class="form-label">Xin mời chia sẻ một số cảm nhận</label>
+                                <textarea class="form-control @error('comment') is-invalid @enderror" id="commentText" rows="4" wire:model.defer="comment" placeholder="Nhận xét của bạn (tối thiểu 15 ký tự)"></textarea>
+                                @error('comment') <span class="invalid-feedback">{{ $message }}</span> @enderror
+                            </div>
+
+                            {{-- Nút Gửi --}}
+                            <button type="submit" class="btn btn-danger w-100" wire:loading.attr="disabled">
+                                <span wire:loading.remove wire:target="submitReview">
+                                    GỬI ĐÁNH GIÁ
+                                </span>
+                                <span wire:loading wire:target="submitReview">
+                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                    Đang gửi...
+                                </span>
+                            </button>
+                        </form>
+                    
+                    @else
+                        <div class="alert alert-danger">Đã có lỗi xảy ra. Vui lòng thử lại.</div>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+    {{-- Lớp phủ (backdrop) cho modal --}}
+    <div class="modal-backdrop fade show"></div>
+    @endif
 </div>

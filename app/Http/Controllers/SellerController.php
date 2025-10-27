@@ -47,7 +47,7 @@ class SellerController extends Controller
     // Logic của bạn: chỉ cần payment_status = 'paid'
     $todayRevenue = Order::where('seller_id',  Auth::id())
                              ->where('payment_status', 'paid')
-                             ->whereDate('updated_at', Carbon::today()) // Chỉ lấy các đơn trong hôm nay
+                             ->whereDate('created_at', Carbon::today()) // Chỉ lấy các đơn trong hôm nay
                              ->sum('total_price');
     $todayOrderCount = Order::where('seller_id', Auth::id())
                             ->whereDate('created_at', Carbon::today()) // Dựa trên ngày tạo
@@ -63,7 +63,8 @@ public function showShop(Request $request, $id)
     {
         // 1. Lấy thông tin cửa hàng
         $shop = User::where('role', 'seller')->findOrFail($id);
-
+        $shopRating = $shop->sellerReviews()->avg('rating');
+        $shopReviewCount = $shop->sellerReviews()->count();
         // 2. Lấy tham số 'sort' và 'category' từ URL
         $sort = $request->query('sort', 'newest');
         $selectedCategory = $request->query('category'); // <-- THÊM MỚI
@@ -111,7 +112,9 @@ public function showShop(Request $request, $id)
             'sort', 
             'categories', 
             'selectedCategory',
-            'totalProductCount'
+            'totalProductCount',
+            'shopRating',      
+            'shopReviewCount'   
         ));
     }
     public function orders(Request $request)
@@ -207,120 +210,120 @@ public function showShop(Request $request, $id)
      * Chấp nhận tham số: ?range=7d, ?range=1m, ?range=1y
      */
     public function getRevenueReport(Request $request)
-    {
-        $sellerId = Auth::id();
+{
+    $sellerId = Auth::id();
 
-        // --- KIỂM TRA REQUEST MỚI (TỪ TRANG BÁO CÁO) ---
-        if ($request->has('range')) {
-            
-            $range = $request->input('range', '7d');
-            $labels = [];
-            $values = [];
-            $query = Order::where('seller_id', $sellerId)
-                          ->where('payment_status', 'paid');
-
-            switch ($range) {
-                case '1y':
-                    // --- 1 NĂM (12 tháng qua, nhóm theo tháng) ---
-                    $startDate = Carbon::now()->subMonths(11)->startOfMonth();
-                    $endDate = Carbon::now()->endOfMonth();
-                    
-                    $dbData = $query->whereBetween('updated_at', [$startDate, $endDate])
-                        ->select(
-                            DB::raw('SUM(total_price) as revenue'),
-                            DB::raw("DATE_FORMAT(updated_at, '%Y-%m') as month")
-                        )
-                        ->groupBy('month')->orderBy('month', 'ASC')->pluck('revenue', 'month');
-
-                    // Lặp 12 tháng để lấp đầy dữ liệu
-                    for ($i = 0; $i < 12; $i++) {
-                        $date = Carbon::now()->subMonths(11 - $i);
-                        $labelFormat = $date->format('Y-m'); // "2025-10"
-                        $labels[] = $date->format('m/Y');    // "10/2025"
-                        $values[] = $dbData->get($labelFormat, 0);
-                    }
-                    break;
-
-                case '1m':
-                    // --- 1 THÁNG (30 ngày qua, nhóm theo ngày) ---
-                    $startDate = Carbon::now()->subDays(29)->startOfDay();
-                    $endDate = Carbon::now()->endOfDay();
-
-                    $dbData = $query->whereBetween('updated_at', [$startDate, $endDate])
-                        ->select(
-                            DB::raw('SUM(total_price) as revenue'),
-                            DB::raw("DATE(updated_at) as date")
-                        )
-                        ->groupBy('date')->orderBy('date', 'ASC')->pluck('revenue', 'date');
-
-                    // Lặp 30 ngày để lấp đầy dữ liệu
-                    for ($i = 0; $i < 30; $i++) {
-                        $date = Carbon::now()->subDays(29 - $i);
-                        $labelFormat = $date->format('Y-m-d'); // "2025-10-25"
-                        $labels[] = $date->format('d/m');    // "25/10"
-                        $values[] = $dbData->get($labelFormat, 0);
-                    }
-                    break;
-                
-                case '7d':
-                default:
-                    // --- 7 NGÀY (7 ngày qua, nhóm theo ngày) ---
-                    $startDate = Carbon::now()->subDays(6)->startOfDay();
-                    $endDate = Carbon::now()->endOfDay();
-
-                    $dbData = $query->whereBetween('updated_at', [$startDate, $endDate])
-                        ->select(
-                            DB::raw('SUM(total_price) as revenue'),
-                            DB::raw("DATE(updated_at) as date")
-                        )
-                        ->groupBy('date')->orderBy('date', 'ASC')->pluck('revenue', 'date');
-
-                    // Lặp 7 ngày để lấp đầy dữ liệu
-                    for ($i = 0; $i < 7; $i++) {
-                        $date = Carbon::now()->subDays(6 - $i);
-                        $labelFormat = $date->format('Y-m-d');
-                        $labels[] = $date->format('d/m');
-                        $values[] = $dbData->get($labelFormat, 0);
-                    }
-                    break;
-            }
-
-            // Trả về JSON KIỂU MỚI cho trang Báo cáo
-            return response()->json(['labels' => $labels, 'values' => $values]);
-
-        } 
+    // --- KIỂM TRA REQUEST MỚI (TỪ TRANG BÁO CÁO) ---
+    if ($request->has('range')) {
         
-        // --- REQUEST CŨ (TỪ TRANG TỔNG QUAN) ---
-        else {
+        $range = $request->input('range', '7d');
+        $labels = [];
+        $values = [];
+        $query = Order::where('seller_id', $sellerId)
+                        ->where('payment_status', 'paid');
+
+        switch ($range) {
+            case '1y':
+                // --- 1 NĂM (12 tháng qua, nhóm theo tháng) ---
+                $startDate = Carbon::now()->subMonths(11)->startOfMonth();
+                $endDate = Carbon::now()->endOfMonth();
+                
+                $dbData = $query->whereBetween('created_at', [$startDate, $endDate]) // <-- ĐÃ SỬA
+                    ->select(
+                        DB::raw('SUM(total_price) as revenue'),
+                        DB::raw("DATE_FORMAT(created_at, '%Y-%m') as month") // <-- ĐÃ SỬA
+                    )
+                    ->groupBy('month')->orderBy('month', 'ASC')->pluck('revenue', 'month');
+
+                // Lặp 12 tháng để lấp đầy dữ liệu
+                for ($i = 0; $i < 12; $i++) {
+                    $date = Carbon::now()->subMonths(11 - $i);
+                    $labelFormat = $date->format('Y-m'); // "2025-10"
+                    $labels[] = $date->format('m/Y');    // "10/2025"
+                    $values[] = $dbData->get($labelFormat, 0);
+                }
+                break;
+
+            case '1m':
+                // --- 1 THÁNG (30 ngày qua, nhóm theo ngày) ---
+                $startDate = Carbon::now()->subDays(29)->startOfDay();
+                $endDate = Carbon::now()->endOfDay();
+
+                $dbData = $query->whereBetween('created_at', [$startDate, $endDate]) // <-- ĐÃ SỬA
+                    ->select(
+                        DB::raw('SUM(total_price) as revenue'),
+                        DB::raw("DATE(created_at) as date") // <-- ĐÃ SỬA
+                    )
+                    ->groupBy('date')->orderBy('date', 'ASC')->pluck('revenue', 'date');
+
+                // Lặp 30 ngày để lấp đầy dữ liệu
+                for ($i = 0; $i < 30; $i++) {
+                    $date = Carbon::now()->subDays(29 - $i);
+                    $labelFormat = $date->format('Y-m-d'); // "2025-10-25"
+                    $labels[] = $date->format('d/m');    // "25/10"
+                    $values[] = $dbData->get($labelFormat, 0);
+                }
+                break;
             
-            // Đây là logic 7 ngày GỐC của bạn
-            $salesData = Order::where('seller_id', $sellerId)
-                ->where('payment_status', 'paid')
-                ->where('updated_at', '>=', Carbon::now()->subDays(6)->startOfDay())
-                ->select(
-                    DB::raw('DATE(updated_at) as date'),
-                    DB::raw('SUM(total_price) as revenue')
-                )
-                ->groupBy('date')
-                ->orderBy('date', 'ASC')
-                ->get()
-                ->pluck('revenue', 'date');
+            case '7d':
+            default:
+                // --- 7 NGÀY (7 ngày qua, nhóm theo ngày) ---
+                $startDate = Carbon::now()->subDays(6)->startOfDay();
+                $endDate = Carbon::now()->endOfDay();
 
-            $reportData = [];
-            $startDate = Carbon::now()->subDays(6);
+                $dbData = $query->whereBetween('created_at', [$startDate, $endDate]) // <-- ĐÃ SỬA
+                    ->select(
+                        DB::raw('SUM(total_price) as revenue'),
+                        DB::raw("DATE(created_at) as date") // <-- ĐÃ SỬA
+                    )
+                    ->groupBy('date')->orderBy('date', 'ASC')->pluck('revenue', 'date');
 
-            for ($i = 0; $i < 7; $i++) {
-                $date = $startDate->copy()->addDays($i)->format('Y-m-d');
-                $reportData[] = [
-                    'date' => $date,
-                    'revenue' => $salesData->get($date, 0)
-                ];
-            }
-
-            // Trả về JSON KIỂU CŨ cho trang Tổng quan
-            return response()->json($reportData);
+                // Lặp 7 ngày để lấp đầy dữ liệu
+                for ($i = 0; $i < 7; $i++) {
+                    $date = Carbon::now()->subDays(6 - $i);
+                    $labelFormat = $date->format('Y-m-d');
+                    $labels[] = $date->format('d/m');
+                    $values[] = $dbData->get($labelFormat, 0);
+                }
+                break;
         }
+
+        // Trả về JSON KIỂU MỚI cho trang Báo cáo
+        return response()->json(['labels' => $labels, 'values' => $values]);
+
+    } 
+    
+    // --- REQUEST CŨ (TỪ TRANG TỔNG QUAN) ---
+    else {
+        
+        // Đây là logic 7 ngày GỐC của bạn
+        $salesData = Order::where('seller_id', $sellerId)
+            ->where('payment_status', 'paid')
+            ->where('created_at', '>=', Carbon::now()->subDays(6)->startOfDay()) // <-- ĐÃ SỬA
+            ->select(
+                DB::raw('DATE(created_at) as date'), // <-- ĐÃ SỬA
+                DB::raw('SUM(total_price) as revenue')
+            )
+            ->groupBy('date')
+            ->orderBy('date', 'ASC')
+            ->get()
+            ->pluck('revenue', 'date');
+
+        $reportData = [];
+        $startDate = Carbon::now()->subDays(6);
+
+        for ($i = 0; $i < 7; $i++) {
+            $date = $startDate->copy()->addDays($i)->format('Y-m-d');
+            $reportData[] = [
+                'date' => $date,
+                'revenue' => $salesData->get($date, 0)
+            ];
+        }
+
+        // Trả về JSON KIỂU CŨ cho trang Tổng quan
+        return response()->json($reportData);
     }
+}
   
     public function showReportPage()
     {
