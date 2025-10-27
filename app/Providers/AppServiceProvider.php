@@ -7,7 +7,9 @@ use App\Models\Cart;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Notifications\Messages\MailMessage;
-
+use Illuminate\Support\Facades\Log;
+use App\Models\Category;
+use App\Models\Brand;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -46,5 +48,22 @@ class AppServiceProvider extends ServiceProvider
         }
         $view->with('totalItems', $totalItems);
     });
+        try {
+        View::composer('layouts.navbar', function ($view) {
+            // Lấy các danh mục cha (Điện thoại, Laptop...)
+            $navbar_categories = Category::whereNull('parent_id')
+                                        ->orderBy('name')
+                                        ->get(['id', 'name']);
+
+            // Lấy TẤT CẢ thương hiệu
+            $navbar_brands = Brand::orderBy('name')->get(['id', 'name']);
+
+            $view->with('navbar_categories', $navbar_categories);
+            $view->with('navbar_brands', $navbar_brands);
+        });
+    } catch (\Exception $e) {
+        // Xử lý lỗi nếu database chưa sẵn sàng (ví dụ khi chạy migrate)
+        Log::error("Không thể tải dữ liệu cho View Composer: " . $e->getMessage());
+    }
     }
 }

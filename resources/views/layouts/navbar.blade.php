@@ -14,135 +14,89 @@
 
         <div class="collapse navbar-collapse" id="navbarsExample09">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
                 <li class="nav-item dropdown">
                     {{-- Nút bấm "DANH MỤC" --}}
                     <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="bi bi-list me-1"></i> DANH MỤC
                     </a>
 
-                    {{-- Nội dung Mega Menu --}}
                     <div class="dropdown-menu mega-menu shadow-lg border-0">
                         <div class="row g-0">
 
-                            {{-- CỘT 1: DANH SÁCH DANH MỤC CHÍNH (L1) --}}
+                            {{-- =================================== --}}
+                            {{-- CỘT 1: DANH MỤC (TỰ ĐỘNG) --}}
+                            {{-- =================================== --}}
                             <div class="col-lg-3 col-md-4 mega-menu-column-1">
                                 <ul class="list-unstyled mb-0">
-                                    {{-- Mục 1: Điện thoại (Active mặc định) --}}
-                                    <li class="mega-menu-item active" data-target="#menu-dienthoai">
-                                        <a class="d-block p-3" href="#">
-                                            <i class="bi bi-phone me-2"></i> Điện thoại, Tablet
-                                        </a>
-                                    </li>
-                                    {{-- Mục 2: Laptop --}}
-                                    <li class="mega-menu-item" data-target="#menu-laptop">
-                                        <a class="d-block p-3" href="#">
-                                            <i class="bi bi-laptop me-2"></i> Laptop
-                                        </a>
-                                    </li>
-                                    {{-- Mục 3: Âm thanh --}}
-                                    <li class="mega-menu-item" data-target="#menu-amthanh">
-                                        <a class="d-block p-3" href="#">
-                                            <i class="bi bi-headphones me-2"></i> Âm thanh, Mic
-                                        </a>
-                                    </li>
-                                    {{-- Mục 4: Đồng hồ --}}
-                                    <li class="mega-menu-item" data-target="#menu-dongho">
-                                        <a class="d-block p-3" href="#">
-                                            <i class="bi bi-smartwatch me-2"></i> Đồng hồ, Camera
-                                        </a>
-                                    </li>
-                                    {{-- Mục 5: Phụ kiện --}}
-                                    <li class="mega-menu-item" data-target="#menu-phukien">
-                                        <a class="d-block p-3" href="#">
-                                            <i class="bi bi-earbuds me-2"></i> Phụ kiện
-                                        </a>
-                                    </li>
+
+                                    {{-- Lặp qua các danh mục cha mà AppServiceProvider đã lấy --}}
+                                    @foreach ($navbar_categories as $index => $category)
+                                        <li class="mega-menu-item {{ $index == 0 ? 'active' : '' }}"
+                                            data-target="#menu-cat-{{ $category->id }}">
+                                            <a class="d-block p-3"
+                                                href="{{ route('products.list', ['category' => $category->id]) }}">
+                                                <i class="bi bi-tag me-2"></i> {{ $category->name }}
+                                            </a>
+                                        </li>
+                                    @endforeach
+
                                 </ul>
                             </div>
 
-                            {{-- CỘT 2: NỘI DUNG CHI TIẾT (L2) --}}
+                            {{-- =================================== --}}
+                            {{-- CỘT 2: HÃNG (BÁN TỰ ĐỘNG) --}}
+                            {{-- =================================== --}}
                             <div class="col-lg-9 col-md-8 mega-menu-column-2 p-4">
 
-                                {{-- Panel 1: Điện thoại (Hiển thị mặc định) --}}
-                                <div class="mega-menu-content active" id="menu-dienthoai">
-                                    <h5 class="mb-3">Điện thoại, Tablet</h5>
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <h6>Hãng điện thoại</h6>
-                                            <ul class="list-unstyled">
-                                                <li><a href="#" class="text-decoration-none">Apple (iPhone)</a>
-                                                </li>
-                                                <li><a href="#" class="text-decoration-none">Samsung</a></li>
-                                                <li><a href="#" class="text-decoration-none">Xiaomi</a></li>
-                                                <li><a href="#" class="text-decoration-none">OPPO</a></li>
-                                            </ul>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <h6>Mức giá</h6>
-                                            <ul class="list-unstyled">
-                                                <li><a href="#" class="text-decoration-none">Dưới 2 triệu</a></li>
-                                                <li><a href="#" class="text-decoration-none">Từ 2 - 4 triệu</a>
-                                                </li>
-                                                <li><a href="#" class="text-decoration-none">Từ 4 - 7 triệu</a>
-                                                </li>
-                                                <li><a href="#" class="text-decoration-none">Trên 10 triệu</a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <h6>Máy tính bảng</h6>
-                                            <ul class="list-unstyled">
-                                                <li><a href="#" class="text-decoration-none">iPad</a></li>
-                                                <li><a href="#" class="text-decoration-none">Samsung Galaxy
-                                                        Tab</a></li>
-                                                <li><a href="#" class="text-decoration-none">Xiaomi Pad</a></li>
-                                            </ul>
+                                {{-- Lặp qua các danh mục cha một lần nữa để TẠO RA các panel --}}
+                                @foreach ($navbar_categories as $index => $category)
+                                    <div class="mega-menu-content {{ $index == 0 ? 'active' : '' }}"
+                                        id="menu-cat-{{ $category->id }}"
+                                        style="{{ $index > 0 ? 'display: none;' : '' }}">
+
+                                        <h5 class="mb-3">Thương hiệu</h5>
+
+                                        <div class="row row-cols-2 row-cols-md-3 g-3">
+
+                                            @php
+                                                $brands_to_show = [];
+
+                                                // === SỬA LỖI: Thêm \Illuminate\Support\Str:: ===
+                                                if (\Illuminate\Support\Str::contains($category->name, 'Điện thoại')) {
+                                                    $brands_to_show = [
+                                                        'Apple',
+                                                        'Samsung',
+                                                        'Xiaomi',
+                                                        'Oppo',
+                                                        'Realme',
+                                                        'Huawei',
+                                                    ];
+                                                } elseif (
+                                                    \Illuminate\Support\Str::contains($category->name, 'Laptop')
+                                                ) {
+                                                    $brands_to_show = ['Apple', 'Dell', 'HP', 'Acer', 'Lenovo', 'Asus'];
+                                                } elseif (
+                                                    \Illuminate\Support\Str::contains($category->name, 'Tablet')
+                                                ) {
+                                                    $brands_to_show = ['Apple', 'Samsung', 'Xiaomi'];
+                                                }
+                                                // ===============================================
+                                            @endphp
+
+                                            {{-- Lọc và lặp qua các hãng đã định nghĩa --}}
+                                            @foreach ($navbar_brands->whereIn('name', $brands_to_show) as $brand)
+                                                <div class="col">
+                                                    <a href="{{ route('products.list', ['category' => $category->id, 'brand' => $brand->id]) }}"
+                                                        class="mega-brand-link">
+                                                        {{ $brand->name }}
+                                                    </a>
+                                                </div>
+                                            @endforeach
+
                                         </div>
                                     </div>
-                                </div>
-
-                                {{-- Panel 2: Laptop (Ẩn) --}}
-                                <div class="mega-menu-content" id="menu-laptop" style="display: none;">
-                                    <h5 class="mb-3">Laptop</h5>
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <h6>Hãng Laptop</h6>
-                                            <ul class="list-unstyled">
-                                                <li><a href="#" class="text-decoration-none">MacBook</a></li>
-                                                <li><a href="#" class="text-decoration-none">Dell</a></li>
-                                                <li><a href="#" class="text-decoration-none">HP</a></li>
-                                                <li><a href="#" class="text-decoration-none">Lenovo</a></li>
-                                            </ul>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <h6>Nhu cầu</h6>
-                                            <ul class="list-unstyled">
-                                                <li><a href="#" class="text-decoration-none">Văn phòng</a></li>
-                                                <li><a href="#" class="text-decoration-none">Đồ họa, Kỹ
-                                                        thuật</a></li>
-                                                <li><a href="#" class="text-decoration-none">Gaming</a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {{-- Panel 3: Âm thanh (Ẩn) --}}
-                                <div class="mega-menu-content" id="menu-amthanh" style="display: none;">
-                                    <h5 class="mb-3">Âm thanh, Mic</h5>
-                                    <p>Nội dung cho âm thanh...</p>
-                                </div>
-
-                                {{-- Panel 4: Đồng hồ (Ẩn) --}}
-                                <div class="mega-menu-content" id="menu-dongho" style="display: none;">
-                                    <h5 class="mb-3">Đồng hồ, Camera</h5>
-                                    <p>Nội dung cho đồng hồ...</p>
-                                </div>
-
-                                {{-- Panel 5: Phụ kiện (Ẩn) --}}
-                                <div class="mega-menu-content" id="menu-phukien" style="display: none;">
-                                    <h5 class="mb-3">Phụ kiện</h5>
-                                    <p>Nội dung cho phụ kiện...</p>
-                                </div>
+                                @endforeach
 
                             </div>
                         </div>
@@ -185,12 +139,11 @@
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
                 @if (Auth::check())
                     <li class="nav-item dropdown">
-                        <a href="#" class="nav-link d-flex align-items-center dropdown-toggle"
-                            id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a href="#" class="nav-link d-flex align-items-center dropdown-toggle" id="userDropdown"
+                            data-bs-toggle="dropdown" aria-expanded="false">
                             @if (Auth::user()->img == '')
-                                <img src="{{ asset('storage/profile_images/default.jpg') }}"
-                                    alt="Default Profile Image" class="rounded-circle"
-                                    style="width: 40px; height: 40px; object-fit: cover;">
+                                <img src="{{ asset('storage/profile_images/default.jpg') }}" alt="Default Profile Image"
+                                    class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
                             @else
                                 <img src="{{ asset('storage/' . Auth::user()->img) }}" alt="Profile Image"
                                     class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">

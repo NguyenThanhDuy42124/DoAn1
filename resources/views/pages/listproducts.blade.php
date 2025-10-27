@@ -3,85 +3,90 @@
 
 @section('content')
 <div class="container my-4">
+ {{-- Mở file: listproducts.blade.php --}}
+{{-- THAY THẾ TOÀN BỘ KHỐI <div class="filter-section ..."> BẰNG CODE NÀY --}}
 
-    <div class="filter-section card shadow-sm mb-4">
-        <div class="card-body">
-            <form action="{{ url()->current() }}" method="GET">
-                <div class="row g-3 align-items-end">
+{{-- Mở file: listproducts.blade.php --}}
+{{-- THAY THẾ TOÀN BỘ KHỐI <div class="filter-section ..."> BẰNG CODE NÀY --}}
 
-                    <div class="col-md-2">
-                        <h6><i class="fas fa-dollar-sign me-2"></i>Khoảng giá</h6>
-                        <select class="form-select" name="price_range">
-                            <option value="">Tất cả</option>
-                            <option value="0-5000000" {{ request('price_range') == '0-5000000' ? 'selected' : '' }}>
-                                Dưới 5 triệu
-                            </option>
-                            <option value="5000000-10000000" {{ request('price_range') == '5000000-10000000' ? 'selected' : '' }}>
-                                5 - 10 triệu
-                            </option>
-                            <option value="10000000-20000000" {{ request('price_range') == '10000000-20000000' ? 'selected' : '' }}>
-                                10 - 20 triệu
-                            </option>
-                            <option value="20000000-" {{ request('price_range') == '20000000-' ? 'selected' : '' }}>
-                                Trên 20 triệu
-                            </option>
-                        </select>
-                    </div>
+<div class="filter-section card shadow-sm mb-4">
+    <div class="card-body">
+        <form action="{{ route('products.list') }}" method="GET">
+            <div class="row g-3 align-items-end">
 
-                    <div class="col-md-2">
-                        <h6><i class="fas fa-tag me-2"></i>Thương hiệu</h6>
-                        <select class="form-select" name="brand">
-                            <option value="">Tất cả</option>
-                            @isset($brands)
-                                @foreach($brands as $brand)
-                                    <option value="{{ $brand->id }}" {{ request('brand') == $brand->id ? 'selected' : '' }}>
-                                        {{ $brand->name }}
-                                    </option>
-                                @endforeach
-                            @endisset
-                        </select>
-                    </div>
-
-                    <div class="col-md-2">
-                        <h6><i class="fas fa-list-ul me-2"></i>Danh mục</h6>
-                        <select class="form-select" name="category">
-                            <option value="">Tất cả</option>
-                            @isset($categories)
-                                @foreach($categories as $category)
-                                    <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
-                                        {{ $category->name }}
-                                    </option>
-                                @endforeach
-                            @endisset
-                        </select>
-                    </div>
-
-                    <div class="col-md-2">
-                        <h6><i class="fas fa-sliders-h me-2"></i>Tùy chọn</h6>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="discount" id="discount" value="1"
-                                   {{ request('discount') ? 'checked' : '' }}>
-                            <label class="form-check-label" for="discount">Đang giảm giá</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="in_stock" id="stock" value="1"
-                                   {{ request('in_stock') ? 'checked' : '' }}>
-                            <label class="form-check-label" for="stock">Còn hàng</label>
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-4 d-flex">
-                        <button type="submit" class="btn btn-primary me-2 w-100">
-                            <i class="fas fa-filter me-1"></i> Lọc
-                        </button>
-                        <a href="{{ url()->current() }}" class="btn btn-outline-secondary w-100">Xóa lọc</a>
-                    </div>
-                    
+                {{-- LỌC KHOẢNG GIÁ --}}
+                <div class="col-md-3">
+                    <label for="price_range" class="form-label fw-semibold">
+                        <i class="fas fa-dollar-sign me-1"></i> Khoảng giá
+                    </label>
+                    <select class="form-select" name="price_range" id="price_range">
+                        <option value="">Tất cả</option>
+                        <option value="0-5000000" {{ request('price_range') == '0-5000000' ? 'selected' : '' }}>
+                            Dưới 5 triệu
+                        </option>
+                        {{-- (Các tùy chọn giá khác) --}}
+                        <option value="5000000-10000000" {{ request('price_range') == '5000000-10000000' ? 'selected' : '' }}>
+                            5 - 10 triệu
+                        </option>
+                        <option value="10000000-20000000" {{ request('price_range') == '10000000-20000000' ? 'selected' : '' }}>
+                            10 - 20 triệu
+                        </option>
+                        <option value="20000000-" {{ request('price_range') == '20000000-' ? 'selected' : '' }}>
+                            Trên 20 triệu
+                        </option>
+                    </select>
                 </div>
-            </form>
-        </div>
-    </div>
 
+                {{-- LỌC THƯƠNG HIỆU (Dùng ID) --}}
+                <div class="col-md-3">
+                    <label for="brand" class="form-label fw-semibold">
+                        <i class="bi bi-apple me-1"></i> Thương hiệu
+                    </label>
+                    <select class="form-select" name="brand" id="brand">
+                        <option value="">Tất cả</option>
+                        @foreach($brands as $brand)
+                            {{-- Gửi đi $brand->id --}}
+                            <option value="{{ $brand->id }}" {{ request('brand') == $brand->id ? 'selected' : '' }}>
+                                {{ $brand->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                
+                {{-- LỌC DANH MỤC (Dùng ID) --}}
+                <div class="col-md-3">
+                    <label for="category" class="form-label fw-semibold">
+                        <i class="bi bi-tag me-1"></i> Danh mục
+                    </label>
+                    <select class="form-select" name="category" id="category">
+                        <option value="">Tất cả</option>
+                        @foreach($categories as $category)
+                            {{-- Gửi đi $category->id --}}
+                            <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
+                                {{ $category->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                {{-- LỌC CÒN HÀNG & NÚT BẤM --}}
+                <div class="col-md-3">
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" name="in_stock" id="in_stock"
+                            {{ request('in_stock') ? 'checked' : '' }}>
+                        <label class="form-check-label" for="in_stock">
+                            Chỉ hiển thị hàng còn
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-filter"></i> Lọc
+                    </button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
     <div class="row g-4">
         @forelse($products as $product)
             <div class="col-md-4">

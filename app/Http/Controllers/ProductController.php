@@ -259,71 +259,73 @@ class ProductController extends Controller
             return redirect()->back()->with('error', 'Lỗi nhập dữ liệu: Đã xảy ra lỗi nghiêm trọng. Vui lòng kiểm tra file Excel và Log hệ thống.');
         }
     }
-   public function listProducts(Request $request)
-{
-    // Bắt đầu query: Tải kèm 'brand' (model)
-    $query = Product::with([
-            'images', 
-            'seller', 
-            'category', 
-            'brand', 
-            'attributeValues.attribute' // <-- THÊM DÒNG NÀY
-        ]) 
-        ->where('status', 'Approved');
-    // 1. Lọc theo Khoảng giá (Giữ nguyên)
-    if ($request->filled('price_range')) {
-        $range = $request->input('price_range');
-        $parts = explode('-', $range); 
-        $minPrice = $parts[0];
-        $maxPrice = $parts[1] ?? null; 
+   // Mở file: ProductController.php
+    // THAY THẾ TOÀN BỘ HÀM listProducts CŨ BẰNG HÀM NÀY
 
-        if ($minPrice > 0) {
-            $query->where('price', '>=', $minPrice);
+    // Mở file: ProductController.php
+    // THAY THẾ TOÀN BỘ HÀM listProducts CŨ BẰNG HÀM NÀY
+
+    // Mở file: app/Http/Controllers/ProductController.php
+    // Đảm bảo hàm listProducts của bạn giống như sau:
+
+    public function listProducts(Request $request)
+    {
+        // 1. Bắt đầu query
+        $query = Product::with([
+                'images', 'seller', 'category', 
+                'brand', 'attributeValues.attribute'
+            ]) 
+            ->where('status', Product::STATUS_APPROVED);
+
+        // 2. Lọc theo Khoảng giá (Giống hệt logic form)
+        if ($request->filled('price_range')) {
+            $range = $request->input('price_range');
+            $parts = explode('-', $range); 
+            $minPrice = $parts[0];
+            $maxPrice = $parts[1] ?? null; 
+
+            if ($minPrice > 0) $query->where('price', '>=', $minPrice);
+            // Sửa logic: nếu maxPrice rỗng (ví dụ: "20000000-") thì không lọc max
+            if ($maxPrice !== null && $maxPrice > 0 && $maxPrice > $minPrice) {
+                $query->where('price', '<=', $maxPrice);
+            }
         }
-        if ($maxPrice !== null && $maxPrice > 0) {
-            $query->where('price', '<=', $maxPrice);
+
+        // 3. Lọc theo Thương hiệu (Giống hệt logic form, dùng ID)
+        if ($request->filled('brand')) {
+            $query->where('brand_id', $request->input('brand'));
         }
+
+        // 4. Lọc "Còn hàng" (Giống hệt logic form)
+        if ($request->filled('in_stock')) {
+            $query->where('stock', '>', 0);
+        }
+
+        // 5. Lọc theo Danh mục (Giống hệt logic form, dùng ID cha)
+        if ($request->filled('category')) {
+            $categoryId = $request->input('category');
+            $category = Category::with('children')->find($categoryId);
+            if ($category) {
+                // Lấy ID cha và TẤT CẢ ID con
+                $allCategoryIds = $category->children->pluck('id')->push($category->id)->all();
+                $query->whereIn('category_id', $allCategoryIds);
+            }
+        }
+
+        // 6. Lấy dữ liệu cho dropdown filter
+        $brands = Brand::orderBy('name')->get();
+        // Lấy danh mục cha (để khớp với @foreach trong form)
+        $categories = Category::whereNull('parent_id')->orderBy('name')->get();
+
+        // 7. Thực thi query và phân trang
+        $products = $query->latest() 
+                           ->paginate(12) 
+                           // Rất quan trọng: Giữ lại filter khi chuyển trang
+                           ->withQueryString(); 
+
+        // 8. Trả về view với đầy đủ dữ liệu
+        return view('pages.listproducts', compact('products', 'brands', 'categories'));
     }
-
-    // 2. Lọc theo Thương hiệu (brand) <-- *** ĐÃ SỬA ***
-    if ($request->filled('brand')) {
-        // Dùng brand_id để lọc
-        $query->where('brand_id', $request->input('brand'));
-    }
-
-    // 3. Lọc "Đang giảm giá" (Giữ nguyên)
-    /*if ($request->filled('discount')) {
-        $query->whereNotNull('sale_price')
-              ->whereColumn('sale_price', '<', 'price');
-    }*/
-
-    // 4. Lọc "Còn hàng" (Giữ nguyên)
-    if ($request->filled('in_stock')) {
-        $query->where('stock', '>', 0);
-    }
-
-    // 5. Lọc theo Danh mục (Giữ nguyên)
-    if ($request->filled('category')) {
-        $query->where('category_id', $request->input('category'));
-    }
-
-    // Lấy danh sách thương hiệu ĐỘNG <-- *** ĐÃ SỬA ***
-    // Lấy thẳng từ bảng `brands` thay vì 'pluck'
-    $brands = Brand::orderBy('name')->get();
-                     
-    // Lấy danh sách danh mục ĐỘNG (Giữ nguyên)
-    $categories = Category::whereDoesntHave('children') // Chỉ lấy category KHÔNG CÓ con
-                      ->orderBy('name') // Sắp xếp theo tên cho dễ nhìn
-                      ->get();
-
-    // Thực thi query (Giữ nguyên)
-    $products = $query->latest() 
-                     ->paginate(30) 
-                     ->withQueryString(); 
-
-    // Trả về view (Giữ nguyên)
-    return view('pages.listproducts', compact('products', 'brands', 'categories'));
-}
     public function destroy($id)
     {
         // Tìm sản phẩm theo id
