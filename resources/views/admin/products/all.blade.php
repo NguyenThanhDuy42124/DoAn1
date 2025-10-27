@@ -147,17 +147,7 @@
                                 </span>
                             </td>
                             <td class="border px-4 py-2">
-                               <div class="d-flex flex-column flex-md-row">
-
-                            <button wire:click="openRejectModal({{ $product->id }})" class="btn btn-danger btn-sm mr-2">
-                                sửa trạng thái
-                            </button>
-
-                               <button wire:click="confirmDelete({{ $product->id }})"
-                                    class="btn btn-danger btn-sm ">
-                                          Xóa
-                               </button>
-                              </div>
+                   
                             </td>
                         </tr>
                     @empty

@@ -60,34 +60,37 @@ class ProductForm extends Component
     /**
      * Khởi chạy component (Xử lý cả Create và Edit)
      */
-    public function mount(Product $product = null) // Nhận Product qua route model binding
+    // GIỮ LẠI TYPE HINT Product, THÊM DẤU ?
+   public function mount($productId = null)
     {
-        // Load Categories (chỉ lá) và Brands
+        // Debug
+        // dd('Mount received productId:', $productId);
+        // Load Categories và Brands
         $this->allCategories = Category::whereDoesntHave('children')->orderBy('name')->get();
         $this->allBrands = Brand::orderBy('name')->get();
-        $this->categoryAttributes = collect(); // Khởi tạo rỗng
+        $this->categoryAttributes = collect();
 
-        if ($product->exists) { // Nếu là Edit (Model Product đã tồn tại)
-            $this->product = $product;
-            $this->productId = $product->id;
+        // TỰ TÌM Product nếu có productId
+        if ($productId) {
+            // Dùng findOrFail để tự 404 nếu ID sai
+            $productModel = Product::with(['images', 'attributeValues'])->findOrFail($productId);
 
-            // Fill dữ liệu tĩnh vào form
-            $this->category_id = $product->category_id;
-            $this->name = $product->name;
-            $this->price = $product->price;
-            $this->brand_id = $product->brand_id;
-            $this->stock = $product->stock;
-            $this->description = $product->description;
+            // Gán vào thuộc tính component
+            $this->product = $productModel;
+            $this->productId = $productModel->id; // Gán lại cho chắc
 
-            // Load ảnh cũ
-            $this->existingImages = $product->images->toArray();
+            // Fill dữ liệu (Logic cũ giữ nguyên)
+            $this->category_id = $productModel->category_id;
+            $this->name = $productModel->name;
+            $this->price = $productModel->price;
+            $this->brand_id = $productModel->brand_id;
+            $this->stock = $productModel->stock;
+            $this->description = $productModel->description;
+            $this->existingImages = $productModel->images->toArray();
+            $this->loadCategoryAttributes();
+            $this->attributeValues = $productModel->attributeValues->pluck('value', 'attribute_id')->toArray();
 
-            // Load thuộc tính động CŨ
-            $this->loadCategoryAttributes(); // Load cấu trúc thuộc tính
-            // Nạp giá trị cũ vào mảng $attributes
-            $this->attributeValues = $product->attributeValues->pluck('value', 'attribute_id')->toArray();
-
-        } else { // Nếu là Create
+        } else { // Nếu là Create (productId là null)
             $this->product = new Product(); // Tạo model rỗng
         }
     }
@@ -97,6 +100,7 @@ class ProductForm extends Component
      */
     public function updatedCategoryId($value)
     {
+       
         $this->loadCategoryAttributes();
         // Reset giá trị attributes cũ khi đổi danh mục
         $this->attributeValues = [];
@@ -161,6 +165,7 @@ class ProductForm extends Component
      */
     public function save()
     {
+    
         // Validate dữ liệu cơ bản + ảnh mới upload
         $validatedData = $this->validate();
 

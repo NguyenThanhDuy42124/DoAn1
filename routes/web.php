@@ -25,6 +25,7 @@ use App\Livewire\Admin\Categories\Manager as CategoryManager;
 use App\Livewire\Admin\Attributes\Manager as AttributeManager;
 use App\Livewire\Admin\Brands\Manager as BrandManager;
 use App\Livewire\Seller\Products\ProductForm;
+use App\Livewire\TestBinding;
 
 Route::get('/', function () {
     return view('MainPage');
@@ -101,6 +102,11 @@ Route::prefix('admin')->middleware('role:admin')->group(function () {
     Route::post('/notifications/{notification}/mark-as-unread', [NotificationController::class, 'markAsUnread'])->name('admin.notifications.markAsUnread');
 });
 
+
+
+Route::get('/test-binding', TestBinding::class);
+
+
 // Route riêng cho seller
 Route::prefix('seller')->middleware('role:seller')->group(function () {
     // Sửa thành SellerController::dashboard
@@ -109,7 +115,7 @@ Route::prefix('seller')->middleware('role:seller')->group(function () {
     // THAY THẾ 2 ROUTE CŨ BẰNG 2 ROUTE NÀY
     Route::get('/products/create', ProductForm::class)->name('seller.products.create');
     // Laravel tự động tìm product dựa trên ID {product} và truyền vào mount()
-    Route::get('/products/{product}/edit', ProductForm::class)->name('seller.products.edit');
+   Route::get('/products/{productId}/edit', ProductForm::class)->name('seller.products.edit');
 
     // Chỉ giữ lại index và destroy cho ProductController
     Route::resource('products', ProductController::class, ['names' => 'seller.products'])

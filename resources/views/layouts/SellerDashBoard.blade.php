@@ -156,13 +156,16 @@
             </nav>
 
             <!-- Main Content -->
-            <div class="container-fluid mt-3">
-                @yield('content')
+            <div class="container-fluid">
+                @if (isset($slot))
+                    {{ $slot }}
+                @else
+                    @yield('content')
+                @endif
             </div>
         </div>
     </div>
-
-    <!-- Scripts -->
+      
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
     </script>
@@ -172,30 +175,35 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
     </script>
-
-    <script>
-        // Sidebar toggle
-        $(document).ready(function() {
-            $('#sidebarCollapse').on('click', function() {
-                $('#sidebar').toggleClass('active');
-                $('#content').toggleClass('sidebar-open');
-
-                // Chỉ thêm overlay trên mobile
-                if ($(window).width() < 992) {
-                    $('#content').toggleClass('overlay');
-                }
-            });
-
-            // Đóng sidebar khi click overlay (trên mobile)
-            $('#content.overlay').on('click', function() {
-                if ($(window).width() < 992) {
-                    $('#sidebar').removeClass('active');
-                    $('#content').removeClass('overlay sidebar-open');
-                }
-            });
-        });
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      <script>
+      // Sidebar toggle
+$(document).ready(function () {
+    $('#sidebarCollapse').on('click', function () {
+        $('#sidebar').toggleClass('active');
+        $('#content').toggleClass('sidebar-open'); // Thêm dòng này
+        
+        // Thêm/xóa overlay trên mobile
+        if ($(window).width() < 992) {
+            if ($('#sidebar').hasClass('active')) {
+                $('<div class="overlay active"></div>').appendTo('body');
+            } else {
+                $('.overlay').remove();
+            }
+        }
+    });
+    
+    // Đóng sidebar khi click overlay
+    $(document).on('click', '.overlay', function() {
+        $('#sidebar').removeClass('active');
+        $('#content').removeClass('sidebar-open'); // Thêm dòng này
+        $('.overlay').remove();
+    });
+});
     </script>
     @livewireScripts
+
+    @stack('scripts')
 </body>
 
 </html>

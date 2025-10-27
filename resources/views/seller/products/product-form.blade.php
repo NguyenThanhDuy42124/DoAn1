@@ -1,9 +1,8 @@
-@extends('layouts.SellerDashBoard')
-@section('content')
+
 
 <div>
     <div class="container">
-        {{-- Tiêu đề trang --}}
+     
         <div class="page-header mt-4">
             <div class="d-flex justify-content-between align-items-center">
                 <h2 class="page-title">
@@ -19,7 +18,10 @@
             </div>
         </div>
 
-        {{-- Hiển thị lỗi validation chung --}}
+        <h2>{{ $product->name }}</h2>
+        <h2>{{ $product->category_id }}</h2>
+        <h2>{{ $product->price }}</h2>
+
         @if ($errors->any())
           <div class="alert alert-danger mt-3">
             <ul class="mb-0">
@@ -30,22 +32,19 @@
           </div>
         @endif
 
-        {{-- Form chính --}}
+
         <div class="form-container card shadow-sm my-4">
             <div class="card-body">
-                {{-- Dùng wire:submit thay vì action --}}
+           
                 <form wire:submit.prevent="save">
-                    {{-- Không cần CSRF với Livewire --}}
-                    {{-- Không cần seller_id vì component tự lấy Auth::id() --}}
+           
 
-                    {{-- === PHẦN THÔNG TIN CƠ BẢN === --}}
                     <h5 class="mb-3 border-bottom pb-2">Thông tin cơ bản</h5>
 
-                    {{-- Danh mục --}}
                     <div class="mb-3 row">
                         <label for="category_id" class="col-sm-3 col-form-label required">Danh mục</label>
                         <div class="col-sm-9">
-                            {{-- wire:model.live để load thuộc tính ngay khi chọn --}}
+                    
                             <select wire:model.live="category_id" id="category_id" class="form-select @error('category_id') is-invalid @enderror" required>
                                 <option value="">-- Chọn danh mục --</option>
                                 @foreach($allCategories as $category)
@@ -58,29 +57,29 @@
                         </div>
                     </div>
 
-                    {{-- Tên sản phẩm --}}
+      
                     <div class="mb-3 row">
                         <label for="name" class="col-sm-3 col-form-label required">Tên sản phẩm</label>
                         <div class="col-sm-9">
-                            <input type="text" wire:model.defer="name" id="name" class="form-control @error('name') is-invalid @enderror" required>
+                            <input type="text" wire:model="name" id="name" class="form-control @error('name') is-invalid @enderror" required>
                             @error('name') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
                     </div>
 
-                    {{-- Giá --}}
+      
                     <div class="mb-3 row">
                         <label for="price" class="col-sm-3 col-form-label required">Giá (VNĐ)</label>
                         <div class="col-sm-9">
-                            <input type="number" step="1000" wire:model.defer="price" id="price" class="form-control @error('price') is-invalid @enderror" required>
+                            <input type="number" min="0" step="1000" wire:model="price" id="price" class="form-control @error('price') is-invalid @enderror" required>
                             @error('price') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
                     </div>
 
-                    {{-- Thương hiệu --}}
+     
                     <div class="mb-3 row">
                         <label for="brand_id" class="col-sm-3 col-form-label">Thương hiệu</label>
                         <div class="col-sm-9">
-                            <select wire:model.defer="brand_id" id="brand_id" class="form-select @error('brand_id') is-invalid @enderror">
+                            <select wire:model="brand_id" id="brand_id" class="form-select @error('brand_id') is-invalid @enderror">
                                 <option value="">-- Chọn thương hiệu (Nếu có) --</option>
                                 @foreach($allBrands as $brand)
                                     <option value="{{ $brand->id }}">
@@ -92,7 +91,7 @@
                         </div>
                     </div>
 
-                    {{-- Tồn kho --}}
+      
                     <div class="mb-3 row">
                         <label for="stock" class="col-sm-3 col-form-label required">Tồn kho</label>
                         <div class="col-sm-9">
@@ -101,7 +100,7 @@
                         </div>
                     </div>
 
-                    {{-- Mô tả --}}
+     
                     <div class="mb-3 row">
                         <label for="description" class="col-sm-3 col-form-label">Mô tả</label>
                         <div class="col-sm-9">
@@ -109,54 +108,50 @@
                             @error('description') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
                     </div>
-
-                    {{-- === PHẦN THUỘC TÍNH ĐỘNG === --}}
-                    {{-- Chỉ hiện khi đã chọn Danh mục và có thuộc tính --}}
-                    @if($categoryAttributes->isNotEmpty())
+ 
+                     @if($categoryAttributes->isNotEmpty())
                     <h5 class="mt-4 mb-3 border-bottom pb-2">Thuộc tính chi tiết</h5>
 
                     @foreach($categoryAttributes as $attribute)
                         <div class="mb-3 row" wire:key="attribute-{{ $attribute->id }}">
                             <label for="attribute-{{ $attribute->id }}" class="col-sm-3 col-form-label">{{ $attribute->name }}</label>
                             <div class="col-sm-9">
-                                {{-- *** ĐỔI TÊN wire:model VÀ @error *** --}}
                                 @if($attribute->type == 'text')
                                     <input type="text"
-                                           wire:model.defer="attributeValues.{{ $attribute->id }}" {{-- <-- Đổi --}}
+                                           wire:model.defer="attributeValues.{{ $attribute->id }}"  
                                            id="attribute-{{ $attribute->id }}"
-                                           class="form-control @error('attributeValues.'.$attribute->id) is-invalid @enderror"> {{-- <-- Đổi --}}
+                                           class="form-control @error('attributeValues.'.$attribute->id) is-invalid @enderror">  
 
                                 @elseif($attribute->type == 'number')
                                     <div class="input-group">
                                         <input type="number" step="any"
-                                               wire:model.defer="attributeValues.{{ $attribute->id }}" {{-- <-- Đổi --}}
+                                               wire:model.defer="attributeValues.{{ $attribute->id }}"  
                                                id="attribute-{{ $attribute->id }}"
-                                               class="form-control @error('attributeValues.'.$attribute->id) is-invalid @enderror"> {{-- <-- Đổi --}}
+                                               class="form-control @error('attributeValues.'.$attribute->id) is-invalid @enderror">  
                                         @if($attribute->unit)
                                             <span class="input-group-text">{{ $attribute->unit }}</span>
                                         @endif
                                     </div>
 
                                 @elseif($attribute->type == 'select')
-                                    <select wire:model.defer="attributeValues.{{ $attribute->id }}" {{-- <-- Đổi --}}
+                                    <select wire:model.defer="attributeValues.{{ $attribute->id }}"  
                                             id="attribute-{{ $attribute->id }}"
-                                            class="form-select @error('attributeValues.'.$attribute->id) is-invalid @enderror"> {{-- <-- Đổi --}}
+                                            class="form-select @error('attributeValues.'.$attribute->id) is-invalid @enderror">  
                                         <option value="">-- Chọn {{ $attribute->name }} --</option>
                                         @foreach($attribute->options as $option)
                                             <option value="{{ $option->value }}">{{ $option->value }}</option>
                                         @endforeach
                                     </select>
                                 @endif
-                                @error('attributeValues.'.$attribute->id) <div class="invalid-feedback">{{ $message }}</div> @enderror {{-- <-- Đổi --}}
+                                @error('attributeValues.'.$attribute->id) <div class="invalid-feedback">{{ $message }}</div> @enderror  
                             </div>
                         </div>
                     @endforeach
                 @endif
 
-                    {{-- === PHẦN HÌNH ẢNH === --}}
                     <h5 class="mt-4 mb-3 border-bottom pb-2">Hình ảnh sản phẩm</h5>
 
-                    {{-- Hiển thị ảnh CŨ (nếu là edit) --}}
+                 
                     @if($productId && !empty($existingImages))
                         <div class="mb-3">
                             <label class="form-label">Ảnh hiện tại:</label>
@@ -176,17 +171,16 @@
                         </div>
                     @endif
 
-                    {{-- Upload ảnh MỚI --}}
                     <div class="mb-3 row">
                         <label for="images" class="col-sm-3 col-form-label">Thêm ảnh mới</label>
                         <div class="col-sm-9">
                             <input type="file" wire:model="images" id="images" class="form-control @error('images.*') is-invalid @enderror" multiple>
                             @error('images.*') <div class="invalid-feedback">{{ $message }}</div> @enderror
 
-                            {{-- Loading indicator --}}
+     
                             <div wire:loading wire:target="images" class="mt-2 text-primary">Đang tải ảnh lên...</div>
 
-                            {{-- Preview ảnh MỚI --}}
+            
                             @if ($images)
                                 <div class="mt-3">
                                     <label class="form-label">Ảnh mới tải lên (preview):</label>
@@ -207,11 +201,10 @@
                         </div>
                     </div>
 
-                    {{-- Nút Submit --}}
                     <div class="d-flex justify-content-end mt-4 pt-3 border-top">
                         <a href="{{ route('seller.products.index') }}" class="btn btn-light me-2">Hủy</a>
                         <button type="submit" class="btn btn-primary" wire:loading.attr="disabled">
-                            {{-- Hiển thị loading khi bấm lưu --}}
+        
                             <span wire:loading wire:target="save" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                             <span wire:loading.remove wire:target="save">
                                 @if($productId)
@@ -224,33 +217,10 @@
                         </button>
                     </div>
                 </form>
-            </div> {{-- End card-body --}}
-        </div> {{-- End card --}}
-    </div> {{-- End container --}}
+            </div> 
+        </div> 
+    </div> 
 
-    {{-- Thêm CSS cho nút xóa ảnh --}}
-    @push('styles')
-    <style>
-        .existing-image-thumb, .new-image-thumb {
-            position: relative;
-            display: inline-block; /* Hoặc inline-flex */
-            margin-right: 0.5rem;
-            margin-bottom: 0.5rem;
-        }
-        .remove-image-btn {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            padding: 0;
-            line-height: 18px; /* Căn giữa dấu X */
-            font-size: 12px;
-            z-index: 10;
-        }
-    </style>
-    @endpush
+   
 </div>
 
-@endsection
