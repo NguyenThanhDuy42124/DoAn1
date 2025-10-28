@@ -36,6 +36,8 @@ Route::post('/register', [UserController::class, 'register']); // gọi đến c
 Route::post('/logout', [UserController::class, 'logout']);
 Route::post('/login', [UserController::class, 'login']);
 
+
+
 // get là load trang web
 Route::get('/login', function () {
     return view('auth.login');
@@ -48,6 +50,15 @@ Route::get('/register', function () {
 Route::get('/dashboard', function () {
     return view('buyer.dashboard');
 })->middleware('auth', 'check.status')->name('dashboard');
+
+//route google
+Route::get('/auth/google/redirect', [App\Http\Controllers\GoogleAuthController::class, 'redirectToGoogle'])
+    ->name('google.auth.redirect');
+
+Route::get('/auth/google/call-back', [App\Http\Controllers\GoogleAuthController::class, 'handleGoogleCallback'])
+    ->name('google.auth.callback');
+
+
 
 // route của forget password
 Route::post('/forgotPassword', [ForgetPasswordController::class, 'sendResetLink'])
@@ -120,7 +131,7 @@ Route::prefix('seller')->middleware('role:seller')->group(function () {
     // Chỉ giữ lại index và destroy cho ProductController
     Route::resource('products', ProductController::class, ['names' => 'seller.products'])
          ->only(['index', 'destroy']);
-   
+
 
     // [GET] Route để hiển thị trang form
     Route::get('/products/import/form', [ProductController::class, 'showImportForm'])->name('seller.products.import.form');
