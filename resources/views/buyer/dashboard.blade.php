@@ -10,54 +10,56 @@
     {{-- Header: Tiêu đề và nút Chỉnh sửa --}}
     <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
         <h5 class="mb-0">Hồ sơ của tôi</h5>
-        
+
         {{-- Nút Chỉnh sửa (lấy từ cuối file gốc) --}}
         @if(Auth::user()->role == 'admin')
-            <a href="{{ route('users.edit', Auth::user()->id) }}" class="btn btn-outline-primary btn-sm">
-                <i class="fas fa-pencil-alt"></i> Chỉnh sửa
-            </a>
+        <a href="{{ route('users.edit', Auth::user()->id) }}" class="btn btn-outline-primary btn-sm">
+            <i class="fas fa-pencil-alt"></i> Chỉnh sửa
+        </a>
         @elseif(Auth::user()->role == 'buyer' || Auth::user()->role == 'seller')
-            <a href="{{ route('general.users.edit', Auth::user()->id) }}" class="btn btn-outline-primary btn-sm">
-                <i class="fas fa-pencil-alt"></i> Chỉnh sửa
-            </a>
+        <a href="{{ route('general.users.edit', Auth::user()->id) }}" class="btn btn-outline-primary btn-sm">
+            <i class="fas fa-pencil-alt"></i> Chỉnh sửa
+        </a>
         @endif
     </div>
 
     {{-- Body: Toàn bộ thông tin --}}
     <div class="card-body">
-        
+
         {{-- Xóa thẻ <h4 class="mb-4"> vì đã có tiêu đề --}}
 
         <div class="info-item">
             <div class="info-label">Họ và tên:</div>
-            <div class="info-value">{{ Auth::user()->name }}</div>
+            <div class="info-value">{{ Auth::user()->name ?? 'Chưa cập nhật' }}</div>
         </div>
 
         <div class="info-item">
             <div class="info-label">Email:</div>
-            <div class="info-value">{{ Auth::user()->email }}</div>
+            <div class="info-value">{{ Auth::user()->email ?? 'Chưa cập nhật' }}</div>
         </div>
 
         <div class="info-item">
             <div class="info-label">Số điện thoại:</div>
-            <div class="info-value">{{ Auth::user()->phoneNumber }}</div>
+            <div class="info-value">{{ Auth::user()->phoneNumber ?? 'Chưa cập nhật' }}</div>
         </div>
 
         <div class="info-item">
             <div class="info-label">Ngày sinh:</div>
-            <div class="info-value">{{ \Carbon\Carbon::parse(Auth::user()->dateOfBirth)->format('d/m/Y') }}</div>
+            <div class="info-value">
+                {{ Auth::user()->date_of_birth ? \Carbon\Carbon::parse(Auth::user()->date_of_birth)->format('d/m/Y') : 'Chưa cập nhật' }}
+            </div>
         </div>
 
         <div class="info-item">
             <div class="info-label">Giới tính:</div>
-            <div class="info-value text-capitalize">{{ Auth::user()->gender }}</div>
+            <div class="info-value text-capitalize">{{ Auth::user()->gender ?? 'Chưa cập nhật' }}</div>
         </div>
 
         @if(Auth::user()->role !== 'admin' && auth()->user()->address != null)
-            <div class="info-item">
-                <div class="info-label">Địa chỉ:</div>
-                <div class="info-value">{{ Auth::user()->address }}</div>
-            </div>
+        <div class="info-item">
+            <div class="info-label">Địa chỉ:</div>
+            <div class="info-value">{{ Auth::user()->address ?? 'Chưa cập nhật' }}</div>
+        </div>
         @endif
 
         <div class="info-item">
