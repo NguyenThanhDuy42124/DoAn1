@@ -40,28 +40,12 @@
     </div>
 
 </div> <div class="card shadow-sm mt-4">
-    <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">Xuất Báo Cáo Doanh Thu</h6>
-    </div>
-    <div class="card-body">
-        <form action="#" method="GET"> 
-            <div class="row align-items-end">
-                <div class="col-md-5">
-                    <label for="start_date">Từ ngày:</label>
-                    <input type="date" id="start_date" name="start_date" class="form-control">
-                </div>
-                <div class="col-md-5">
-                    <label for="end_date">Đến ngày:</label>
-                    <input type="date" id="end_date" name="end_date" class="form-control">
-                </div>
-                <div class="col-md-2">
-                    <button type="submit" class="btn btn-primary w-100" disabled>Xuất File</button>
-                </div>
-            </div>
-        </form>
-        <div id="date-range-error" class="text-danger small mt-2 fw-bold"></div>
-        <small class="text-muted mt-2 d-block">(Chức năng này đang được phát triển)</small>
-    </div>
+   {{--
+  PHẦN 3: THAY THẾ FORM HTML BẰNG LIVEWIRE COMPONENT
+  Xóa toàn bộ <div class="card shadow-sm mt-4">...</div> cũ
+  và thay bằng dòng này:
+--}}
+@livewire('seller.export-report-form')
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -92,9 +76,9 @@
                 new Chart(ctxTopCustomers, {
                     type: 'bar', // Biểu đồ cột
                     data: {
-                        labels: topCustomerLabels, 
+                        labels: topCustomerLabels,
                         datasets: [{
-                            label: 'Tổng chi tiêu', 
+                            label: 'Tổng chi tiêu',
                             data: topCustomerValues,
                             backgroundColor: [
                                 'rgba(0, 123, 255, 0.7)',
@@ -121,10 +105,10 @@
                             legend: {
                                 display: false
                             },
-                            tooltip: { 
-                                callbacks: { 
+                            tooltip: {
+                                callbacks: {
                                     label: (context) => 'Tổng chi tiêu: ' + formatCurrency(context.parsed.x)
-                                } 
+                                }
                             }
                         }
                     }
@@ -135,13 +119,13 @@
         // --- BIỂU ĐỒ 2: DOANH THU ĐỘNG (Giữ nguyên) ---
         const ctxDynamic = document.getElementById('dynamicRevenueChart').getContext('2d');
         const dynamicChart = new Chart(ctxDynamic, {
-            type: 'bar', 
+            type: 'bar',
             data: { labels: [], datasets: [{
                 label: 'Doanh thu', data: [],
                 backgroundColor: 'rgba(40, 167, 69, 0.5)',
                 borderColor: 'rgba(40, 167, 69, 1)',
                 borderWidth: 1, borderRadius: 5,
-                fill: true, tension: 0.1 
+                fill: true, tension: 0.1
             }]},
             options: {
                 responsive: true, maintainAspectRatio: false,
@@ -158,7 +142,7 @@
             fetch(`${url}?range=${range}`)
                 .then(response => response.json())
                 .then(data => {
-                    dynamicChart.config.type = chartType; 
+                    dynamicChart.config.type = chartType;
                     dynamicChart.data.labels = data.labels;
                     dynamicChart.data.datasets[0].data = data.values;
                     if(chartType === 'line') {
@@ -186,14 +170,14 @@
                 fetchAndUpdateChart(range, type);
             });
         });
-        
+
         fetchAndUpdateChart('7d', 'bar');
 
         // --- PHẦN 3: VALIDATE DATE RANGE (Giữ nguyên) ---
         const startDateInput = document.getElementById('start_date');
         const endDateInput = document.getElementById('end_date');
         const errorContainer = document.getElementById('date-range-error');
-        
+
         function validateDateRange() {
             const startVal = startDateInput.value;
             const endVal = endDateInput.value;
