@@ -158,14 +158,6 @@ class CheckoutController extends Controller
                         $order->status = 'Cancelled';
                         $order->cancellation_reason = 'User cancelled payment';
                         $order->save(); 
-                        foreach($order->items as $item)
-                        {
-                            if($item->product)
-                            {
-                                $item->product->stock += $item->quantity;
-                                $item->product->save();
-                            }
-                        }
                     }
                     
                 }

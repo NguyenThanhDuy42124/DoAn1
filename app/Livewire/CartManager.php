@@ -23,8 +23,11 @@ class CartManager extends Component
     public function loadCart()
     {
         $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
-        $items = CartItem::with('product')->where('cart_id', $cart->id)->get();
-        $items = CartItem::with('product.images')->where('cart_id', $cart->id)->get();
+        $items = CartItem::with('product.images')
+                           ->where('cart_id', $cart->id)
+                           ->orderBy('updated_at', 'desc') // <-- QUAN TRỌNG
+                           ->get();
+        $latestItem = $items->first();
         // Convert to array và add stock_status để view dùng
         $this->cartItems = $items->map(function ($item) {
             $maxStock = $item->product->stock;
@@ -43,10 +46,23 @@ class CartManager extends Component
             return $item->toArray();  // Bao gồm stock_status
         })->toArray();
 
-        // Selected mặc định: Tick hết nếu in_stock và quantity > 0
-        $this->selectedItems = collect($items)->filter(function ($item) {
-        return $item->stock_status === 'in_stock' && $item->quantity > 0;
-    })->pluck('id')->toArray();
+        if ($latestItem) {
+            // Cần lấy 'stock_status' từ $this->cartItems (array) mà chúng ta vừa tạo
+            $latestItemData = collect($this->cartItems)->firstWhere('id', $latestItem->id);
+
+            // Chỉ chọn nếu item mới nhất còn hàng
+            if ($latestItemData && $latestItemData['stock_status'] === 'in_stock') {
+                // Tự động chọn item mới nhất (cập nhật gần nhất)
+                // === LỖI ĐÃ ĐƯỢC SỬA TẠI ĐÂY ===
+                $this->selectedItems = [(string)$latestItem->id];
+            } else {
+                // Nếu item mới nhất hết hàng, không chọn gì
+                $this->selectedItems = [];
+            }
+        } else {
+            // Nếu giỏ hàng trống, không chọn gì
+            $this->selectedItems = [];
+        }
     }
 
     public function updatedQuantities($value, $key)  // Hook khi quantity thay đổi
@@ -90,7 +106,7 @@ class CartManager extends Component
     {
         $total = 0;
         foreach ($this->cartItems as $item) {
-            if (in_array($item['id'], $this->selectedItems)) {  // Fix: $item['id'], không $items
+            if (in_array((string)$item['id'], $this->selectedItems)) {  // Fix: $item['id'], không $items
                 $qty = $this->quantities[$item['id']] ?? 0;
                 $total += $item['price'] * $qty;
             }
