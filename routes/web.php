@@ -59,7 +59,6 @@ Route::get('/auth/google/call-back', [App\Http\Controllers\GoogleAuthController:
     ->name('google.auth.callback');
 
 
-
 // route của forget password
 Route::post('/forgotPassword', [ForgetPasswordController::class, 'sendResetLink'])
     ->middleware('throttle:5,1')
