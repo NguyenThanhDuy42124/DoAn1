@@ -124,61 +124,14 @@ class CheckoutController extends Controller
 
         try {
             $session = \Stripe\Checkout\Session::retrieve($sessionId);
-
-            if (!$session) {
-                throw new NotFoundHttpException;
+            if (!$session)
+            {
+                throw new NotFoundHttpException();
             }
-
             $customer = \Stripe\Customer::retrieve($session->customer);
-
-            $orders = Order::with('items.product')
-                    ->where('session_id', $session->id)
-                    ->get();
-                foreach($orders as $order)
-                {
-                    if($order && $order->payment_status === 'unpaid')
-                {
-                    $order->payment_status='paid';
-                    $order->save();
-                    $hasInsufficientStock = false;
-
-                    foreach($order->items as $item)
-                    {
-                        $product = $item->product;
-                        if($product)
-                        {
-                            if($product->stock < $item->quantity)
-                            {
-                                $hasInsufficientStock = true;
-                            }
-                            $product->stock -= $item->quantity;
-                            $product->save();
-                        }
-                    }
-
-                    if ($hasInsufficientStock)
-                    {
-                        $order->status = 'Cancelled';
-                        $order->cancellation_reason = 'Insuffcient stock after payment';
-                        $order->save();
-                    }
-                    else
-                    {
-                        $order->status = 'Pending';
-                        $order->save();
-                             \App\Models\Notification::create([
-                        'user_id' => $order->seller_id,
-                        'type' => 'new_order',
-                        'message' => "Bạn có đơn hàng mới #{$order->id} từ {$order->buyer_name} với tổng giá " . number_format($order->total_price) . " VND",
-                        'is_read' => false,
-                    ]);
-                    }
-                }
-                }
-            
-
-            return view('buyer.checkouts.success', compact('customer'));
+            return view ('buyer.checkouts.success', compact('customer'));
         } catch (\Exception $e) {
+            report($e);
             throw new NotFoundHttpException();
         }
     }
@@ -190,31 +143,38 @@ class CheckoutController extends Controller
 
         if ($sessionId)
         {
-            $session = \Stripe\Checkout\Session::retrieve($sessionId);
-            if($session)
-            {
-                $orders = Order::where('session_id', $session->id)
+            
+            try {
+                $session = \Stripe\Checkout\Session::retrieve($sessionId);
+                if($session)
+                {
+                    $orders=Order::with('items.product')
+                    ->where('session_id', $session->id)
                     ->where('status', 'Pending')
                     ->where('payment_status', 'unpaid')
                     ->get();
-                
                     foreach($orders as $order)
                     {
                         $order->status = 'Cancelled';
                         $order->cancellation_reason = 'User cancelled payment';
-                        $order->save();
-                    }
-
-                    foreach ($order->items as $item)
-                    {
-                        $product = $item->product;
-                        if($product)
+                        $order->save(); 
+                        foreach($order->items as $item)
                         {
-                            $product->stock += $item->quantity;
-                            $product->save();
+                            if($item->product)
+                            {
+                                $item->product->stock += $item->quantity;
+                                $item->product->save();
+                            }
                         }
                     }
+                    
+                }
+            } catch (\Exception $e)
+            {
+                report($e);
+                return view('buyer.checkouts.cancel')->with('error', 'Không thể xác thực phiên hủy.');
             }
+        
         }
 
         return view('buyer.checkouts.cancel')->with('success', 'Đơn hàng đã bị hủy.');
@@ -242,39 +202,71 @@ class CheckoutController extends Controller
             return response('', 400);
         }
 
-        // Handle the event
         switch ($event->type) {
             case 'checkout.session.completed':
                 $session = $event->data->object;
 
                 $orders = Order::with('items.product')
                     ->where('session_id', $session->id)
+                    ->where('payment_status', 'unpaid') // Chỉ xử lý đơn chưa thanh toán
                     ->get();
+                
                 foreach($orders as $order)
                 {
-                    if($order && $order->payment_status === 'unpaid')
-                {
-                    $order->payment_status='paid';
-                    $order->save();
+                    // Đã được xử lý bởi một webhook call khác rồi thì bỏ qua
+                    if($order->payment_status !== 'unpaid') {
+                        continue;
+                    }
+
+                    $order->payment_status = 'paid';
+                    // Tạm thời chưa lưu, chờ kiểm tra stock
+
+                    $hasInsufficientStock = false;
+                    $insufficientItems = [];
+
+                    // 1. Vòng lặp KIỂM TRA stock trước
                     foreach($order->items as $item)
                     {
-                        $product = $item->product;
-                        if($product)
+                        if(!$item->product || $item->product->stock < $item->quantity)
                         {
-                            if($product->stock < $item->quantity)
-                            {
-                                continue;
-                            }
-                            $product->stock -= $item->quantity;
-                            $product->save();
+                            $hasInsufficientStock = true;
+                            $insufficientItems[] = $item->product ? $item->product->name : 'Unknown Product';
                         }
                     }
+
+                    // 2. Quyết định dựa trên kết quả kiểm tra
+                    if ($hasInsufficientStock)
+                    {
+                        // Nếu hết hàng -> Hủy đơn và GHI LÝ DO
+                        $order->status = 'Cancelled';
+                        $order->cancellation_reason = 'Insufficient stock after payment: ' . implode(', ', $insufficientItems);
+                        $order->save();
+                        
+                        // TODO:gọi API Stripe để refund đơn hàng này
+                    }
+                    else
+                    {
+                        // Nếu đủ hàng -> Trừ kho và xác nhận đơn
+                        $order->status = 'Pending';
+                        
+                        foreach($order->items as $item)
+                        {
+                            // $item->product đã được load sẵn
+                            $item->product->stock -= $item->quantity;
+                            $item->product->save();
+                        }
+
+                        $order->save(); // Lưu đơn hàng sau khi đã trừ kho thành công
+
+                        // Gửi notification cho seller
+                        \App\Models\Notification::create([
+                            'user_id' => $order->seller_id,
+                            'type' => 'new_order',
+                            'message' => "Bạn có đơn hàng mới #{$order->id} từ {$order->buyer_name} với tổng giá " . number_format($order->total_price) . " VND",
+                            'is_read' => false,
+                        ]);
+                    }
                 }
-                }
-                
-                // chỗ này mày có thể gửi mail hoặc notification
-                // Send email to customer
-                // ...
                 break;
 
             default:
@@ -282,5 +274,6 @@ class CheckoutController extends Controller
         }
 
         return response('');
+
     }
 }
