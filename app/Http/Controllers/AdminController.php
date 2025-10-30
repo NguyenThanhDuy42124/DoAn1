@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-
+use Illuminate\Support\Facades\DB; 
 class AdminController extends Controller
 {
         // hàm này để load trang dashboard của admin, có thêm phần tìm kiếm user
@@ -31,9 +31,44 @@ class AdminController extends Controller
         // --- THÊM LOGIC ĐẾM ĐƠN HÀNG ---
     $totalOrders = Order::count(); //
     $totalProducts = Product::count();
+    // (Giả định role của người mua là 'buyer' và người bán là 'seller')
+    $sellerCount = User::where('role', 'seller')->count();
+    $buyerCount = User::where('role', 'buyer')->count();
+    
+    // Chuẩn bị dữ liệu cho Chart.js
+    $userChartData = [
+        'labels' => ['Người bán (Seller)', 'Người mua (Buyer)'],
+        'values' => [$sellerCount, $buyerCount]
+    ];
+    $productStatusCounts = Product::select('status', DB::raw('count(*) as count'))
+                                ->groupBy('status')
+                                ->pluck('count', 'status'); // -> ['Pending' => 50, 'Approved' => 200, ...]
+
+    // Định nghĩa các trạng thái bạn muốn hiển thị (dựa trên Model Product)
+    $statuses = [
+        Product::STATUS_PENDING => 'Đang chờ duyệt',
+        Product::STATUS_APPROVED => 'Đã duyệt',
+        Product::STATUS_REJECTED => 'Bị từ chối',
+        Product::STATUS_HIDDEN => 'Bị ẩn'
+    ];
+
+    $productStatusLabels = [];
+    $productStatusValues = [];
+
+    foreach ($statuses as $statusCode => $statusName) {
+        $productStatusLabels[] = $statusName;
+        $productStatusValues[] = $productStatusCounts->get($statusCode, 0); // Lấy count, mặc định là 0
+    }
+    
+    $productStatusData = [
+        'labels' => $productStatusLabels,
+        'values' => $productStatusValues
+    ];
         // Trả view dashboard, luôn truyền $users
         return view('admin.dashboard', compact('users', 'role', 'totalOrders',
-        'totalProducts'));
+        'totalProducts', 
+        'userChartData',
+        'productStatusData'));
     }
     public function userDashboard(Request $request){
         $role = session('current_role', Auth::user()->role);
