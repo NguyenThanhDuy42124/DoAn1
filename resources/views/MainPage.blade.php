@@ -29,7 +29,7 @@
 <section class="container my-5">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="fw-bold text-danger"><i class="fas fa-bolt"></i> FLASH SALE TOÀN SÀN</h2>
-        <a href="#" class="text-primary">Xem tất cả ></a>
+        <a href="/products" class="text-primary">Xem tất cả ></a>
     </div>
     <div class="row g-3">
 

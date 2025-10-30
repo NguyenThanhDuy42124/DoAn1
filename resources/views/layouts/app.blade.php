@@ -128,7 +128,7 @@
         <div class="text-center pt-4 mt-4 border-top">
             <p class="mb-1 text-muted">&copy; {{ date('Y') }} DKDSHOP. Đã đăng ký bản quyền.</p>
             <p class="mb-0 text-muted small">
-                Công ty TNHH DKDSHOP | Địa chỉ: 123 Đường ABC, Phường XYZ, Quận 1, TP. Hồ Chí Minh
+                Công ty TNHH DKDSHOP | Địa chỉ: 255 Đường Nguyễn Văn Cừ, Phường Cái Khế, TP. Cần Thơ
             </p>
         </div>
     </div>

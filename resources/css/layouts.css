@@ -628,6 +628,15 @@ footer p {
         border-color: #ccc;
         color: #0d6efd; /* Xanh primary */
     }
+    .mega-menu-content {
+    display: none;
+}
+
+/* Quy tắc 2: Chỉ hiển thị panel nào đang có class 'active' 
+*/
+.mega-menu-content.active {
+    display: block;
+}
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .navbar-nav {

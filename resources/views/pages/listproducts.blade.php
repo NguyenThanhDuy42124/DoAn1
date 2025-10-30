@@ -3,11 +3,6 @@
 
 @section('content')
 <div class="container my-4">
- {{-- Mở file: listproducts.blade.php --}}
-{{-- THAY THẾ TOÀN BỘ KHỐI <div class="filter-section ..."> BẰNG CODE NÀY --}}
-
-{{-- Mở file: listproducts.blade.php --}}
-{{-- THAY THẾ TOÀN BỘ KHỐI <div class="filter-section ..."> BẰNG CODE NÀY --}}
 
 <div class="filter-section card shadow-sm mb-4">
     <div class="card-body">

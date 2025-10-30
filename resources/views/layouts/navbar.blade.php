@@ -29,13 +29,12 @@
                             {{-- =================================== --}}
                             <div class="col-lg-3 col-md-4 mega-menu-column-1">
                                 <ul class="list-unstyled mb-0">
-
-                                    {{-- Lặp qua các danh mục cha mà AppServiceProvider đã lấy --}}
-                                    @foreach ($navbar_categories as $index => $category)
-                                        <li class="mega-menu-item {{ $index == 0 ? 'active' : '' }}"
+                                    
+                                    {{-- Lặp qua các danh mục cha ($navbar_categories) --}}
+                                    @foreach($navbar_categories as $index => $category)
+                                        <li class="mega-menu-item {{ $index == 0 ? 'active' : '' }}" 
                                             data-target="#menu-cat-{{ $category->id }}">
-                                            <a class="d-block p-3"
-                                                href="{{ route('products.list', ['category' => $category->id]) }}">
+                                            <a class="d-block p-3" href="{{ route('products.list', ['category' => $category->id]) }}">
                                                 <i class="bi bi-tag me-2"></i> {{ $category->name }}
                                             </a>
                                         </li>
@@ -45,77 +44,72 @@
                             </div>
 
                             {{-- =================================== --}}
-                            {{-- CỘT 2: HÃNG (BÁN TỰ ĐỘNG) --}}
+                            {{-- CỘT 2: HÃNG + BỘ LỌC GIÁ MỚI --}}
                             {{-- =================================== --}}
                             <div class="col-lg-9 col-md-8 mega-menu-column-2 p-4">
 
                                 {{-- Lặp qua các danh mục cha một lần nữa để TẠO RA các panel --}}
-                                @foreach ($navbar_categories as $index => $category)
-                                    <div class="mega-menu-content {{ $index == 0 ? 'active' : '' }}"
-                                        id="menu-cat-{{ $category->id }}"
-                                        style="{{ $index > 0 ? 'display: none;' : '' }}">
-
-                                        <h5 class="mb-3">Thương hiệu</h5>
-
-                                        <div class="row row-cols-2 row-cols-md-3 g-3">
-
-                                            @php
-                                                $brands_to_show = [];
-
-                                                // === SỬA LỖI: Thêm \Illuminate\Support\Str:: ===
-                                                if (\Illuminate\Support\Str::contains($category->name, 'Điện thoại')) {
-                                                    $brands_to_show = [
-                                                        'Apple',
-                                                        'Samsung',
-                                                        'Xiaomi',
-                                                        'Oppo',
-                                                        'Realme',
-                                                        'Huawei',
-                                                    ];
-                                                } elseif (
-                                                    \Illuminate\Support\Str::contains($category->name, 'Laptop')
-                                                ) {
-                                                    $brands_to_show = ['Apple', 'Dell', 'HP', 'Acer', 'Lenovo', 'Asus'];
-                                                } elseif (
-                                                    \Illuminate\Support\Str::contains($category->name, 'Tablet')
-                                                ) {
-                                                    $brands_to_show = ['Apple', 'Samsung', 'Xiaomi'];
-                                                }
-                                                // ===============================================
-                                            @endphp
-
-                                            {{-- Lọc và lặp qua các hãng đã định nghĩa --}}
-                                            @foreach ($navbar_brands->whereIn('name', $brands_to_show) as $brand)
+                                @foreach($navbar_categories as $index => $category)
+                                    <div class="mega-menu-content {{ $index == 0 ? 'active' : '' }}" 
+                                         id="menu-cat-{{ $category->id }}">
+                                        
+                                        {{-- Tiêu đề động --}}
+                                        <h5 class="mb-3">Thương hiệu {{ $category->name }}</h5>
+                                        
+                                        {{-- DANH SÁCH THƯƠNG HIỆU --}}
+                                        <div class="row row-cols-2 row-cols-md-3 g-3 mega-brand-list">
+                                            
+                                            {{-- Lặp qua TOÀN BỘ $navbar_brands --}}
+                                            @foreach ($navbar_brands as $brand)
                                                 <div class="col">
-                                                    <a href="{{ route('products.list', ['category' => $category->id, 'brand' => $brand->id]) }}"
-                                                        class="mega-brand-link">
+                                                    {{--
+                                                        *** THAY ĐỔI QUAN TRỌNG ***
+                                                        Thêm 'data-base-href' để lưu link gốc
+                                                        Thêm class 'mega-brand-link' để JS có thể tìm thấy
+                                                    --}}
+                                                    <a href="{{ route('products.list', ['category' => $category->id, 'brand' => $brand->id]) }}" 
+                                                       class="mega-brand-link"
+                                                       data-base-href="{{ route('products.list', ['category' => $category->id, 'brand' => $brand->id]) }}">
                                                         {{ $brand->name }}
                                                     </a>
                                                 </div>
                                             @endforeach
-
                                         </div>
+
+                                        {{-- === PHẦN MỚI THÊM === --}}
+                                        <hr class="my-4">
+                                        <div class="mega-price-filter">
+                                            <label for="mega-price-{{ $category->id }}" class="form-label fw-semibold mb-2" style="font-size: 0.9rem;">
+                                                <i class="fas fa-dollar-sign me-1"></i> Lọc theo mức giá
+                                            </label>
+                                            {{-- 
+                                                Class 'mega-price-select' rất quan trọng để JS bắt sự kiện 
+                                                Các giá trị (value) phải khớp với logic trong ProductController
+                                            --}}
+                                            <select class="form-select form-select-sm mega-price-select" id="mega-price-{{ $category->id }}">
+                                                <option value="">Tất cả mức giá</option>
+                                                <option value="0-5000000">Dưới 5 triệu</option>
+                                                <option value="5000000-10000000">5 - 10 triệu</option>
+                                                <option value="10000000-20000000">10 - 20 triệu</option>
+                                                <option value="20000000-">Trên 20 triệu</option>
+                                            </select>
+                                        </div>
+                                        {{-- === KẾT THÚC PHẦN MỚI === --}}
+
                                     </div>
                                 @endforeach
-
+                                
                             </div>
                         </div>
                     </div>
                 </li>
+                
                 <li class="nav-item">
                     <a class="nav-link" href="/products">DANH SÁCH SẢN PHẨM</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/vouchers">KHUYẾN MÃI</a>
                 </li>
-                <!--  <li class="nav-item">
-                    <a class="nav-link" href="#">HỖ TRỢ</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">GIỚI THIỆU</a>
-                </li> -->
-
-
             </ul>
 
             <div class="d-flex mx-auto align-items-center">
@@ -168,10 +162,9 @@
                                 </li>
                             @endif
 
-                            {{-- 3. TRANG QUẢN TRỊ (Chỉ admin thấy) - MỤC MỚI --}}
+                            {{-- 3. TRANG QUẢN TRỊ (Chỉ admin thấy) --}}
                             @if (Auth::user()->role == 'admin')
                                 <li>
-                                    {{-- Bạn có thể đổi route('switchRole', 'admin') thành route('admin.dashboard') nếu có --}}
                                     <a class="dropdown-item fw-bold text-primary"
                                         href="{{ route('switchRole', 'admin') }}">
                                         <i class="bi bi-shield-lock me-2"></i> Trang Quản Trị
@@ -256,10 +249,96 @@
         </div>
     </div>
 </nav>
+
 <script data-livewire-eval="false">
     // Chờ cho toàn bộ nội dung trang được tải
     document.addEventListener("DOMContentLoaded", function() {
 
+        // =============================================
+        // == BẮT ĐẦU: LOGIC MEGA MENU MỚI ==
+        // =============================================
+            
+        const menuItems = document.querySelectorAll('.mega-menu-item');
+        const menuContents = document.querySelectorAll('.mega-menu-content');
+        const priceSelects = document.querySelectorAll('.mega-price-select');
+
+        // --- 1. Logic chuyển tab (Category) ---
+        // Thêm sự kiện 'mouseenter' (di chuột vào) cho mỗi item danh mục
+        menuItems.forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                // Xóa class 'active' khỏi tất cả các item và content
+                menuItems.forEach(i => i.classList.remove('active'));
+                menuContents.forEach(c => c.classList.remove('active'));
+
+                // Thêm class 'active' cho item và content tương ứng
+                this.classList.add('active');
+                const targetId = this.getAttribute('data-target');
+                const activeContent = document.querySelector(targetId);
+
+                if (activeContent) {
+                    activeContent.classList.add('active');
+                    
+                    // **QUAN TRỌNG**: Khi chuyển tab, cập nhật lại link 
+                    // dựa trên giá trị đang được chọn của bộ lọc giá trong tab đó
+                    const currentSelect = activeContent.querySelector('.mega-price-select');
+                    if (currentSelect) {
+                        updateBrandLinks(activeContent, currentSelect.value);
+                    }
+                }
+            });
+        });
+
+        // --- 2. Logic cập nhật link khi chọn giá ---
+        // Thêm sự kiện 'change' cho tất cả các dropdown giá
+        priceSelects.forEach(select => {
+            select.addEventListener('change', function() {
+                // Tìm 'cha' (content panel) đang chứa dropdown này
+                const activeContent = this.closest('.mega-menu-content');
+                if (activeContent) {
+                    // Gọi hàm cập nhật link với giá trị mới
+                    updateBrandLinks(activeContent, this.value);
+                }
+            });
+        });
+
+        // --- 3. Hàm chính: Cập nhật các link thương hiệu ---
+        function updateBrandLinks(contentPanel, priceRange) {
+            // Tìm tất cả link thương hiệu trong content panel hiện tại
+            const brandLinks = contentPanel.querySelectorAll('.mega-brand-link');
+            
+            brandLinks.forEach(link => {
+                // Lấy link gốc từ 'data-base-href'
+                const baseHref = link.getAttribute('data-base-href');
+                
+                if (priceRange) { // Nếu có chọn giá (value != "")
+                    // Thêm tham số 'price_range' vào link
+                    // (Tự động kiểm tra nên dùng '?' hay '&')
+                    const separator = baseHref.includes('?') ? '&' : '?';
+                    link.setAttribute('href', `${baseHref}${separator}price_range=${priceRange}`);
+                } else { // Nếu chọn "Tất cả" (value == "")
+                    // Trả về link gốc
+                    link.setAttribute('href', baseHref);
+                }
+            });
+        }
+
+        // --- 4. Khởi tạo cho tab active đầu tiên khi tải trang ---
+        // (Để đảm bảo các link đúng ngay cả khi chưa làm gì)
+        const initialActiveContent = document.querySelector('.mega-menu-content.active');
+        if (initialActiveContent) {
+             const initialSelect = initialActiveContent.querySelector('.mega-price-select');
+             if (initialSelect) {
+                // Cập nhật link dựa trên giá trị mặc định ("Tất cả")
+                updateBrandLinks(initialActiveContent, initialSelect.value);
+             }
+        }
+        
+        // =============================================
+        // == KẾT THÚC: LOGIC MEGA MENU MỚI ==
+        // =============================================
+
+
+        // --- (Code Geolocation cũ của bạn) ---
         // Tìm phần tử <span> để hiển thị vị trí
         const locationTextElement = document.getElementById('user-location-text');
 
@@ -276,8 +355,6 @@
         // Kiểm tra xem trình duyệt có hỗ trợ Geolocation không
         if ("geolocation" in navigator) {
             // Lấy vị trí hiện tại
-            // Tham số thứ nhất là callback khi thành công
-            // Tham số thứ hai là callback khi thất bại
             navigator.geolocation.getCurrentPosition(handleSuccess, handleError);
         } else {
             console.warn("Trình duyệt này không hỗ trợ Geolocation.");
@@ -290,7 +367,6 @@
             const longitude = position.coords.longitude;
 
             // Dùng API miễn phí của BigDataCloud để đổi tọa độ sang tên (Reverse Geocoding)
-            // Yêu cầu kết quả bằng tiếng Việt (localityLanguage=vi)
             const apiUrl =
                 `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=vi`;
 
