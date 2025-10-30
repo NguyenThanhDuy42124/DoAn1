@@ -1,40 +1,43 @@
 <?php
 
 use App\Models\User;
+use App\Livewire\MainPage;
+use App\Livewire\TestBinding;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\SellerController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\BuyerController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\SellerController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\VoucherController;
+use App\Http\Controllers\CartItemController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\UserInfoController;
+use Illuminate\Auth\Middleware\Authenticate;
+use App\Livewire\Seller\Products\ProductForm;
+use Illuminate\Session\Middleware\StartSession;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ForgetPasswordController;
-use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\VoucherController;
-use App\Http\Controllers\CartController;
-use App\Http\Controllers\CartItemController;
-use App\Http\Controllers\CheckoutController;
-use App\Http\Controllers\OrderController;
-use App\Http\Controllers\UserInfoController;
-use Illuminate\Session\Middleware\StartSession;
+use App\Livewire\Admin\Brands\Manager as BrandManager;
+use App\Livewire\Admin\Promotion\MainPagePromotionImage;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
-use Illuminate\Auth\Middleware\Authenticate;
 use App\Livewire\Admin\Categories\Manager as CategoryManager;
 use App\Livewire\Admin\Attributes\Manager as AttributeManager;
-use App\Livewire\Admin\Brands\Manager as BrandManager;
-use App\Livewire\Seller\Products\ProductForm;
-use App\Livewire\TestBinding;
 
-Route::get('/', function () {
-    return view('MainPage');
-});
+Route::get('/', MainPage::class)->name('main.page');
 
 // Post là bắt dữ liệu gửi từ form
 Route::post('/register', [UserController::class, 'register']); // gọi đến controller
 Route::post('/logout', [UserController::class, 'logout']);
 Route::post('/login', [UserController::class, 'login']);
+
+
 
 
 
@@ -50,6 +53,14 @@ Route::get('/register', function () {
 Route::get('/dashboard', function () {
     return view('buyer.dashboard');
 })->middleware('auth', 'check.status')->name('dashboard');
+
+Route::get('/', function () {
+    $path = null;
+    if (Storage::disk('public')->exists('banner_path.txt')) {
+        $path = Storage::disk('public')->get('banner_path.txt');
+    }
+    return view('mainpage', compact('path'));
+});
 
 //route google
 Route::get('/auth/google/redirect', [App\Http\Controllers\GoogleAuthController::class, 'redirectToGoogle'])
@@ -94,9 +105,13 @@ Route::prefix('admin')->middleware('role:admin')->group(function () {
     Route::get('/attributes', AttributeManager::class)->name('admin.attributes.manager');
     Route::get('/brands', BrandManager::class)->name('admin.brands.manager');
 
+
+    // Route cho quản lý ảnh trang chủ
+    Route::get('/UserUIimages', MainPagePromotionImage::class)->name('admin.homepage.images.manager');
+
     // 2. Resource chỉ dùng cho CRUD chi tiết (create, edit, …)
     Route::resource('products', ProductController::class, ['names' => 'admin.products'])
-         ->except(['index']);   // <-- loại bỏ GET /admin/products
+        ->except(['index']);   // <-- loại bỏ GET /admin/products
 
 
 
@@ -125,11 +140,11 @@ Route::prefix('seller')->middleware('role:seller')->group(function () {
     // THAY THẾ 2 ROUTE CŨ BẰNG 2 ROUTE NÀY
     Route::get('/products/create', ProductForm::class)->name('seller.products.create');
     // Laravel tự động tìm product dựa trên ID {product} và truyền vào mount()
-   Route::get('/products/{productId}/edit', ProductForm::class)->name('seller.products.edit');
+    Route::get('/products/{productId}/edit', ProductForm::class)->name('seller.products.edit');
 
     // Chỉ giữ lại index và destroy cho ProductController
     Route::resource('products', ProductController::class, ['names' => 'seller.products'])
-         ->only(['index', 'destroy']);
+        ->only(['index', 'destroy']);
 
 
     // [GET] Route để hiển thị trang form
@@ -154,7 +169,7 @@ Route::prefix('seller')->middleware('role:seller')->group(function () {
     })->name('seller.orders.index');
     Route::get('/reports', [SellerController::class, 'showReportPage'])->name('seller.reports.index');
     Route::get('/seller/api/revenue-report', [SellerController::class, 'getRevenueReport'])
-     ->name('seller.api.revenue.report');
+        ->name('seller.api.revenue.report');
 });
 Route::get('/shop/{id}', [SellerController::class, 'showShop'])->name('shop.show');
 Route::get('/products', [ProductController::class, 'listProducts'])->name('products.list');
@@ -200,11 +215,9 @@ Route::middleware('auth')->group(function () {
     Route::post('buyer/orders/{id}/return', [BuyerController::class, 'returnOrder'])->name('buyer.orders.return');
     Route::post('/orders/{order}/repurchase', [App\Http\Controllers\OrderController::class, 'repurchase'])->name('orders.repurchase');
 
-     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
     Route::post('/notifications/{notification}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
     Route::post('/notifications/{notification}/mark-as-unread', [NotificationController::class, 'markAsUnread'])->name('notifications.markAsUnread');
     Route::delete('/notifications/{notification}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
-
-
 });

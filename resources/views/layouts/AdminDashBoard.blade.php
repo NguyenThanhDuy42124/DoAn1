@@ -16,13 +16,19 @@
     <div class="wrapper">
         <!-- Sidebar -->
         <nav id="sidebar">
-         
+
 
             <ul class="list-unstyled components">
                 <li>
                     <a href="{{ route('admin.dashboard') }}">
                         <i class="fas fa-tachometer-alt"></i>
                         Tổng quan
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('admin.homepage.images.manager') }}">
+                        <i class="fas fa-user-shield"></i>
+                        Quản lý Ảnh ở trang chủ
                     </a>
                 </li>
                 <li>
@@ -171,7 +177,7 @@ $(document).ready(function () {
     $('#sidebarCollapse').on('click', function () {
         $('#sidebar').toggleClass('active');
         $('#content').toggleClass('sidebar-open'); // Thêm dòng này
-        
+
         // Thêm/xóa overlay trên mobile
         if ($(window).width() < 992) {
             if ($('#sidebar').hasClass('active')) {
@@ -181,7 +187,7 @@ $(document).ready(function () {
             }
         }
     });
-    
+
     // Đóng sidebar khi click overlay
     $(document).on('click', '.overlay', function() {
         $('#sidebar').removeClass('active');

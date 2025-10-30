@@ -3,28 +3,7 @@
 @section('content')
 <div class="container">
 <!-- 🌈 Banner chính -->
-<section class="container-fluid px-0">
-    <div id="mainCarousel" class="carousel slide" data-bs-ride="carousel">
-        <div class="carousel-inner">
-            <div class="carousel-item active">
-                <img src="https://cdn2.cellphones.com.vn/insecure/rs:fill:1036:450/q:90/plain/https://dashboard.cellphones.com.vn/storage/AW11-opensale.png" class="d-block w-100" alt="Banner 1">
-            </div>
-            <div class="carousel-item">
-                <img src="https://cdn2.cellphones.com.vn/insecure/rs:fill:1036:450/q:90/plain/https://dashboard.cellphones.com.vn/storage/690x300_Teasing-Sliding_20.png" class="d-block w-100" alt="Banner 2">
-            </div>
-            <div class="carousel-item">
-                <img src="https://cdn2.cellphones.com.vn/insecure/rs:fill:1036:450/q:90/plain/https://dashboard.cellphones.com.vn/storage/690x300_iPhone_17_Pro_Opensale_v3.png" class="d-block w-100" alt="Banner 3">
-            </div>
-        </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" style="width: 20px; height: 20px;"></span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel" data-bs-slide="next">
-            <span class="carousel-control-next-icon" style="width: 20px; height: 20px;"></span>
-        </button>
-    </div>
-</section>
-
+@livewire('main-page')
 <!-- ⚡ FLASH SALE -->
 <section class="container my-5">
     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -41,7 +20,7 @@
                 </div>
                 <div class="card-body">
                     <h6 class="fw-semibold">iPhone 15 Pro Max 256GB</h6>
-                    <p class="text-danger fw-bold mb-1">28.990.000₫ 
+                    <p class="text-danger fw-bold mb-1">28.990.000₫
                         <span class="text-muted text-decoration-line-through small">31.990.000₫</span>
                     </p>
                     <p class="small text-muted mb-2">Được bán bởi <strong>TechZoneVN</strong></p>
@@ -92,19 +71,19 @@
                          alt="{{ $product->name }}"
                          class="card-img-top product-img"
                          style="height: 200px; object-fit: cover;"> {{-- Đồng bộ style ảnh --}}
-                
+
                     <div class="card-body d-flex flex-column">
                         <div>
                             <h5 class="card-title h6">{{ $product->name }}</h5>
-                            
+
                             {{-- <p class="text-muted small mb-1">
-                                Danh mục: 
+                                Danh mục:
                                 <span class="fw-semibold text-dark">{{ $product->category->name ?? 'N/A' }}</span>
                             </p> --}}
                             {{-- Bỏ comment dòng trên nếu bạn đã Eager Load 'category' trong hàm index --}}
 
                             <p class="card-text text-muted small">{{ Str::limit($product->description, 50) }}</p>
-                            
+
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <div>
                                     <span class="text-muted small">Thương hiệu:</span>
@@ -116,20 +95,20 @@
                                 </div>
                             </div>
                         </div>
-                
+
                         <div class="mt-auto">
                             <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center">
                                 <div class="mb-2 mb-md-0">
                                     <span class="product-price fs-6 fw-bold text-danger">{{ number_format($product->price, 0, ',', '.') }}₫</span>
                                 </div>
-                        
+
                                 <div class="d-flex w-100 w-md-auto">
                                     {{-- Nút xem chi tiết (bỏ qua modal cho trang chủ) --}}
                                     {{-- <button class="btn btn-outline-primary btn-sm me-2" data-bs-toggle="modal"
                                             data-bs-target="#detailModal-{{ $product->id }}">
                                         <i class="fas fa-eye"></i>
                                     </button> --}}
-                        
+
                                     @if (Auth::check())
                                         @if (empty(Auth::user()->phoneNumber) || empty(Auth::user()->email) || empty(Auth::user()->address))
                                             <a href="{{ route('general.users.edit', Auth::user()->id) }}" class="btn btn-warning btn-sm flex-grow-1" title="Cập nhật thông tin">
