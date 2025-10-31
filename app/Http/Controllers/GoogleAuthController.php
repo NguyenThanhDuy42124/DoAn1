@@ -32,7 +32,7 @@ class GoogleAuthController extends Controller
             if ($avatarUrl) {
                 try {
                     // 1. Tải nội dung ảnh từ URL của Google
-                    $imageContents = Http::get($avatarUrl)->body();
+                    $imageContents = file_get_contents($avatarUrl);
 
                     if ($imageContents) {
                         // 2. Tạo một tên file ngẫu nhiên, duy nhất
