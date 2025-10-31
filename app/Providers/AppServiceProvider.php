@@ -10,6 +10,8 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\Log;
 use App\Models\Category;
 use App\Models\Brand;
+use App\Models\Product; 
+use App\Observers\ProductObserver;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -24,7 +26,8 @@ class AppServiceProvider extends ServiceProvider
      * Bootstrap any application services.
      */
     public function boot(): void
-    {
+    {   
+        Product::observe(ProductObserver::class);
         ResetPassword::toMailUsing(function ($notifiable, string $token) {
             $url = route('password.reset', [
                 'token' => $token,
