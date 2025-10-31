@@ -28,7 +28,7 @@
                 <li>
                     <a href="{{ route('admin.homepage.images.manager') }}">
                         <i class="fas fa-user-shield"></i>
-                        Quản lý Ảnh ở trang chủ
+                        Quản lý banner
                     </a>
                 </li>
                 <li>
@@ -102,51 +102,112 @@
                 <button type="button" id="sidebarCollapse">
                     <i class="fas fa-bars"></i>
                 </button>
-
-                <div class="ml-auto d-flex align-items-center">
-                    <!-- Notification -->
-                    <div class="dropdown mr-3">
-                        <button class="btn btn-light dropdown-toggle" type="button" id="notificationDropdown"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-bell"></i>
-                            <span class="badge badge-danger">3</span>
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="notificationDropdown">
-                            <h6 class="dropdown-header">Thông báo</h6>
-                            <a class="dropdown-item" href="#">Đơn hàng mới #12345</a>
-                            <a class="dropdown-item" href="#">Người dùng mới đăng ký</a>
-                            <a class="dropdown-item" href="#">Sản phẩm sắp hết hàng</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item text-center" href="#">Xem tất cả</a>
+<div class="ml-auto d-flex align-items-center">
+    <div class="dropdown mr-3">
+        <button class="btn btn-light dropdown-toggle" type="button" id="notificationDropdown"
+            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-bell"></i>
+            {{-- Lấy số thông báo chưa đọc động --}}
+            @php
+                $unreadCount = \App\Models\Notification::where('user_id', auth()->id())
+                    ->where('is_read', false)
+                    ->count();
+            @endphp
+            @if ($unreadCount > 0)
+                <span class="badge badge-danger">{{ $unreadCount }}</span>
+            @endif
+        </button>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="notificationDropdown"
+            style="min-width: 300px;">
+            <div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom">
+                <h6 class="mb-0">Thông báo</h6>
+                {{-- Nút đánh dấu tất cả đã đọc --}}
+                @if ($unreadCount > 0)
+                    <form action="{{ route('notifications.markAllAsRead') }}" method="POST"
+                        class="m-0">
+                        @csrf
+                        <button type="submit" class="btn btn-sm btn-outline-primary py-0"><small>Đánh
+                                dấu tất cả đã đọc</small></button>
+                    </form>
+                @endif
+            </div>
+            {{-- Lấy 5 thông báo mới nhất --}}
+            @php
+                $notifications = \App\Models\Notification::where('user_id', auth()->id())
+                    ->latest()
+                    ->take(5)
+                    ->get();
+            @endphp
+            <div class="dropdown-notifications">
+                @forelse($notifications as $notification)
+                    <div class="dropdown-item {{ $notification->is_read ? '' : 'bg-light' }}">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <a href="{{ route('notifications.markAsRead', $notification->id) }}"
+                                    class="text-decoration-none text-dark {{ $notification->is_read ? '' : 'font-weight-bold' }}">
+                                    <small
+                                        class="d-block">{{ Str::limit($notification->message, 60) }}</small>
+                                </a>
+                                <small
+                                    class="text-muted">{{ $notification->created_at->diffForHumans() }}</small>
+                            </div>
+                            {{-- Nút đánh dấu 1 thông báo đã đọc --}}
+                            @if (!$notification->is_read)
+                                <form
+                                    action="{{ route('notifications.markAsRead', $notification->id) }}"
+                                    method="POST" class="ml-2">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm btn-outline-success py-0"
+                                        title="Đánh dấu đã đọc">
+                                        <small><i class="fas fa-check"></i></small>
+                                    </button>
+                                </form>
+                            @endif
                         </div>
                     </div>
-
-                    <!-- User Dropdown -->
-                    <div class="dropdown">
-                        <button class="btn btn-light dropdown-toggle d-flex align-items-center" type="button" id="userDropdown"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <img src="https://ui-avatars.com/api/?name=Admin+User&background=ff6600&color=fff"
-                                width="30" height="30" class="rounded-circle mr-2">
-                            Admin User
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                            <a class="dropdown-item" href="/dashboard">
-                                <i class="fas fa-user-circle mr-2"></i> Hồ sơ
-                            </a>
-                            <a class="dropdown-item" href="#">
-                                <i class="fas fa-cog mr-2"></i> Cài đặt
-                            </a>
-                            <div class="dropdown-divider"></div>
-                            <form id="logout-form" action="/logout" method="POST" style="display: none;">
-                                @csrf
-                            </form>
-                            <a class="dropdown-item" href="#"
-                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                <i class="fas fa-sign-out-alt mr-2"></i> Đăng xuất
-                            </a>
-                        </div>
+                    @if (!$loop->last)
+                        <div class="dropdown-divider m-0"></div>
+                    @endif
+                @empty
+                    <div class="dropdown-item text-center py-3">
+                        <small class="text-muted">Không có thông báo</small>
                     </div>
-                </div>
+                @endforelse
+            </div>
+            <div class="dropdown-divider m-0"></div>
+            <a class="dropdown-item text-center py-2" href="{{ route('notifications.index') }}">
+                <small class="text-primary">Xem tất cả thông báo</small>
+            </a>
+        </div>
+    </div>
+
+    <div class="dropdown">
+        <button class="btn btn-light dropdown-toggle d-flex align-items-center" type="button"
+            id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            {{-- Lấy Avatar và Tên động --}}
+            @if (Auth::user()->img == '')
+                <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=ff6600&color=fff"
+                    width="30" height="30" class="rounded-circle mr-2">
+            @else
+                <img src="{{ asset('storage/' . Auth::user()->img) }}" width="30" height="30"
+                    class="rounded-circle mr-2">
+            @endif
+            {{ Auth::user()->name }}
+        </button>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+            {{-- Menu đã bỏ "Cài đặt" để giống Seller --}}
+            <a class="dropdown-item" href="/dashboard"><i class="fas fa-user-circle mr-2"></i> Hồ sơ</a>
+
+            <div class="dropdown-divider"></div>
+            <form id="logout-form" action="/logout" method="POST" style="display: none;">@csrf
+            </form>
+            <a class="dropdown-item" href="#"
+                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                <i class="fas fa-sign-out-alt mr-2"></i> Đăng xuất
+            </a>
+        </div>
+    </div>
+</div>
             </nav>
 
             <!-- Main Content -->

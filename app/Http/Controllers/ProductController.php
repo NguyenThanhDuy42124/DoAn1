@@ -326,6 +326,12 @@ class ProductController extends Controller
         // 8. Trả về view với đầy đủ dữ liệu
         return view('pages.listproducts', compact('products', 'brands', 'categories'));
     }
+    public function showProductDetail($id)
+    {
+        // Chỉ đơn thuần trả về view và truyền $id.
+        // Toàn bộ dữ liệu tĩnh sẽ được xử lý trong file Blade.
+        return view('pages.product-detail', ['id' => $id]);
+    }
     public function destroy($id)
     {
         // Tìm sản phẩm theo id

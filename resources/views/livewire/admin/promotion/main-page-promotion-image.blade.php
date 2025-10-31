@@ -1,25 +1,39 @@
-<div class="max-w-5xl mx-auto mt-10 p-6 bg-white rounded-xl shadow-md">
-    <h1 class="text-2xl font-bold mb-4 text-center">quản lý Ảnh ở trang chủ</h1>
+{{-- 
+  Sử dụng container-lg (tương đương max-w-5xl), mt-5 (thay cho mt-10), 
+  p-4 (thay cho p-6) và các class shadow, rounded của Bootstrap
+--}}
+<div class="container-lg mt-5 p-4 bg-white rounded shadow-sm">
+    
+    {{-- Sử dụng class h3 (tương đương text-2xl) và fw-bold (font-bold) --}}
+    <h1 class="h3 fw-bold mb-4 text-center">Banner & Promotion</h1>
 
-    {{-- Tabs --}}
-    <div class="flex space-x-4 border-b mb-4">
-        <button wire:click="setTab('banner')"
-            class="pb-2 {{ $tab === 'banner' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500' }}">
-            Banner
-        </button>
-
-        <button wire:click="setTab('other')"
-            class="pb-2 {{ $tab === 'other' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500' }}">
-            Chức năng khác
-        </button>
-    </div>
+    {{-- Tabs (Dùng cấu trúc nav-tabs của Bootstrap) --}}
+    <ul class="nav nav-tabs mb-4">
+        <li class="nav-item">
+            {{-- 
+              Dùng <button> với class "nav-link" để kích hoạt wire:click.
+              Thêm class "active" của Bootstrap khi tab được chọn.
+            --}}
+            <button class="nav-link {{ $tab === 'banner' ? 'active' : '' }}" wire:click="setTab('banner')">
+                Banner
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link {{ $tab === 'other' ? 'active' : '' }}" wire:click="setTab('other')">
+                Promotion?
+            </button>
+        </li>
+    </ul>
 
     {{-- Nội dung của từng tab --}}
     <div>
         @if ($tab === 'banner')
+            {{-- Component Livewire được giữ nguyên --}}
             @livewire('admin.promotion.banner-upload')
+            
         @elseif ($tab === 'other')
-            <div class="p-4 text-gray-500 text-center">
+            {{-- Dùng class "text-muted" của Bootstrap (thay cho text-gray-500) --}}
+            <div class="p-4 text-muted text-center">
                 (Trang này bạn có thể thêm component khác sau)
             </div>
         @endif

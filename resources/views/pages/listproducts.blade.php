@@ -82,21 +82,33 @@
         </form>
     </div>
 </div>
-    <div class="row g-4">
-        @forelse($products as $product)
-            <div class="col-md-4">
-                <div class="card product-card h-100 shadow-sm">
-                    <span class="badge-discount">- X%</span> 
+   <div class="row g-4">
+    @forelse($products as $product)
+        <div class="col-md-4">
+            {{-- Thêm d-flex flex-column để footer luôn ở dưới cùng --}}
+            <div class="card product-card h-100 shadow-sm d-flex flex-column"> 
+
+                {{-- === BỌC LINK BẮT ĐẦU === --}}
+                {{-- Link này bọc hình ảnh, thân card (thông tin) và giá --}}
+                <a href="{{ route('products.detail', ['id' => $product->id]) }}" 
+                   class="text-decoration-none text-dark" 
+                   style="flex-grow: 1;"> {{-- flex-grow để link chiếm hết không gian --}}
+                   
+                    {{-- Badge giảm giá (Tôi đã thêm logic tính % cho bạn) --}}
+                    @if($product->original_price && $product->original_price > $product->price)
+                        <span class="badge-discount">-{{ round(100 - ($product->price / $product->original_price * 100)) }}%</span>
+                    @endif
                     
                     <img src="{{ $product->images->isNotEmpty() ?
-                        asset('storage/' . $product->images->first()->image_path) :
-                        asset('storage/product_images/default.jpg') }}"
+                                asset('storage/' . $product->images->first()->image_path) :
+                                asset('storage/product_images/default.jpg') }}"
                          alt="{{ $product->name }}"
                          class="card-img-top product-img">
 
-                    <div class="card-body d-flex flex-column">
-                        
+                    {{-- Thân card - Bỏ d-flex và mt-auto --}}
+                    <div class="card-body"> 
                         <div>
+                            {{-- Tên sản phẩm (không cần thẻ <a> riêng) --}}
                             <h5 class="card-title">{{ $product->name }}</h5>
                             <p class="text-muted small mb-1"> Danh mục: 
                                 <span class="fw-semibold text-dark">{{ $product->category->name ?? 'Chưa phân loại' }}</span>
@@ -114,57 +126,64 @@
                                 </div>
                             </div>
                         </div>
-
-                        <div class="mt-auto">
-                            <div class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center">
-                                <div class="mb-2 mb-md-0">
-                                    <span class="product-price">{{ number_format($product->price, 0, ',', '.') }}₫</span>
-                                </div>
-                                <div class="d-flex w-100 w-md-auto">
-                                    <button class="btn btn-outline-primary btn-sm me-2" data-bs-toggle="modal"
-                                            data-bs-target="#detailModal-{{ $product->id }}">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-
-                                    @if (Auth::check())
-                                        @if (empty(Auth::user()->phoneNumber) || empty(Auth::user()->email) || empty(Auth::user()->address))
-                                            <a href="{{ route('general.users.edit', Auth::user()->id) }}" class="btn btn-warning btn-sm flex-grow-1">
-                                                <i class="fas fa-user-edit"></i> Cập nhật thông tin
-                                            </a>
-                                        @else
-                                            @if($product->stock > 0)
-                                                <form action="{{ route('buyer.carts.store') }}" method="POST" class="flex-grow-1">
-                                                    @csrf
-                                                    <input type="hidden" name="product_id" value="{{ $product->id }}">
-                                                    <input type="hidden" name="quantity" value="1">
-                                                    <button type="submit" class="btn btn-success btn-sm w-100">
-                                                        <i class="fas fa-cart-plus"></i>
-                                                    </button>
-                                                </form>
-                                            @else
-                                                <button class="btn btn-secondary btn-sm flex-grow-1" disabled>Hết hàng</button>
-                                            @endif
-                                        @endif
-                                    @else
-                                        <a href="{{ route('login') }}" class="btn btn-success btn-sm flex-grow-1">
-                                            <i class="fas fa-cart-plus"></i>
-                                        </a>
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
                         
+                        {{-- Giá được đưa vào đây để có thể click --}}
+                        <div class="mt-3"> {{-- Thay mt-auto bằng mt-3 --}}
+                            <span class="product-price">{{ number_format($product->price, 0, ',', '.') }}₫</span>
+                        </div>
+                    </div>
+                {{-- === BỌC LINK KẾT THÚC === --}}
+                </a> 
+
+                {{-- PHẦN NÚT BẤM (ĐỂ BÊN NGOÀI <a>) --}}
+                {{-- Đặt vào card-footer để đảm bảo nó ở dưới cùng --}}
+                <div class="card-footer bg-white border-top-0 pt-0 pb-3">
+                    <div class="d-flex">
+                        
+                        {{-- Nút "Xem" (thay modal bằng link) --}}
+                        <a href="{{ route('products.detail', ['id' => $product->id]) }}" class="btn btn-outline-primary btn-sm me-2">
+                            <i class="fas fa-eye"></i>
+                        </a>
+
+                        {{-- Toàn bộ logic nút bấm "Thêm vào giỏ" --}}
+                        <div class="flex-grow-1">
+                            @if (Auth::check())
+                                @if (empty(Auth::user()->phoneNumber) || empty(Auth::user()->email) || empty(Auth::user()->address))
+                                    <a href="{{ route('general.users.edit', Auth::user()->id) }}" class="btn btn-warning btn-sm w-100">
+                                        <i class="fas fa-user-edit"></i> Cập nhật
+                                    </a>
+                                @else
+                                    @if($product->stock > 0)
+                                        <form action="{{ route('buyer.carts.store') }}" method="POST">
+                                            @csrf
+                                            <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                            <input type="hidden" name="quantity" value="1">
+                                            <button type="submit" class="btn btn-success btn-sm w-100">
+                                                <i class="fas fa-cart-plus"></i>
+                                            </button>
+                                        </form>
+                                    @else
+                                        <button class="btn btn-secondary btn-sm w-100" disabled>Hết hàng</button>
+                                    @endif
+                                @endif
+                            @else
+                                <a href="{{ route('login') }}" class="btn btn-success btn-sm w-100">
+                                    <i class="fas fa-cart-plus"></i>
+                                </a>
+                            @endif
+                        </div>
                     </div>
                 </div>
             </div>
-        @empty
-            <div class="col-12">
-                <div class="alert alert-info text-center">
-                    Không tìm thấy sản phẩm nào phù hợp với bộ lọc.
-                </div>
+        </div>
+    @empty
+        <div class="col-12">
+            <div class="alert alert-info text-center">
+                Không tìm thấy sản phẩm nào phù hợp với bộ lọc.
             </div>
-        @endforelse
-    </div> 
+        </div>
+    @endforelse
+</div>
     
     <div class="mt-4 d-flex justify-content-center">
         {{ $products->links() }}

@@ -173,6 +173,7 @@ Route::prefix('seller')->middleware('role:seller')->group(function () {
 });
 Route::get('/shop/{id}', [SellerController::class, 'showShop'])->name('shop.show');
 Route::get('/products', [ProductController::class, 'listProducts'])->name('products.list');
+Route::get('/products/{id}', [ProductController::class, 'showProductDetail'])->name('products.detail');
 Route::get('/vouchers', [VoucherController::class, 'listVouchers'])->name('vouchers.list');
 Route::get('/', [SellerController::class, 'index'])->name('home');
 
