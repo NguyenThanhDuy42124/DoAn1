@@ -86,7 +86,7 @@
     position: fixed;
     top: var(--header-height);
     /* THAY ĐỔI Ở ĐÂY */
-    left: -260px;
+    left: 0;
     /* Ẩn sidebar mặc định */
     height: calc(100vh - var(--header-height));
     /* THAY ĐỔI Ở ĐÂY */
@@ -99,7 +99,7 @@
 }
 
 .seller-dashboard #sidebar.active {
-    left: 0;
+    left:-260px;
     /* Hiện sidebar khi có class active */
 }
 
@@ -181,7 +181,7 @@
 
 /* ===== Content Area ===== */
 .seller-dashboard #content {
-    margin-left: 0;
+    margin-left:var(--sidebar-width);
     /* Không margin khi sidebar ẩn */
     transition: all 0.3s ease;
     min-height: 100vh;
@@ -189,7 +189,7 @@
 }
 
 .seller-dashboard #content.sidebar-open {
-    margin-left: var(--sidebar-width);
+    margin-left:0;
     /* Margin khi sidebar mở */
 }
 

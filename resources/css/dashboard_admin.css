@@ -474,10 +474,31 @@
         padding-bottom: 30px;
     }
 
-    .admin-dashboard #content.sidebar-open {
+    /* --- THAY ĐỔI Ở ĐÂY --- */
+
+    /* 1. Đặt sidebar mở mặc định trên desktop */
+    .admin-dashboard #sidebar {
+        left: 0;
+    }
+
+    /* 2. Đặt content bị đẩy sang mặc định trên desktop */
+    .admin-dashboard #content {
         margin-left: var(--sidebar-width);
         width: calc(100% - var(--sidebar-width));
     }
+
+    /* 3. Khi sidebar active (tức là BỊ ẨN), thu sidebar về */
+    .admin-dashboard #sidebar.active {
+        left: -260px;
+    }
+
+    /* 4. Khi content có class .sidebar-open (tức là sidebar BỊ ẨN), trả content về 100% */
+    .admin-dashboard #content.sidebar-open {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    /* ---------------------- */
 
     /* Ẩn overlay trên desktop */
     .admin-dashboard .overlay {
