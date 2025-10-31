@@ -20,6 +20,6 @@ class Category extends Model
     {
         return $this->belongsToMany(Attribute::class, 'category_attribute');
     }
-
+     
 
 }

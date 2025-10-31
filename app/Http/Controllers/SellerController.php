@@ -71,8 +71,7 @@ public function showShop(Request $request, $id)
 
         // 3. THÊM MỚI: Lấy tất cả danh mục để hiển thị ở sidebar
         // (Giả sử bạn có model App\Models\Category)
-        $categories = Category::whereDoesntHave('children')
-                              ->orderBy('name')
+        $categories = Category::orderBy('name')
                               ->get();
 
         // 4. Xây dựng câu truy vấn sản phẩm
