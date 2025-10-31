@@ -68,7 +68,24 @@ class User extends Authenticatable
         // Liên kết Review::class thông qua Product::class
         return $this->hasManyThrough(Review::class, Product::class, 'seller_id', 'product_id');
     }
+    public function following()
+    {
+        // Bảng trung gian là 'followers'
+        // Khóa ngoại của model hiện tại (User as follower) là 'user_id'
+        // Khóa ngoại của model liên kết (User as seller) là 'seller_id'
+        return $this->belongsToMany(User::class, 'followers', 'user_id', 'seller_id');
+    }
 
+    /**
+     * Danh sách những user đang theo dõi seller này.
+     */
+    public function followers()
+    {
+        // Bảng trung gian là 'followers'
+        // Khóa ngoại của model hiện tại (User as seller) là 'seller_id'
+        // Khóa ngoại của model liên kết (User as follower) là 'user_id'
+        return $this->belongsToMany(User::class, 'followers', 'seller_id', 'user_id');
+    }
     public function isAdmin()
     {
         return $this->role === 'admin';

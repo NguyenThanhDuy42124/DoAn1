@@ -24,6 +24,7 @@ use Illuminate\Session\Middleware\StartSession;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ForgetPasswordController;
+use App\Http\Controllers\FollowController;
 use App\Livewire\Admin\Brands\Manager as BrandManager;
 use App\Livewire\Admin\Promotion\MainPagePromotionImage;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -221,4 +222,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/notifications/{notification}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
     Route::post('/notifications/{notification}/mark-as-unread', [NotificationController::class, 'markAsUnread'])->name('notifications.markAsUnread');
     Route::delete('/notifications/{notification}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
+
+    Route::post('follow/{seller}', [FollowController::class, 'toggleFollow'])->name('seller.follow.toggle');
 });

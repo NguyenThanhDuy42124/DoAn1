@@ -17,9 +17,28 @@
                     <div class="ms-md-4 text-center text-md-start mt-3 mt-md-0">
                         <h1 class="fw-bold display-6 mb-1">{{ $shop->name }}</h1>
                         <p class="text-muted mb-2">Tham gia từ: {{ $shop->created_at->format('d/m/Y') }}</p>
-                        <button class="btn btn-danger">
-                            <i class="fas fa-plus me-1"></i> Theo dõi
-                        </button>
+                        <form action="{{ route('seller.follow.toggle', $shop->id) }}" method="POST" style="display: inline-block;">
+    @csrf
+
+    @if(Auth::check())
+        {{-- Kiểm tra xem user có phải chính là chủ shop không --}}
+        @if(Auth::id() != $shop->id) 
+            @if($isFollowing)
+                <button type="submit" class="btn btn-outline-secondary">
+                    <i class="fas fa-check me-1"></i> Đang theo dõi
+                </button>
+            @else
+                <button type="submit" class="btn btn-danger">
+                    <i class="fas fa-plus me-1"></i> Theo dõi
+                </button>
+            @endif
+        @endif
+    @else
+         <a href="{{ route('login') }}" class="btn btn-danger">
+             <i class="fas fa-plus me-1"></i> Theo dõi
+         </a>
+    @endif
+</form>
                         <button class="btn btn-outline-secondary">
                             <i class="fas fa-comment-dots me-1"></i> Chat
                         </button>
@@ -39,10 +58,10 @@
                             {{-- Hiển thị tổng số lượt đánh giá --}}
                             <div class="text-muted small">Đánh giá ({{ $shopReviewCount }})</div>
                         </div>
-                        <div class="px-3 px-lg-4">
-                            <div class="fs-4 fw-bold">...</div>
-                            <div class="text-muted small">Theo dõi</div>
-                        </div>
+                       <div class="px-3 px-lg-4">
+    <div class="fs-4 fw-bold">{{ $followerCount }}</div>
+    <div class="text-muted small">Theo dõi</div>
+</div>
                         <div class="px-3 px-lg-4">
                             <div class="fs-4 fw-bold">...</div>
                             <div class="text-muted small">Phản hồi Chat</div>

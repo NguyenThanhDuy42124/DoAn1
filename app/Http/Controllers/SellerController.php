@@ -68,7 +68,14 @@ public function showShop(Request $request, $id)
         // 2. Lấy tham số 'sort' và 'category' từ URL
         $sort = $request->query('sort', 'newest');
         $selectedCategory = $request->query('category'); // <-- THÊM MỚI
+        
+        $isFollowing = false;
+        $followerCount = $shop->followers()->count(); // Đếm số người theo dõi
 
+        if (Auth::check()) {
+            // Kiểm tra xem user hiện tại có đang theo dõi shop này không
+            $isFollowing = Auth::user()->following()->where('seller_id', $shop->id)->exists();
+        }
         // 3. THÊM MỚI: Lấy tất cả danh mục để hiển thị ở sidebar
         // (Giả sử bạn có model App\Models\Category)
         $categories = Category::orderBy('name')
@@ -113,7 +120,9 @@ public function showShop(Request $request, $id)
             'selectedCategory',
             'totalProductCount',
             'shopRating',      
-            'shopReviewCount'   
+            'shopReviewCount',
+            'isFollowing',    
+            'followerCount'   
         ));
     }
     public function orders(Request $request)
