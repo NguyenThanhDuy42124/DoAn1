@@ -14,7 +14,7 @@ class AdminUserSeeder extends Seeder
         if (!User::where('email', 'admin@example.com')->exists()) {
             User::create([
                 'name' => 'Admin',
-                'email' => 'admin@admin.com',
+                'email' => 'admin@gmail.com',
                 'password' => Hash::make('Pa$$w0rd123!'), // đổi mật khẩu theo ý mày
                 'role' => 'admin',
             ]);

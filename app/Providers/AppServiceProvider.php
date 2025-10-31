@@ -51,8 +51,7 @@ class AppServiceProvider extends ServiceProvider
         try {
         View::composer('layouts.navbar', function ($view) {
             // Lấy các danh mục cha (Điện thoại, Laptop...)
-            $navbar_categories = Category::whereNull('parent_id')
-                                        ->orderBy('name')
+            $navbar_categories = Category::orderBy('name')
                                         ->get(['id', 'name']);
 
             // Lấy TẤT CẢ thương hiệu

@@ -20,6 +20,10 @@ class Product extends Model
         'stock',
         'description',
         'status',
+        'attributes',
+    ];
+    protected $casts = [
+        'attributes' => 'array',
     ];
 
     const STATUS_PENDING = 'Pending';
@@ -53,8 +57,5 @@ class Product extends Model
     {
         return $this->hasMany(ProductImage::class);
     }
-    public function attributeValues(): HasMany
-    {
-        return $this->hasMany(ProductAttributeValue::class);
-    }
+    
 }

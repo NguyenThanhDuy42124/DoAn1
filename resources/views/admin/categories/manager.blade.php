@@ -3,91 +3,110 @@
         <div class="col-md-7">
             <h3>Quản lý Danh mục</h3>
             <button class="btn btn-primary mb-3" wire:click="createNewCategory">
-                Thêm danh mục mới
+                <i class="fas fa-plus"></i> Thêm danh mục mới
             </button>
             
-            <div wire:ignore 
-                 x-data="categoryTree()" 
-                 x-init="initSortable($el)">
-                
-                <ol class="dd-list">
-                    @include('admin.categories._category-tree-item', ['categories' => $categories])
-                </ol>
+            <div class="card">
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Tên Danh mục</th>
+                                <th>Số thuộc tính (Mẫu)</th>
+                                <th style="width: 100px;">Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($categories as $category)
+                                <tr wire:key="cat-{{ $category->id }}">
+                                    <td>
+                                        <strong>{{ $category->name }}</strong>
+                                    </td>
+                                    <td>
+                                        {{-- Load 'attributes_count' cho hiệu năng --}}
+                                        {{-- (Sửa loadCategories() trong PHP nếu muốn) --}}
+                                        <span class="badge badge-info">{{ $category->attributes->count() }} thuộc tính</span>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-info" 
+                                                wire:click="editCategory({{ $category->id }})">
+                                            Sửa
+                                        </button>
+                                        {{-- Thêm nút Xóa nếu muốn --}}
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="3" class="text-center">Chưa có danh mục nào.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
         
         <div class="col-md-5">
             @if($showModal)
-                @include('admin.categories._category-form')
+                <div class="card shadow-sm">
+                    <div class="card-header">
+                        <h4>
+                            @if($editingCategory->exists)
+                                Sửa danh mục: {{ $editingCategory->name }}
+                            @else
+                                Tạo danh mục mới
+                            @endif
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <form wire:submit.prevent="saveCategory">
+                            <div class="form-group">
+                                <label>Tên</label>
+                                <input type="text" 
+                                       class="form-control @error('state.name') is-invalid @enderror" 
+                                       wire:model.defer="state.name">
+                                @error('state.name') <span class="invalid-feedback">{{ $message }}</span> @enderror
+                            </div>
+                            
+                            <hr>
+
+                            <h5>Gán Thuộc tính (Khuôn mẫu)</h5>
+                            <div class="attribute-list" style="max-height: 250px; overflow-y: auto; border: 1px solid #eee; padding: 10px;">
+                                @foreach($allAttributes as $attribute)
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" 
+                                               value="{{ $attribute->id }}" 
+                                               id="attr-{{ $attribute->id }}"
+                                               wire:model.defer="selectedAttributes">
+                                        <label class="form-check-label" for="attr-{{ $attribute->id }}">
+                                            {{ $attribute->name }} ({{ $attribute->type }})
+                                        </label>
+                                    </div>
+                                @endforeach
+                            </div>
+                            
+                            <hr>
+                            
+                            <div class="d-flex justify-content-between">
+                                <button type="submit" class="btn btn-success">
+                                    <span wire:loading.remove wire:target="saveCategory">
+                                        <i class="fas fa-save"></i> Lưu lại
+                                    </span>
+                                    <span wire:loading wire:target="saveCategory">
+                                        <span class="spinner-border spinner-border-sm"></span> Đang lưu...
+                                    </span>
+                                </button>
+                                <button type="button" class="btn btn-secondary" 
+                                        wire:click="$set('showModal', false)">
+                                    Hủy
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             @endif
         </div>
     </div>
 </div>
 
-@push('scripts')
-{{-- XÓA DÒNG NÀY: <script src="/path/to/jquery.nestable.min.js"></script> --}}
-
-<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
-
-<script>
-    // Hàm Alpine.js được định nghĩa ở đây
-    function categoryTree() {
-        return {
-            initSortable(rootEl) {
-                // Tìm tất cả các list con (kể cả list gốc)
-                let lists = rootEl.querySelectorAll('ol');
-                lists.forEach(list => {
-                    Sortable.create(list, {
-                        group: 'categories', // Cho phép kéo giữa các list
-                        animation: 150,
-                        
-                        // Đây là phần quan trọng
-                        onEnd: (evt) => {
-                            // Lấy list gốc
-                            let rootList = rootEl.querySelector('ol');
-                            // Chuyển cây HTML thành JSON
-                            let data = this.serialize(rootList);
-                            
-                            // Gửi JSON về Livewire.
-                            @this.call('updateOrder', JSON.stringify(data));
-                        }
-                    });
-                });
-            },
-
-            /**
-             * Hàm này đọc cây HTML và tạo ra JSON
-             * y hệt định dạng của Nestable2.
-             */
-            serialize(list) {
-                let items = [];
-                // Lặp qua từng <li> trong <ol>
-                Array.from(list.children).forEach(li => {
-                    // Chỉ lấy <li>, bỏ qua các thẻ rác nếu có
-                    if (li.tagName !== 'LI') return;
-
-                    let item = {
-                        // Lấy id từ data-id
-                        id: li.dataset.id 
-                    };
-                    
-                    // Tìm <ol> con bên trong <li> này
-                    let nestedList = li.querySelector('ol');
-                    
-                    // Nếu có <ol> con và nó có <li> bên trong
-                    if (nestedList && nestedList.children.length > 0) {
-                        // Chạy đệ quy
-                        item.children = this.serialize(nestedList);
-                    }
-                    
-                    items.push(item);
-                });
-                
-                return items;
-            }
-        }
-    }
-</script>
-
-{{-- XÓA HOÀN TOÀN CODE JQUERY CŨ CỦA NESTABLE --}}
-@endpush
+{{-- XÓA TOÀN BỘ @push('scripts') VÀ CODE Sortable.js --}}

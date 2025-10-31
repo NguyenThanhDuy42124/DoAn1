@@ -3,50 +3,45 @@
 namespace App\Livewire\Admin\Categories;
 
 use App\Models\Category;
-use App\Models\Brand;
-use App\Models\Attribute;
+use App\Models\Attribute; // Giữ lại
 use Livewire\Component;
-
 
 class Manager extends Component
 {
-    public $testProperty = 'HELLO WORLD';
-    // 1. Thuộc tính cho Tree View
-    public $categories; // Collection của các danh mục gốc (parent_id = null)
+    // 1. Thuộc tính cho Danh sách
+    public $categories; // Collection của TẤT CẢ danh mục
 
     // 2. Thuộc tính cho Form (Modal)
     public $showModal = false;
     public ?Category $editingCategory; // Category đang được sửa
     public $state = []; // Dữ liệu form (wire:model="state.name")
-    
-    // 3. Thuộc tính cho việc Gán Thuộc tính
+
+    // 3. Thuộc tính cho việc Gán Thuộc tính (VẪN GIỮ NGUYÊN)
     public $allAttributes;
     public $selectedAttributes = []; // Mảng các ID thuộc tính được check
-
-
-    public $formattedCategories = [];
 
     /**
      * Khởi chạy component
      */
     public function mount()
     {
-        $this->allAttributes = Attribute::orderBy('name')->get();
-        $this->loadCategories();
+        // Vẫn load "Khuôn Mẫu"
+        $this->allAttributes = Attribute::orderBy('name')->get(); 
+        
+        // Load danh sách đơn giản
+        $this->loadCategories(); 
 
+        // Khởi tạo model rỗng
         $this->editingCategory = new Category();
     }
 
     /**
-     * Lấy dữ liệu cây (chỉ lấy cấp cao nhất,
-     * quan hệ "children" sẽ tự động tải lồng nhau)
+     * Lấy dữ liệu danh sách (siêu đơn giản)
      */
     public function loadCategories()
     {
-        $this->categories = Category::with('children') // Tải sẵn cấp con
-                                    ->whereNull('parent_id')
-                                    ->orderBy('sort_order')
-                                    ->get();
+        // Không còn whereNull, không còn 'children', không còn 'sort_order'
+        $this->categories = Category::orderBy('name')->get(); 
     }
 
     //--- PHẦN 2: XỬ LÝ FORM ---
@@ -69,12 +64,13 @@ class Manager extends Component
     public function editCategory($categoryId)
     {
         $this->resetErrorBag();
+        // Vẫn load 'attributes' để biết cái nào đã check
         $this->editingCategory = Category::with('attributes')->find($categoryId);
         
-        // Nạp dữ liệu vào form
-        $this->state = $this->editingCategory->toArray(); 
+        // Nạp dữ liệu vào form (chỉ còn 'name')
+        $this->state = $this->editingCategory->only(['name']); 
         
-        // Nạp các thuộc tính đã được gán
+        // Nạp các thuộc tính đã được gán (GIỮ NGUYÊN)
         $this->selectedAttributes = $this->editingCategory->attributes->pluck('id')->toArray();
         
         $this->showModal = true;
@@ -85,140 +81,37 @@ class Manager extends Component
      */
     public function saveCategory()
     {
+        // Rule siêu đơn giản
         $rules = [
-            'state.name' => 'required|string|max:255',
-            'state.parent_id' => 'nullable|exists:categories,id',
-            // Thêm các rules khác nếu cần
+            'state.name' => 'required|string|max:255|unique:categories,name,' . $this->editingCategory->id,
         ];
-        
-        // Chặn không cho chọn cha là chính nó
-        if ($this->editingCategory->id) {
-             $rules['state.parent_id'] .= '|not_in:' . $this->editingCategory->id;
-        }
 
         $this->validate($rules);
 
-        // 1. Lưu thông tin cơ bản
+        // 1. Lưu thông tin cơ bản (chỉ có 'name')
         $this->editingCategory->fill($this->state);
         $this->editingCategory->save();
 
-        // 2. Đồng bộ hóa (sync) các thuộc tính (đây là mấu chốt)
-        // sync() sẽ tự động thêm/xóa trong bảng category_attribute
+        // 2. Đồng bộ hóa (sync) các thuộc tính (VẪN GIỮ NGUYÊN)
+        // Đây là logic "Khuôn Mẫu"
         $this->editingCategory->attributes()->sync($this->selectedAttributes);
 
-        // 3. Đóng modal và tải lại cây
+        // 3. Đóng modal và tải lại danh sách
         $this->showModal = false;
-        
-        // Dùng redirect để làm mới toàn bộ trang -> đảm bảo cây JS được
-        // cập nhật 100% chính xác sau khi sửa/thêm.
-        return redirect(request()->header('Referer'));
+        $this->loadCategories(); // Tải lại danh sách
+        // Không cần redirect cả trang
     }
 
-    //--- PHẦN 1: XỬ LÝ KÉO-THẢ (DRAG & DROP) ---
-
-    /**
-     * Phương thức này được JS gọi khi người dùng thả chuột
-     * $data là một JSON string từ Nestable
-     * [ { "id": 1, "children": [ { "id": 2 } ] }, { "id": 3 } ]
-     */
-    public function updateOrder($data)
-    {
-        // Chuyển JSON thành mảng PHP
-        $tree = json_decode($data, true); 
-
-        $this->updateRecursive($tree);
-        
-        // Không cần loadCategories() vì JS đã cập nhật UI
-        // và DB đã được cập nhật ở backend.
-    }
-
-    /**
-     * Hàm đệ quy để cập nhật CSDL từ cây
-     */
-    private function updateRecursive($categories, $parentId = null)
-    {
-        foreach ($categories as $index => $categoryData) {
-            // Cập nhật CSDL
-            Category::where('id', $categoryData['id'])->update([
-                'parent_id' => $parentId,
-                'sort_order' => $index + 1 // $index bắt đầu từ 0
-            ]);
-
-            // Nếu có con, lặp lại
-            if (isset($categoryData['children']) && count($categoryData['children']) > 0) {
-                $this->updateRecursive($categoryData['children'], $categoryData['id']);
-            }
-        }
-    }
+    //--- XÓA TOÀN BỘ PHẦN KÉO-THẢ VÀ ĐỆ QUY ---
+    // Xóa hàm updateOrder()
+    // Xóa hàm updateRecursive()
+    // Xóa hàm loadFormattedCategories()
+    // Xóa hàm buildCategoryList()
 
     //--- PHẦN RENDER ---
-
-    /**
-     * Helper cho dropdown "Chọn danh mục cha"
-     * Tạo ra một danh sách phẳng có định dạng
-     * [ 1 => "Quần Áo", 3 => "-- Áo Sơ Mi" ]
-     */
-    public function loadFormattedCategories()
-    {
-        // 1. Lấy TẤT CẢ danh mục 1 lần duy nhất
-        $allCategories = Category::orderBy('sort_order')->get();
-        
-        // 2. Nhóm chúng lại theo parent_id để dễ dàng xây dựng cây
-        $groupedCategories = $allCategories->groupBy('parent_id');
-
-        // 3. Lấy ID của danh mục đang sửa (nếu có)
-        // Dùng optional() để an toàn nếu $editingCategory là null
-        $editingId = optional($this->editingCategory)->id;
-
-        $formatted = [];
-        
-        // 4. Bắt đầu xây dựng cây từ cấp gốc (parent_id = null)
-        $this->buildCategoryList(
-            $groupedCategories, 
-            $formatted, 
-            null, // Bắt đầu từ parent_id = null
-            '',   // Không có prefix
-            $editingId // ID cần loại trừ
-        );
-        
-        $this->formattedCategories = $formatted;
-    }
-
-    private function buildCategoryList($groupedCategories, &$formatted, $parentId, $prefix = '', $excludeId = null)
-    {
-        // Lấy danh sách con từ collection đã nhóm, không query DB
-        $children = $groupedCategories->get($parentId, collect());
-
-        foreach ($children as $category) {
-            // Nếu category này là category đang sửa (excludeId),
-            // thì bỏ qua nó (và tất cả con của nó)
-            if ($category->id == $excludeId) {
-                continue; 
-            }
-
-            // Thêm vào danh sách
-            $formatted[$category->id] = $prefix . ' ' . $category->name;
-
-            // Kiểm tra xem nó có con không
-            if ($groupedCategories->has($category->id)) {
-                // Đệ quy để xử lý các con
-                $this->buildCategoryList(
-                    $groupedCategories, 
-                    $formatted, 
-                    $category->id, // parent_id mới là ID của category này
-                    $prefix . '—', // Thêm gạch
-                    $excludeId
-                );
-            }
-        }
-    }
-
-    
-
-
     public function render()
     {
-        $this->loadFormattedCategories();
+        // Không cần gọi loadFormattedCategories() nữa
         return view('admin.categories.manager')->layout('layouts.AdminDashBoard');
     }
 }

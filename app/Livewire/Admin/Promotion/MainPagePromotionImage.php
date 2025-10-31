@@ -14,6 +14,6 @@ class MainPagePromotionImage extends Component
     }
     public function render()
     {
-        return view('livewire.admin.promotion.main-page-promotion-image')->layout('layouts.AdminDashboard');;
+        return view('livewire.admin.promotion.main-page-promotion-image')->layout('layouts.AdminDashBoard');
     }
 }

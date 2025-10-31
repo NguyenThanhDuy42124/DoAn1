@@ -14,10 +14,7 @@ class Attribute extends Model
         return $this->belongsToMany(Category::class, 'category_attribute');
     }
 
-    public function values()
-    {
-        return $this->hasMany(ProductAttributeValue::class);
-    }
+
 
     public function options(): HasMany
     {
