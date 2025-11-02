@@ -18,16 +18,39 @@ class CartManager extends Component
     public function mount()
     {
         $this->loadCart();
+        $this->initializeSelections();
+    
     }
 
+    public function initializeSelections()
+    {
+        $latestItemData = collect($this->cartItems)
+                            ->sortByDesc('updated_at') // <-- Tự sort theo updated_at
+                            ->first();
+
+        if ($latestItemData) {
+            // Cần lấy 'stock_status' từ $this->cartItems (array)
+            // (Đảm bảo $latestItemData là array chứa 'stock_status')
+
+            // Chỉ chọn nếu item mới nhất còn hàng
+            if ($latestItemData['stock_status'] === 'in_stock') {
+                // Tự động chọn item mới nhất (cập nhật gần nhất)
+                $this->selectedItems = [(string)$latestItemData['id']];
+            } else {
+                // Nếu item mới nhất hết hàng, không chọn gì
+                $this->selectedItems = [];
+            }
+        } else {
+            // Nếu giỏ hàng trống, không chọn gì
+            $this->selectedItems = [];
+        }
+    }
     public function loadCart()
     {
         $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
         $items = CartItem::with('product.images')
                            ->where('cart_id', $cart->id)
-                           ->orderBy('updated_at', 'desc') // <-- QUAN TRỌNG
                            ->get();
-        $latestItem = $items->first();
         // Convert to array và add stock_status để view dùng
         $this->cartItems = $items->map(function ($item) {
             $maxStock = $item->product->stock;
@@ -46,23 +69,6 @@ class CartManager extends Component
             return $item->toArray();  // Bao gồm stock_status
         })->toArray();
 
-        if ($latestItem) {
-            // Cần lấy 'stock_status' từ $this->cartItems (array) mà chúng ta vừa tạo
-            $latestItemData = collect($this->cartItems)->firstWhere('id', $latestItem->id);
-
-            // Chỉ chọn nếu item mới nhất còn hàng
-            if ($latestItemData && $latestItemData['stock_status'] === 'in_stock') {
-                // Tự động chọn item mới nhất (cập nhật gần nhất)
-                // === LỖI ĐÃ ĐƯỢC SỬA TẠI ĐÂY ===
-                $this->selectedItems = [(string)$latestItem->id];
-            } else {
-                // Nếu item mới nhất hết hàng, không chọn gì
-                $this->selectedItems = [];
-            }
-        } else {
-            // Nếu giỏ hàng trống, không chọn gì
-            $this->selectedItems = [];
-        }
     }
 
     public function updatedQuantities($value, $key)  // Hook khi quantity thay đổi
@@ -97,6 +103,10 @@ class CartManager extends Component
         $cartItem = CartItem::find($cartItemId);
         if ($cartItem && $cartItem->cart->user_id === Auth::id()) {
             $cartItem->delete();
+            $this->selectedItems = array_filter($this->selectedItems, function($id) use ($cartItemId) {
+                return $id != $cartItemId;
+            });
+            $this->selectedItems = array_values($this->selectedItems);
             $this->loadCart();
             $this->dispatch('success', 'Item removed!');
         }
