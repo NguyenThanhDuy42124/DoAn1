@@ -3,222 +3,124 @@
 
   Press Ctrl+C to stop the server
 
-  2025-10-31 20:43:14 / .......................................... ~ 502.21ms
-  2025-10-31 20:43:17 /login ....................................... ~ 0.16ms
-  2025-10-31 20:45:40 /auth/google/redirect ...................... ~ 500.45ms
-  2025-10-31 20:45:54 /auth/google/call-back ........................... ~ 1s
-  2025-10-31 20:45:55 / ............................................ ~ 0.08ms
-  2025-10-31 20:45:55 /storage/product_images/default.jpg ........ ~ 500.59ms
-  2025-10-31 20:45:55 /storage/profile_images/5VzjDZQqilrb91IiyyqSLmrD9v0nrW8R3QakpNTa.jpg  ~ 501.47ms
-  2025-10-31 20:45:55 /storage/profile_images/nNTgofai8XaVLm1ATlaq5JleftcJNADgILmdU22y.jpg  ~ 501.80ms
-  2025-10-31 20:45:55 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 501.93ms
-  2025-10-31 20:45:55 /storage/product_images/default.jpg .......... ~ 0.04ms
-  2025-10-31 20:46:49 / ............................................ ~ 0.19ms
-  2025-10-31 20:46:49 /storage/profile_images/5VzjDZQqilrb91IiyyqSLmrD9v0nrW8R3QakpNTa.jpg  ~ 0.09ms
-  2025-10-31 20:46:49 /storage/product_images/default.jpg .......... ~ 0.04ms
-  2025-10-31 20:46:49 /storage/profile_images/nNTgofai8XaVLm1ATlaq5JleftcJNADgILmdU22y.jpg  ~ 0.06ms
-  2025-10-31 20:46:49 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.15ms
-  2025-10-31 20:46:50 /switch-role/admin ........................... ~ 0.24ms
-  2025-10-31 20:46:50 /admin/dashboard ............................. ~ 0.05ms
-  2025-10-31 20:46:53 /admin/categories ............................ ~ 0.25ms
-  2025-10-31 20:46:56 /livewire/update ........................... ~ 500.73ms
-  2025-10-31 20:46:59 /livewire/update ............................. ~ 0.15ms
-  2025-10-31 20:47:00 /livewire/update ............................. ~ 0.26ms
-  2025-10-31 20:47:05 /admin/attributes ............................ ~ 0.11ms
-  2025-10-31 20:47:12 /logout ...................................... ~ 0.12ms
-  2025-10-31 20:47:12 / ............................................ ~ 0.07ms
-  2025-10-31 20:47:12 /storage/product_images/default.jpg .......... ~ 0.10ms
-  2025-10-31 20:47:12 /storage/profile_images/nNTgofai8XaVLm1ATlaq5JleftcJNADgILmdU22y.jpg  ~ 0.07ms
-  2025-10-31 20:47:12 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.18ms
-  2025-10-31 20:47:13 /login ....................................... ~ 0.13ms
-  2025-10-31 20:47:17 /login ....................................... ~ 0.15ms
-  2025-10-31 20:47:17 / ............................................ ~ 0.08ms
-  2025-10-31 20:47:17 /storage/product_images/default.jpg .......... ~ 0.14ms
-  2025-10-31 20:47:17 /storage/profile_images/nNTgofai8XaVLm1ATlaq5JleftcJNADgILmdU22y.jpg  ~ 0.05ms
-  2025-10-31 20:47:17 /storage/product_images/default.jpg .......... ~ 0.05ms
-  2025-10-31 20:47:17 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.47ms
-  2025-10-31 20:47:23 /products .................................... ~ 0.15ms
-  2025-10-31 20:47:24 /storage/profile_images/nNTgofai8XaVLm1ATlaq5JleftcJNADgILmdU22y.jpg  ~ 0.15ms
-  2025-10-31 20:47:29 /products .................................... ~ 0.12ms
-  2025-10-31 20:47:29 /storage/product_images/default.jpg .......... ~ 0.06ms
-  2025-10-31 20:47:29 /storage/profile_images/nNTgofai8XaVLm1ATlaq5JleftcJNADgILmdU22y.jpg  ~ 0.49ms
-  2025-10-31 20:47:29 /storage/product_images/default.jpg .......... ~ 0.05ms
-  2025-10-31 20:47:33 /carts ....................................... ~ 0.25ms
-  2025-10-31 20:47:33 /carts ..................................... ~ 500.36ms
-  2025-10-31 20:47:34 /storage/product_images/default.jpg .......... ~ 0.09ms
-  2025-10-31 20:47:34 /storage/product_images/dWYcwERtXDKEDfmhEoo7pxqtepP5iOQx1kb04eRp.jpg  ~ 0.04ms
-  2025-10-31 20:47:34 /storage/profile_images/nNTgofai8XaVLm1ATlaq5JleftcJNADgILmdU22y.jpg  ~ 0.04ms
-  2025-10-31 20:47:34 /storage/product_images/default.jpg .......... ~ 0.04ms
-  2025-10-31 20:47:38 /livewire/update ............................. ~ 0.32ms
-  2025-10-31 20:47:38 /storage/product_images/default.jpg .......... ~ 0.10ms
-  2025-10-31 20:47:39 /livewire/update ............................. ~ 0.33ms
-  2025-10-31 20:47:39 /storage/product_images/default.jpg .......... ~ 0.09ms
-  2025-10-31 20:47:42 /livewire/update ............................. ~ 0.18ms
-  2025-10-31 20:47:42 /storage/product_images/default.jpg .......... ~ 0.07ms
-  2025-10-31 20:47:46 /livewire/update ............................. ~ 0.30ms
-  2025-10-31 20:47:46 /storage/product_images/default.jpg .......... ~ 0.09ms
-  2025-10-31 20:47:47 /livewire/update ............................. ~ 0.20ms
-  2025-10-31 20:47:47 /checkout .................................... ~ 0.07ms
-  2025-10-31 20:47:47 /carts ....................................... ~ 0.06ms
-  2025-10-31 20:47:47 /storage/product_images/default.jpg .......... ~ 0.06ms
-  2025-10-31 20:47:47 /storage/profile_images/nNTgofai8XaVLm1ATlaq5JleftcJNADgILmdU22y.jpg  ~ 0.08ms
-  2025-10-31 20:47:47 /storage/product_images/default.jpg .......... ~ 0.20ms
-  2025-10-31 20:47:47 /storage/product_images/dWYcwERtXDKEDfmhEoo7pxqtepP5iOQx1kb04eRp.jpg  ~ 0.54ms
-  2025-10-31 20:47:55 /livewire/update ............................. ~ 0.26ms
-  2025-10-31 20:47:55 /storage/product_images/default.jpg .......... ~ 0.07ms
-  2025-10-31 20:47:59 /livewire/update ............................. ~ 0.17ms
-  2025-10-31 20:47:59 /storage/product_images/default.jpg .......... ~ 0.08ms
-  2025-10-31 20:48:03 /livewire/update ............................. ~ 0.18ms
-  2025-10-31 20:48:03 /checkout ........................................ ~ 2s
-  2025-10-31 20:48:15 /checkout/success ................................ ~ 2s
-  2025-10-31 20:48:17 /storage/profile_images/nNTgofai8XaVLm1ATlaq5JleftcJNADgILmdU22y.jpg  ~ 0.06ms
-  2025-10-31 20:48:19 /products .................................... ~ 0.19ms
-  2025-10-31 20:48:19 /storage/product_images/default.jpg .......... ~ 0.05ms
-  2025-10-31 20:48:19 /storage/profile_images/nNTgofai8XaVLm1ATlaq5JleftcJNADgILmdU22y.jpg  ~ 0.04ms
-  2025-10-31 20:48:19 /storage/product_images/default.jpg .......... ~ 0.04ms
-  2025-10-31 20:48:57 /logout ...................................... ~ 0.23ms
-  2025-10-31 20:48:57 / ............................................ ~ 0.06ms
-  2025-10-31 20:48:57 /storage/product_images/default.jpg .......... ~ 0.06ms
-  2025-10-31 20:48:57 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.08ms
-  2025-10-31 20:48:57 /storage/profile_images/nNTgofai8XaVLm1ATlaq5JleftcJNADgILmdU22y.jpg  ~ 0.06ms
-  2025-10-31 20:48:58 /login ....................................... ~ 0.19ms
-  2025-10-31 20:49:07 /login ..................................... ~ 500.33ms
-  2025-10-31 20:49:07 / ............................................ ~ 0.06ms
-  2025-10-31 20:49:07 /storage/product_images/default.jpg .......... ~ 0.06ms
-  2025-10-31 20:49:07 /storage/profile_images/default.jpg .......... ~ 0.35ms
-  2025-10-31 20:49:07 /storage/profile_images/nNTgofai8XaVLm1ATlaq5JleftcJNADgILmdU22y.jpg  ~ 0.05ms
-  2025-10-31 20:49:07 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.14ms
-  2025-10-31 20:49:23 /dashboard ................................... ~ 0.15ms
-  2025-10-31 20:49:23 /storage/profile_images/default.jpg .......... ~ 0.09ms
-  2025-10-31 20:49:24 /switch-role/admin ........................... ~ 0.25ms
-  2025-10-31 20:49:24 /admin/dashboard ............................. ~ 0.08ms
-  2025-10-31 20:49:35 /admin/UserUIimages .............................. ~ 1s
-  2025-10-31 20:50:02 /admin/UserUIimages ........................ ~ 500.34ms
-  2025-10-31 20:50:34 /logout ...................................... ~ 0.17ms
-  2025-10-31 20:50:35 / ............................................ ~ 0.11ms
-  2025-10-31 20:50:35 /storage/product_images/default.jpg .......... ~ 0.10ms
-  2025-10-31 20:50:35 /storage/profile_images/nNTgofai8XaVLm1ATlaq5JleftcJNADgILmdU22y.jpg  ~ 0.08ms
-  2025-10-31 20:50:35 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.20ms
-  2025-10-31 20:50:35 /storage/product_images/default.jpg .......... ~ 0.14ms
-  2025-10-31 20:50:35 /login ....................................... ~ 0.25ms
-  2025-10-31 20:50:59 /auth/google/redirect ........................ ~ 0.13ms
-  2025-10-31 20:51:02 /auth/google/call-back ........................... ~ 1s
-  2025-10-31 20:51:03 / ............................................ ~ 0.08ms
-  2025-10-31 20:51:03 /storage/profile_images/5VzjDZQqilrb91IiyyqSLmrD9v0nrW8R3QakpNTa.jpg  ~ 0.08ms
-  2025-10-31 20:51:03 /storage/product_images/default.jpg .......... ~ 0.20ms
-  2025-10-31 20:51:03 /storage/profile_images/nNTgofai8XaVLm1ATlaq5JleftcJNADgILmdU22y.jpg  ~ 0.39ms
-  2025-10-31 20:51:03 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.48ms
-  2025-10-31 20:51:03 /storage/product_images/default.jpg .......... ~ 0.04ms
-  2025-10-31 20:51:05 /switch-role/admin ........................... ~ 0.12ms
-  2025-10-31 20:51:05 /admin/dashboard ............................. ~ 0.04ms
-  2025-10-31 20:51:07 /admin/UserUIimages ........................ ~ 500.39ms
-  2025-10-31 20:58:47 /admin/UserUIimages ........................ ~ 500.34ms
-  2025-10-31 20:58:51 /admin/UserUIimages ........................ ~ 500.44ms
-  2025-10-31 20:58:57 /admin/UserUIimages .............................. ~ 1s
-  2025-10-31 20:59:30 /admin/UserUIimages .......................... ~ 0.18ms
-  2025-10-31 20:59:32 /admin/UserUIimages ........................ ~ 500.45ms
-  2025-10-31 20:59:40 /admin/UserUIimages .......................... ~ 0.22ms
-  2025-10-31 20:59:41 /admin/UserUIimages .......................... ~ 0.13ms
-  2025-10-31 20:59:49 /admin/UserUIimages ........................ ~ 500.33ms
-  2025-10-31 21:00:09 /admin/UserUIimages ........................ ~ 500.32ms
-  2025-10-31 21:00:12 /admin/UserUIimages ........................ ~ 500.49ms
-  2025-10-31 21:00:22 /admin/UserUIimages ........................ ~ 500.46ms
-  2025-10-31 21:00:25 /admin/UserUIimages ........................ ~ 500.43ms
-  2025-10-31 21:00:38 /admin/UserUIimages ........................ ~ 500.51ms
-  2025-10-31 21:00:41 /admin/UserUIimages ........................ ~ 500.40ms
-  2025-10-31 21:00:47 /admin/UserUIimages .......................... ~ 0.20ms
-  2025-10-31 21:00:49 /livewire/update ............................. ~ 0.34ms
-  2025-10-31 21:00:58 /livewire/update ............................. ~ 0.28ms
-  2025-10-31 21:01:13 /livewire/update ............................. ~ 0.14ms
-  2025-10-31 21:01:13 /livewire/upload-file ........................ ~ 0.08ms
-  2025-10-31 21:01:13 /livewire/update ............................. ~ 0.07ms
-  2025-10-31 21:01:13 /livewire/preview-file/5bWMvoCImWACOsxmr1m6KitgxWLOSJ-metadnUtZGlldS1xdXktc2F0YW4ta3Jhc3puYWhvcmthaS1sYXN6bG8tZ2lhcC12YW4tY2h1bmctZGljaC5qcGc=-.jpg  ~ 0.06ms
-  2025-10-31 21:01:20 /livewire/update ............................. ~ 0.17ms
-  2025-10-31 21:01:20 /storage/Banner/vaA1ZysUDnQK3IwFAnZs7bgDiTZJ2426DINcCdWV.jpg  ~ 0.08ms
-  2025-10-31 21:01:26 /admin/dashboard ............................. ~ 0.13ms
-  2025-10-31 21:01:28 /dashboard ................................... ~ 0.24ms
-  2025-10-31 21:01:29 /storage/profile_images/5VzjDZQqilrb91IiyyqSLmrD9v0nrW8R3QakpNTa.jpg  ~ 0.07ms
-  2025-10-31 21:01:30 / ............................................ ~ 0.24ms
-  2025-10-31 21:01:30 /storage/profile_images/5VzjDZQqilrb91IiyyqSLmrD9v0nrW8R3QakpNTa.jpg  ~ 0.05ms
-  2025-10-31 21:01:30 /storage/Banner/vaA1ZysUDnQK3IwFAnZs7bgDiTZJ2426DINcCdWV.jpg  ~ 0.05ms
-  2025-10-31 21:01:30 /storage/product_images/default.jpg .......... ~ 0.05ms
-  2025-10-31 21:01:30 /storage/profile_images/nNTgofai8XaVLm1ATlaq5JleftcJNADgILmdU22y.jpg  ~ 0.07ms
-  2025-10-31 21:01:30 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.16ms
-  2025-10-31 21:01:41 /dashboard ................................... ~ 0.30ms
-  2025-10-31 21:01:41 /storage/profile_images/5VzjDZQqilrb91IiyyqSLmrD9v0nrW8R3QakpNTa.jpg  ~ 0.10ms
-  2025-10-31 21:01:44 /switch-role/admin ........................... ~ 0.17ms
-  2025-10-31 21:01:44 /admin/dashboard ............................. ~ 0.06ms
-  2025-10-31 21:01:46 /admin/dashboard ............................. ~ 0.15ms
-  2025-10-31 21:01:48 /admin/UserUIimages .......................... ~ 0.14ms
-  2025-10-31 21:01:49 /storage/Banner/vaA1ZysUDnQK3IwFAnZs7bgDiTZJ2426DINcCdWV.jpg  ~ 0.08ms
-  2025-10-31 21:02:26 /livewire/update ............................. ~ 0.12ms
-  2025-10-31 21:02:26 /livewire/upload-file ........................ ~ 0.04ms
-  2025-10-31 21:02:26 /livewire/update ............................. ~ 0.04ms
-  2025-10-31 21:02:27 /livewire/update ............................. ~ 0.23ms
-  2025-10-31 21:02:33 /livewire/update ............................. ~ 0.20ms
-  2025-10-31 21:02:34 /livewire/update ............................. ~ 0.25ms
-  2025-10-31 21:02:41 /dashboard ................................... ~ 0.21ms
-  2025-10-31 21:02:41 /storage/profile_images/5VzjDZQqilrb91IiyyqSLmrD9v0nrW8R3QakpNTa.jpg  ~ 0.07ms
-  2025-10-31 21:02:45 /products .................................... ~ 0.13ms
-  2025-10-31 21:02:46 /storage/profile_images/5VzjDZQqilrb91IiyyqSLmrD9v0nrW8R3QakpNTa.jpg  ~ 0.13ms
-  2025-10-31 21:02:55 /products .................................... ~ 0.15ms
-  2025-10-31 21:02:55 /storage/product_images/default.jpg .......... ~ 0.12ms
-  2025-10-31 21:02:55 /storage/profile_images/5VzjDZQqilrb91IiyyqSLmrD9v0nrW8R3QakpNTa.jpg  ~ 0.04ms
-  2025-10-31 21:03:02 /general/users/10/edit ....................... ~ 0.20ms
-  2025-10-31 21:03:02 /storage/profile_images/5VzjDZQqilrb91IiyyqSLmrD9v0nrW8R3QakpNTa.jpg  ~ 0.07ms
-  2025-10-31 21:03:23 /general/users/10 ............................ ~ 0.15ms
-  2025-10-31 21:03:23 /general/users/10/edit ....................... ~ 0.06ms
-  2025-10-31 21:03:23 /storage/profile_images/5VzjDZQqilrb91IiyyqSLmrD9v0nrW8R3QakpNTa.jpg  ~ 0.04ms
-  2025-10-31 21:03:30 /storage/product_images/default.jpg .......... ~ 0.12ms
-  2025-10-31 21:03:43 /products .................................... ~ 0.23ms
-  2025-10-31 21:03:43 /storage/product_images/default.jpg .......... ~ 0.06ms
-  2025-10-31 21:03:43 /storage/product_images/dWYcwERtXDKEDfmhEoo7pxqtepP5iOQx1kb04eRp.jpg  ~ 0.39ms
-  2025-10-31 21:03:43 /storage/product_images/aYa4avlszdBKJhxFPyB2u3Dmhe1I72oA2I5paUD7.jpg  ~ 0.17ms
-  2025-10-31 21:03:43 /storage/profile_images/5VzjDZQqilrb91IiyyqSLmrD9v0nrW8R3QakpNTa.jpg  ~ 0.27ms
-  2025-10-31 21:03:48 /products .................................... ~ 0.22ms
-  2025-10-31 21:03:49 /storage/product_images/default.jpg .......... ~ 0.07ms
-  2025-10-31 21:03:49 /storage/profile_images/5VzjDZQqilrb91IiyyqSLmrD9v0nrW8R3QakpNTa.jpg  ~ 0.08ms
-  2025-10-31 21:03:49 /storage/product_images/default.jpg .......... ~ 0.05ms
-  2025-10-31 21:03:57 /dashboard ................................... ~ 0.20ms
-  2025-10-31 21:03:57 /storage/profile_images/5VzjDZQqilrb91IiyyqSLmrD9v0nrW8R3QakpNTa.jpg  ~ 0.08ms
-  2025-10-31 21:03:58 /logout ...................................... ~ 0.12ms
-  2025-10-31 21:03:58 / ............................................ ~ 0.05ms
-  2025-10-31 21:03:58 /storage/product_images/default.jpg .......... ~ 0.05ms
-  2025-10-31 21:03:58 /storage/Banner/vaA1ZysUDnQK3IwFAnZs7bgDiTZJ2426DINcCdWV.jpg  ~ 0.42ms
-  2025-10-31 21:03:58 /storage/profile_images/nNTgofai8XaVLm1ATlaq5JleftcJNADgILmdU22y.jpg  ~ 0.49ms
-  2025-10-31 21:03:58 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.24ms
-  2025-10-31 21:03:58 /storage/product_images/default.jpg .......... ~ 0.04ms
-  2025-10-31 21:03:59 /login ....................................... ~ 0.20ms
-  2025-10-31 21:04:02 /login ....................................... ~ 0.15ms
-  2025-10-31 21:04:02 / ............................................ ~ 0.07ms
-  2025-10-31 21:04:02 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.07ms
-  2025-10-31 21:04:02 /storage/product_images/default.jpg .......... ~ 0.20ms
-  2025-10-31 21:04:02 /storage/Banner/vaA1ZysUDnQK3IwFAnZs7bgDiTZJ2426DINcCdWV.jpg  ~ 0.07ms
-  2025-10-31 21:04:02 /storage/product_images/default.jpg .......... ~ 0.05ms
-  2025-10-31 21:04:02 /storage/profile_images/nNTgofai8XaVLm1ATlaq5JleftcJNADgILmdU22y.jpg  ~ 0.59ms
-  2025-10-31 21:04:08 /switch-role/seller .......................... ~ 0.14ms
-  2025-10-31 21:04:08 /seller/dashboard ............................ ~ 0.06ms
-  2025-10-31 21:04:08 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.06ms
-  2025-10-31 21:04:08 /seller/seller/api/revenue-report ............ ~ 0.13ms
-  2025-10-31 21:04:12 /seller/products ............................. ~ 0.14ms
-  2025-10-31 21:04:12 /storage/product_images/default.jpg .......... ~ 0.04ms
-  2025-10-31 21:04:12 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.05ms
-  2025-10-31 21:04:12 /storage/product_images/aYa4avlszdBKJhxFPyB2u3Dmhe1I72oA2I5paUD7.jpg  ~ 0.13ms
-  2025-10-31 21:04:25 /seller/products ............................. ~ 0.13ms
-  2025-10-31 21:04:25 /storage/product_images/default.jpg .......... ~ 0.07ms
-  2025-10-31 21:04:25 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.05ms
-  2025-10-31 21:04:32 /seller/products ............................. ~ 0.19ms
-  2025-10-31 21:04:32 /storage/product_images/default.jpg .......... ~ 0.12ms
-  2025-10-31 21:04:32 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.08ms
-  2025-10-31 21:04:32 /storage/product_images/aYa4avlszdBKJhxFPyB2u3Dmhe1I72oA2I5paUD7.jpg  ~ 0.21ms
-  2025-10-31 21:04:35 /seller/products/import/form ................. ~ 0.25ms
-  2025-10-31 21:04:35 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.15ms
-  2025-10-31 21:04:37 /seller/products/create ...................... ~ 0.14ms
-  2025-10-31 21:04:37 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.27ms
-  2025-10-31 21:04:40 /livewire/update ............................. ~ 0.11ms
-  2025-10-31 21:04:59 /seller/products/create ...................... ~ 0.20ms
-  2025-10-31 21:04:59 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.16ms
-  2025-10-31 21:05:01 /seller/products/create ...................... ~ 0.18ms
-  2025-10-31 21:05:01 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.11ms
-  2025-10-31 21:05:15 /seller/products/create ...................... ~ 0.21ms
-  2025-10-31 21:05:15 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.07ms
+  2025-11-02 20:54:02 / .......................................... ~ 500.59ms
+  2025-11-02 20:54:08 / ............................................ ~ 0.19ms
+  2025-11-02 20:54:08 /storage/product_images/default.jpg .......... ~ 0.07ms
+  2025-11-02 20:54:08 /storage/profile_images/nNTgofai8XaVLm1ATlaq5JleftcJNADgILmdU22y.jpg  ~ 0.39ms
+  2025-11-02 20:54:08 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.50ms
+  2025-11-02 20:54:08 /storage/Banner/pzHwXFpWAC6B7hrvMcKu5sgDVjXkbXOERD8KARbs.jpg  ~ 0.59ms
+  2025-11-02 20:54:09 /login ....................................... ~ 0.12ms
+  2025-11-02 20:54:11 /login ..................................... ~ 500.31ms
+  2025-11-02 20:54:12 / ............................................ ~ 0.04ms
+  2025-11-02 20:54:12 /storage/product_images/default.jpg .......... ~ 0.05ms
+  2025-11-02 20:54:12 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.05ms
+  2025-11-02 20:54:12 /storage/Banner/pzHwXFpWAC6B7hrvMcKu5sgDVjXkbXOERD8KARbs.jpg  ~ 0.05ms
+  2025-11-02 20:54:12 /storage/profile_images/nNTgofai8XaVLm1ATlaq5JleftcJNADgILmdU22y.jpg  ~ 0.05ms
+  2025-11-02 20:54:14 /switch-role/seller .......................... ~ 0.12ms
+  2025-11-02 20:54:14 /seller/dashboard ............................ ~ 0.07ms
+  2025-11-02 20:54:14 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.11ms
+  2025-11-02 20:54:14 /seller/seller/api/revenue-report ............ ~ 0.05ms
+  2025-11-02 20:54:16 /seller/orders ............................... ~ 0.12ms
+  2025-11-02 20:54:16 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.06ms
+  2025-11-02 20:54:17 /seller/products ............................. ~ 0.13ms
+  2025-11-02 20:54:17 /storage/product_images/default.jpg .......... ~ 0.12ms
+  2025-11-02 20:54:17 /storage/product_images/aYa4avlszdBKJhxFPyB2u3Dmhe1I72oA2I5paUD7.jpg  ~ 0.09ms
+  2025-11-02 20:54:17 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.23ms
+  2025-11-02 20:54:22 /seller/products/create ...................... ~ 0.24ms
+  2025-11-02 20:54:23 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.06ms
+  2025-11-02 20:54:25 /livewire/update ............................. ~ 0.18ms
+  2025-11-02 20:54:34 /livewire/update ............................. ~ 0.13ms
+  2025-11-02 20:54:34 /seller/products ............................. ~ 0.06ms
+  2025-11-02 20:54:34 /storage/product_images/default.jpg .......... ~ 0.05ms
+  2025-11-02 20:54:34 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.06ms
+  2025-11-02 20:54:34 /storage/product_images/aYa4avlszdBKJhxFPyB2u3Dmhe1I72oA2I5paUD7.jpg  ~ 0.16ms
+  2025-11-02 20:54:37 /seller/products/21/edit ..................... ~ 0.20ms
+  2025-11-02 20:54:37 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.07ms
+  2025-11-02 20:54:48 /livewire/update ............................. ~ 0.12ms
+  2025-11-02 20:54:48 /livewire/upload-file ........................ ~ 0.06ms
+  2025-11-02 20:54:48 /livewire/update ............................. ~ 0.05ms
+  2025-11-02 20:54:48 /livewire/preview-file/FdtYS3Ljhx3LYI3ZWREu383lc4vs91-metadm4tMTExMzQyMDctN3I5OG8tbHZrNzAydmFjOWk0OTNAcmVzaXplX3c0NTBfbmwud2VicA==-.webp  ~ 0.06ms
+  2025-11-02 20:54:50 /livewire/update ............................. ~ 0.18ms
+  2025-11-02 20:54:50 /seller/products ............................. ~ 0.23ms
+  2025-11-02 20:54:50 /storage/product_images/default.jpg .......... ~ 0.05ms
+  2025-11-02 20:54:50 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.06ms
+  2025-11-02 20:54:50 /storage/product_images/aYa4avlszdBKJhxFPyB2u3Dmhe1I72oA2I5paUD7.jpg  ~ 0.19ms
+  2025-11-02 20:54:52 /seller/products/21/edit ..................... ~ 0.13ms
+  2025-11-02 20:54:52 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.13ms
+  2025-11-02 21:05:49 /livewire/update ............................. ~ 0.23ms
+  2025-11-02 21:05:49 /livewire/upload-file ...................... ~ 500.37ms
+  2025-11-02 21:05:49 /livewire/update ............................. ~ 0.05ms
+  2025-11-02 21:05:49 /livewire/preview-file/rOiUiBossGOSq01OkXLvkVoudPnUzW-metadm4tMTExMzQyMDctN3I5OG8tbHZrNzAydmFjOWk0OTNAcmVzaXplX3c0NTBfbmwud2VicA==-.webp  ~ 0.05ms
+  2025-11-02 21:05:51 /livewire/update ............................. ~ 0.12ms
+  2025-11-02 21:05:51 /seller/products ............................. ~ 0.06ms
+  2025-11-02 21:05:51 /storage/product_images/default.jpg .......... ~ 0.04ms
+  2025-11-02 21:05:51 /storage/product_images/aYa4avlszdBKJhxFPyB2u3Dmhe1I72oA2I5paUD7.jpg  ~ 0.06ms
+  2025-11-02 21:05:51 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.16ms
+  2025-11-02 21:05:53 /seller/products/21/edit ..................... ~ 0.28ms
+  2025-11-02 21:05:54 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.09ms
+  2025-11-02 21:05:59 /livewire/update ............................. ~ 0.13ms
+  2025-11-02 21:05:59 /livewire/upload-file ........................ ~ 0.04ms
+  2025-11-02 21:05:59 /livewire/update ............................. ~ 0.04ms
+  2025-11-02 21:05:59 /livewire/preview-file/GHrxrRQcUmX6dmdzr6QKhG6DvJsmu2-metadm4tMTExMzQyMDctN3I5OG8tbHZrNzAydmFjOWk0OTNAcmVzaXplX3c0NTBfbmwud2VicA==-.webp  ~ 0.04ms
+  2025-11-02 21:06:02 /livewire/update ........................... ~ 500.54ms
+  2025-11-02 21:06:02 /seller/products ............................. ~ 0.06ms
+  2025-11-02 21:06:02 /storage/product_images/default.jpg .......... ~ 0.04ms
+  2025-11-02 21:06:02 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.05ms
+  2025-11-02 21:06:02 /storage/product_images/aYa4avlszdBKJhxFPyB2u3Dmhe1I72oA2I5paUD7.jpg  ~ 0.13ms
+  2025-11-02 21:15:29 /seller/products/21/edit ..................... ~ 0.16ms
+  2025-11-02 21:15:29 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.07ms
+  2025-11-02 21:15:34 /livewire/update ............................. ~ 0.19ms
+  2025-11-02 21:15:34 /livewire/upload-file ........................ ~ 0.07ms
+  2025-11-02 21:15:34 /livewire/update ............................. ~ 0.06ms
+  2025-11-02 21:15:34 /livewire/preview-file/Zc7F8GrJiDug8D72hasbu0Vh1cpwMb-metadm4tMTExMzQyMDctN3I5OG8tbHZrNzAydmFjOWk0OTNAcmVzaXplX3c0NTBfbmwud2VicA==-.webp  ~ 0.04ms
+  2025-11-02 21:15:41 /livewire/update ............................. ~ 0.21ms
+  2025-11-02 21:15:42 /livewire/upload-file ...................... ~ 500.75ms
+  2025-11-02 21:15:42 /livewire/update ............................. ~ 0.06ms
+  2025-11-02 21:15:42 /livewire/preview-file/G0px9rRscKnSc8d9YhOqvYVdeXrlkx-metaZGVmYXVsdC5qcGc=-.jpg  ~ 0.05ms
+  2025-11-02 21:15:43 /livewire/update ............................. ~ 0.11ms
+  2025-11-02 21:15:43 /seller/products ............................. ~ 0.07ms
+  2025-11-02 21:15:43 /storage/product_images/default.jpg .......... ~ 0.09ms
+  2025-11-02 21:15:43 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.68ms
+  2025-11-02 21:15:43 /storage/product_images/aYa4avlszdBKJhxFPyB2u3Dmhe1I72oA2I5paUD7.jpg  ~ 0.24ms
+  2025-11-02 21:15:45 /seller/products/21/edit ..................... ~ 0.20ms
+  2025-11-02 21:15:45 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.27ms
+  2025-11-02 21:16:32 / ............................................ ~ 0.22ms
+  2025-11-02 21:16:32 /livewire/livewire.js ........................ ~ 0.05ms
+  2025-11-02 21:17:18 /storage/product_images/default.jpg .......... ~ 0.21ms
+  2025-11-02 21:17:18 /favicon.ico ................................. ~ 0.72ms
+  2025-11-02 21:17:18 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 2.01ms
+  2025-11-02 21:17:18 /storage/profile_images/nNTgofai8XaVLm1ATlaq5JleftcJNADgILmdU22y.jpg  ~ 2.16ms
+  2025-11-02 21:17:18 /storage/Banner/pzHwXFpWAC6B7hrvMcKu5sgDVjXkbXOERD8KARbs.jpg  ~ 2.31ms
+  2025-11-02 21:17:18 /storage/product_images/default.jpg .......... ~ 0.06ms
+  2025-11-02 21:25:11 /seller/products/21/edit ..................... ~ 0.18ms
+  2025-11-02 21:25:11 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.05ms
+  2025-11-02 21:25:18 /livewire/update ............................. ~ 0.23ms
+  2025-11-02 21:25:18 /livewire/upload-file ........................ ~ 0.07ms
+  2025-11-02 21:25:19 /livewire/update ............................. ~ 0.06ms
+  2025-11-02 21:25:19 /livewire/preview-file/TFz22AQ8j01iBBmiYyUVCJLHRG7x7s-metaZGVmYXVsdC5qcGc=-.jpg  ~ 0.09ms
+  2025-11-02 21:25:20 /livewire/update ............................. ~ 0.22ms
+  2025-11-02 21:37:25 /seller/products/21/edit ..................... ~ 0.17ms
+  2025-11-02 21:37:26 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.07ms
+  2025-11-02 21:37:30 /livewire/update ............................. ~ 0.13ms
+  2025-11-02 21:37:30 /livewire/upload-file ........................ ~ 0.08ms
+  2025-11-02 21:37:30 /livewire/update ............................. ~ 0.06ms
+  2025-11-02 21:37:30 /livewire/preview-file/8pEgEPGBrOKiFYBloCMtOs46OfDDIk-metaZGVmYXVsdC5qcGc=-.jpg  ~ 500.47ms
+  2025-11-02 21:37:31 /livewire/update ............................. ~ 0.15ms
+  2025-11-02 21:37:31 /seller/products ............................. ~ 0.08ms
+  2025-11-02 21:37:31 /storage/product_images/MUMT2tAXorDBuVMHGg94k8KDiVdlszX2dxAVZkAc.jpg  ~ 0.07ms
+  2025-11-02 21:37:31 /storage/product_images/default.jpg .......... ~ 0.06ms
+  2025-11-02 21:37:31 /storage/product_images/aYa4avlszdBKJhxFPyB2u3Dmhe1I72oA2I5paUD7.jpg  ~ 0.48ms
+  2025-11-02 21:37:31 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.20ms
+  2025-11-02 21:37:40 /seller/products/20/edit ................... ~ 500.41ms
+  2025-11-02 21:37:40 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.07ms
+  2025-11-02 21:37:44 /livewire/update ............................. ~ 0.13ms
+  2025-11-02 21:37:45 /livewire/upload-file ........................ ~ 0.07ms
+  2025-11-02 21:37:45 /livewire/update ............................. ~ 0.07ms
+  2025-11-02 21:37:45 /livewire/preview-file/5QsOrZVxJE2EArjTLPDtmN6pzfwAvd-metaNGY0ZGVlZmVlMGVkNmFiMzMzZmMuanBn-.jpg  ~ 0.27ms
+  2025-11-02 21:37:46 /livewire/update ............................. ~ 0.15ms
+  2025-11-02 21:37:46 /seller/products ............................. ~ 0.06ms
+  2025-11-02 21:37:46 /storage/product_images/UVTDdCi7W6vZJTwWA4QsUCot8My69ZOFmrmHjsHm.jpg  ~ 0.06ms
+  2025-11-02 21:37:46 /storage/product_images/default.jpg .......... ~ 0.05ms
+  2025-11-02 21:37:46 /storage/profile_images/BMeh3SnLeYCMKNf52jyImsoIgTcKPnV9M9xbiDHp.jpg  ~ 0.06ms
+  2025-11-02 21:37:46 /storage/product_images/MUMT2tAXorDBuVMHGg94k8KDiVdlszX2dxAVZkAc.jpg  ~ 0.14ms
+  2025-11-02 21:37:46 /storage/product_images/aYa4avlszdBKJhxFPyB2u3Dmhe1I72oA2I5paUD7.jpg  ~ 0.22ms

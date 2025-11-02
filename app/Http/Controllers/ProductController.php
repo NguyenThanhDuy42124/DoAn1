@@ -72,8 +72,6 @@ class ProductController extends Controller
                 }
             }
             
-            // *** XÓA: Bỏ toàn bộ khối xử lý EAV cũ ***
-            // if ($request->has('attributes')) { ... }
 
             DB::commit();
         } catch (\Exception $e) {
@@ -159,7 +157,7 @@ class ProductController extends Controller
             (new FastExcel())
                 ->import($filePath, function ($row) use (
                     $categoryId, $sellerId, $uploadedImages, &$importedCount, 
-                    $categoryAttributes, $attributeColumnNames // <-- Thêm
+                    $categoryAttributes, $attributeColumnNames
                 ) {
 
                     if (empty($row['name']) || empty($row['price'])) {
@@ -201,8 +199,27 @@ class ProductController extends Controller
                     // foreach ($categoryAttributes as $attribute) { ... }
 
                     // Xử lý hình ảnh (Giữ nguyên)
-                    if ($uploadedImages->isNotEmpty()) {
-                        // ... (code xử lý ảnh giữ nguyên) ...
+                   if ($uploadedImages->isNotEmpty()) {
+                        // Tìm tất cả các cột ảnh trong dòng hiện tại
+                        $imageColumns = array_filter($row, function($key) {
+                            return str_contains(strtolower($key), 'image_');
+                        }, ARRAY_FILTER_USE_KEY);
+
+                        foreach ($imageColumns as $imageName) {
+                            $imageName = trim($imageName);
+                            // Kiểm tra tên file ảnh có trong danh sách ảnh đã upload không
+                            if ($imageName && $uploadedImages->has($imageName)) {
+                                $imageFile = $uploadedImages->get($imageName);
+
+                                // Lưu file ảnh vào storage và tạo bản ghi DB
+                                $path = $imageFile->store('product_images', 'public');
+
+                                ProductImage::create([
+                                    'product_id' => $product->id,
+                                    'image_path' => $path,
+                                ]);
+                            }
+                        }
                     }
 
                     $importedCount++;
@@ -228,8 +245,18 @@ class ProductController extends Controller
             ->where('status', Product::STATUS_APPROVED);
 
         // 2. Lọc (Giữ nguyên)
-        if ($request->filled('price_range')) {
-            // ... (code lọc giá giữ nguyên)
+         if ($request->filled('price_range')) {
+            $range = $request->input('price_range');
+            $parts = explode('-', $range); 
+            $minPrice = $parts[0];
+            $maxPrice = $parts[1] ?? null; 
+
+            if ($minPrice > 0) {
+                $query->where('price', '>=', $minPrice);
+            }
+            if ($maxPrice !== null && $maxPrice > 0) {
+                $query->where('price', '<=', $maxPrice);
+            }
         }
         if ($request->filled('brand')) {
             $query->where('brand_id', $request->input('brand'));
@@ -307,7 +334,9 @@ class ProductController extends Controller
             'brand_id'    => 'nullable|exists:brands,id', 
             'name'        => 'required|string|max:255',
             'price'       => 'required|numeric|min:0',
-            // ... (các rules khác giữ nguyên) ...
+            'images.*'    => 'nullable|image|max:2048|mimes:jpeg,png,jpg,gif,svg', // Đổi 'image' thành 'images.*'
+            'deleted_images' => 'nullable|array',
+            'deleted_images.*' => 'exists:product_images,id', // Đảm bảo ID hình ảnh tồn tại
             'attributes'  => 'nullable|array', // <-- Giữ nguyên
         ]);
 
@@ -324,20 +353,36 @@ class ProductController extends Controller
                 'stock'       => $request->stock,
                 'description' => $request->description,
                 'status'      => $request->status,
+                'images.*'    => 'nullable|image|max:2048|mimes:jpeg,png,jpg,gif,svg', // Đổi 'image' thành 'images.*'
+                'deleted_images' => 'nullable|array',
+                'deleted_images.*' => 'exists:product_images,id', // Đảm bảo ID hình ảnh tồn tại
                 'attributes'  => $request->input('attributes', []), // <-- THÊM MỚI
             ]);
 
-            // Xử lý xóa/thêm ảnh (Giữ nguyên)
+            // 3. Xóa các hình ảnh đã chọn (nếu có)
             if ($request->has('deleted_images')) {
-                // ... (code xóa ảnh giữ nguyên)
-            }
-            if ($request->hasFile('images')) {
-                // ... (code thêm ảnh giữ nguyên)
+                $deletedImageIds = $request->input('deleted_images');
+                $imagesToDelete = ProductImage::whereIn('id', $deletedImageIds)->where('product_id', $product->id)->get();
+
+                foreach ($imagesToDelete as $image) {
+                    // Xóa file vật lý khỏi storage
+                    Storage::disk('public')->delete($image->image_path);
+                    // Xóa bản ghi trong database
+                    $image->delete();
+                }
             }
 
-            // *** XÓA: Bỏ toàn bộ khối xử lý EAV cũ ***
-            // $product->attributeValues()->delete(); 
-            // if ($request->has('attributes')) { ... }
+            // 4. Thêm các hình ảnh mới (nếu có)
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $image) {
+                    $path = $image->store('product_images', 'public');
+                    ProductImage::create([
+                        'product_id' => $product->id,
+                        'image_path' => $path,
+                    ]);
+                }
+            }
+
 
             DB::commit();
 
@@ -349,3 +394,6 @@ class ProductController extends Controller
         }
     }
 }
+
+
+

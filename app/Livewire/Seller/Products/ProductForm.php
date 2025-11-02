@@ -157,12 +157,13 @@ class ProductForm extends Component
      */
     public function save()
     {
+        // 1. Xóa dd() test đi
+        // dd($this->images); 
         $validatedData = $this->validate();
 
         DB::beginTransaction();
         try {
             // --- 1. Lưu/Cập nhật thông tin cơ bản ---
-            // *** SỬA: Thêm 'attributes' vào mảng $productData ***
             $productData = [
                 'category_id' => $validatedData['category_id'],
                 'brand_id'    => $validatedData['brand_id'] ?: null, 
@@ -172,8 +173,6 @@ class ProductForm extends Component
                 'description' => $validatedData['description'],
                 'seller_id'   => Auth::id(), 
                 'status'      => $this->product->exists ? $this->product->status : Product::STATUS_PENDING,
-                
-                // *** MẤU CHỐT: Gán thẳng mảng attributes vào đây ***
                 'attributes'  => $validatedData['attributeValues'] ?? [],
             ];
 
@@ -181,33 +180,53 @@ class ProductForm extends Component
                 $this->product->update($productData);
             } else { // Create
                 $this->product = Product::create($productData);
+                // Cập nhật lại $this->productId phòng khi cần dùng ngay sau đó
+                $this->productId = $this->product->id; 
             }
 
-            // *** XÓA: Bỏ toàn bộ khối code xử lý EAV ***
-            // --- 2. Lưu/Cập nhật thuộc tính EAV ---
-            // $this->product->attributeValues()->delete(); 
-            // if (!empty($validatedData['attributeValues'])) {
-            // ... (XÓA HẾT)
-            // }
-
-            // --- 3. Xử lý ảnh CŨ cần xóa (Giữ nguyên) ---
+            // --- 2. Xử lý ảnh CŨ cần xóa (ĐÃ ĐIỀN CODE) ---
             if (!empty($this->deletedImageIds)) {
-                // ... (code giữ nguyên)
+                $imagesToDelete = ProductImage::whereIn('id', $this->deletedImageIds)
+                                               ->where('product_id', $this->product->id) // Bảo mật: chỉ xóa ảnh của sp này
+                                               ->get();
+                
+                foreach ($imagesToDelete as $image) {
+                    Storage::disk('public')->delete($image->image_path); // Xóa file
+                    $image->delete(); // Xóa record DB
+                }
+                
+                $this->deletedImageIds = []; // Reset mảng
             }
 
-            // --- 4. Xử lý ảnh MỚI upload (Giữ nguyên) ---
+            // --- 3. Xử lý ảnh MỚI upload (ĐÃ ĐIỀN CODE) ---
             if (!empty($this->images)) {
-                // ... (code giữ nguyên)
+                foreach ($this->images as $imageFile) {
+                    // Lưu file ảnh vào storage/app/public/product_images
+                    $path = $imageFile->store('product_images', 'public');
+                    
+                    // Tạo record trong DB
+                    ProductImage::create([
+                        'product_id' => $this->product->id,
+                        'image_path' => $path,
+                    ]);
+                }
+                
+                 // Reset mảng upload
+                 $this->images = []; 
+                 // Tải lại ảnh (quan trọng)
+                 $this->product->load('images'); 
+                 $this->existingImages = $this->product->images->toArray();
             }
 
             DB::commit();
 
             session()->flash('success', $this->productId ? 'Cập nhật sản phẩm thành công!' : 'Thêm sản phẩm thành công!');
+            // Sửa lại: redirect() phải là cái cuối cùng
             return redirect()->route('seller.products.index');
 
         } catch (\Exception $e) {
             DB::rollBack();
-            \Log::error('Save product error: ' . $e->getMessage());
+            \Log::error('Save product error: ' . $e->getMessage() . ' on line ' . $e->getLine()); // Thêm getLine()
             session()->flash('error', 'Đã xảy ra lỗi khi lưu sản phẩm. Vui lòng thử lại.');
         }
     }
