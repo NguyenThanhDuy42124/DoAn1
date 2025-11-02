@@ -24,7 +24,9 @@ class CartManager extends Component
 
     public function initializeSelections()
     {
-        $latestItemData = collect($this->cartItems)->first();
+        $latestItemData = collect($this->cartItems)
+                            ->sortByDesc('updated_at') // Sắp giảm dần (mới nhất -> cũ)
+                            ->first();
 
         if ($latestItemData) {
             // Cần lấy 'stock_status' từ $this->cartItems (array)
