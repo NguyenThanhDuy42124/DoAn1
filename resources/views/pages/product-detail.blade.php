@@ -88,6 +88,36 @@
             </div>
         </div>
     </div>
+        <div class="row g-5 mt-4">
+        <div class="col">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3">
+                    <h4 class="mb-0 fw-bold">Mô tả sản phẩm</h4>
+                </div>
+                <div class="card-body">
+                    <p>{{ $product->description }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row g-5 mt-4">
+        <div class="col">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3">
+                    <h4 class="mb-0 fw-bold">Người bán</h4>
+                </div>
+                <div class="card-body d-flex align-items-center">
+                    <img src="{{ asset('storage/' . $seller->img)  }}" alt="{{asset('storage/product_images/default.jpg')}}" class="rounded-circle border me-4" style="width: 80px; height: 80px; object-fit: cover;">
+                    <div>
+                        <h5 class="fw-semibold mb-1">{{ $seller->name }}</h5>
+                        <p class="mb-2 text-muted">Địa chỉ: {{ $seller->address }}</p>
+                        <a href="/shop/{{ $seller->id }}" class="btn btn-outline-primary btn-sm">
+                            Xem cửa hàng
+                        </a>
+                    </div>
+            </div>
+        </div>
+    </div>
 
     {{-- PHẦN THÔNG SỐ KỸ THUẬT & SẢN PHẨM TƯƠNG TỰ --}}
     <div class="row g-5 mt-4">

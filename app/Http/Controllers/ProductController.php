@@ -289,9 +289,10 @@ class ProductController extends Controller
     {
         // Lấy sản phẩm kèm hình ảnh liên quan
         $product = Product::with('images')->findOrFail($id);
+        $seller = $product->seller;
 
         // Trả về view và truyền biến $product
-        return view('pages.product-detail', compact('product'));
+        return view('pages.product-detail', compact('product', 'seller'));
     }
 
 
