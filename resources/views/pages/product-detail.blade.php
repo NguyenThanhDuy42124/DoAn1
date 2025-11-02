@@ -8,38 +8,51 @@
     <div class="card shadow-sm border-0">
         <div class="card-body p-4 p-md-5">
             <div class="row g-5">
-                
+
                 {{-- CỘT BÊN TRÁI (HÌNH ẢNH) --}}
                 <div class="col-lg-6">
-                    <img src="/storage/product_images/default.jpg" 
-                         alt="Ảnh sản phẩm" 
-                         class="img-fluid rounded border w-100 mb-3">
-                    
-                    {{-- Bạn có thể thêm các ảnh thumbnail tĩnh ở đây --}}
-                    <div class="row g-2">
-                        <div class="col-3">
-                            <img src="/storage/product_images/default.jpg" alt="ảnh 2" class="img-fluid rounded border">
+                    @if($product && $product->images->count() > 0)
+                    <div id="productCarousel" class="carousel slide mb-3" data-bs-ride="carousel">
+                        <div class="carousel-inner rounded border">
+                            @foreach($product->images as $index => $image)
+                            <div class="carousel-item {{ $loop->first ? 'active' : '' }}">
+                                <img src="{{ asset('storage/' . $image->image_path) }}" class="d-block w-100 rounded border" alt="Ảnh sản phẩm {{ $index + 1 }}">
+                            </div>
+                            @endforeach
                         </div>
-                        <div class="col-3">
-                            <img src="/storage/product_images/default.jpg" alt="ảnh 3" class="img-fluid rounded border">
+                        @if (count($product->images) > 1)
+                        <button class="carousel-control-prev carousel-dark" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" style="width: 20px; height: 20px;"></span>
+                        </button>
+                        <button class="carousel-control-next carousel-dark" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" style="width: 20px; height: 20px;"></span>
+                        </button>
+                        @endif
+                    </div>
+                    @else
+                    <img src="{{ asset('storage/product_images/default.jpg') }}" alt="Ảnh sản phẩm" class="img-fluid rounded border w-100 mb-3">
+                    @endif
+                    {{-- ẢNH THUMBNAILS BÊN DƯỚI --}}
+                    <div class="row g-2 justify-content-center">
+                        @foreach($product->images as $index => $image)
+                        <div class="col-3 col-md-2">
+                            <img src="{{ asset('storage/' . $image->image_path) }}" class="img-thumbnail border border-2 border-transparent w-100" style="cursor:pointer;" data-bs-target="#productCarousel" data-bs-slide-to="{{ $index }}" aria-current="{{ $index === 0 ? 'true' : 'false' }}" aria-label="Slide {{ $index + 1 }}">
                         </div>
-                        <div class="col-3">
-                            <img src="/storage/product_images/default.jpg" alt="ảnh 4" class="img-fluid rounded border">
-                        </div>
+                        @endforeach
                     </div>
                 </div>
 
                 {{-- CỘT BÊN PHẢI (THÔNG TIN) --}}
                 <div class="col-lg-6">
-                    <h1 class="h3 fw-bold mb-3">Tên sản phẩm</h1>
-                    
+                    <h1 class="h3 fw-bold mb-3">{{ $product->name }}</h1>
+
                     {{-- Giá --}}
                     <div class="mb-3">
                         <span class="text-muted text-decoration-line-through me-2">
                             giá gốc
                         </span>
                         <span class="h2 text-danger fw-bolder">
-                            giá hiện tại
+                            {{$product->price}}₫
                         </span>
                         <span class="badge bg-danger ms-2">discount</span>
                     </div>
@@ -50,7 +63,7 @@
                             <i class="fas fa-cart-plus me-2"></i> Mua luôn
                         </button>
                         <button class="btn btn-outline-primary btn-lg flex-grow-1">
-                            <i class="fas fa-tools me-2"></i> Tư vấn 
+                            <i class="fas fa-tools me-2"></i> Tư vấn
                         </button>
                     </div>
 
@@ -78,7 +91,7 @@
 
     {{-- PHẦN THÔNG SỐ KỸ THUẬT & SẢN PHẨM TƯƠNG TỰ --}}
     <div class="row g-5 mt-4">
-        
+
         {{-- CỘT THÔNG SỐ (Bám sát ảnh) --}}
         <div class="col-lg-8">
             <div class="card shadow-sm border-0">
@@ -151,7 +164,7 @@
                     <h4 class="mb-0 fw-bold">Sản phẩm tương tự</h4>
                 </div>
                 <div class="card-body">
-                    
+
                     <div class="d-flex align-items-center mb-3">
                         <img src="/storage/product_images/default.jpg" alt="PC AMD GAMING Ryzen 7 5700X" class="border rounded me-3" style="width: 80px; height: 80px; object-fit: cover;">
                         <div>
@@ -161,7 +174,7 @@
                             <strong class="text-danger">12,390,000₫</strong>
                         </div>
                     </div>
-                    
+
                     <div class="d-flex align-items-center mb-3">
                         <img src="/storage/product_images/default.jpg" alt="PC TTG HOME OFFICE Core i3 12100" class="border rounded me-3" style="width: 80px; height: 80px; object-fit: cover;">
                         <div>

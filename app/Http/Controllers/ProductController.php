@@ -23,8 +23,8 @@ class ProductController extends Controller
     {
         // *** SỬA: Đơn giản hóa query Category ***
         $categories = Category::orderBy('name')->get(); // Không cần 'whereDoesntHave' nữa
-        $brands = Brand::orderBy('name')->get(); 
-        
+        $brands = Brand::orderBy('name')->get();
+
         // View này có lẽ không còn dùng nếu mày dùng Livewire Full-page component
         // Nhưng nếu dùng, nó vẫn chạy
         return view('seller.products.create_product', compact('categories', 'brands'));
@@ -52,7 +52,7 @@ class ProductController extends Controller
             $product = Product::create([
                 'seller_id'   => $request->input('seller_id'),
                 'category_id' => $request->input('category_id'),
-                'brand_id'    => $request->input('brand_id'), 
+                'brand_id'    => $request->input('brand_id'),
                 'name'        => $request->input('name'),
                 'price'       => $request->input('price'),
                 'stock'       => $request->input('stock'),
@@ -71,12 +71,12 @@ class ProductController extends Controller
                     ]);
                 }
             }
-            
+
 
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error("Store Product Error: " . $e->getMessage()); 
+            Log::error("Store Product Error: " . $e->getMessage());
             return redirect()->back()->withErrors('Có lỗi xảy ra, vui lòng thử lại.');
         }
 
@@ -87,7 +87,7 @@ class ProductController extends Controller
     public function index(Request $request) // (Seller Dashboard)
     {
         // Query cơ bản (Giữ nguyên)
-        $query = Product::with('images', 'category') 
+        $query = Product::with('images', 'category')
                         ->where('seller_id', auth()->id());
 
         // Các filter (Giữ nguyên)
@@ -106,11 +106,11 @@ class ProductController extends Controller
 
         // *** SỬA: Đơn giản hóa query Category ***
         $categories = Category::orderBy('name')->get(); // Không cần 'whereDoesntHave'
-        $brands = Brand::orderBy('name')->get(); 
+        $brands = Brand::orderBy('name')->get();
 
         $products = $query->orderBy('created_at', 'desc')
-                         ->paginate(99) 
-                         ->withQueryString(); 
+                         ->paginate(99)
+                         ->withQueryString();
 
         return view('seller.products.index', compact('products', 'categories', 'brands'));
     }
@@ -127,13 +127,13 @@ class ProductController extends Controller
     {
         // 1. Validation (Giữ nguyên)
         $request->validate([
-            'category_id' => 'required|exists:categories,id', 
+            'category_id' => 'required|exists:categories,id',
             'excel_file' => 'required|file|mimes:xlsx,xls,csv|max:5120',
             'images.*'   => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
         ]);
 
         $categoryId = $request->input('category_id');
-        $sellerId = Auth::id(); 
+        $sellerId = Auth::id();
         $filePath = $request->file('excel_file')->path();
 
         // *** THÊM MỚI: Lấy "Khuôn Mẫu" thuộc tính của danh mục này ***
@@ -156,12 +156,12 @@ class ProductController extends Controller
         try {
             (new FastExcel())
                 ->import($filePath, function ($row) use (
-                    $categoryId, $sellerId, $uploadedImages, &$importedCount, 
+                    $categoryId, $sellerId, $uploadedImages, &$importedCount,
                     $categoryAttributes, $attributeColumnNames
                 ) {
 
                     if (empty($row['name']) || empty($row['price'])) {
-                         return null; 
+                         return null;
                     }
 
                     // Xử lý Brand (Giữ nguyên)
@@ -181,7 +181,7 @@ class ProductController extends Controller
                         'stock'       => (int)($row['stock'] ?? 0),
                         'description' => $row['description'] ?? null,
                     ];
-                    
+
                     // Lọc mảng $row, chỉ lấy các cột có tên nằm trong "Khuôn Mẫu"
                     $attributesData = [];
                     foreach ($attributeColumnNames as $columnName) {
@@ -241,15 +241,15 @@ class ProductController extends Controller
     {
         // 1. Bắt đầu query
         // *** SỬA: Xóa 'attributeValues.attribute' vì không cần join EAV nữa ***
-        $query = Product::with(['images', 'seller', 'category', 'brand']) 
+        $query = Product::with(['images', 'seller', 'category', 'brand'])
             ->where('status', Product::STATUS_APPROVED);
 
         // 2. Lọc (Giữ nguyên)
          if ($request->filled('price_range')) {
             $range = $request->input('price_range');
-            $parts = explode('-', $range); 
+            $parts = explode('-', $range);
             $minPrice = $parts[0];
-            $maxPrice = $parts[1] ?? null; 
+            $maxPrice = $parts[1] ?? null;
 
             if ($minPrice > 0) {
                 $query->where('price', '>=', $minPrice);
@@ -269,7 +269,7 @@ class ProductController extends Controller
         if ($request->filled('category')) {
             $categoryId = $request->input('category');
             // Vì category là phẳng, không cần tìm con
-            $query->where('category_id', $categoryId); 
+            $query->where('category_id', $categoryId);
         }
 
         // 4. Lấy dữ liệu cho dropdown filter
@@ -278,18 +278,20 @@ class ProductController extends Controller
         $categories = Category::orderBy('name')->get(); // Không cần logic cây
 
         // 5. Thực thi query (Giữ nguyên)
-        $products = $query->latest() 
-                           ->paginate(12) 
-                           ->withQueryString(); 
+        $products = $query->latest()
+                           ->paginate(12)
+                           ->withQueryString();
 
         return view('pages.listproducts', compact('products', 'brands', 'categories'));
     }
 
     public function showProductDetail($id)
     {
-        // Chỉ đơn thuần trả về view và truyền $id.
-        // Toàn bộ dữ liệu tĩnh sẽ được xử lý trong file Blade.
-        return view('pages.product-detail', ['id' => $id]);
+        // Lấy sản phẩm kèm hình ảnh liên quan
+        $product = Product::with('images')->findOrFail($id);
+
+        // Trả về view và truyền biến $product
+        return view('pages.product-detail', compact('product'));
     }
 
 
@@ -308,7 +310,7 @@ class ProductController extends Controller
         // *** SỬA: Đơn giản hóa query ***
         $categories = Category::orderBy('name')->get();
         $brands = Brand::orderBy('name')->get();
-        
+
         // Load sản phẩm. Không cần 'with('attributeValues')'
         // vì $product->attributes đã là mảng (nhờ $casts)
         $product = Product::findOrFail($id);
@@ -316,12 +318,12 @@ class ProductController extends Controller
         // Load "Khuôn Mẫu" thuộc tính (Logic này vẫn đúng và cần thiết)
         $categoryAttributes = Attribute::whereHas('categories', function($q) use ($product) {
             $q->where('category_id', $product->category_id);
-        })->with('options')->get(); 
+        })->with('options')->get();
 
         return view('seller.products.edit_product', compact(
-            'product', 
-            'categories', 
-            'brands', 
+            'product',
+            'categories',
+            'brands',
             'categoryAttributes'
         ));
     }
@@ -331,7 +333,7 @@ class ProductController extends Controller
         // *** SỬA: Validation ***
         $request->validate([
             'category_id' => 'required|exists:categories,id',
-            'brand_id'    => 'nullable|exists:brands,id', 
+            'brand_id'    => 'nullable|exists:brands,id',
             'name'        => 'required|string|max:255',
             'price'       => 'required|numeric|min:0',
             'images.*'    => 'nullable|image|max:2048|mimes:jpeg,png,jpg,gif,svg', // Đổi 'image' thành 'images.*'
@@ -347,7 +349,7 @@ class ProductController extends Controller
             // *** SỬA: Gộp 'attributes' vào update() ***
             $product->update([
                 'category_id' => $request->category_id,
-                'brand_id'    => $request->brand_id, 
+                'brand_id'    => $request->brand_id,
                 'name'        => $request->name,
                 'price'       => $request->price,
                 'stock'       => $request->stock,
