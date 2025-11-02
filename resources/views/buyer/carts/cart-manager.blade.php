@@ -51,7 +51,7 @@
                                     $itemTotal = $item['price'] * ($quantities[$item['id']] ?? 0);
                                 @endphp
 
-                                <tr class="{{ $outOfStock ? 'table-danger' : '' }}">
+                                <tr wire:key="cart-item-{{$item['id']}}" class="{{ $outOfStock ? 'table-danger' : '' }}">
                                     <td class="text-center">
                                         <input type="checkbox" class="form-check-input" wire:model.live="selectedItems" value="{{ $item['id'] }}" />
                                     </td>

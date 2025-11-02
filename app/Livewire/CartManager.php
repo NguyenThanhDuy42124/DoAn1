@@ -24,9 +24,7 @@ class CartManager extends Component
 
     public function initializeSelections()
     {
-        $latestItemData = collect($this->cartItems)
-                            ->sortByDesc('updated_at') // <-- Tự sort theo updated_at
-                            ->first();
+        $latestItemData = collect($this->cartItems)->first();
 
         if ($latestItemData) {
             // Cần lấy 'stock_status' từ $this->cartItems (array)
@@ -50,6 +48,7 @@ class CartManager extends Component
         $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
         $items = CartItem::with('product.images')
                            ->where('cart_id', $cart->id)
+                           ->orderBy('created_at', 'desc')
                            ->get();
         // Convert to array và add stock_status để view dùng
         $this->cartItems = $items->map(function ($item) {
@@ -101,14 +100,34 @@ class CartManager extends Component
     public function removeItem($cartItemId)
     {
         $cartItem = CartItem::find($cartItemId);
+        $cartItem = CartItem::find($cartItemId);
         if ($cartItem && $cartItem->cart->user_id === Auth::id()) {
+            
+            // 1. Vẫn xóa khỏi Database
             $cartItem->delete();
-            $this->selectedItems = array_filter($this->selectedItems, function($id) use ($cartItemId) {
-                return $id != $cartItemId;
-            });
-            $this->selectedItems = array_values($this->selectedItems);
-            $this->loadCart();
+
+            // 2. Xóa khỏi mảng $cartItems (thay vì loadCart)
+            // Lọc ra tất cả item KHÔNG có id = $cartItemId
+            $this->cartItems = array_values(
+                array_filter($this->cartItems, function ($item) use ($cartItemId) {
+                    return $item['id'] != $cartItemId;
+                })
+            );
+
+            // 3. Xóa khỏi mảng $selectedItems (đề phòng item bị xóa đang được chọn)
+            $this->selectedItems = array_values(
+                array_filter($this->selectedItems, function ($id) use ($cartItemId) {
+                    return $id != $cartItemId;
+                })
+            );
+
+            // 4. BỎ $this->loadCart();
+            // $this->loadCart(); 
+
+            // 5. Vẫn dispatch event
             $this->dispatch('success', 'Item removed!');
+
+            // Livewire sẽ tự động render lại và tự gọi getTotalPriceProperty
         }
     }
 
