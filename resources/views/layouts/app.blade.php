@@ -19,7 +19,7 @@
     @include('layouts.navbar')
 
 
-    <main class="flex-fill mt-5 pt-4">
+    <main class="flex-fill mt-0 pt-4">
         @if (isset($slot))
         {{ $slot }}
         @else

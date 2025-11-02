@@ -2,7 +2,7 @@
 @section('title', 'Danh sách sản phẩm')
 
 @section('content')
-<div class="container my-4">
+<div class="container mb-5">
 
 <div class="filter-section card shadow-sm mb-4">
     <div class="card-body">
@@ -184,11 +184,33 @@
         </div>
     @endforelse
 </div>
+  <div class="mt-4 d-md-flex justify-content-between align-items-center">
     
-    <div class="mt-4 d-flex justify-content-center">
-        {{ $products->links() }}
+    {{-- 1. Phần hiển thị kết quả (bên trái) --}}
+    <div class="text-center text-md-start mb-2 mb-md-0">
+        @if ($products->total() > 0)
+            <p class="text-muted small mb-0">
+                Hiển thị <strong>{{ $products->firstItem() }}</strong> 
+                - <strong>{{ $products->lastItem() }}</strong> 
+                trong tổng số <strong>{{ $products->total() }}</strong> kết quả
+            </p>
+        @else
+            <p class="text-muted small mb-0">
+                Không tìm thấy kết quả nào.
+            </p>
+        @endif
     </div>
     
+    {{-- 2. Phần nút chuyển trang (bên phải) --}}
+    <div class="d-flex justify-content-center justify-content-md-end">
+         {{-- 
+          Thêm withQueryString() là RẤT QUAN TRỌNG 
+          để giữ lại bộ lọc (giá, thương hiệu...) khi chuyển trang.
+        --}}
+        {{ $products->withQueryString()->links('pagination::bootstrap-5') }}
+    </div>
+
+</div>
 </div> 
 
 @foreach($products as $product)

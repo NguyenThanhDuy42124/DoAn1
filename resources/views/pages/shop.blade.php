@@ -3,7 +3,7 @@
 
 
 @section('content')
-    <div class="container my-5">
+    <div class="container mb-5">
 
         <section class="shop-header-wrapper mb-4">
             <div class="shop-banner"></div>

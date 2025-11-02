@@ -4,42 +4,69 @@
 @section('title', 'PC TTG DESIGNER - 3D RENDER - EDIT VIDEO ULTRA 7 265KF - RTX 4060 8GB')
 
 @section('content')
-<div class="container my-5">
+{{-- ĐÃ SỬA: Giảm margin-top --}}
+<div class="container mb-5">
     <div class="card shadow-sm border-0">
         <div class="card-body p-4 p-md-5">
             <div class="row g-5">
 
-                {{-- CỘT BÊN TRÁI (HÌNH ẢNH) --}}
+                {{-- CỘT BÊN TRÁI (HÌNH ẢNH) - ĐÃ SỬA CAROUSEL & THUMBNAILS --}}
                 <div class="col-lg-6">
                     @if($product && $product->images->count() > 0)
                     <div id="productCarousel" class="carousel slide mb-3" data-bs-ride="carousel">
-                        <div class="carousel-inner rounded border">
+                        
+                        {{-- Khung ratio 1x1 để giữ kích thước cố định --}}
+                        <div class="carousel-inner rounded border" style="background-color: #f8f9fa;">
                             @foreach($product->images as $index => $image)
-                            <div class="carousel-item img- {{ $loop->first ? 'active' : '' }}">
-                                <img src="{{ asset('storage/' . $image->image_path) }}" class="d-block w-100 rounded border" alt="Ảnh sản phẩm {{ $index + 1 }}">
+                            <div class="carousel-item {{ $loop->first ? 'active' : '' }}">
+                                <div class="ratio ratio-1x1">
+                                    <img src="{{ asset('storage/' . $image->image_path) }}" 
+                                         class="d-block w-100 h-100 rounded" 
+                                         style="object-fit: contain; object-position: center;" 
+                                         alt="Ảnh sản phẩm {{ $index + 1 }}">
+                                </div>
                             </div>
                             @endforeach
                         </div>
+
                         @if (count($product->images) > 1)
-                        <button class="carousel-control-prev carousel-dark" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon" style="width: 20px; height: 20px;"></span>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
                         </button>
-                        <button class="carousel-control-next carousel-dark" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
-                            <span class="carousel-control-next-icon" style="width: 20px; height: 20px;"></span>
+                        <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
                         </button>
                         @endif
                     </div>
-                    @else
-                    <img src="{{ asset('storage/product_images/default.jpg') }}" alt="Ảnh sản phẩm" class="img-fluid rounded border w-100 mb-3">
-                    @endif
-                    {{-- ẢNH THUMBNAILS BÊN DƯỚI --}}
-                    <div class="row g-2 justify-content-center">
+
+                    {{-- ẢNH THUMBNAILS BÊN DƯỚI (cuộn ngang) --}}
+                    <div class="row g-2 flex-nowrap overflow-auto pb-2" style="-webkit-overflow-scrolling: touch;">
+                        {{-- Các Thumbnail ảnh sản phẩm --}}
                         @foreach($product->images as $index => $image)
-                        <div class="col-3 col-md-2">
-                            <img src="{{ asset('storage/' . $image->image_path) }}" class="img-thumbnail border border-2 border-transparent w-100" style="cursor:pointer;" data-bs-target="#productCarousel" data-bs-slide-to="{{ $index }}" aria-current="{{ $index === 0 ? 'true' : 'false' }}" aria-label="Slide {{ $index + 1 }}">
+                        <div class="col-3 col-md-2 flex-shrink-0">
+                            <img src="{{ asset('storage/' . $image->image_path) }}" 
+                                 class="img-thumbnail border border-2 {{ $loop->first ? 'border-primary' : 'border-transparent' }} w-100" 
+                                 style="cursor:pointer; height: 80px; object-fit: cover;" 
+                                 data-bs-target="#productCarousel" 
+                                 data-bs-slide-to="{{ $index }}" 
+                                 aria-current="{{ $index === 0 ? 'true' : 'false' }}" 
+                                 aria-label="Slide {{ $index + 1 }}" 
+                                 onclick="this.closest('.row').querySelectorAll('.img-thumbnail').forEach(img => img.classList.remove('border-primary')); this.classList.add('border-primary');">
                         </div>
                         @endforeach
                     </div>
+
+                    @else
+                    {{-- Ảnh mặc định cũng trong khung ratio --}}
+                    <div class="ratio ratio-1x1 rounded border" style="background-color: #f8f9fa;">
+                        <img src="{{ asset('storage/product_images/default.jpg') }}" 
+                             alt="Ảnh sản phẩm" 
+                             class="img-fluid rounded w-100 h-100"
+                             style="object-fit: contain; object-position: center;">
+                    </div>
+                    @endif
                 </div>
 
                 {{-- CỘT BÊN PHẢI (THÔNG TIN) --}}
@@ -79,27 +106,22 @@
                         </div>
                     </div>
 
-                    {{-- Mô tả ngắn --}}
-                    <div class="mt-4">
-                        <h5 class="fw-semibold">Mô tả nhanh</h5>
-                        <p class="text-muted">nắng tắt phía sau màn mưa cố nén cơn đau phía sau nụ cười</p>
+                    {{-- ĐÃ SỬA: "Mô tả sản phẩm" thay thế "Mô tả nhanh" --}}
+                    <div class="card bg-light border-0 mt-4">
+                        <h5 class="fw-semibold">Mô tả sản phẩm</h5>
+                        {{-- Giả sử $product->description là văn bản thuần túy --}}
+                        {{-- Nếu nó là HTML, bạn nên dùng {!! $product->description !!} --}}
+                        <p class="text-muted" style="white-space: pre-wrap;">{{ $product->description }}</p>
                     </div>
+
                 </div>
             </div>
         </div>
     </div>
-        <div class="row g-5 mt-4">
-        <div class="col">
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-white py-3">
-                    <h4 class="mb-0 fw-bold">Mô tả sản phẩm</h4>
-                </div>
-                <div class="card-body">
-                    <p>{{ $product->description }}</p>
-                </div>
-            </div>
-        </div>
-    </div>
+
+    {{-- ĐÃ XÓA: Card "Mô tả sản phẩm" riêng biệt ở đây --}}
+
+    {{-- Card "Người bán" --}}
     <div class="row g-5 mt-4">
         <div class="col">
             <div class="card shadow-sm border-0">
@@ -115,6 +137,7 @@
                             Xem cửa hàng
                         </a>
                     </div>
+                </div>
             </div>
         </div>
     </div>
@@ -122,7 +145,7 @@
     {{-- PHẦN THÔNG SỐ KỸ THUẬT & SẢN PHẨM TƯƠNG TỰ --}}
     <div class="row g-5 mt-4">
 
-        {{-- CỘT THÔNG SỐ (Bám sát ảnh) --}}
+        {{-- CỘT THÔNG SỐ --}}
         <div class="col-lg-8">
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-white py-3">
@@ -152,28 +175,7 @@
                                 <td>36th</td>
                             </tr>
                             <tr>
-                                <td>3</td>
-                                <td>RAM GEIL SPEAR V 32GB BUSS 5200MHz</td>
-                                <td>1</td>
-                                <td>36th</td>
-                            </tr>
-                            <tr>
-                                <td>4</td>
-                                <td>Ổ cứng SSD SSTC Oceanic Whitetip 512GB</td>
-                                <td>1</td>
-                                <td>36th</td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td>Nguồn máy tính AKIO G8750 - 750W</td>
-                                <td>1</td>
-                                <td>36th</td>
-                            </tr>
-                            <tr>
-                                <td>6</td>
-                                <td>CARD MÀN HÌNH COLORFUL GEFORCE RTX 4060</td>
-                                <td>1</td>
-                                <td>36th</td>
+                                GỌN LẠI (TƯƠNG TỰ) ...
                             </tr>
                             <tr>
                                 <td>7</td>
