@@ -15,7 +15,7 @@
                     <div id="productCarousel" class="carousel slide mb-3" data-bs-ride="carousel">
                         <div class="carousel-inner rounded border">
                             @foreach($product->images as $index => $image)
-                            <div class="carousel-item {{ $loop->first ? 'active' : '' }}">
+                            <div class="carousel-item img- {{ $loop->first ? 'active' : '' }}">
                                 <img src="{{ asset('storage/' . $image->image_path) }}" class="d-block w-100 rounded border" alt="Ảnh sản phẩm {{ $index + 1 }}">
                             </div>
                             @endforeach
