@@ -20,7 +20,10 @@ class SellerController extends Controller
    public function index()
 {
     // Lấy top 4 cửa hàng uy tín (seller)
-    $shops = User::where('role', 'seller')->take(4)->get();
+    $shops = User::where('role', 'seller')
+                     ->withAvg('sellerReviews', 'rating') // <-- THAY ĐỔI Ở ĐÂY
+                     ->take(4)
+                     ->get();
 
     // Lấy sản phẩm (đã lọc status)
     // Tải kèm 'seller' và 'images' để dùng ở view
