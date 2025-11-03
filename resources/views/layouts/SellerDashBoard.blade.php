@@ -7,19 +7,16 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Dashboard Seller - TechStore</title>
 
-    <!-- Bootstrap & Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
-    <!-- Vite -->
     @vite(['resources/css/dashboard_seller.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
 
 <body class="seller-dashboard">
     <div class="wrapper">
-        <!-- Sidebar -->
         <nav id="sidebar">
 
 
@@ -43,16 +40,13 @@
             </ul>
         </nav>
 
-        <!-- Content -->
         <div id="content">
-            <!-- Header -->
             <nav class="navbar navbar-expand-lg px-3">
                 <button type="button" id="sidebarCollapse">
                     <i class="fas fa-bars"></i>
                 </button>
 
                 <div class="ml-auto d-flex align-items-center">
-                    <!-- Notification -->
                     <div class="dropdown mr-3">
                         <button class="btn btn-light dropdown-toggle" type="button" id="notificationDropdown"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -90,11 +84,19 @@
                                     <div class="dropdown-item {{ $notification->is_read ? '' : 'bg-light' }}">
                                         <div class="d-flex justify-content-between align-items-start">
                                             <div class="flex-grow-1">
-                                                <a href="{{ route('notifications.markAsRead', $notification->id) }}"
+                                                
+                                                {{-- ================================================== --}}
+                                                {{-- SỬA LỖI Ở ĐÂY: đổi 'show' thành 'index' --}}
+                                                {{-- ================================================== --}}
+                                                <a href="{{ route('notifications.index') }}"
                                                     class="text-decoration-none text-dark {{ $notification->is_read ? '' : 'font-weight-bold' }}">
                                                     <small
                                                         class="d-block">{{ Str::limit($notification->message, 60) }}</small>
                                                 </a>
+                                                {{-- ================================================== --}}
+                                                {{-- KẾT THÚC SỬA LỖI --}}
+                                                {{-- ================================================== --}}
+
                                                 <small
                                                     class="text-muted">{{ $notification->created_at->diffForHumans() }}</small>
                                             </div>
@@ -127,7 +129,6 @@
                         </div>
                     </div>
 
-                    <!-- User Dropdown -->
                     <div class="dropdown">
                         <button class="btn btn-light dropdown-toggle d-flex align-items-center" type="button"
                             id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -155,7 +156,6 @@
                 </div>
             </nav>
 
-            <!-- Main Content -->
             <div class="container-fluid">
                 @if (isset($slot))
                     {{ $slot }}
@@ -166,6 +166,7 @@
         </div>
     </div>
       
+    {{-- Scripts (Giữ nguyên) --}}
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
     </script>
@@ -174,7 +175,7 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
-    </script>
+    </Gscript>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
       <script>
       // Sidebar toggle
