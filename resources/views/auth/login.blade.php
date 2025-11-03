@@ -53,9 +53,6 @@
                     </div>
 
                     <div class="social-login">
-                        <a href="#" class="social-btn fb-btn">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
                         <a href="{{ route('google.auth.redirect') }}" class="social-btn google-btn">
                             <i class="fab fa-google"></i>
                         </a>
