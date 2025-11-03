@@ -85,7 +85,7 @@
 
                 <div class="form-group">
                     <label for="description">Mô tả</label>
-                    <textarea name="description" id="description" class="form-control">{{ old('description', $product->description) }}</textarea>
+                    <textarea name="description" id="description" class="form-control textarea">{{ old('description', $product->description) }}</textarea>
                 </div>
 
                 <div class="form-group">
