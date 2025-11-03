@@ -306,10 +306,14 @@ class ProductController extends Controller
 
         // 4. Tải sản phẩm liên quan (cùng danh mục)
         $relatedProducts = Product::where('category_id', $product->category_id)
-                                ->where('id', '!=', $product->id)
-                                ->latest()
-                                ->take(5) // Lấy 5 sản phẩm
-                                ->get();
+                           ->where('id', '!=', $product->id)
+                           // Bổ sung điều kiện giống như hàm listProducts
+                           ->where('status', Product::STATUS_APPROVED) 
+                           // Bổ sung eager load 'images' để tối ưu view (tránh N+1)
+                           ->with('images') 
+                           ->latest()
+                           ->take(5) // Lấy 5 sản phẩm
+                           ->get();
 
         // 5. Trả về view và truyền TẤT CẢ các biến
         return view('pages.product-detail', compact(
