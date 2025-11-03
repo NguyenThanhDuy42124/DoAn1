@@ -194,7 +194,12 @@
                     @if ($productToReview)
                         {{-- 1. Thông tin sản phẩm (Giữ nguyên) --}}
                         <div class="d-flex align-items-center mb-3">
-                            <img src="{{ $productToReview->thumbnail_url ?? 'https://via.placeholder.com/100' }}" alt="{{ $productToReview->name }}" class="img-thumbnail" style="width: 80px; height: 80px; object-fit: contain;">
+                            <img src="{{ !empty($item['product']['images']) ?
+                                                      asset('storage/' . $item['product']['images'][0]['image_path']) :
+                                                      asset('storage/product_images/default.jpg') }}" 
+                                             alt="{{ $item['product']['name'] }}" 
+                                             class="img-fluid rounded" 
+                                             style="width: 60px; height: 60px; object-fit: cover;">
                             <h6 class="ms-3">{{ $productToReview->name }}</h6>
                         </div>
                         <hr>

@@ -205,9 +205,16 @@
                                         <div class="d-flex mb-4">
                                             {{-- Avatar người mua --}}
                                             <div class="flex-shrink-0 me-3">
-                                                <img src="https://ui-avatars.com/api/?name={{ urlencode($review->buyer->name ?? 'User') }}&background=random&color=fff&size=50"
-                                                    class="rounded-circle" alt="{{ $review->buyer->name ?? 'User' }}">
-                                            </div>
+    @if ($review->buyer && $review->buyer->img)
+        {{-- Nếu người mua có ảnh, hiển thị ảnh của họ --}}
+        <img src="{{ asset('storage/' . $review->buyer->img) }}" alt="{{ $review->buyer->name }}"
+             class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
+    @else
+        {{-- Nếu không có, hiển thị ảnh default --}}
+        <img src="{{ asset('storage/profile_images/default.jpg') }}" alt="{{ $review->buyer->name ?? 'User' }}"
+             class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
+    @endif
+                                           </div>
                                             
                                             {{-- Nội dung đánh giá --}}
                                             <div class="flex-grow-1">
@@ -254,7 +261,7 @@
 
                                 {{-- Phân trang cho Reviews --}}
                                 <div class="mt-4 d-flex justify-content-center">
-                                    {{ $reviews->links() }}
+                                    {{ $reviews->links('pagination::bootstrap-5') }}
                                 </div>
                             </div>
                         </div>
@@ -295,24 +302,7 @@
                             @endforelse
 
                             {{-- Dữ liệu hard-code cũ của bạn (có thể xóa đi) --}}
-                            <div classD-flex align-items-center mb-3">
-                                <img src="/storage/product_images/default.jpg" alt="PC TTG GAMING INTEL Core i5 12400F" class="border rounded me-3" style="width: 80px; height: 80px; object-fit: contain;">
-                                <div>
-                                    <a href="/products/101" class="text-decoration-none text-dark fw-semibold d-block">
-                                        PC TTG GAMING INTEL Core i5 12400F
-                                    </a>
-                                    <strong class="text-danger">12,390,000₫</strong>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center mb-3">
-                                <img src="/storage/product_images/default.jpg" alt="PC TTG HOME OFFICE Core i3 12100" class="border rounded me-3" style="width: 80px; height: 80px; object-fit: contain;">
-                                <div>
-                                    <a href="/products/102" class="text-decoration-none text-dark fw-semibold d-block">
-                                        PC TTG HOME OFFICE Core i3 12100
-                                    </a>
-                                    <strong class="text-danger">6,880,000₫</strong>
-                                </div>
-                            </div>
+                            
                             {{-- ... --}}
 
                         </div>
