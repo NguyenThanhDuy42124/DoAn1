@@ -285,14 +285,39 @@ class ProductController extends Controller
         return view('pages.listproducts', compact('products', 'brands', 'categories'));
     }
 
-    public function showProductDetail($id)
+   public function showProductDetail($id)
     {
-        // Lấy sản phẩm kèm hình ảnh liên quan
-        $product = Product::with('images')->findOrFail($id);
+        // 1. Tải sản phẩm chính VÀ đếm/tính trung bình reviews
+        // (Tôi thêm 'brand' và 'category' để hiển thị đầy đủ thông tin ở view)
+        $product = Product::with(['images', 'brand', 'category']) 
+                        ->withCount('reviews') // <-- Tự động tạo biến 'reviews_count'
+                        ->withAvg('reviews', 'rating') // <-- Tự động tạo biến 'reviews_avg_rating'
+                        ->findOrFail($id);
+
+        // 2. Lấy thông tin seller (Giữ nguyên)
         $seller = $product->seller;
 
-        // Trả về view và truyền biến $product
-        return view('pages.product-detail', compact('product', 'seller'));
+        // 3. Tải các đánh giá (có phân trang)
+        // Sắp xếp mới nhất, và tải kèm thông tin người mua (buyer)
+        $reviews = $product->reviews()
+                          ->with('buyer') 
+                          ->latest()      
+                          ->paginate(5, ['*'], 'reviews_page'); // Phân trang 5 review/trang
+
+        // 4. Tải sản phẩm liên quan (cùng danh mục)
+        $relatedProducts = Product::where('category_id', $product->category_id)
+                                ->where('id', '!=', $product->id)
+                                ->latest()
+                                ->take(5) // Lấy 5 sản phẩm
+                                ->get();
+
+        // 5. Trả về view và truyền TẤT CẢ các biến
+        return view('pages.product-detail', compact(
+            'product', 
+            'seller', 
+            'reviews', // <-- BIẾN MỚI
+            'relatedProducts' // <-- BIẾN MỚI
+        ));
     }
 
 
