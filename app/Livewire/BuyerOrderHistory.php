@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Order;
 use App\Models\Product; // <-- BỔ SUNG
 use App\Models\Review;  // <-- BỔ SUNG
+use App\Models\Notification; // <-- ĐÃ THÊM
+
 class BuyerOrderHistory extends Component
 {
     use WithPagination;
@@ -149,13 +151,41 @@ class BuyerOrderHistory extends Component
         // ==========================================================
         // CẬP NHẬT LOGIC LƯU
         // ==========================================================
-        Review::create([
+        $newReview = Review::create([
             'buyer_id' => Auth::id(),
             'product_id' => $this->productToReview->id,
             'order_id' => $this->current_order_id, // <-- THÊM DÒNG NÀY
             'rating' => $this->rating,
             'comment' => $this->comment,
         ]);
+        // ==========================================================
+
+        // ==========================================================
+        // BỔ SUNG: TẠO THÔNG BÁO CHO SELLER
+        // ==========================================================
+        
+        // 1. Lấy thông tin cần thiết
+        $buyerName = htmlspecialchars_decode(Auth::user()->name, ENT_QUOTES);
+        $productName = htmlspecialchars_decode($this->productToReview->name, ENT_QUOTES);
+        $sellerId = $this->productToReview->seller_id; // <-- ID của người nhận (Seller)
+        $reviewContent = $this->comment; 
+
+        // 2. Định dạng message
+        $separator = "||---REVIEW---||"; // Sử dụng dấu tách mới
+        $summary = "Người mua {$buyerName} đã đánh giá {$newReview->rating} sao cho sản phẩm {$productName} của bạn.";
+        
+        // Ghép tóm tắt và nội dung review
+        $fullMessage = $summary . $separator . $reviewContent;
+
+        // 3. Tạo Notification
+        Notification::create([
+            'user_id' => $sellerId, // <-- Gửi cho Seller
+            'type' => 'new_review', // <-- Loại thông báo mới
+            'message' => $fullMessage,
+            'is_read' => false 
+        ]);
+        // ==========================================================
+        // KẾT THÚC BỔ SUNG
         // ==========================================================
 
         $this->closeReviewModal();
