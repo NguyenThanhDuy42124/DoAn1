@@ -37,22 +37,34 @@ class UserController extends Controller
         return redirect('/');
     }
     // hàm này để đăng nhập
-    public function login(Request $request)
-    {
-        $incomingData = $request->validate([
-            'email' => ['required', 'email', 'max:255'],
-            'password' => ['required'],
-        ]);
+public function login(Request $request)
+{
+    $incomingData = $request->validate([
+        'email' => ['required', 'email', 'max:255'],
+        'password' => ['required'],
+    ]);
 
-        if (Auth::attempt(['email' => $incomingData['email'], 'password' => $incomingData['password']])) {
-            $request->session()->regenerate();
-            return redirect()->intended('/');
+    if (Auth::attempt([
+        'email' => $incomingData['email'],
+        'password' => $incomingData['password'],
+    ])) {
+        $user = Auth::user();
+        if ($user->status === 'inactive') {
+            Auth::logout();
+            return back()->withErrors([
+                'login' => 'Tài khoản của bạn đã bị vô hiệu hóa. Vui lòng liên hệ quản trị viên để biết thêm chi tiết.',
+            ])->onlyInput('email');
         }
 
-        return back()->withErrors([
-            'login' => 'email hoặc mật khẩu không đúng.',
-        ])->onlyInput('email');
+        $request->session()->regenerate();
+        return redirect()->intended('/');
     }
+
+    return back()->withErrors([
+        'login' => 'Email hoặc mật khẩu không chính xác.',
+    ])->onlyInput('email');
+}
+
     // hàm này để load trang dashboard của seller và admin
     public function index()
     {
@@ -77,8 +89,4 @@ class UserController extends Controller
 
         abort(403, 'Không có quyền');
     }
-
-
-
-
 }

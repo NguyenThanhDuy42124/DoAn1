@@ -49,6 +49,9 @@
                             <button wire:click="openRejectModal({{ $product->id }})" class="bg-red-500 btn-danger px-2 py-1 rounded">
                                 Từ chối
                             </button>
+                            <a href="{{ route('products.detail', ['id' => $product->id]) }}" class="btn btn-outline-primary btn-sm me-2">
+                                <i class="fas fa-eye"></i>
+                            </a>
                         </div>
                     </td>
                 </tr>
@@ -90,3 +93,4 @@
             </div>
         </div>
     </div>
+</div>

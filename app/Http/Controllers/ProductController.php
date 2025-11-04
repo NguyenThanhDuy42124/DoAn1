@@ -88,7 +88,7 @@ class ProductController extends Controller
     {
         // Query cơ bản (Giữ nguyên)
         $query = Product::with('images', 'category')
-                        ->where('seller_id', auth()->id());
+            ->where('seller_id', auth()->id());
 
         // Các filter (Giữ nguyên)
         if ($request->filled('search')) {
@@ -109,8 +109,8 @@ class ProductController extends Controller
         $brands = Brand::orderBy('name')->get();
 
         $products = $query->orderBy('created_at', 'desc')
-                         ->paginate(99)
-                         ->withQueryString();
+            ->paginate(99)
+            ->withQueryString();
 
         return view('seller.products.index', compact('products', 'categories', 'brands'));
     }
@@ -138,7 +138,7 @@ class ProductController extends Controller
 
         // *** THÊM MỚI: Lấy "Khuôn Mẫu" thuộc tính của danh mục này ***
         // (Logic này vẫn đúng)
-        $categoryAttributes = Attribute::whereHas('categories', function($q) use ($categoryId) {
+        $categoryAttributes = Attribute::whereHas('categories', function ($q) use ($categoryId) {
             $q->where('category_id', $categoryId);
         })->get();
 
@@ -146,7 +146,7 @@ class ProductController extends Controller
         $attributeColumnNames = $categoryAttributes->pluck('name')->all();
 
         // Xử lý ảnh (Giữ nguyên)
-        $uploadedImages = collect($request->file('images'))->keyBy(function($file) {
+        $uploadedImages = collect($request->file('images'))->keyBy(function ($file) {
             return $file->getClientOriginalName();
         });
 
@@ -156,12 +156,16 @@ class ProductController extends Controller
         try {
             (new FastExcel())
                 ->import($filePath, function ($row) use (
-                    $categoryId, $sellerId, $uploadedImages, &$importedCount,
-                    $categoryAttributes, $attributeColumnNames
+                    $categoryId,
+                    $sellerId,
+                    $uploadedImages,
+                    &$importedCount,
+                    $categoryAttributes,
+                    $attributeColumnNames
                 ) {
 
                     if (empty($row['name']) || empty($row['price'])) {
-                         return null;
+                        return null;
                     }
 
                     // Xử lý Brand (Giữ nguyên)
@@ -199,9 +203,9 @@ class ProductController extends Controller
                     // foreach ($categoryAttributes as $attribute) { ... }
 
                     // Xử lý hình ảnh (Giữ nguyên)
-                   if ($uploadedImages->isNotEmpty()) {
+                    if ($uploadedImages->isNotEmpty()) {
                         // Tìm tất cả các cột ảnh trong dòng hiện tại
-                        $imageColumns = array_filter($row, function($key) {
+                        $imageColumns = array_filter($row, function ($key) {
                             return str_contains(strtolower($key), 'image_');
                         }, ARRAY_FILTER_USE_KEY);
 
@@ -229,7 +233,6 @@ class ProductController extends Controller
             DB::commit();
 
             return redirect()->back()->with('success', 'Đã nhập thành công ' . $importedCount . ' sản phẩm.');
-
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error("Import Error: " . $e->getMessage() . " on line " . $e->getLine());
@@ -245,7 +248,7 @@ class ProductController extends Controller
             ->where('status', Product::STATUS_APPROVED);
 
         // 2. Lọc (Giữ nguyên)
-         if ($request->filled('price_range')) {
+        if ($request->filled('price_range')) {
             $range = $request->input('price_range');
             $parts = explode('-', $range);
             $minPrice = $parts[0];
@@ -279,20 +282,44 @@ class ProductController extends Controller
 
         // 5. Thực thi query (Giữ nguyên)
         $products = $query->latest()
-                           ->paginate(12)
-                           ->withQueryString();
+            ->paginate(12)
+            ->withQueryString();
 
         return view('pages.listproducts', compact('products', 'brands', 'categories'));
     }
 
-   public function showProductDetail($id)
+    public function showProductDetail($id)
     {
         // 1. Tải sản phẩm chính VÀ đếm/tính trung bình reviews
         // (Tôi thêm 'brand' và 'category' để hiển thị đầy đủ thông tin ở view)
-        $product = Product::with(['images', 'brand', 'category']) 
-                        ->withCount('reviews') // <-- Tự động tạo biến 'reviews_count'
-                        ->withAvg('reviews', 'rating') // <-- Tự động tạo biến 'reviews_avg_rating'
-                        ->findOrFail($id);
+
+        $product = Product::with(['images', 'brand', 'category'])
+            ->withCount('reviews') // <-- Tự động tạo biến 'reviews_count'
+            ->withAvg('reviews', 'rating') // <-- Tự động tạo biến 'reviews_avg_rating'
+            ->findOrFail($id);
+        // Các trạng thái cần bảo mật
+        $protectedStatuses = [
+            Product::STATUS_PENDING ?? 'pending',
+            Product::STATUS_REJECTED ?? 'rejected',
+            Product::STATUS_HIDDEN ?? 'hidden',
+        ];
+
+        // Nếu sản phẩm ở trạng thái "bảo mật" (pending/rejected/hidden)
+        if (in_array($product->status, $protectedStatuses, true)) {
+            $user = auth()->user();
+
+            // Nếu chưa đăng nhập -> chặn (hoặc chuyển sang 404 để che thông tin)
+            if (!$user) {
+                abort(403, 'Bạn cần có quyền hạn để xem sản phẩm này.');
+                // hoặc: abort(404); // ít lộ thông tin hơn
+            }
+
+            // Chỉ admin hoặc chính seller mới được phép
+            if ($user->role !== 'admin' && $user->id !== $product->seller_id) {
+                abort(403, 'Bạn không có quyền truy cập sản phẩm này.');
+                // hoặc: abort(404);
+            }
+        }
 
         // 2. Lấy thông tin seller (Giữ nguyên)
         $seller = $product->seller;
@@ -300,25 +327,25 @@ class ProductController extends Controller
         // 3. Tải các đánh giá (có phân trang)
         // Sắp xếp mới nhất, và tải kèm thông tin người mua (buyer)
         $reviews = $product->reviews()
-                          ->with('buyer') 
-                          ->latest()      
-                          ->paginate(5, ['*'], 'reviews_page'); // Phân trang 5 review/trang
+            ->with('buyer')
+            ->latest()
+            ->paginate(5, ['*'], 'reviews_page'); // Phân trang 5 review/trang
 
         // 4. Tải sản phẩm liên quan (cùng danh mục)
         $relatedProducts = Product::where('category_id', $product->category_id)
-                           ->where('id', '!=', $product->id)
-                           // Bổ sung điều kiện giống như hàm listProducts
-                           ->where('status', Product::STATUS_APPROVED) 
-                           // Bổ sung eager load 'images' để tối ưu view (tránh N+1)
-                           ->with('images') 
-                           ->latest()
-                           ->take(5) // Lấy 5 sản phẩm
-                           ->get();
+            ->where('id', '!=', $product->id)
+            // Bổ sung điều kiện giống như hàm listProducts
+            ->where('status', Product::STATUS_APPROVED)
+            // Bổ sung eager load 'images' để tối ưu view (tránh N+1)
+            ->with('images')
+            ->latest()
+            ->take(5) // Lấy 5 sản phẩm
+            ->get();
 
         // 5. Trả về view và truyền TẤT CẢ các biến
         return view('pages.product-detail', compact(
-            'product', 
-            'seller', 
+            'product',
+            'seller',
             'reviews', // <-- BIẾN MỚI
             'relatedProducts' // <-- BIẾN MỚI
         ));
@@ -346,7 +373,7 @@ class ProductController extends Controller
         $product = Product::findOrFail($id);
 
         // Load "Khuôn Mẫu" thuộc tính (Logic này vẫn đúng và cần thiết)
-        $categoryAttributes = Attribute::whereHas('categories', function($q) use ($product) {
+        $categoryAttributes = Attribute::whereHas('categories', function ($q) use ($product) {
             $q->where('category_id', $product->category_id);
         })->with('options')->get();
 
@@ -426,6 +453,3 @@ class ProductController extends Controller
         }
     }
 }
-
-
-

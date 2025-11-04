@@ -9,10 +9,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\DB; 
+use Illuminate\Support\Facades\DB;
+
 class AdminController extends Controller
 {
-        // hàm này để load trang dashboard của admin, có thêm phần tìm kiếm user
+    // hàm này để load trang dashboard của admin, có thêm phần tìm kiếm user
     public function dashboard(Request $request)
     {
         $role = session('current_role', Auth::user()->role);
@@ -29,48 +30,53 @@ class AdminController extends Controller
 
         $users = $query->paginate(10)->appends($request->query());
         // --- THÊM LOGIC ĐẾM ĐƠN HÀNG ---
-    $totalOrders = Order::count(); //
-    $totalProducts = Product::count();
-    // (Giả định role của người mua là 'buyer' và người bán là 'seller')
-    $sellerCount = User::where('role', 'seller')->count();
-    $buyerCount = User::where('role', 'buyer')->count();
-    
-    // Chuẩn bị dữ liệu cho Chart.js
-    $userChartData = [
-        'labels' => ['Người bán (Seller)', 'Người mua (Buyer)'],
-        'values' => [$sellerCount, $buyerCount]
-    ];
-    $productStatusCounts = Product::select('status', DB::raw('count(*) as count'))
-                                ->groupBy('status')
-                                ->pluck('count', 'status'); // -> ['Pending' => 50, 'Approved' => 200, ...]
+        $totalOrders = Order::count(); //
+        $totalProducts = Product::count();
+        // (Giả định role của người mua là 'buyer' và người bán là 'seller')
+        $sellerCount = User::where('role', 'seller')->count();
+        $buyerCount = User::where('role', 'buyer')->count();
 
-    // Định nghĩa các trạng thái bạn muốn hiển thị (dựa trên Model Product)
-    $statuses = [
-        Product::STATUS_PENDING => 'Đang chờ duyệt',
-        Product::STATUS_APPROVED => 'Đã duyệt',
-        Product::STATUS_REJECTED => 'Bị từ chối',
-        Product::STATUS_HIDDEN => 'Bị ẩn'
-    ];
+        // Chuẩn bị dữ liệu cho Chart.js
+        $userChartData = [
+            'labels' => ['Người bán (Seller)', 'Người mua (Buyer)'],
+            'values' => [$sellerCount, $buyerCount]
+        ];
+        $productStatusCounts = Product::select('status', DB::raw('count(*) as count'))
+            ->groupBy('status')
+            ->pluck('count', 'status'); // -> ['Pending' => 50, 'Approved' => 200, ...]
 
-    $productStatusLabels = [];
-    $productStatusValues = [];
+        // Định nghĩa các trạng thái bạn muốn hiển thị (dựa trên Model Product)
+        $statuses = [
+            Product::STATUS_PENDING => 'Đang chờ duyệt',
+            Product::STATUS_APPROVED => 'Đã duyệt',
+            Product::STATUS_REJECTED => 'Bị từ chối',
+            Product::STATUS_HIDDEN => 'Bị ẩn'
+        ];
 
-    foreach ($statuses as $statusCode => $statusName) {
-        $productStatusLabels[] = $statusName;
-        $productStatusValues[] = $productStatusCounts->get($statusCode, 0); // Lấy count, mặc định là 0
-    }
-    
-    $productStatusData = [
-        'labels' => $productStatusLabels,
-        'values' => $productStatusValues
-    ];
+        $productStatusLabels = [];
+        $productStatusValues = [];
+
+        foreach ($statuses as $statusCode => $statusName) {
+            $productStatusLabels[] = $statusName;
+            $productStatusValues[] = $productStatusCounts->get($statusCode, 0); // Lấy count, mặc định là 0
+        }
+
+        $productStatusData = [
+            'labels' => $productStatusLabels,
+            'values' => $productStatusValues
+        ];
         // Trả view dashboard, luôn truyền $users
-        return view('admin.dashboard', compact('users', 'role', 'totalOrders',
-        'totalProducts', 
-        'userChartData',
-        'productStatusData'));
+        return view('admin.dashboard', compact(
+            'users',
+            'role',
+            'totalOrders',
+            'totalProducts',
+            'userChartData',
+            'productStatusData'
+        ));
     }
-    public function userDashboard(Request $request){
+    public function userDashboard(Request $request)
+    {
         $role = session('current_role', Auth::user()->role);
 
         // Lấy danh sách user nếu là admin
@@ -108,19 +114,28 @@ class AdminController extends Controller
     public function update(Request $request, $id)
     {
         $user = User::findOrFail($id);
-    if ($request->has('delete_image') && $user->img) {
-        Storage::delete('public/' . $user->img);
-        $user->img = null;
-    }
+        if ($request->has('delete_image') && $user->img) {
+            Storage::delete('public/' . $user->img);
+            $user->img = null;
+        }
 
 
-    $data = $request->only(['role','status','img']);
+        $data = $request->only(['role', 'status', 'img']);
 
+        if($request->status=='inactive' && $user->role == 'seller'){
+            // lưu trạng thái hiện tại vào previous_status trước khi cập nhật
+            $product = Product::where('seller_id', $user->id)->first();
+            if($product){
+                $product->previous_status = $product->status;
+                $product->status = Product::STATUS_HIDDEN;
+                $product->save();
+            }
+        }
+        elseif($request)
 
+        $user->update($data);
 
-    $user->update($data);
-
-    return redirect()->route('admin.users.manager')->with('message', 'Cập nhật thành công');
+        return redirect()->route('admin.users.manager')->with('message', 'Cập nhật thành công');
     }
 
     // hàm này để load trang tạo user

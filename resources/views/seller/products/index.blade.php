@@ -3,121 +3,118 @@
 
 @section('content')
 <div class="container">
-   <div class="page-header mt-4">
-    <div class="d-flex flex-wrap justify-content-between align-items-center">
-        <div class="mb-3 d-flex flex-wrap">
-            <a href="{{ route('seller.products.import.form') }}" class="btn btn-primary mr-2 mb-2 flex-fill text-nowrap">
-                <i class="fas fa-plus mr-2"></i>Thêm sản phẩm bằng File excel
-            </a>
-            <a href="{{ route('seller.products.create') }}" class="btn btn-primary mb-2 flex-fill text-nowrap">
-                <i class="fas fa-plus mr-2"></i>Thêm sản phẩm
-            </a>
-        </div>
+    <div class="page-header mt-4">
+        <div class="d-flex flex-wrap justify-content-between align-items-center">
+            <div class="mb-3 d-flex flex-wrap">
+                <a href="{{ route('seller.products.import.form') }}" class="btn btn-primary mr-2 mb-2 flex-fill text-nowrap">
+                    <i class="fas fa-plus mr-2"></i>Thêm sản phẩm bằng File excel
+                </a>
+                <a href="{{ route('seller.products.create') }}" class="btn btn-primary mb-2 flex-fill text-nowrap">
+                    <i class="fas fa-plus mr-2"></i>Thêm sản phẩm
+                </a>
+            </div>
 
-        <div class="mb-3">
-            <a href="{{ route('seller.dashboard') }}" class="btn btn-primary mb-2 flex-fill text-nowrap">
-                <i class="fas fa-home me-2"></i>Quay lại
-            </a>
+            <div class="mb-3">
+                <a href="{{ route('seller.dashboard') }}" class="btn btn-primary mb-2 flex-fill text-nowrap">
+                    <i class="fas fa-home me-2"></i>Quay lại
+                </a>
+            </div>
         </div>
     </div>
-</div>
 
-<div class="card shadow-sm mb-4">
-    <div class="card-body">
-        <form action="{{ route('seller.products.index') }}" method="GET">
-            <div class="row g-3 align-items-end"> {{-- Giữ align-items-end --}}
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form action="{{ route('seller.products.index') }}" method="GET">
+                <div class="row g-3 align-items-end"> {{-- Giữ align-items-end --}}
 
-                {{-- Tìm tên (OK) --}}
-                <div class="col-md-3"> {{-- Giảm cột --}}
-                    <label for="search" class="form-label fw-bold">Tìm theo tên</label>
-                    <input type="text" class="form-control" id="search" name="search"
-                           placeholder="Nhập tên sản phẩm..." value="{{ request('search') }}">
-                </div>
-
-                {{-- Trạng thái (OK) --}}
-                <div class="col-md-2">
-                    <label for="status" class="form-label fw-bold">Trạng thái</label>
-                    <select class="form-select" id="status" name="status">
-                        <option value="">Tất cả</option>
-                        <option value="Pending" @if(request('status') == 'Pending') selected @endif>Pending</option>
-                        <option value="Approved" @if(request('status') == 'Approved') selected @endif>Approved</option>
-                        <option value="Hidden" @if(request('status') == 'Hidden') selected @endif>Hidden</option>
-                        <option value="Rejected" @if(request('status') == 'Rejected') selected @endif>Rejected</option>
-                    </select>
-                </div>
-
-                {{-- Danh mục (OK) --}}
-                <div class="col-md-2">
-                    <label for="category" class="form-label fw-bold">Danh mục</label>
-                    <select class="form-select" id="category" name="category">
-                        <option value="">Tất cả</option>
-                        @isset($categories)
-                            @foreach($categories as $category)
-                                <option value="{{ $category->id }}" @if(request('category') == $category->id) selected @endif>
-                                    {{ $category->name }}
-                                </option>
-                            @endforeach
-                        @endisset
-                    </select>
-                </div>
-
-                {{-- *** THÊM BỘ LỌC THƯƠNG HIỆU *** --}}
-                <div class="col-md-2">
-                    <label for="brand_id" class="form-label fw-bold">Thương hiệu</label>
-                    <select class="form-select" id="brand_id" name="brand_id"> {{-- Dùng name="brand_id" --}}
-                        <option value="">Tất cả</option>
-                        @isset($brands)
-                            @foreach($brands as $brand)
-                                <option value="{{ $brand->id }}" @if(request('brand_id') == $brand->id) selected @endif>
-                                    {{ $brand->name }}
-                                </option>
-                            @endforeach
-                        @endisset
-                    </select>
-                </div>
-
-                {{-- Nút lọc (OK) --}}
-                <div class="col-md-3"> {{-- Tăng cột --}}
-                    <div class="d-flex">
-                        <button type="submit" class="btn btn-primary w-100 me-2">
-                            <i class="fas fa-filter me-1"></i> Lọc
-                        </button>
-                        <a href="{{ route('seller.products.index') }}" class="btn btn-outline-secondary w-100">
-                            <i class="fas fa-times me-1"></i> Xóa lọc
-                        </a>
+                    {{-- Tìm tên (OK) --}}
+                    <div class="col-md-3"> {{-- Giảm cột --}}
+                        <label for="search" class="form-label fw-bold">Tìm theo tên</label>
+                        <input type="text" class="form-control" id="search" name="search" placeholder="Nhập tên sản phẩm..." value="{{ request('search') }}">
                     </div>
-                </div>
-            </div> {{-- Đóng thẻ div class="row g-3 align-items-end" --}}
-        </form>
-    </div>
-</div>
 
-@if($products && count($products) > 0)
+                    {{-- Trạng thái (OK) --}}
+                    <div class="col-md-2">
+                        <label for="status" class="form-label fw-bold">Trạng thái</label>
+                        <select class="form-select" id="status" name="status">
+                            <option value="">Tất cả</option>
+                            <option value="Pending" @if(request('status')=='Pending' ) selected @endif>Pending</option>
+                            <option value="Approved" @if(request('status')=='Approved' ) selected @endif>Approved</option>
+                            <option value="Hidden" @if(request('status')=='Hidden' ) selected @endif>Hidden</option>
+                            <option value="Rejected" @if(request('status')=='Rejected' ) selected @endif>Rejected</option>
+                        </select>
+                    </div>
+
+                    {{-- Danh mục (OK) --}}
+                    <div class="col-md-2">
+                        <label for="category" class="form-label fw-bold">Danh mục</label>
+                        <select class="form-select" id="category" name="category">
+                            <option value="">Tất cả</option>
+                            @isset($categories)
+                            @foreach($categories as $category)
+                            <option value="{{ $category->id }}" @if(request('category')==$category->id) selected @endif>
+                                {{ $category->name }}
+                            </option>
+                            @endforeach
+                            @endisset
+                        </select>
+                    </div>
+
+                    {{-- *** THÊM BỘ LỌC THƯƠNG HIỆU *** --}}
+                    <div class="col-md-2">
+                        <label for="brand_id" class="form-label fw-bold">Thương hiệu</label>
+                        <select class="form-select" id="brand_id" name="brand_id"> {{-- Dùng name="brand_id" --}}
+                            <option value="">Tất cả</option>
+                            @isset($brands)
+                            @foreach($brands as $brand)
+                            <option value="{{ $brand->id }}" @if(request('brand_id')==$brand->id) selected @endif>
+                                {{ $brand->name }}
+                            </option>
+                            @endforeach
+                            @endisset
+                        </select>
+                    </div>
+
+                    {{-- Nút lọc (OK) --}}
+                    <div class="col-md-3"> {{-- Tăng cột --}}
+                        <div class="d-flex">
+                            <button type="submit" class="btn btn-primary w-100 me-2">
+                                <i class="fas fa-filter me-1"></i> Lọc
+                            </button>
+                            <a href="{{ route('seller.products.index') }}" class="btn btn-outline-secondary w-100">
+                                <i class="fas fa-times me-1"></i> Xóa lọc
+                            </a>
+                        </div>
+                    </div>
+                </div> {{-- Đóng thẻ div class="row g-3 align-items-end" --}}
+            </form>
+        </div>
+    </div>
+
+    @if($products && count($products) > 0)
     <div class="row gy-4">
-       @foreach($products as $product)
+        @foreach($products as $product)
         <div class="col-12 col-sm-6 col-md-4 col-lg-3">
             <div class="card h-100 product-card position-relative shadow-sm">
 
                 {{-- Badge trạng thái (OK) --}}
                 @php
-                    $status = $product->status;
-                    $badgeClass = match($status) {
-                        'Pending' => 'bg-secondary',
-                        'Approved' => 'bg-success',
-                        'Hidden' => 'bg-dark',
-                        'Rejected' => 'bg-danger',
-                        'Deleted' => 'bg-muted',
-                        default => 'bg-light text-dark'
-                    };
+                $status = $product->status;
+                $badgeClass = match($status) {
+                'Pending' => 'bg-secondary',
+                'Approved' => 'bg-success',
+                'Hidden' => 'bg-dark',
+                'Rejected' => 'bg-danger',
+                'Deleted' => 'bg-muted',
+                default => 'bg-light text-dark'
+                };
                 @endphp
                 <span class="status-badge badge {{ $badgeClass }} position-absolute top-0 start-0 m-2 p-2">
                     {{ ucfirst($status) }}
                 </span>
 
                 {{-- Ảnh (OK) --}}
-                <img src="{{ $product->images->isNotEmpty() ? asset('storage/' . $product->images->first()->image_path) : asset('storage/product_images/default.jpg') }}"
-                     alt="{{ $product->name }}"
-                     class="card-img-top product-img">
+                <img src="{{ $product->images->isNotEmpty() ? asset('storage/' . $product->images->first()->image_path) : asset('storage/product_images/default.jpg') }}" alt="{{ $product->name }}" class="card-img-top product-img">
 
                 <div class="card-body product-body d-flex flex-column justify-content-between">
                     <div>
@@ -141,6 +138,9 @@
 
                     {{-- Nút Sửa/Xóa (OK) --}}
                     <div class="mt-auto">
+                        <a href="{{ route('products.detail', ['id' => $product->id]) }}" class="btn btn-info w-100 mb-2">
+                            <i class="fas fa-eye"></i>
+                        </a>
                         <a href="{{ route('seller.products.edit', $product->id) }}" class="btn btn-primary w-100 mb-2">
                             <i class="fas fa-edit me-2"></i>Sửa
                         </a>
@@ -157,7 +157,7 @@
         </div>
         @endforeach
     </div>
-@else
+    @else
     {{-- Thông báo rỗng (OK) --}}
     <div class="empty-state text-center my-5">
         <i class="fas fa-box-open fa-3x mb-3 text-muted"></i>
@@ -167,7 +167,7 @@
             <i class="fas fa-plus me-2"></i>Thêm sản phẩm đầu tiên
         </a>
     </div>
-@endif
+    @endif
 
 </div> {{-- Đóng thẻ div class="container" --}}
 @endsection
