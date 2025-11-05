@@ -92,7 +92,19 @@ class ProductController extends Controller
 
         // Các filter (Giữ nguyên)
         if ($request->filled('search')) {
-            $query->where('name', 'like', '%' . $request->input('search') . '%');
+            // Tách chuỗi tìm kiếm thành các từ khóa
+            $searchTerm = trim($request->input('search'));
+            $keywords = explode(' ', $searchTerm);
+
+            // Thêm điều kiện AND cho mỗi từ khóa,
+            // dùng LOWER() để không phân biệt hoa/thường
+            $query->where(function ($q) use ($keywords) {
+                foreach ($keywords as $word) {
+                    if (!empty($word)) {
+                        $q->whereRaw('LOWER(name) LIKE ?', ['%' . mb_strtolower($word, 'UTF-8') . '%']);
+                    }
+                }
+            });
         }
         if ($request->filled('status')) {
             $query->where('status', $request->input('status'));
@@ -246,7 +258,21 @@ class ProductController extends Controller
         // *** SỬA: Xóa 'attributeValues.attribute' vì không cần join EAV nữa ***
         $query = Product::with(['images', 'seller', 'category', 'brand'])
             ->where('status', Product::STATUS_APPROVED);
+        if ($request->filled('search')) {
+            // Tách chuỗi tìm kiếm thành các từ khóa
+            $searchTerm = trim($request->input('search'));
+            $keywords = explode(' ', $searchTerm);
 
+            // Thêm điều kiện AND cho mỗi từ khóa,
+            // dùng LOWER() để không phân biệt hoa/thường
+            $query->where(function ($q) use ($keywords) {
+                foreach ($keywords as $word) {
+                    if (!empty($word)) {
+                        $q->whereRaw('LOWER(name) LIKE ?', ['%' . mb_strtolower($word, 'UTF-8') . '%']);
+                    }
+                }
+            });
+        }
         // 2. Lọc (Giữ nguyên)
         if ($request->filled('price_range')) {
             $range = $request->input('price_range');

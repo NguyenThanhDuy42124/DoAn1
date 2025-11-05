@@ -8,7 +8,14 @@
     <div class="card-body">
         <form action="{{ route('products.list') }}" method="GET">
             <div class="row g-3 align-items-end">
-
+                <div class="row g-3 mb-3">
+                 <div class="col-md-12">
+                     <label for="search" class="form-label fw-semibold">
+                        <i class="bi bi-search me-1"></i> Tìm theo tên sản phẩm
+                    </label>
+                    <input type="text" class="form-control" id="search" name="search" placeholder="Nhập tên sản phẩm cần tìm..." value="{{ request('search') }}">
+                 </div>
+            </div>
                 {{-- LỌC KHOẢNG GIÁ --}}
                 <div class="col-md-3">
                     <label for="price_range" class="form-label fw-semibold">
@@ -84,7 +91,7 @@
 </div>
    <div class="row g-4">
     @forelse($products as $product)
-        <div class="col-md-4">
+        <div class="col-md-3">
             {{-- Thêm d-flex flex-column để footer luôn ở dưới cùng --}}
             <div class="card product-card h-100 shadow-sm d-flex flex-column"> 
 
