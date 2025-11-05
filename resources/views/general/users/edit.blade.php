@@ -86,7 +86,7 @@
                                     @endif
                                 </label>
                                 <button type="button" class="btn btn-link btn-sm" id="use-current-location" style="text-decoration: none;">
-                                    <i class="fas fa-map-marker-alt me-1"></i> Dùng vị trí hiện tại
+                                    <i class="fas fa-map-marker-alt me-1"></i> Dùng vị trí đã lưu
                                 </button>
                             </div>
                             @if(Auth::user()->role == 'buyer')
@@ -127,30 +127,39 @@
             $('#content').toggleClass('active');
         });
     });
+
+    // ===========================================
+    // === LOGIC VỊ TRÍ (ĐÃ CẬP NHẬT) ===
+    // ===========================================
     $('#use-current-location').on('click', function() {
-            // 1. Lấy vị trí đã lưu từ sessionStorage (do navbar lưu)
-            const detectedLocation = sessionStorage.getItem('userDetectedLocation');
+        
+        // 1. Lấy cả hai vị trí
+        const chosenLocation = localStorage.getItem('userChosenLocation'); // Ưu tiên 1
+        const detectedLocation = sessionStorage.getItem('userDetectedLocation'); // Ưu tiên 2
 
-            if (detectedLocation) {
-                const addressInput = $('#address');
-                const currentAddress = addressInput.val();
+        // 2. Xác định vị trí có thẩm quyền (ưu tiên vị trí đã CHỌN)
+        const authoritativeLocation = chosenLocation || detectedLocation;
 
-                // 2. Chỉ thêm tên Tỉnh/Thành phố nếu nó CHƯA có trong địa chỉ
-                // (Kiểm tra không phân biệt hoa thường)
-                if (currentAddress && !currentAddress.toLowerCase().includes(detectedLocation.toLowerCase())) {
-                    // Nếu đã có địa chỉ, nối thêm vào
-                    addressInput.val(currentAddress + ', ' + detectedLocation);
-                } else if (!currentAddress) {
-                    // Nếu ô trống, điền vị trí vào
-                    addressInput.val(detectedLocation);
-                }
-                // (Nếu đã có rồi thì không làm gì cả)
-                
-            } else {
-                // 3. Nếu không tìm thấy vị trí
-                alert('Không tìm thấy vị trí tự động. Vui lòng quay lại trang chủ và cho phép truy cập vị trí, sau đó thử lại.');
+        if (authoritativeLocation) {
+            const addressInput = $('#address');
+            const currentAddress = addressInput.val();
+
+            // 3. Kiểm tra (không phân biệt hoa thường) xem vị trí đã có trong địa chỉ chưa
+            if (currentAddress && !currentAddress.toLowerCase().includes(authoritativeLocation.toLowerCase())) {
+                // Nếu đã có địa chỉ, nối thêm vào
+                addressInput.val(currentAddress + ', ' + authoritativeLocation);
+            } else if (!currentAddress) {
+                // Nếu ô trống, điền vị trí vào
+                addressInput.val(authoritativeLocation);
             }
-        });
+            // (Nếu vị trí đã tồn tại, không làm gì cả để tránh lặp lại)
+            
+        } else {
+            // 4. Nếu không tìm thấy vị trí nào
+            alert('Không tìm thấy vị trí đã lưu. Vui lòng quay lại trang chủ, chọn hoặc cho phép truy cập vị trí, sau đó thử lại.');
+        }
+    });
+    
     // Script xem trước ảnh (giữ nguyên)
     const input = document.getElementById('img');
     const preview = document.getElementById('preview');

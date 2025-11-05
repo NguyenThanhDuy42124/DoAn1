@@ -698,6 +698,46 @@ footer p {
     opacity: 1;
     visibility: visible;
 }
+ /* CSS cho modal chọn vị trí */
+    #locationModal .modal-body {
+        max-height: 450px;
+        /* Giới hạn chiều cao và cho phép cuộn */
+        overflow-y: auto;
+    }
+
+    #location-list-container .location-select-item {
+        display: flex; /* Đổi thành flex */
+        justify-content: space-between; /* Đẩy icon check sang phải */
+        align-items: center; /* Căn giữa */
+        padding: 8px 12px;
+        text-decoration: none;
+        color: #333;
+        border-radius: 4px;
+        font-weight: 500;
+    }
+
+    #location-list-container .location-select-item:hover {
+        background-color: #f4f4f4;
+        color: #0d6efd;
+    }
+
+    /* Thêm CSS cho icon check */
+    .location-check-icon {
+        display: none; /* Ẩn icon mặc định */
+        color: #0d6efd; /* Màu primary của Bootstrap */
+        font-size: 1.1rem; /* Kích thước icon (bạn có thể điều chỉnh) */
+    }
+
+    /* Khi item được active, hiển thị icon */
+    #location-list-container .location-select-item.active .location-check-icon {
+        display: inline-block; /* Hiển thị icon */
+    }
+    
+    /* Làm cho chữ của item active đậm hơn */
+    #location-list-container .location-select-item.active span {
+        font-weight: 700;
+        color: #0d6efd;
+    }
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .navbar-nav {
