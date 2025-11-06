@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Http\Controllers;
+
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
@@ -40,12 +42,37 @@ class UserInfoController extends Controller
             'gender' => 'required|in:male,female,other',
             'email' => 'required|email|unique:users,email,' . $user->id,
             'img' => 'nullable|image|max:2048|mimes:jpeg,png,jpg,gif,svg', // Optional profile image
+            'cccd_front_image' => 'nullable|image|max:2048|mimes:jpeg,png,jpg,gif,svg',
+            'cccd_back_image' => 'nullable|image|max:2048|mimes:jpeg,png,jpg,gif,svg',
+            'selfie_image' => 'nullable|image|max:2048|mimes:jpeg,png,jpg,gif,svg',
         ]);
         if ($request->hasFile('img')) {
 
             $imagePath = $request->file('img')->store('profile_images', 'public');
             $validated['img'] = $imagePath;
         }
+        // Đếm số file upload
+        $count = 0;
+        if ($request->hasFile('cccd_front_image')) $count++;
+        if ($request->hasFile('cccd_back_image')) $count++;
+        if ($request->hasFile('selfie_image')) $count++;
+
+        // Nếu đã upload 1 hoặc 2 thì phải upload đủ cả 3
+        if ($count > 0 && $count < 3) {
+            return redirect()->back()->withInput()->with('error', 'Bạn phải upload đủ cả 3 ảnh CCCD (mặt trước, mặt sau và ảnh selfie)');
+        }
+        // ...existing code lưu ảnh...
+        if ($count === 3) {
+            $validated['cccd_front_image_path'] = $request->file('cccd_front_image')->store('ekyc_images', 'local');
+            $validated['cccd_back_image_path'] = $request->file('cccd_back_image')->store('ekyc_images', 'local');
+            $validated['cccd_selfie_image_path'] = $request->file('selfie_image')->store('ekyc_images', 'local');
+            $user->ekyc_status = 'pending';
+        }
+
+        if ($request->filled('password')) {
+            $validated['password'] = Hash::make($request->input('password'));
+        }
+
 
         // Update only allowed fields (no password or role)
         $user->update($validated);

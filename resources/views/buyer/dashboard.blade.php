@@ -66,6 +66,19 @@
             <div class="info-label">Quyền hạn:</div>
             <div class="info-value text-capitalize">{{ Auth::user()->role }}</div>
         </div>
+
+        <div class="info-item">
+            <div class="info-label">Trạng thái EKYC:</div>
+            <div class="info-value ">
+                @if(Auth::user()->ekyc_status == 'pending')
+                    <span class="badge badge-info text-black">⌛ Đang chờ</span>
+                @elseif(Auth::user()->ekyc_status == 'verified')
+                    <span class="badge badge-success text-black">✅ Đã xác minh</span>
+                @else
+                    <span class="badge badge-secondary text-black">❌ Chưa nộp</span>
+                @endif
+            </div>
+        </div>
     </div>
 </div>
 
