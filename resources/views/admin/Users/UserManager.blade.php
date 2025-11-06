@@ -47,7 +47,8 @@
                                                 <th width="25%">Email</th>
                                                 <th width="15%">Vai trò</th>
                                                 <th width="10%">Trạng thái</th>
-                                                <th width="25%" class="text-center">Hành động</th>
+                                                <th width="10%" class="text-center">EKYC</th>
+                                                <th width="15%" class="text-center">Hành động</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -71,7 +72,17 @@
                                                 @else
                                                     <td><span class="badge badge-success">Active</span></td>
                                                 @endif
+                                                <td class="text-center">
+                                                    @if($user->ekyc_status == 'verified')
+                                                        <i class="fas fa-check-circle text-success">đã xác minh</i>
+                                                    @elseif($user->ekyc_status=='not_submitted')
+                                                        <i class="fas fa-times-circle text-danger">Chưa xác minh</i>
+                                                    @elseif($user->ekyc_status =='pending')
+                                                        <span class="fas ">Đang chờ xác minh</span>
+                                                    @endif
+                                                </td>
                                                 <td>
+
                                                     <a class="btn btn-sm btn-info"
                                                         href="{{ route('users.edit', $user->id) }}">
                                                         <i class="fas fa-edit"></i>
@@ -83,6 +94,7 @@
                                                         <button class="btn btn-sm btn-danger"><i
                                                                 class="fas fa-trash"></i></button>
                                                     </form>
+
                                                 </td>
                                             </tr>
                                             @endforeach
@@ -91,5 +103,5 @@
                                 </div>
                             </div>
                         </div>
-                   
+
 @endsection
