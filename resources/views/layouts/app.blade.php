@@ -104,7 +104,7 @@
                 <h6 class="text-uppercase fw-bold mb-4">Kết nối với chúng tôi</h6>
                 
                 <div class="d-flex mb-4">
-                    <a href="https_www.facebook.com_trduy.112" class="text-muted me-3" aria-label="Facebook" target="_blank">
+                    <a href="#" class="text-muted me-3" aria-label="Facebook" target="_blank">
                         <i class="fab fa-facebook-f fa-lg"></i>
                     </a>
                     <a href="#" class="text-muted me-3" aria-label="Instagram" target="_blank">
