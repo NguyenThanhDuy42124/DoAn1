@@ -191,6 +191,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+@stack('modals')
 </body>
 
 </html>

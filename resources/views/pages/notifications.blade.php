@@ -54,7 +54,11 @@
 </style>
 @endpush
 
-@section('account_content') {{-- Hoặc @section('content') tùy layout của bạn --}}
+{{-- 
+    NỘI DUNG CHÍNH CỦA TRANG (DANH SÁCH THÔNG BÁO)
+    Phần này vẫn nằm trong 'account_content'
+--}}
+@section('account_content')
 
 <div class="card shadow-sm border-0">
     <div class="card-header bg-white py-3">
@@ -66,13 +70,14 @@
             <div class="list-group list-group-flush">
                 @foreach ($notifications as $notification)
                     
+                    {{-- Đây là MỤC BẤM ĐỂ MỞ MODAL --}}
                     <div class="list-group-item list-group-item-action py-3 px-4 notification-item clickable {{ $notification->is_read ? '' : 'unread' }}"
                          data-bs-toggle="modal"
                          data-bs-target="#notificationModal-{{ $notification->id }}"
                     >
                         <div class="d-flex align-items-center">
                             
-                            {{-- Icon (Giữ nguyên) --}}
+                            {{-- Icon --}}
                             <div class="notification-icon me-3">
                                 @if ($notification->type === 'order_status_updated')
                                     <i class="fas fa-truck text-primary"></i>
@@ -86,20 +91,14 @@
                             {{-- Nội dung tóm tắt (message) --}}
                             <div class="ms-3 flex-grow-1" style="min-width: 0;"> 
                                 <div class="me-3">
-
                                     <div class="notification-message-summary {{ $notification->is_read ? '' : 'fw-bold' }}">
-                                        {{-- 
-                                            Bỏ hàm e() và dùng strip_tags() để hiển thị đúng ký tự ' 
-                                            giống như logic trong modal.
-                                        --}}
                                         {!! strip_tags(\Illuminate\Support\Str::before($notification->message, "||---REPLY---||")) !!}
                                     </div>
-                                    
                                 </div>
                                 <small class="text-muted">{{ $notification->created_at->diffForHumans() }}</small>
                             </div>
 
-                            {{-- Actions (Giữ nguyên) --}}
+                            {{-- Actions --}}
                             <div class="ms-auto d-flex">
                                 @if (!$notification->is_read)
                                     <form action="{{ route('notifications.markAsRead', $notification->id) }}" method="POST" class="d-inline">
@@ -123,6 +122,7 @@
                 @endforeach
             </div>
             
+            {{-- Phân trang --}}
             @if ($notifications->hasPages())
                 <div class="card-footer bg-white">
                     {{ $notifications->links() }}
@@ -130,6 +130,7 @@
             @endif
             
         @else
+            {{-- Trường hợp không có thông báo --}}
             <div class="text-center py-5">
                 <i class="fas fa-bell-slash fa-3x text-muted mb-3"></i>
                 <h5 class="text-muted">Không có thông báo nào.</h5>
@@ -139,63 +140,72 @@
     </div>
 </div>
 
+@endsection {{-- Kết thúc @section('account_content') --}}
 
-@foreach ($notifications as $notification)
-    <div class="modal fade" id="notificationModal-{{ $notification->id }}" tabindex="-1" aria-labelledby="notificationModalLabel-{{ $notification->id }}" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="notificationModalLabel-{{ $notification->id }}">
-                        {{-- Tiêu đề (Giữ nguyên) --}}
-                        @if ($notification->type === 'review_replied')
-                            <i class="fas fa-comment-dots text-success me-2"></i> Phản hồi đánh giá
-                        @elseif ($notification->type === 'order_status_updated')
-                            <i class="fas fa-truck text-primary me-2"></i> Cập nhật đơn hàng
-                        @else
-                            <i class="fas fa-bell me-2"></i> Chi tiết thông báo
+
+{{-- 
+    PHẦN ĐỊNH NGHĨA MODAL
+    Đã được di chuyển ra khỏi @section và đẩy vào @stack('modals')
+    để khắc phục lỗi CSS transform.
+--}}
+@push('modals')
+    @foreach ($notifications as $notification)
+        <div class="modal fade" id="notificationModal-{{ $notification->id }}" tabindex="-1" aria-labelledby="notificationModalLabel-{{ $notification->id }}" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="notificationModalLabel-{{ $notification->id }}">
+                            {{-- Tiêu đề --}}
+                            @if ($notification->type === 'review_replied')
+                                <i class="fas fa-comment-dots text-success me-2"></i> Phản hồi đánh giá
+                            @elseif ($notification->type === 'order_status_updated')
+                                <i class="fas fa-truck text-primary me-2"></i> Cập nhật đơn hàng
+                            @else
+                                <i class="fas fa-bell me-2"></i> Chi tiết thông báo
+                            @endif
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        @php
+                            $separator = "||---REPLY---||";
+                            $messageParts = explode($separator, $notification->message, 2);
+                            
+                            $summary = strip_tags(trim($messageParts[0]));
+                            $replyContent = isset($messageParts[1]) ? strip_tags(trim($messageParts[1])) : null;
+                        @endphp
+
+                        {{-- 1. Hiển thị tóm tắt --}}
+                        <p class="text-dark">{{ $summary }}</p>
+
+                        {{-- 2. Hiển thị nội dung phản hồi (nếu có) --}}
+                        @if($replyContent && $notification->type === 'review_replied')
+                            <hr>
+                            <blockquote class="blockquote bg-light p-3 rounded mt-2 mb-0">
+                                <p class="mb-0">{!! nl2br($replyContent) !!}</p>
+                            </blockquote>
                         @endif
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-
-                <div class="modal-body">
-                    @php
-                        $separator = "||---REPLY---||";
-                        $messageParts = explode($separator, $notification->message, 2);
                         
-                        $summary = strip_tags(trim($messageParts[0]));
-                        $replyContent = isset($messageParts[1]) ? strip_tags(trim($messageParts[1])) : null;
-                    @endphp
-
-                    {{-- 1. Hiển thị tóm tắt (Giữ nguyên) --}}
-                    <p class="text-dark">{{ $summary }}</p>
-
-                    {{-- 
-                        Xóa khối @elseif gây ra lỗi trùng lặp.
-                        Chỉ hiển thị blockquote NẾU CÓ $replyContent
-                    --}}
-                    @if($replyContent && $notification->type === 'review_replied')
-                        <hr>
-                        <blockquote class="blockquote bg-light p-3 rounded mt-2 mb-0">
-                            <p class="mb-0">{!! nl2br($replyContent) !!}</p>
-                        </blockquote>
-                    @endif
+                        <small class="text-muted d-block mt-3">
+                            {{ $notification->created_at->diffForHumans() }} ({{ $notification->created_at->format('H:i d/m/Y') }})
+                        </small>
+                    </div>
                     
-                    <small class="text-muted d-block mt-3">
-                        {{ $notification->created_at->diffForHumans() }} ({{ $notification->created_at->format('H:i d/m/Y') }})
-                    </small>
-                </div>
-                
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-@endforeach
+    @endforeach
+@endpush
 
-@endsection
 
+{{-- 
+    PHẦN SCRIPT (Giữ nguyên)
+    Vẫn nằm trong @push('scripts')
+--}}
 @push('scripts')
 <script>
     // Ngăn modal kích hoạt khi nhấp vào nút (Giữ nguyên)
