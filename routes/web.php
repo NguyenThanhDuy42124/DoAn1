@@ -25,6 +25,8 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ForgetPasswordController;
 use App\Http\Controllers\FollowController;
+use App\Http\Controllers\StaticPageController;
+
 use App\Livewire\Admin\Brands\Manager as BrandManager;
 use App\Livewire\Admin\Promotion\MainPagePromotionImage;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -188,7 +190,24 @@ Route::post('/webhook', [CheckoutController::class, 'webhook'])
         Authenticate::class,  // Nếu route inherit auth
     ]);
 
+Route::prefix('info')->name('pages.')->group(function () {
+    // Nhóm Hỗ Trợ Khách Hàng
+    Route::get('/faq', [StaticPageController::class, 'faq'])->name('faq');
+    Route::get('/warranty-policy', [StaticPageController::class, 'warrantyPolicy'])->name('warranty');
+    Route::get('/return-policy', [StaticPageController::class, 'returnPolicy'])->name('return');
+    // Trang tra cứu đơn hàng (sẽ làm riêng)
+    Route::get('/order-tracking', [StaticPageController::class, 'orderTracking'])->name('order-tracking');
 
+    // Nhóm Thông tin & Chính sách
+    Route::get('/about-us', [StaticPageController::class, 'about'])->name('about');
+    Route::get('/careers', [StaticPageController::class, 'careers'])->name('careers');
+    Route::get('/privacy-policy', [StaticPageController::class, 'privacyPolicy'])->name('privacy');
+    Route::get('/terms-of-service', [StaticPageController::class, 'termsOfService'])->name('terms');
+    
+    // Bạn có thể thêm các trang Kênh Người Bán ở đây sau
+    // Route::get('/seller-support', [StaticPageController::class, 'sellerSupport'])->name('seller-support');
+    // Route::get('/marketplace-rules', [StaticPageController::class, 'marketplaceRules'])->name('marketplace-rules');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('general/users/{id}/edit', [UserInfoController::class, 'edit'])->name('general.users.edit');

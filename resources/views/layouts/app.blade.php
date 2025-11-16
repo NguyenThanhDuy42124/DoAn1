@@ -44,16 +44,20 @@
                         <a href="mailto:truongduy112098@gmail.com" class="text-muted text-decoration-none">hotro@trduy.dkdshop.com</a>
                     </li>
                     <li class="mb-2">
-                        <a href="#" class="text-muted text-decoration-none">Câu hỏi thường gặp</a>
+                        {{-- Cập nhật --}}
+                        <a href="{{ route('pages.faq') }}" class="text-muted text-decoration-none">Câu hỏi thường gặp</a>
                     </li>
                     <li class="mb-2">
-                        <a href="#" class="text-muted text-decoration-none">Tra cứu đơn hàng</a>
+                        {{-- Cập nhật --}}
+                        <a href="{{ route('pages.order-tracking') }}" class="text-muted text-decoration-none">Tra cứu đơn hàng</a>
                     </li>
                     <li class="mb-2">
-                        <a href="#" class="text-muted text-decoration-none">Chính sách bảo hành</a>
+                        {{-- Cập nhật --}}
+                        <a href="{{ route('pages.warranty') }}" class="text-muted text-decoration-none">Chính sách bảo hành</a>
                     </li>
                     <li class="mb-2">
-                        <a href="#" class="text-muted text-decoration-none">Chính sách đổi trả</a>
+                        {{-- Cập nhật --}}
+                        <a href="{{ route('pages.return') }}" class="text-muted text-decoration-none">Chính sách đổi trả</a>
                     </li>
                 </ul>
             </div>
@@ -68,9 +72,11 @@
                         <a href="#" class="text-muted text-decoration-none">Đăng nhập Kênh Bán</a>
                     </li>
                     <li class="mb-2">
+                        {{-- Sẽ cập nhật sau --}}
                         <a href="#" class="text-muted text-decoration-none">Hỗ trợ Người Bán</a>
                     </li>
                     <li class="mb-2">
+                        {{-- Sẽ cập nhật sau --}}
                         <a href="#" class="text-muted text-decoration-none">Quy chế hoạt động Sàn</a>
                     </li>
                 </ul>
@@ -80,17 +86,20 @@
                 <h6 class="text-uppercase fw-bold mb-4">Thông tin & Chính sách</h6>
                 <ul class="list-unstyled mb-0">
                     <li class="mb-2">
-                        {{-- Link này lấy từ navbar của bạn --}}
-                        <a href="#" class="text-muted text-decoration-none">Giới thiệu DKDSHOP</a>
+                        {{-- Cập nhật --}}
+                        <a href="{{ route('pages.about') }}" class="text-muted text-decoration-none">Giới thiệu DKDSHOP</a>
                     </li>
                     <li class="mb-2">
-                        <a href="#" class="text-muted text-decoration-none">Tuyển dụng</a>
+                        {{-- Cập nhật --}}
+                        <a href="{{ route('pages.careers') }}" class="text-muted text-decoration-none">Tuyển dụng</a>
                     </li>
                     <li class="mb-2">
-                        <a href="#" class="text-muted text-decoration-none">Chính sách bảo mật</a>
+                        {{-- Cập nhật --}}
+                        <a href="{{ route('pages.privacy') }}" class="text-muted text-decoration-none">Chính sách bảo mật</a>
                     </li>
                     <li class="mb-2">
-                        <a href="#" class="text-muted text-decoration-none">Điều khoản sử dụng</a>
+                        {{-- Cập nhật --}}
+                        <a href="{{ route('pages.terms') }}" class="text-muted text-decoration-none">Điều khoản sử dụng</a>
                     </li>
                 </ul>
             </div>
@@ -98,18 +107,17 @@
             <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
                 <h6 class="text-uppercase fw-bold mb-4">Kết nối với chúng tôi</h6>
                 
-                {{-- Yêu cầu Font Awesome (đã có trong file của bạn) --}}
                 <div class="d-flex mb-4">
-                    <a href="#" class="text-muted me-3" aria-label="Facebook">
+                    <a href="https_www.facebook.com_trduy.112" class="text-muted me-3" aria-label="Facebook" target="_blank">
                         <i class="fab fa-facebook-f fa-lg"></i>
                     </a>
-                    <a href="#" class="text-muted me-3" aria-label="Instagram">
+                    <a href="#" class="text-muted me-3" aria-label="Instagram" target="_blank">
                         <i class="fab fa-instagram fa-lg"></i>
                     </a>
-                    <a href="#" class="text-muted me-3" aria-label="Youtube">
+                    <a href="#" class="text-muted me-3" aria-label="Youtube" target="_blank">
                         <i class="fab fa-youtube fa-lg"></i>
                     </a>
-                    <a href="#" class="text-muted" aria-label="Tiktok">
+                    <a href="#" class="text-muted" aria-label="Tiktok" target="_blank">
                         <i class="fab fa-tiktok fa-lg"></i>
                     </a>
                 </div>
