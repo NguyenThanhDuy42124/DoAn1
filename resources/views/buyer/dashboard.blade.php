@@ -74,11 +74,37 @@
                     <span class="badge badge-info text-black">⌛ Đang chờ</span>
                 @elseif(Auth::user()->ekyc_status == 'verified')
                     <span class="badge badge-success text-black">✅ Đã xác minh</span>
+                @elseif(Auth::user()->ekyc_status == 'rejected')
+                    <span class="badge badge-danger text-black">❌ Bị từ chối</span>
                 @else
                     <span class="badge badge-secondary text-black">❌ Chưa nộp</span>
                 @endif
             </div>
         </div>
+        @if(Auth::user()->role == 'buyer')
+        <div class="info-item">
+            <div class="info-label">Trở thành Seller:</div>
+            <div class="info-value ">
+                <form action="{{ route('buyer.requestToBecomeSeller') }}" method="POST" style="display:inline;">
+                    @csrf
+                    <button class="btn btn-primary btn-sm" type="submit">
+                        <i class="fas fa-user-plus"></i> Tham gia ngay
+                    </button>
+                </form>
+            </div>
+            <p class="text-danger small"> để trở thành seller cần phải EKYC thành công!</p>
+        </div>
+        @if(session('message'))
+            <div class="alert alert-success">
+                {{ session('message') }}
+            </div>
+        @endif
+        @if(session('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+        @endif
+        @endif
     </div>
 </div>
 

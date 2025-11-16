@@ -75,10 +75,12 @@
                                                 <td class="text-center">
                                                     @if($user->ekyc_status == 'verified')
                                                         <i class="fas text-success">đã xác minh</i>
-                                                    @elseif($user->ekyc_status=='not_submitted')
+                                                    @elseif($user->ekyc_status == 'not_submitted')
                                                         <i class="fas text-danger">Chưa xác minh</i>
                                                     @elseif($user->ekyc_status =='pending')
                                                         <span class="fas ">Đang chờ xác minh</span>
+                                                    @elseif($user->ekyc_status =='rejected')
+                                                        <span class="fas text-danger">Bị từ chối</span>
                                                     @endif
                                                 </td>
                                                 <td>

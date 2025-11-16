@@ -5,12 +5,14 @@ use App\Livewire\MainPage;
 use App\Livewire\TestBinding;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\KycController;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\BuyerController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\FollowController;
 use App\Http\Controllers\SellerController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\VoucherController;
@@ -20,13 +22,12 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\UserInfoController;
 use Illuminate\Auth\Middleware\Authenticate;
 use App\Livewire\Seller\Products\ProductForm;
+use App\Http\Controllers\StaticPageController;
 use Illuminate\Session\Middleware\StartSession;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PasswordResetController;
-use App\Http\Controllers\ForgetPasswordController;
-use App\Http\Controllers\FollowController;
-use App\Http\Controllers\StaticPageController;
 
+use App\Http\Controllers\ForgetPasswordController;
 use App\Livewire\Admin\Brands\Manager as BrandManager;
 use App\Livewire\Admin\Promotion\MainPagePromotionImage;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -95,6 +96,9 @@ Route::prefix('admin')->middleware('role:admin')->group(function () {
     //vừa truyền $users vừa gọi hàm dashboard trong AdminController
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/usersManager', [AdminController::class, 'userDashboard'])->name('admin.users.manager');
+    Route::get('/kyc-image/{type}/{userId}', [KycController::class, 'show'])
+    ->name('admin.kyc.image')
+    ->middleware(['auth','role:admin']);
 
     // khai báo tài nguyên CRUD cho UserController
     Route::resource('users', AdminController::class);
@@ -203,7 +207,7 @@ Route::prefix('info')->name('pages.')->group(function () {
     Route::get('/careers', [StaticPageController::class, 'careers'])->name('careers');
     Route::get('/privacy-policy', [StaticPageController::class, 'privacyPolicy'])->name('privacy');
     Route::get('/terms-of-service', [StaticPageController::class, 'termsOfService'])->name('terms');
-    
+
     // Bạn có thể thêm các trang Kênh Người Bán ở đây sau
     // Route::get('/seller-support', [StaticPageController::class, 'sellerSupport'])->name('seller-support');
     // Route::get('/marketplace-rules', [StaticPageController::class, 'marketplaceRules'])->name('marketplace-rules');
@@ -218,6 +222,10 @@ Route::middleware('auth')->group(function () {
         // resources/views/buyer/carts/index.blade.php
         return view('buyer.carts.index');
     })->name('buyer.carts.index');
+
+    Route::get('/buyer/dashboard', [UserController::class, 'requestToBecomeSeller'])
+        ->name('buyer.RequestToBecomeSeller');
+
 
     Route::post('/carts', [CartController::class, 'store'])->name('buyer.carts.store');
     Route::get('/cart-items/{id}/edit', [CartItemController::class, 'edit'])->name('buyer.cart_items.edit');
@@ -244,3 +252,6 @@ Route::middleware('auth')->group(function () {
 
     Route::post('follow/{seller}', [FollowController::class, 'toggleFollow'])->name('seller.follow.toggle');
 });
+Route::post('/buyer/request-seller', [\App\Http\Controllers\UserController::class, 'requestToBecomeSeller'])
+    ->name('buyer.requestToBecomeSeller')
+    ->middleware('auth');

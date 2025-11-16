@@ -6,10 +6,11 @@ use App\Models\User;
 use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class AdminController extends Controller
 {
@@ -120,7 +121,7 @@ class AdminController extends Controller
         }
 
 
-        $data = $request->only(['role', 'status', 'img']);
+        $data = $request->only(['role', 'status', 'img','ekyc_status']);
 
         if($request->status=='inactive' && $user->role == 'seller'){
             // lưu trạng thái hiện tại vào previous_status trước khi cập nhật
@@ -132,6 +133,36 @@ class AdminController extends Controller
             }
         }
         elseif($request)
+        if($request->status=='active' && $user->role == 'seller'){
+            // khôi phục trạng thái từ previous_status khi kích hoạt lại
+            $product = Product::where('seller_id', $user->id)->first();
+            if($product && $product->previous_status){
+                $product->status = $product->previous_status;
+                $product->previous_status = null; // xóa previous_status sau khi khôi phục
+                $product->save();
+            }
+        }
+        if ($request->filled('ekyc_status') && $request->ekyc_status === 'rejected') {
+            // xóa ảnh eKYC nếu bị từ chối (dùng disk rõ ràng)
+            if ($user->cccd_front_image_path && Storage::disk('local')->exists($user->cccd_front_image_path)) {
+                Storage::disk('local')->delete($user->cccd_front_image_path);
+                $user->cccd_front_image_path = null;
+            }
+            if ($user->cccd_back_image_path && Storage::disk('local')->exists($user->cccd_back_image_path)) {
+                Storage::disk('local')->delete($user->cccd_back_image_path);
+                $user->cccd_back_image_path = null;
+            }
+            if ($user->cccd_selfie_image_path && Storage::disk('local')->exists($user->cccd_selfie_image_path)) {
+                Storage::disk('local')->delete($user->cccd_selfie_image_path);
+                $user->cccd_selfie_image_path = null;
+            }
+
+            // ghi log để debug
+            Log::info('EKYC rejected - removed files for user', ['user_id' => $user->id]);
+
+            // đảm bảo lưu thay đổi (an toàn)
+            $user->save();
+        }
 
         $user->update($data);
 

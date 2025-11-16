@@ -52,6 +52,15 @@
                     </select>
                 </div>
                 <div class="form-group">
+                    <label for="ekyc_status" class="form-label">EKYC</label>
+                    <select class="form-control" style="height: 50px;" id="ekyc" name="ekyc_status" required>
+                        <option value="not_submitted" {{ $user->ekyc_status === 'not_submitted' ? 'selected' : '' }}>Chưa thêm EKYC</option>
+                        <option value="pending" {{ $user->ekyc_status === 'pending' ? 'selected' : '' }}>Chờ duyệt</option>
+                        <option value="verified" {{ $user->ekyc_status === 'verified' ? 'selected' : '' }}>Đã xác nhận</option>
+                        <option value="rejected" {{ $user->ekyc_status === 'rejected' ? 'selected' : '' }}>Bị từ chối</option>
+                    </select>
+                </div>
+                <div class="form-group">
                     <label>Ảnh người dùng hiện tại : </label>
                     <div class="image-preview-container mb-3">
                         @if($user->img)
@@ -66,16 +75,57 @@
                         <p>Chưa có ảnh đại diện.</p>
                         @endif
                     </div>
-
                 </div>
+                <div class="form-group">
+                    @if($user->cccd_front_image || $user->cccd_back_image || $user->cccd_selfie_image_path)
+                    <label>Ảnh EKYC hiện tại : </label>
+                    <div class="image-preview-container mb-3">
+                        @if($user->cccd_front_image_path)
+                        <div class="mb-2">
+                            <label>Mặt trước:</label><br>
+                            <img src="{{ route('admin.kyc.image', ['type' => 'front', 'userId' => $user->id]) }}" class="img-fluid" alt="CCCD Front Image" style="max-width: 200px;">
+                            <div class="form-check mt-2">
+                                <input class="form-check-input" type="checkbox" name="delete_cccd_front_image" value="1" id="deleteCccdFrontImage">
+                                <label class="form-check-label" for="deleteCccdFrontImage">
+                                    Xóa ảnh mặt trước
+                                </label>
+                            </div>
+                        </div>
+                        @endif
 
+                        @if($user->cccd_back_image_path)
+                        <div>
+                            <label>Mặt sau:</label><br>
+                            <img src="{{ route('admin.kyc.image', ['type' => 'back', 'userId' => $user->id]) }}" class="img-fluid" alt="CCCD Back Image" style="max-width: 200px;">
+                            <div class="form-check          mt-2">
+                                <input class="form-check-input" type="checkbox" name="delete_cccd_back_image" value="1" id="deleteCccdBackImage">
+                                <label class="form-check-label" for="deleteCccdBackImage">
+                                    Xóa ảnh mặt sau
+                                </label>
+                            </div>
+                        </div>
+                        @endif
 
-                <div class="d-flex justify-content-end">
-                    <a href="{{ route('admin.users.manager') }}" class="btn btn-secondary mr-2">Hủy bỏ</a>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save me-1"></i>Lưu thông tin
-                    </button>
-                </div>
+                        @if($user->cccd_selfie_image_path)
+                        <div class="mt-2">
+                            <label>Ảnh selfie với CCCD:</label><br>
+                            <img src="{{ route('admin.kyc.image', ['type' => 'selfie', 'userId' => $user->id]) }}" class="img-fluid" alt="CCCD Selfie Image" style="max-width: 200px;">
+                            <div class="form-check mt-2">
+                                <input class="form-check-input" type="checkbox" name="delete_cccd_selfie_image" value="1" id="deleteCccdSelfieImage">
+                                <label class="form-check-label" for="deleteCccdSelfieImage">
+                                    Xóa ảnh selfie với CCCD
+                                </label>
+                            </div>
+                        </div>
+                        @endif
+                    </div>
+                    @endif {{-- <-- thêm dòng này: đóng `@if($user->cccd_front_image || $user->cccd_back_image)` --}}
+                    <div class="d-flex justify-content-end">
+                        <a href="{{ route('admin.users.manager') }}" class="btn btn-secondary mr-2">Hủy bỏ</a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i>Lưu thông tin
+                        </button>
+                    </div>
             </form>
         </div>
     </div>

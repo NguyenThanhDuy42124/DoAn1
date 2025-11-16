@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Notification;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
@@ -67,6 +68,11 @@ class UserInfoController extends Controller
             $validated['cccd_back_image_path'] = $request->file('cccd_back_image')->store('ekyc_images', 'local');
             $validated['cccd_selfie_image_path'] = $request->file('selfie_image')->store('ekyc_images', 'local');
             $user->ekyc_status = 'pending';
+            Notification::create([
+            'user_id' => $user->id,
+            'type' => 'ekyc_submitted',
+            'message' => 'Bạn đã gửi yêu cầu eKYC. Vui lòng chờ xác minh từ quản trị viên.',
+        ]);
         }
 
         if ($request->filled('password')) {
