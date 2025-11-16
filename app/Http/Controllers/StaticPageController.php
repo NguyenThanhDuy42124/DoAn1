@@ -175,26 +175,7 @@ class StaticPageController extends Controller
     /**
      * Trang Tra cứu đơn hàng
      */
-    public function orderTracking(): View
-    {
-        // Giữ nguyên nội dung demo này
-        $title = 'Tra cứu đơn hàng';
-        $content = '
-            <p>Nhập mã đơn hàng của bạn (ví dụ: DKD123456) hoặc số điện thoại đặt hàng để theo dõi hành trình đơn hàng.</p>
-            <form action="#" method="GET" class="border p-3 rounded">
-                <div class="mb-3">
-                    <label for="tracking_id" class="form-label fw-semibold">Mã đơn hàng / Số điện thoại</label>
-                    <input type="text" class="form-control form-control-lg" id="tracking_id" placeholder="Nhập mã đơn hàng hoặc SĐT" name="tracking_id">
-                </div>
-                <button class="btn btn-primary w-100 btn-lg" type="submit">
-                    <i class="fas fa-search me-2"></i>Tra cứu ngay
-                </button>
-            </form>
-            <p class="mt-3 text-muted"><i>(Đây là tính năng demo, chưa có xử lý logic)</i></p>
-        ';
-        return $this->showStaticPage($title, $content);
-    }
-
+  
     // ==========================================
     // === NHÓM THÔNG TIN & CHÍNH SÁCH
     // ==========================================

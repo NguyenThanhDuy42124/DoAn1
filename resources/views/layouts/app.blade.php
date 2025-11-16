@@ -49,10 +49,6 @@
                     </li>
                     <li class="mb-2">
                         {{-- Cập nhật --}}
-                        <a href="{{ route('pages.order-tracking') }}" class="text-muted text-decoration-none">Tra cứu đơn hàng</a>
-                    </li>
-                    <li class="mb-2">
-                        {{-- Cập nhật --}}
                         <a href="{{ route('pages.warranty') }}" class="text-muted text-decoration-none">Chính sách bảo hành</a>
                     </li>
                     <li class="mb-2">
