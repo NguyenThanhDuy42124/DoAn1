@@ -376,29 +376,32 @@ footer p {
     border-radius: 0 0 20px 20px;
 }
 
+/* === CẬP NHẬT PRODUCT CARD (ĐÃ HỢP NHẤT) === */
 .product-card {
-    border: none;
+    border: 1px solid #f0f0f0; /* Thêm viền mờ */
     border-radius: 12px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Tối ưu transition */
     overflow: hidden;
     background: white;
 }
 
 .product-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15) !important;
+    transform: translateY(-5px); /* Nâng card lên 5px (thay vì -8px) */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12) !important; /* Đổ bóng rõ hơn */
 }
 
 .product-img {
     height: 200px;
     object-fit: cover;
-    transition: transform 0.3s ease;
+    transition: transform 0.4s ease; /* Tăng thời gian zoom 1 chút */
     border-radius: 0;
 }
 
 .product-card:hover .product-img {
-    transform: scale(1.05);
+    transform: scale(1.05); /* Zoom ảnh 5% */
 }
+/* === KẾT THÚC CẬP NHẬT PRODUCT CARD === */
+
 
 .card-title {
     font-weight: 600;
@@ -810,3 +813,81 @@ footer p {
         color: white;
     }
 }
+
+
+/* === 🚀 BỔ SUNG HIỆU ỨNG GIAO DIỆN MỚI === */
+
+/* 1. Hiệu ứng "Glow" cho nút bấm CTA */
+/* Tác dụng cho cả .btn-success (biến --secondary) và .btn-outline-primary */
+
+/* LƯU Ý: Nút .btn-success của bạn đang dùng biến --secondary (màu cam).
+   Tôi sẽ sửa lại hiệu ứng glow cho đúng màu cam.
+*/
+.btn-success {
+    /* Đã có transition ở trên, nhưng thêm ở đây để chắc chắn */
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+.btn-success:hover {
+    transform: translateY(-2px); /* Nhấc nút lên 1 chút */
+    /* Tỏa sáng màu cam (secondary) */
+    box-shadow: 0 4px 12px rgba(255, 102, 0, 0.3); 
+}
+
+.btn-outline-primary {
+     transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+.btn-outline-primary:hover {
+    transform: translateY(-2px);
+    /* Tỏa sáng màu xanh (primary) */
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+}
+
+
+/* 2. Hiệu ứng xuất hiện (Fade-in) khi tải trang */
+@keyframes fadeInSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Áp dụng cho các cột chứa card trong .row.g-4 */
+.row.g-4 > [class*="col-"] {
+    animation: fadeInSlideUp 0.6s ease-out forwards;
+    opacity: 0; /* Bắt đầu ẩn đi */
+}
+
+/* Hiệu ứng xuất hiện lần lượt (Staggered animation) */
+.row.g-4 > [class*="col-"]:nth-child(2) { animation-delay: 0.1s; }
+.row.g-4 > [class*="col-"]:nth-child(3) { animation-delay: 0.2s; }
+.row.g-4 > [class*="col-"]:nth-child(4) { animation-delay: 0.3s; }
+.row.g-4 > [class*="col-"]:nth-child(5) { animation-delay: 0.4s; }
+.row.g-4 > [class*="col-"]:nth-child(6) { animation-delay: 0.5s; }
+.row.g-4 > [class*="col-"]:nth-child(7) { animation-delay: 0.6s; }
+.row.g-4 > [class*="col-"]:nth-child(8) { animation-delay: 0.7s; }
+/* Bạn có thể thêm tiếp cho các hàng sau nếu muốn */
+.row.g-4 > [class*="col-"]:nth-child(9) { animation-delay: 0.15s; }
+.row.g-4 > [class*="col-"]:nth-child(10) { animation-delay: 0.25s; }
+.row.g-4 > [class*="col-"]:nth-child(11) { animation-delay: 0.35s; }
+.row.g-4 > [class*="col-"]:nth-child(12) { animation-delay: 0.45s; }
+
+
+/* 3. Hiệu ứng "Rung nhẹ" cho Badge giảm giá */
+@keyframes pulseBadge {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.08); } /* Hơi phồng to */
+    100% { transform: scale(1); }
+}
+
+.badge-discount {
+    /* Style đã có ở dòng 402 */
+    /* Thêm animation */
+    animation: pulseBadge 2.5s infinite ease-in-out;
+    transform-origin: center;
+}
+
+/* === KẾT THÚC BỔ SUNG HIỆU ỨNG === */

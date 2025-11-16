@@ -32,9 +32,7 @@
                         <i class="fas fa-shopping-bag"></i> Đơn hàng
                     </a>
 
-                    <a class="nav-link" href="#"> {{-- Ví dụ: href="{{ route('wishlist.index') }}" --}}
-                        <i class="fas fa-heart"></i> Sản phẩm yêu thích
-                    </a>
+                   
                     <a class="nav-link {{ request()->routeIs('buyer.carts.index') ? 'active' : '' }}" 
                        href="{{ route('buyer.carts.index') }}">
                         <i class="fas fa-shopping-cart"></i> Giỏ hàng
@@ -44,9 +42,9 @@
                         <i class="fas fa-bell"></i> Thông báo
                     </a>
 
-                    <a class="nav-link" href="#"> {{-- Ví dụ: href="{{ route('security.change_password') }}" --}}
+                    <!--<a class="nav-link" href="#"> {{-- Ví dụ: href="{{ route('security.change_password') }}" --}}
                         <i class="fas fa-shield-alt"></i> Bảo mật
-                    </a>
+                    </a>-->
                     
                 </div>
             </div>
