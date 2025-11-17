@@ -169,7 +169,7 @@ class ProductForm extends Component
                 'brand_id'    => $validatedData['brand_id'] ?: null, 
                 'name'        => $validatedData['name'],
                 'price'       => $validatedData['price'],
-                'stock'       => $validatedData['stock'],
+                'stock'       => $this-> productId ? $validatedData['stock'] : 0,
                 'description' => $validatedData['description'],
                 'seller_id'   => Auth::id(), 
                 'status'      => $this->product->exists ? $this->product->status : Product::STATUS_PENDING,

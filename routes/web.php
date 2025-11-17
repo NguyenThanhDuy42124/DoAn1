@@ -26,7 +26,7 @@ use App\Http\Controllers\StaticPageController;
 use Illuminate\Session\Middleware\StartSession;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PasswordResetController;
-
+use App\Livewire\Seller\Stock\SellerTransactionHistory;
 use App\Http\Controllers\ForgetPasswordController;
 use App\Livewire\Admin\Brands\Manager as BrandManager;
 use App\Livewire\Admin\Promotion\MainPagePromotionImage;
@@ -143,6 +143,8 @@ Route::get('/test-binding', TestBinding::class);
 Route::prefix('seller')->middleware('role:seller')->group(function () {
     // Sửa thành SellerController::dashboard
 
+    Route::get('stock/history', SellerTransactionHistory::class)->name('seller.stock.history');
+
     Route::get('/dashboard', [SellerController::class, 'dashboard'])->name('seller.dashboard');
     // THAY THẾ 2 ROUTE CŨ BẰNG 2 ROUTE NÀY
     Route::get('/products/create', ProductForm::class)->name('seller.products.create');
@@ -159,6 +161,8 @@ Route::prefix('seller')->middleware('role:seller')->group(function () {
 
     // [POST] Route để xử lý dữ liệu từ form
     Route::post('/products/import', [ProductController::class, 'import'])->name('seller.products.import');
+
+
 
 
     //route vouchers

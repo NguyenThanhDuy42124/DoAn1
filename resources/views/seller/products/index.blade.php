@@ -12,6 +12,9 @@
                 <a href="{{ route('seller.products.create') }}" class="btn btn-primary mb-2 flex-fill text-nowrap">
                     <i class="fas fa-plus mr-2"></i>Thêm sản phẩm
                 </a>
+                <a href="{{ route('seller.stock.history') }}" class="btn btn-primary mb-2 flex-fill text-nowrap">
+                    <i class="fas fa-plus mr-2"></i>Nhập/xuất kho
+                </a>
             </div>
 
             <div class="mb-3">

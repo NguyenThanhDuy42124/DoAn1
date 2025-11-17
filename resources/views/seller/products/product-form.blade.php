@@ -82,14 +82,31 @@
                             @error('brand_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
                     </div>
-      
+                    @if($productId)
                     <div class="mb-3 row">
-                        <label for="stock" class="col-sm-3 col-form-label required">Tồn kho</label>
+                        <label for="stock" class="col-sm-3 col-form-label">Tồn kho</label>
                         <div class="col-sm-9">
-                            <input type="number" wire:model.defer="stock" id="stock" class="form-control @error('stock') is-invalid @enderror" required>
-                            @error('stock') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            
+                            {{-- Vẫn giữ readonly, không cho sửa trực tiếp --}}
+                            <input type="number" 
+                                   wire:model.defer="stock" 
+                                   id="stock" 
+                                   class="form-control" 
+                                   readonly>
+                            <div class="mt-2">
+                                <a href="{{ route('seller.stock.history', ['action' => 'import', 'product_id' => $productId]) }}" 
+                                   class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-plus-circle"></i> Nhập kho
+                                </a>
+                                <a href="{{ route('seller.stock.history', ['action' => 'export', 'product_id' => $productId]) }}" 
+                                   class="btn btn-sm btn-outline-warning ms-2">
+                                    <i class="bi bi-dash-circle"></i> Xuất kho / Điều chỉnh
+                                </a>
+                            </div>
+
                         </div>
                     </div>
+            @endif
      
                     <div class="mb-3 row">
                         <label for="description" class="col-sm-3 col-form-label">Mô tả</label>
