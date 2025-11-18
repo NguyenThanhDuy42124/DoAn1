@@ -133,7 +133,7 @@
                         <div class="row g-2 mb-2 align-items-center">
                             <div class="col-md-6">
                                 @if($index == 0) <label class="form-label">Sản phẩm</label> @endif
-                                <select wire:model="importItems.{{ $index }}.product_id" 
+                                <select wire:model="importItems.{{ $index }}.product_id"
                                         class="form-select @error('importItems.'.$index.'.product_id') is-invalid @enderror">
                                     <option value="">-- Chọn sản phẩm --</option>
                                     @foreach($importableProducts as $product)
@@ -145,8 +145,8 @@
 
                             <div class="col-md-4">
                                 @if($index == 0) <label class="form-label">Số lượng</label> @endif
-                                <input type="number" 
-                                       wire:model="importItems.{{ $index }}.quantity" 
+                                <input type="number"
+                                       wire:model="importItems.{{ $index }}.quantity"
                                        class="form-control @error('importItems.'.$index.'.quantity') is-invalid @enderror" min="1">
                                 @error('importItems.'.$index.'.quantity') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
                             </div>

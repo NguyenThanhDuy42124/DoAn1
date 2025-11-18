@@ -33,6 +33,13 @@ class AdminController extends Controller
         // --- THÊM LOGIC ĐẾM ĐƠN HÀNG ---
         $totalOrders = Order::count(); //
         $totalProducts = Product::count();
+        $totalRevenue = 0;
+
+        for($i = 0; $i< $totalOrders; $i++){
+            $order = Order::all()[$i];
+            $totalRevenue += $order->total_price;
+        }
+
         // (Giả định role của người mua là 'buyer' và người bán là 'seller')
         $sellerCount = User::where('role', 'seller')->count();
         $buyerCount = User::where('role', 'buyer')->count();
@@ -73,7 +80,8 @@ class AdminController extends Controller
             'totalOrders',
             'totalProducts',
             'userChartData',
-            'productStatusData'
+            'productStatusData',
+            'totalRevenue'
         ));
     }
     public function userDashboard(Request $request)

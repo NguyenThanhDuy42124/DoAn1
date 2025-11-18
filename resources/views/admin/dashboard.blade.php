@@ -27,8 +27,8 @@
             <div class="col-md-3">
                 <div class="stats-card" style="background: linear-gradient(to right, var(--warning), #d39e00);">
                     <i class="fas fa-money-bill-wave"></i>
-                    <div class="stats-value">...</div>
-                    <div class="stats-label">Doanh thu</div>
+                    <div class="stats-value">{{ number_format($totalRevenue, 0, ',', '.') }} VND</div>
+                    <div class="stats-label">Doanh thu toàn sàn</div>
                 </div>
             </div>
         </div>
@@ -37,10 +37,10 @@
         <div class="row mb-4">
             <div class="col-md-8">
                 <div class="dashboard-card">
-                    <div class="card-header">Tình trạng sản phẩm (Toàn Sàn)</div> 
+                    <div class="card-header">Tình trạng sản phẩm (Toàn Sàn)</div>
                     <div class="card-body">
                         <div class="chart-container">
-                            <canvas id="productStatusChart"></canvas> 
+                            <canvas id="productStatusChart"></canvas>
                         </div>
                     </div>
                 </div>
@@ -76,7 +76,7 @@
                                     </div>
                                 </div>
 
-                                
+
                                 <div class="collapse mt-2" id="searchPanel" style="">
                                     <form method="GET" action="{{ route('admin.dashboard') }}" class="form-inline mb-3"
                                         style="align-items: left;">
@@ -91,7 +91,7 @@
                                     </form>
                                 </div>
 
-                          
+
                                 @if (session()->has('message'))
     <h3 style="align-self: center">{{ session('message') }}</h3>
     @endif
@@ -154,15 +154,15 @@
                             </div>
                         </div>
 
-                        
+
                     </div>-->
     </div>
    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-    
-    //BD1: PHÂN LOẠI NGƯỜI DÙNG 
+
+    //BD1: PHÂN LOẠI NGƯỜI DÙNG
     const userChartData = @json($userChartData ?? ['labels' => [], 'values' => []]);
     if (document.getElementById('userTypeChart') && userChartData.values.length > 0) {
         const ctxUser = document.getElementById('userTypeChart').getContext('2d');
@@ -180,7 +180,7 @@ document.addEventListener("DOMContentLoaded", function() {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { position: 'bottom' } } 
+                plugins: { legend: { position: 'bottom' } }
             }
         });
     }
@@ -227,7 +227,7 @@ document.addEventListener("DOMContentLoaded", function() {
                                 const total = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
                                 const percentage = (value / total * 100).toFixed(1);
                                 label += ` (${percentage}%)`;
-                                
+
                                 return label;
                             }
                         }
