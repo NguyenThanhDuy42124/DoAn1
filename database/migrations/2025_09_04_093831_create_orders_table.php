@@ -6,26 +6,20 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('buyer_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('seller_id')->nullable()->constrained('users');
-            $table->string('status')->default('pending');
+            $table->string('status')->default('unpaid');
             $table->double('total_price', 12, 2)->default(0);
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('orders');
+        Schema::dropIfExists('orders'); // 👈 chỉ cần drop bảng
     }
 };

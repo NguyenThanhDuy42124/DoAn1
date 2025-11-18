@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Notification;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,10 +15,16 @@ class UserController extends Controller
     {
         $incomingData = $request->validate([
             "email" => "required|email|max:255|unique:users,email",
-            "name" => "required|string|max:255|unique:users,name",
+            "name" => "required|string|max:255",
             "password" => "required|string|min:3",
+            "phoneNumber" => "nullable|string|max:15",
+            "dateOfBirth" => "nullable|date",
+            "gender" => "nullable|string|in:male,female,other",
+            "address" => "nullable|string|max:255",
         ]);
+        $incomingData['img'] = null; // default null for profile image
         $incomingData["password"] = bcrypt($incomingData["password"]);
+        $incomingData["status"] = "active";
         $user = User::create($incomingData);
         Auth::login($user);
         return redirect('/dashboard');
@@ -34,19 +41,31 @@ class UserController extends Controller
     public function login(Request $request)
     {
         $incomingData = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255'],
             'password' => ['required'],
         ]);
 
-        if (Auth::attempt(['name' => $incomingData['name'], 'password' => $incomingData['password']])) {
+        if (Auth::attempt([
+            'email' => $incomingData['email'],
+            'password' => $incomingData['password'],
+        ])) {
+            $user = Auth::user();
+            if ($user->status === 'inactive') {
+                Auth::logout();
+                return back()->withErrors([
+                    'login' => 'Tài khoản của bạn đã bị vô hiệu hóa. Vui lòng liên hệ quản trị viên để biết thêm chi tiết.',
+                ])->onlyInput('email');
+            }
+
             $request->session()->regenerate();
-            return redirect()->intended('/dashboard');
+            return redirect()->intended('/');
         }
 
         return back()->withErrors([
-            'login' => 'Tên hoặc mật khẩu không đúng.',
-        ])->onlyInput('name');
+            'login' => 'Email hoặc mật khẩu không chính xác.',
+        ])->onlyInput('email');
     }
+
     // hàm này để load trang dashboard của seller và admin
     public function index()
     {
@@ -71,80 +90,23 @@ class UserController extends Controller
 
         abort(403, 'Không có quyền');
     }
-
-
-    // hàm này để load trang dashboard của admin, có thêm phần tìm kiếm user
-    public function dashboard(Request $request)
+    public function requestToBecomeSeller(Request $request)
     {
-        $role = session('current_role', Auth::user()->role);
+        $user = Auth::user();
 
-        // Lấy danh sách user nếu là admin
-        $users = collect(); // mặc định trống
-
-        $query = User::where('role', '!=', 'admin');
-
-        // Nếu có từ khóa tìm kiếm
-        if ($request->filled('keyword')) {
-            $query->where('name', 'like', '%' . $request->keyword . '%');
+        if ($user->ekyc_status !== 'verified') {
+            return redirect()->route('general.users.edit', $user->id)
+                ->with('error', 'Bạn cần hoàn thành eKYC và được xác minh trước khi gửi yêu cầu trở thành người bán.');
+        }
+        $admins = User::where('role', 'admin')->get();
+        foreach ($admins as $admin) {
+            Notification::create([
+                'user_id' => $user->id,
+                'type' => 'Buyer_Request',
+                'message' => 'Bạn đã gửi yêu cầu trở thành người bán. với ID: ' . $user->id . ' Vui lòng chờ xác minh từ quản trị viên.',
+            ]);
         }
 
-        $users = $query->paginate(10)->appends($request->query());
-
-
-        // Trả view dashboard, luôn truyền $users
-        return view('admin.dashboard', compact('users', 'role'));
+        return redirect()->back()->with('message', 'Yêu cầu của bạn đã được gửi thành công. Vui lòng chờ xét duyệt từ quản trị viên.');
     }
-    public function destroy(User $user)
-    {
-        $message = 'Cook 1 tài khoản thành công';
-        $user->delete();
-        return redirect()->route('admin.dashboard')->with('success', 'User deleted successfully.')->with('message', $message);
-    }
-    // hàm này để load trang edit user
-    public function edit($id)
-    {
-        $user = User::findOrFail($id);
-        if (!$user) {
-            return redirect()->route('admin.dashboard')->with('error', 'User not found.');
-        }
-        return view('admin.edit', compact('user'));
-    }
-    // hàm này để cập nhật user
-    public function update(Request $request, $id)
-    {
-        $user = User::findOrFail($id);
-
-    $data = $request->only(['name', 'email', 'password', 'role']);
-
-    // Nếu password không nhập lại thì bỏ qua
-    if (empty($data['password'])) {
-        unset($data['password']);
-    } else {
-        $data['password'] = Hash::make($data['password']);
-    }
-
-    $user->update($data);
-
-    return redirect()->route('admin.dashboard')->with('message', 'Cập nhật thành công');
-    }
-
-    // hàm này để load trang tạo user
-    public function create()
-    {
-        return view('admin.create');
-    }
-    // tạo tài khoản
-    public function store(Request $request)
-    {
-        $message = 'tạo 1 tài khoản thành công';
-        $incomingData = $request->validate([
-            "email" => "required|email|max:255|unique:users,email",
-            "name" => "required|string|max:255|unique:users,name",
-            "password" => "required|string|min:3",
-        ]);
-        $incomingData["password"] = bcrypt($incomingData["password"]);
-        User::create($incomingData);
-        return redirect()->route('admin.dashboard')->with('message', $message);
-    }
-    
 }

@@ -6,7 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -17,7 +17,10 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
-    protected $fillable = ['name', 'email', 'password', 'role'];
+    protected $fillable = ['name', 'email', 'password',
+    'google_id', 'role','gender','phoneNumber',
+     'address','dateOfBirth', 'status', 'img', 'ekyc_status',
+     'cccd_front_image_path', 'cccd_back_image_path', 'cccd_selfie_image_path'];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -28,6 +31,7 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
 
 
     /**
@@ -62,8 +66,29 @@ class User extends Authenticatable
     {
         return $this->hasMany(Notification::class, 'user_id');
     }
+    public function sellerReviews(): HasManyThrough
+    {
+        // Liên kết Review::class thông qua Product::class
+        return $this->hasManyThrough(Review::class, Product::class, 'seller_id', 'product_id');
+    }
+    public function following()
+    {
+        // Bảng trung gian là 'followers'
+        // Khóa ngoại của model hiện tại (User as follower) là 'user_id'
+        // Khóa ngoại của model liên kết (User as seller) là 'seller_id'
+        return $this->belongsToMany(User::class, 'followers', 'user_id', 'seller_id');
+    }
 
-
+    /**
+     * Danh sách những user đang theo dõi seller này.
+     */
+    public function followers()
+    {
+        // Bảng trung gian là 'followers'
+        // Khóa ngoại của model hiện tại (User as seller) là 'seller_id'
+        // Khóa ngoại của model liên kết (User as follower) là 'user_id'
+        return $this->belongsToMany(User::class, 'followers', 'seller_id', 'user_id');
+    }
     public function isAdmin()
     {
         return $this->role === 'admin';

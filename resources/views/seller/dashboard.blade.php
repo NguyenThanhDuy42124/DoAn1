@@ -1,247 +1,211 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+@extends('layouts.SellerDashBoard')
+@section('content')
+<div class="container">
+    
+    <div class="page-header mt-4 mb-4">
+        <h1 class="h2">Tổng quan</h1>
+        <p class="text-muted">Chào mừng trở lại, đây là những gì đang diễn ra hôm nay.</p>
+    </div>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
-        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    @vite(['resources/css/dashboard_seller.css', 'resources/js/app.js'])
-     <title>Dashboard Seller </title>
-</head>
-
-<body>
-    @extends('layouts.app')
-    @section('content')
-    <div class="container dashboard-container">
-        <!-- Header -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <div class="store-logo">USER Ở ĐÂY NÈ</div>
-            <div class="d-flex align-items-center justify-content-between" style="width: 250px;">
-                <a href="/" class="btn btn-outline-primary mr-2"><i class="fas fa-home"></i> Trang chủ</a>
-                <div>
-                <form action="/logout" method="POST">
-                    @csrf
-                    <button type="submit" class="btn btn-primary fas fa-sign-out-alt" style="height: 40px">Đăng Xuất</button>
-                </form>
+    <div class="row g-4 mb-4">
+        
+        <div class="col-md-6 col-lg-3">
+    <div class="card shadow-sm h-100 border-start border-primary border-4">
+        <div class="card-body">
+            <div class="d-flex align-items-center">
+                <div class="flex-grow-1">
+                    <div class="text-muted text-uppercase small fw-bold">Doanh thu (Hôm nay)</div>
+                    <h3 class="fw-bold mb-0 mt-2">{{ number_format($todayRevenue ?? 0, 0, ',', '.') }} đ</h3>
                 </div>
-            </div>
-        </div>
-
-        <!-- Dashboard Card -->
-        <div class="dashboard-card">
-            <div class="dashboard-header">
-                <div class="d-flex align-items-center">
-                    <img src="https://ui-avatars.com/api/?name=Nguyễn+Văn+B&background=ff6600&color=fff&size=120"
-                        alt="Avatar" class="seller-avatar mr-4">
-                    <div>
-                        <h2 class="mb-1">{{ Auth::user()->name }}</h2>
-                        <p class="mb-0">Nhà bán hàng từ: {{ Auth::user()->created_at->format('d/m/Y') }}</p>
-                        <p class="mb-0">Đánh giá: {{ Auth::user()->rating }} ({{ Auth::user()->reviews_count }} đánh giá)</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="dashboard-body">
-                <div class="row">
-                    <!-- Sidebar menu -->
-                    <div class="col-md-3">
-                        <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist"
-                            aria-orientation="vertical">
-                            <a class="nav-link active" id="v-pills-dashboard-tab" data-toggle="pill"
-                                href="#v-pills-dashboard" role="tab" aria-controls="v-pills-dashboard"
-                                aria-selected="true">
-                                <i class="fas fa-tachometer-alt mr-2"></i> Tổng quan
-                            </a>
-                            <a class="nav-link" id="v-pills-orders-tab" data-toggle="pill" href="#v-pills-orders"
-                                role="tab" aria-controls="v-pills-orders" aria-selected="false">
-                                <i class="fas fa-shopping-bag mr-2"></i> Đơn hàng
-                            </a>
-                            <a class="nav-link" id="v-pills-products-tab" data-toggle="pill" href="#v-pills-products"
-                                role="tab" aria-controls="v-pills-products" aria-selected="false">
-                                <i class="fas fa-box mr-2"></i> Sản phẩm
-                            </a>
-                            <a class="nav-link" id="v-pills-analytics-tab" data-toggle="pill" href="#v-pills-analytics"
-                                role="tab" aria-controls="v-pills-analytics" aria-selected="false">
-                                <i class="fas fa-chart-line mr-2"></i> Thống kê
-                            </a>
-                            <a class="nav-link" id="v-pills-customers-tab" data-toggle="pill" href="#v-pills-customers"
-                                role="tab" aria-controls="v-pills-customers" aria-selected="false">
-                                <i class="fas fa-users mr-2"></i> Khách hàng
-                            </a>
-                            <a class="nav-link" id="v-pills-promotions-tab" data-toggle="pill"
-                                href="#v-pills-promotions" role="tab" aria-controls="v-pills-promotions"
-                                aria-selected="false">
-                                <i class="fas fa-percent mr-2"></i> Khuyến mãi
-                            </a>
-                            <a class="nav-link" id="v-pills-settings-tab" data-toggle="pill" href="#v-pills-settings"
-                                role="tab" aria-controls="v-pills-settings" aria-selected="false">
-                                <i class="fas fa-cog mr-2"></i> Cài đặt
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Content -->
-                    <div class="col-md-9">
-                        <div class="tab-content" id="v-pills-tabContent">
-                            <!-- Tổng quan -->
-                            <div class="tab-pane fade show active" id="v-pills-dashboard" role="tabpanel"
-                                aria-labelledby="v-pills-dashboard-tab">
-                                <h4 class="section-title">Tổng quan cửa hàng</h4>
-
-                                <div class="row mb-4">
-                                    <div class="col-md-3">
-                                        <div class="stats-card">
-                                            <div class="stats-icon">
-                                                <i class="fas fa-shopping-bag"></i>
-                                            </div>
-                                            <div class="stats-value">...</div>
-                                            <div class="stats-label">Đơn hàng</div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="stats-card">
-                                            <div class="stats-icon">
-                                                <i class="fas fa-box"></i>
-                                            </div>
-                                            <div class="stats-value">...</div>
-                                            <div class="stats-label">Sản phẩm</div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="stats-card">
-                                            <div class="stats-icon">
-                                                <i class="fas fa-users"></i>
-                                            </div>
-                                            <div class="stats-value">...</div>
-                                            <div class="stats-label">Khách hàng</div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="stats-card">
-                                            <div class="stats-icon">
-                                                <i class="fas fa-money-bill-wave"></i>
-                                            </div>
-                                            <div class="stats-value">...</div>
-                                            <div class="stats-label">Doanh thu</div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-8">
-                                        <div class="dashboard-card">
-                                            <div class="dashboard-body">
-                                                <h5 class="section-title">Doanh thu</h5>
-                                                <div class="chart-container">
-                                                    <canvas id="revenueChart"></canvas>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="dashboard-card">
-                                            <div class="dashboard-body">
-                                                <h5 class="section-title">Trạng thái đơn hàng</h5>
-                                                <div class="chart-container">
-                                                    <canvas id="orderStatusChart"></canvas>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="dashboard-card mt-4">
-                                    <div class="dashboard-body">
-                                        <h5 class="section-title">Đơn hàng mới nhất</h5>
-                                        <!--   
-                                        <div class="order-card">
-                                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                                <div class="font-weight-bold">Mã đơn: #DH12347</div>
-                                                <div class="order-status status-pending">Chờ xác nhận</div>
-                                            </div>
-                                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                                <div>Ngày đặt: 12/10/2023</div>
-                                                <div class="font-weight-bold text-primary">5.990.000₫</div>
-                                            </div>
-                                            <div class="d-flex align-items-center">
-                                                <img src="https://images.unsplash.com/photo-1598327105666-5b89351aff97?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" alt="Product" class="product-img mr-3">
-                                                <div>
-                                                    <div class="font-weight-bold">iPhone 14 Pro Max 128GB</div>
-                                                    <div class="text-muted">Số lượng: 1</div>
-                                                </div>
-                                            </div>
-                                            <div class="text-right mt-3">
-                                                <button class="btn btn-outline-primary btn-sm mr-2">Xem chi tiết</button>
-                                                <button class="btn btn-primary btn-sm">Xác nhận</button>
-                                            </div>
-                                        </div>
-                                    -->
-                                        <div class="text-center mt-3">
-                                            <button class="btn btn-outline-primary">Xem tất cả đơn hàng</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Đơn hàng -->
-                            <div class="tab-pane fade" id="v-pills-orders" role="tabpanel"
-                                aria-labelledby="v-pills-orders-tab">
-                                <h4 class="section-title">Quản lý đơn hàng</h4>
-                                <p class="text-muted">...</p>
-                            </div>
-
-                            <!-- Sản phẩm -->
-                            <div class="tab-pane fade" id="v-pills-products" role="tabpanel"
-                                aria-labelledby="v-pills-products-tab">
-                                <h4 class="section-title">Quản lý sản phẩm</h4>
-                                <p class="text-muted">...</p>
-                            </div>
-
-                            <!-- Các tab khác có thể được thêm ở đây -->
-                            <div class="tab-pane fade" id="v-pills-analytics" role="tabpanel"
-                                aria-labelledby="v-pills-analytics-tab">
-                                <h4 class="section-title">Thống kê và báo cáo</h4>
-                                <p class="text-muted">...</p>
-                            </div>
-
-                            <div class="tab-pane fade" id="v-pills-customers" role="tabpanel"
-                                aria-labelledby="v-pills-customers-tab">
-                                <h4 class="section-title">Quản lý khách hàng</h4>
-                                <p class="text-muted">...</p>
-                            </div>
-
-                            <div class="tab-pane fade" id="v-pills-promotions" role="tabpanel"
-                                aria-labelledby="v-pills-promotions-tab">
-                                <h4 class="section-title">Khuyến mãi và giảm giá</h4>
-                                <p class="text-muted">...</p>
-                            </div>
-
-                            <div class="tab-pane fade" id="v-pills-settings" role="tabpanel"
-                                aria-labelledby="v-pills-settings-tab">
-                                <h4 class="section-title">Cài đặt cửa hàng</h4>
-                                <p class="text-muted">...</p>
-                            </div>
-                        </div>
-                    </div>
+                <div class="fs-2 text-primary">
+                    <i class="fas fa-dollar-sign"></i>
                 </div>
             </div>
         </div>
     </div>
-    @endsection
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"
-        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"
-        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</div>
 
-</body>
+        <div class="col-md-6 col-lg-3">
+            <div class="card shadow-sm h-100 border-start border-success border-4">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <div class="text-muted text-uppercase small fw-bold">Đơn hàng (Hôm nay)</div>
+                            <h3 class="fw-bold mb-0 mt-2">{{ $todayOrderCount ?? 0 }}</h3>
+                        </div>
+                        <div class="fs-2 text-success">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-</html>
+       <div class="col-md-6 col-lg-3">
+    <div class="card shadow-sm h-100 border-start border-info border-4">
+        <div class="card-body">
+            <div class="d-flex align-items-center">
+                <div class="flex-grow-1">
+                    <div class="text-muted text-uppercase small fw-bold">Sản phẩm đang bán</div>
+                    
+                    <h3 class="fw-bold mb-0 mt-2">{{ $approvedProductCount }}</h3>
+                    
+                </div>
+                <div class="fs-2 text-info">
+                    <i class="fas fa-box"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+        <div class="col-md-6 col-lg-3">
+    <div class="card shadow-sm h-100 border-start border-warning border-4">
+        <div class="card-body">
+            <div class="d-flex align-items-center">
+                <div class="flex-grow-1">
+                    <div class="text-muted text-uppercase small fw-bold">Sản phẩm chờ duyệt</div>
+                    
+                    <h3 class="fw-bold mb-0 mt-2">{{ $pendingProductCount }}</h3>
+                    
+                </div>
+                <div class="fs-2 text-warning">
+                    <i class="fas fa-pause-circle"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    </div>
+
+    <div class="row g-4">
+        
+        <div class="col-lg-8">
+    <div class="card shadow-sm h-100">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0"><i class="fas fa-chart-bar me-2"></i>Báo cáo doanh thu (7 ngày qua)</h5>
+            <a href="{{ route('seller.reports.index') }}" class="btn btn-sm btn-outline-primary">Xem chi tiết</a>
+        </div>
+        <div class="card-body">
+            <div style="position: relative; height: 350px;">
+                <canvas id="revenueChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+        <div class="col-lg-4">
+    <div class="card shadow-sm h-100">
+        <div class="card-header">
+            <h5 class="card-title mb-0"><i class="fas fa-list-ul me-2"></i>Đơn hàng mới nhất</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="list-group list-group-flush">
+                
+                @forelse($latestOrders as $order)
+                    <a href="{{ route('seller.orders.show', $order->id) }}" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">Đơn hàng #{{ $order->id }}</h6>
+                            <small class="text-muted">{{ $order->created_at->diffForHumans() }}</small>
+                        </div>
+                        <p class="mb-1 fw-bold text-success">{{ number_format($order->total_price, 0, ',', '.') }} đ</p>
+                        <small>{{ $order->buyer_name }}</small>
+                    </a>
+                @empty
+                    <div class="list-group-item">
+                        <p class="text-muted mb-0 text-center">Không có đơn hàng mới nào.</p>
+                    </div>
+                @endforelse
+
+            </div>
+        </div>
+        <div class="card-footer text-center">
+            <a href="{{ route('seller.orders.index') }}">Xem tất cả đơn hàng</a>
+        </div>
+    </div>
+</div>
+    </div>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        
+        // Hàm để định dạng số tiền
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
+        }
+
+        // 1. Lấy dữ liệu động từ API Laravel
+        fetch('{{ route("seller.api.revenue.report") }}') // <-- Gọi route đã tạo
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                // 2. Xử lý dữ liệu
+                const labels = data.map(item => {
+                    const date = new Date(item.date);
+                    return `${date.getDate()}/${date.getMonth() + 1}`; // Format: "25/10"
+                });
+                
+                const revenueData = data.map(item => item.revenue);
+
+                // 3. Vẽ biểu đồ
+                const ctx = document.getElementById('revenueChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Doanh thu',
+                            data: revenueData,
+                            backgroundColor: 'rgba(0, 123, 255, 0.5)',
+                            borderColor: 'rgba(0, 123, 255, 1)',
+                            borderWidth: 1,
+                            borderRadius: 5
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(value) {
+                                        if (value >= 1000000) return (value / 1000000) + ' Tr';
+                                        if (value >= 1000) return (value / 1000) + ' k';
+                                        return formatCurrency(value);
+                                    }
+                                }
+                            }
+                        },
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return 'Doanh thu: ' + formatCurrency(context.parsed.y);
+                                    }
+                                }
+                            },
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Lỗi khi tải dữ liệu biểu đồ:', error);
+                // Hiển thị lỗi nếu không tải được
+                const chartContainer = document.getElementById('revenueChart').parentElement;
+                chartContainer.innerHTML = `<div class="d-flex h-100 justify-content-center align-items-center text-danger">
+                                                <span>Không thể tải dữ liệu biểu đồ.</span>
+                                            </div>`;
+            });
+    });
+</script>
+@endsection

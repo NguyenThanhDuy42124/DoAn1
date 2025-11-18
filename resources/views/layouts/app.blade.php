@@ -5,119 +5,193 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
-        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     @vite(['resources/css/layouts.css'])
-    <title>Cửa hàng điện thoại</title>
+    @vite(['resources/js/app.js'])
+    <title>@yield('title', 'Trang chủ cửa hàng')</title>
+    @stack('styles')
+    @livewireStyles
 </head>
 
 <body class="d-flex flex-column min-vh-100">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light rounded fixed-top" aria-label="Eleventh navbar example">
-        <div class="container-fluid d-flex">
-            <!-- Logo -->
-            <a class="navbar-brand fw-bold" href="/">
-                <span class="text-primary">TEN</span><span class="text-dark">SHOP</span>
-            </a>
-
-            <!-- Nút thu gọn trên mobile -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample09"
-                aria-controls="navbarsExample09" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <!-- Menu + Search -->
-            <div class="collapse navbar-collapse" id="navbarsExample09">
-                <!-- Menu trái -->
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/san-pham">DANH SÁCH SẢN PHẨM</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/khuyen-mai">KHUYẾN MÃI</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/ho-tro">HỖ TRỢ</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/gioi-thieu">GIỚI THIỆU</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link active dropdown-toggle bg-light" href="#" role="button" id="dropdownMenuLink"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            TÀI KHOẢN
-                        </a>
-
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                            <a class="dropdown-item" href="/dashboard">Thông tin tài khoản</a>
-                            <a class="dropdown-item" href="/login">Đăng nhập</a>
-                            <a class="dropdown-item" href="/register">Đăng ký</a>
-                        </div>
-            </div>
-
-            </li>
-            </ul>
-
-            <!-- Form tìm kiếm phải -->
-            <form class="d-flex ms-auto">
-                <input class="form-control me-2" type="search" placeholder="Tìm kiếm sản phẩm..." aria-label="Search">
-                <button class="btn btn-outline-primary" type="submit">
-                    <i class="fas fa-search"></i>
-                </button>
-            </form>
-        </div>
-        </div>
-    </nav>
+ 
+    @include('layouts.navbar')
 
 
-    <main class="container flex-fill mt-5 pt-4">
-        @yield('content')
+    <main class="flex-fill mt-0 pt-4">
+        @if (isset($slot))
+        {{ $slot }}
+        @else
+            @yield('content')
+        @endif
     </main>
 
-    <footer class="py-4 mt-auto">
-        <div class="container">
-            <div class="row">
-                <!-- Cột 1 -->
-                <div class="col-md-4 mt-3">
-                    <h5>Tổng đài hỗ trợ miễn phí</h5>
-                    <p class="mb-2">Mua hàng - bảo hành: 1800.0000 (7h30 - 22h00)</p>
-                    <p class="mb-2">Khiếu nại: 1800.1111 (8h00 - 21h30)</p>
-                </div>
+  
+<footer class="py-5 mt-auto border-top">
+    <div class="container">
+        <div class="row">
 
-                <!-- Cột 2 -->
-                <div class="col-md-4 mt-3">
-                    <h5>Thông tin và chính sách</h5>
-                    <p class="mb-2">Mua hàng trả góp Online</p>
-                    <p class="mb-2">Mua hàng trả góp bằng thẻ tín dụng</p>
-                    <p class="mb-2">Chính sách giao hàng</p>
-                </div>
-
-                <!-- Cột 3 -->
-                <div class="col-md-4 mt-3">
-                    <h5>Dịch vụ và thông tin khác</h5>
-                    <p class="mb-2">Khách hàng doanh nghiệp (B2B)</p>
-                    <p class="mb-2">Ưu đãi thanh toán</p>
-                    <p class="mb-2">Quy chế hoạt động</p>
-                </div>
+            <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+                <h6 class="text-uppercase fw-bold mb-4">Hỗ Trợ Khách Hàng</h6>
+                <ul class="list-unstyled mb-3">
+                    <li class="mb-2">
+                        <span class="fw-semibold">Hotline:</span> 
+                        <a href="tel:18000001" class="text-muted text-decoration-none">1800.0001</a>
+                    </li>
+                    <li class="mb-2">
+                        <span class="fw-semibold">Email:</span> 
+                        <a href="mailto:truongduy112098@gmail.com" class="text-muted text-decoration-none">hotro@trduy.dkdshop.com</a>
+                    </li>
+                    <li class="mb-2">
+                        {{-- Cập nhật --}}
+                        <a href="{{ route('pages.faq') }}" class="text-muted text-decoration-none">Câu hỏi thường gặp</a>
+                    </li>
+                    <li class="mb-2">
+                        {{-- Cập nhật --}}
+                        <a href="{{ route('pages.warranty') }}" class="text-muted text-decoration-none">Chính sách bảo hành</a>
+                    </li>
+                    <li class="mb-2">
+                        {{-- Cập nhật --}}
+                        <a href="{{ route('pages.return') }}" class="text-muted text-decoration-none">Chính sách đổi trả</a>
+                    </li>
+                </ul>
             </div>
 
-            <div class="row mt-4">
-                <div class="col-12 text-center">
-                    <p class="mb-0">© COPYRIGHT.</p>
+            <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+                <h6 class="text-uppercase fw-bold mb-4">Kênh Người Bán</h6>
+                <ul class="list-unstyled mb-0">
+                    <li class="mb-2">
+                        <a href="#" class="text-muted text-decoration-none">Đăng ký bán hàng</a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="#" class="text-muted text-decoration-none">Đăng nhập Kênh Bán</a>
+                    </li>
+                    <li class="mb-2">
+                        {{-- Sẽ cập nhật sau --}}
+                        <a href="#" class="text-muted text-decoration-none">Hỗ trợ Người Bán</a>
+                    </li>
+                    <li class="mb-2">
+                        {{-- Sẽ cập nhật sau --}}
+                        <a href="#" class="text-muted text-decoration-none">Quy chế hoạt động Sàn</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+                <h6 class="text-uppercase fw-bold mb-4">Thông tin & Chính sách</h6>
+                <ul class="list-unstyled mb-0">
+                    <li class="mb-2">
+                        {{-- Cập nhật --}}
+                        <a href="{{ route('pages.about') }}" class="text-muted text-decoration-none">Giới thiệu DKDSHOP</a>
+                    </li>
+                    <li class="mb-2">
+                        {{-- Cập nhật --}}
+                        <a href="{{ route('pages.careers') }}" class="text-muted text-decoration-none">Tuyển dụng</a>
+                    </li>
+                    <li class="mb-2">
+                        {{-- Cập nhật --}}
+                        <a href="{{ route('pages.privacy') }}" class="text-muted text-decoration-none">Chính sách bảo mật</a>
+                    </li>
+                    <li class="mb-2">
+                        {{-- Cập nhật --}}
+                        <a href="{{ route('pages.terms') }}" class="text-muted text-decoration-none">Điều khoản sử dụng</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+                <h6 class="text-uppercase fw-bold mb-4">Kết nối với chúng tôi</h6>
+                
+                <div class="d-flex mb-4">
+                    <a href="#" class="text-muted me-3" aria-label="Facebook" target="_blank">
+                        <i class="fab fa-facebook-f fa-lg"></i>
+                    </a>
+                    <a href="#" class="text-muted me-3" aria-label="Instagram" target="_blank">
+                        <i class="fab fa-instagram fa-lg"></i>
+                    </a>
+                    <a href="#" class="text-muted me-3" aria-label="Youtube" target="_blank">
+                        <i class="fab fa-youtube fa-lg"></i>
+                    </a>
+                    <a href="#" class="text-muted" aria-label="Tiktok" target="_blank">
+                        <i class="fab fa-tiktok fa-lg"></i>
+                    </a>
+                </div>
+                
+                <h6 class="text-uppercase fw-bold mb-4">Phương thức thanh toán</h6>
+                <div class="d-flex flex-wrap" style="font-size: 2rem;">
+                    <i class="fab fa-cc-visa me-2 mb-2 text-muted" title="Visa"></i>
+                    <i class="fab fa-cc-mastercard me-2 mb-2 text-muted" title="Mastercard"></i>
+                    <i class="fab fa-cc-jcb me-2 mb-2 text-muted" title="JCB"></i>
+                    <i class="fab fa-paypal me-2 mb-2 text-muted" title="Paypal"></i>
                 </div>
             </div>
+            
         </div>
-    </footer>
 
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
-        integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous">
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"
-        integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13" crossorigin="anonymous">
-    </script>
+        <div class="text-center pt-4 mt-4 border-top">
+            <p class="mb-1 text-muted">&copy; {{ date('Y') }} DKDSHOP. Đã đăng ký bản quyền.</p>
+            <p class="mb-0 text-muted small">
+                Công ty TNHH DKDSHOP | Địa chỉ: 255 Đường Nguyễn Văn Cừ, Phường Cái Khế, TP. Cần Thơ
+            </p>
+        </div>
+    </div>
+</footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" data-livewire-eval="false"></script>
+ @livewireScripts
+ @if(config('chatify.pusher.key') != null)
+    <button
+    type="button"
+    id="chat-bubble"
+    class="btn btn-primary shadow rounded-circle"
+    onclick="window.location.href='{{ route('chatify') }}'">
+    {{-- Nút chat đã dùng icon 'bi' từ navbar, ta giữ nguyên --}}
+    <i class="bi bi-chat-dots-fill"></i> 
+    </button>
+ @endif
+ <script>
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // Xử lý hover cho Mega Menu
+    const megaMenuItems = document.querySelectorAll('.mega-menu-item');
+    const megaMenuContents = document.querySelectorAll('.mega-menu-content');
+
+    megaMenuItems.forEach(item => {
+        // Dùng 'mouseenter' (rê chuột vào)
+        item.addEventListener('mouseenter', function() {
+            
+            // 1. Xóa 'active' khỏi TẤT CẢ các mục L1
+            megaMenuItems.forEach(i => i.classList.remove('active'));
+            
+            // 2. Thêm 'active' cho mục L1 đang được hover
+            this.classList.add('active');
+            
+            // 3. Lấy ID của nội dung L2 cần hiển thị (từ 'data-target')
+            const targetId = this.getAttribute('data-target');
+            
+            // 4. Ẩn TẤT CẢ nội dung L2
+            megaMenuContents.forEach(content => {
+                content.style.display = 'none';
+                content.classList.remove('active');
+            });
+            
+            // 5. Hiển thị nội dung L2 tương ứng
+            const targetContent = document.querySelector(targetId);
+            if (targetContent) {
+                targetContent.style.display = 'block';
+                targetContent.classList.add('active');
+            }
+        });
+    });
+
+    // (Tùy chọn) Ngăn dropdown tự đóng khi click bên trong menu
+    document.querySelector('.mega-menu').addEventListener('click', function(e) {
+        e.stopPropagation();
+    });
+});
+</script>
+@stack('modals')
 </body>
 
 </html>

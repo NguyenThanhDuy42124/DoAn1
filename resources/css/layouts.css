@@ -1,175 +1,893 @@
- :root {
-            --primary: #0066cc;
-            --secondary: #ff6600;
-            --light-bg: #f8f9fa;
-            --dark-text: #333;
-            --border-radius: 12px;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f7fb;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            margin: 0;
-            padding: 0;
-        }
-        
-        /* Navbar styling */
-        .navbar {
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            padding: 0.5rem 0;
-        }
-        
-        .navbar-brand {
-            font-weight: bold;
-            font-size: 24px;
-        }
-        
-        .navbar-brand span:first-child {
-            color: var(--primary);
-        }
-        
-        .navbar-brand span:last-child {
-            color: var(--secondary);
-        }
-        
-        .navbar-nav .nav-link {
-            font-weight: 500;
-            padding: 0.5rem 1rem;
-            color: var(--dark-text);
-        }
-        
-        .navbar-nav .nav-link:hover,
-        .navbar-nav .nav-link.active {
-            color: var(--primary);
-        }
-        
-        .dropdown-menu {
-            border: none;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            border-radius: var(--border-radius);
-        }
-        
-        .dropdown-item {
-            padding: 0.5rem 1rem;
-        }
-        
-        .dropdown-item:hover {
-            background-color: #f8f9fa;
-            color: var(--primary);
-        }
-        
-        .form-control {
-            border-radius: 20px;
-            padding: 0.5rem 1rem;
-        }
-        
-        /* Main content */
-        main {
-            flex: 1;
-            padding: 2rem 0;
-        }
-        
-        /* Footer styling */
-        footer {
-            background-color: #f1f1f1;
-            color: #555;
-            padding: 2rem 0;
-            margin-top: auto;
-            width: 100%;
-        }
-        
-        footer h5 {
-            font-weight: 600;
-            color: var(--dark-text);
-            margin-bottom: 1rem;
-        }
-        
-        footer p {
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-        }
-        
-        /* Button styling */
-        .btn-primary {
-            background-color: var(--primary);
-            border-color: var(--primary);
-            border-radius: 6px;
-        }
-        
-        .btn-primary:hover {
-            background-color: #0052a3;
-            border-color: #0052a3;
-        }
-        
-        .btn-outline-primary {
-            color: var(--primary);
-            border-color: var(--primary);
-            border-radius: 6px;
-        }
-        
-        .btn-outline-primary:hover {
-            background-color: var(--primary);
-            color: white;
-        }
-        
-        /* Card styling */
-        .card {
-            border: none;
-            border-radius: var(--border-radius);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-        }
-        
-        /* Form styling */
-        .form-control {
-            border: 1px solid #dce1e6;
-            border-radius: 6px;
-            padding: 12px 15px;
-            transition: all 0.3s;
-        }
-        
-        .form-control:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 0.2rem rgba(0, 102, 204, 0.25);
-        }
-        
-        /* Additional styles for consistency */
-        .section-title {
-            color: var(--primary);
-            font-weight: 600;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #eaeaea;
-        }
-        
-        .text-primary {
-            color: var(--primary) !important;
-        }
-        
-        .bg-primary {
-            background-color: var(--primary) !important;
-        }
-        
-        .alert-primary {
-            background-color: rgba(0, 102, 204, 0.1);
-            border-color: rgba(0, 102, 204, 0.3);
-            color: var(--primary);
-        }
-        
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .navbar-nav {
-                padding: 1rem 0;
-            }
-            
-            .navbar-nav .nav-item {
-                margin-bottom: 0.5rem;
-            }
-            
-            footer .col-4 {
-                width: 100%;
-                margin-bottom: 1.5rem;
-            }
-        }
+:root {
+    --primary: #0066cc;
+    --secondary: #ff6600;
+    --light-bg: #f8f9fa;
+    --dark-text: #333;
+    --border-radius: 12px;
+}
+
+body {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f7fb;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    padding-top: 70px;
+    /* <-- THÊM DÒNG NÀY */
+}
+
+/* ===== NAVBAR STYLING - GIỐNG SELLER DASHBOARD ===== */
+/* ===== NAVBAR STYLING (Giống Seller Dashboard) ===== */
+.navbar {
+    /* Style lấy từ dashboard_seller.css */
+    background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+    border-bottom: none;
+    height: 70px;
+    box-shadow: 0 4px 12px rgba(25, 118, 210, 0.15);
+    /* 'fixed-top' đã có trong HTML, không cần 'position: fixed' ở đây */
+    z-index: 1030;
+    padding: 0 20px;
+    transition: all 0.3s ease;
+}
+
+/* Ghi đè CSS của layouts.css để đảm bảo chữ màu trắng */
+.navbar-dark .navbar-brand,
+.navbar-dark .navbar-brand span {
+    color: #fff !important;
+    /* Ghi đè màu primary/secondary */
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.85) !important;
+    /* Ghi đè màu dark-text */
+    font-weight: 500;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    margin: 0 2px;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover,
+.navbar-dark .navbar-nav .nav-link.active {
+    color: #fff !important;
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Style cho Dropdown (giữ nguyên) */
+.dropdown-menu {
+    border: none;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    border-radius: var(--border-radius);
+}
+
+.select {
+    height: 50px;
+}
+
+.dropdown-item {
+    padding: 10px 20px;
+    /* Tăng padding cho đẹp hơn */
+    transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background-color: var(--primary);
+    /* Dùng màu --primary của bạn */
+    color: white;
+}
+
+/* Form styling (giữ nguyên) */
+.form-control {
+    border-radius: 20px;
+    padding: 0.75rem 1rem;
+    /* Cập nhật từ file css mới của bạn */
+    border: 1px solid #dce1e6;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 0.2rem rgba(0, 102, 204, 0.15);
+}
+
+/* Căn chỉnh lại form-group của Bootstrap 4 */
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: var(--dark-text);
+    /* Lấy từ layouts.css */
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+/* Nút submit */
+.btn-update-profile {
+    /* Sử dụng lại style của .btn-primary nhưng làm nó to hơn */
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: white;
+    padding: 12px 20px;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    width: 100%;
+    /* Dãn hết chiều rộng */
+}
+
+.btn-update-profile:hover {
+    background-color: #0052a3;
+    /* Lấy từ :hover của .btn-primary */
+    border-color: #0052a3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 102, 204, 0.25);
+}
+
+/* Căn chỉnh ảnh preview */
+.avatar-preview-wrapper {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.avatar-preview {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 50%;
+    /* Làm tròn ảnh đại diện */
+    border: 5px solid #fff;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    background-color: #f8f9fa;
+    /* Nền mờ khi chưa có ảnh */
+    margin: 0 auto;
+}
+
+/* Ẩn thẻ img nếu không có src (tránh icon vỡ) */
+.avatar-preview[src="#"] {
+    display: none;
+}
+
+/* Hiển thị ảnh nếu có (kể cả ảnh cũ hoặc ảnh mới) */
+.avatar-preview:not([src="#"]) {
+    display: block;
+}
+
+/* Vùng chứa chính cho trang tài khoản, thêm khoảng cách với navbar */
+.account-container {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+/* Card chung cho sidebar và content */
+.account-card {
+    background-color: #fff;
+    border: none;
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    /* Giúp bo góc .account-header */
+}
+
+/* (MỚI) Header chung chứa ảnh đại diện và tên */
+.account-header {
+    background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+    /* Đồng bộ với navbar */
+    padding: 1.5rem 2rem;
+    display: flex;
+    align-items: center;
+    color: #fff;
+}
+
+.account-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 4px solid #fff;
+    object-fit: cover;
+    margin-right: 1.5rem;
+    background-color: #f8f9fa;
+    /* Nền mờ khi chưa có ảnh */
+}
+
+.account-header h3 {
+    margin-bottom: 0.25rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.account-header p {
+    margin-bottom: 0;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.9rem;
+}
+
+/* (MỚI) Sidebar menu */
+.account-sidebar .nav-pills .nav-link {
+    color: var(--dark-text);
+    padding: 0.85rem 1.25rem;
+    border-radius: 8px;
+    /* Bo góc cho từng link */
+    margin-bottom: 5px;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+}
+
+.account-sidebar .nav-pills .nav-link i {
+    width: 20px;
+    /* Căn chỉnh icon */
+    margin-right: 10px;
+    color: #888;
+    transition: all 0.2s ease-in-out;
+}
+
+.account-sidebar .nav-pills .nav-link:hover,
+.account-sidebar .nav-pills .nav-link.active {
+    background-color: #e8f4ff;
+    /* Màu nền xanh nhạt khi active */
+    color: var(--primary);
+}
+
+.account-sidebar .nav-pills .nav-link.active i,
+.account-sidebar .nav-pills .nav-link:hover i {
+    color: var(--primary);
+}
+
+/* (MỚI) Vùng nội dung bên phải */
+.account-content {
+    padding: 2rem;
+}
+
+.account-content h4 {
+    font-weight: 700;
+    color: var(--dark-text);
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 10px;
+}
+
+/* (MỚI) Style cho các dòng thông tin */
+.info-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.info-item:last-of-type {
+    border-bottom: none;
+}
+
+.info-label {
+    font-weight: 600;
+    color: #6c757d;
+    width: 150px;
+    /* Cố định chiều rộng label */
+    flex-shrink: 0;
+}
+
+.info-value {
+    color: var(--dark-text);
+    flex-grow: 1;
+    font-weight: 500;
+}
+
+/* ===== Location Display Styling (MỚI) ===== */
+.location-display {
+    /* Nền trắng để nổi bật trên navbar xanh */
+    background-color: #fff;
+    /* Chữ màu xanh (lấy từ biến --primary của bạn) */
+    color: var(--primary);
+    padding: 8px 15px;
+    border-radius: 20px;
+    /* Bo tròn giống thanh search */
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    /* Ngăn không cho rớt dòng trên màn hình hẹp */
+    white-space: nowrap;
+}
+
+/* Hiệu ứng khi hover */
+.location-display:hover {
+    background-color: #f8f9fa;
+    /* Hơi xám lại 1 chút */
+    color: var(--primary);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Style cho các icon bên trong */
+.location-display i {
+    color: var(--primary);
+}
+
+.location-display .location-chevron {
+    font-size: 0.7rem;
+    /* Thu nhỏ icon chevron */
+    opacity: 0.7;
+}
+
+/* Main content */
+main {
+    flex: 1;
+    padding: 2rem 0;
+    z-index: 0;
+}
+
+/* Footer styling */
+footer {
+    background-color: #f1f1f1;
+    color: #555;
+    padding: 2rem 0;
+    margin-top: auto;
+    width: 100%;
+}
+
+footer h5 {
+    font-weight: 600;
+    color: var(--dark-text);
+    margin-bottom: 1rem;
+}
+
+footer p {
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+/* Button styling */
+.btn-primary {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    border-radius: 6px;
+}
+
+.btn-primary:hover {
+    background-color: #0052a3;
+    border-color: #0052a3;
+}
+
+.btn-outline-primary {
+    color: var(--primary);
+    border-color: var(--primary);
+    border-radius: 6px;
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary);
+    color: white;
+}
+
+/* Card styling */
+.card {
+    border: none;
+    border-radius: var(--border-radius);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+.page-header {
+    background: linear-gradient(to right, var(--primary), #004d99);
+    color: white;
+    padding: 40px 0;
+    margin-bottom: 30px;
+    border-radius: 0 0 20px 20px;
+}
+
+/* === CẬP NHẬT PRODUCT CARD (ĐÃ HỢP NHẤT) === */
+.product-card {
+    border: 1px solid #f0f0f0; /* Thêm viền mờ */
+    border-radius: 12px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Tối ưu transition */
+    overflow: hidden;
+    background: white;
+}
+
+.product-card:hover {
+    transform: translateY(-5px); /* Nâng card lên 5px (thay vì -8px) */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12) !important; /* Đổ bóng rõ hơn */
+}
+
+.product-img {
+    height: 200px;
+    object-fit: cover;
+    transition: transform 0.4s ease; /* Tăng thời gian zoom 1 chút */
+    border-radius: 0;
+}
+
+.product-card:hover .product-img {
+    transform: scale(1.05); /* Zoom ảnh 5% */
+}
+/* === KẾT THÚC CẬP NHẬT PRODUCT CARD === */
+
+
+.card-title {
+    font-weight: 600;
+    color: var(--dark-text);
+    margin-bottom: 10px;
+}
+
+.product-price {
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+.btn-primary:hover {
+    background-color: #0052a3;
+    border-color: #0052a3;
+}
+
+.btn-success {
+    background-color: var(--secondary);
+    border-color: var(--secondary);
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+.btn-success:hover {
+    background-color: #e55a00;
+    border-color: #e55a00;
+}
+
+.modal-header {
+    background-color: var(--primary);
+    color: white;
+}
+
+.filter-section {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    margin-bottom: 30px;
+}
+
+.pagination {
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.page-link {
+    color: var(--primary);
+}
+
+.page-item.active .page-link {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #6c757d;
+}
+
+.empty-state i {
+    font-size: 4rem;
+    margin-bottom: 15px;
+    color: #dee2e6;
+}
+
+.badge-discount {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--secondary);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* Form styling */
+.form-control {
+    border: 1px solid #dce1e6;
+    border-radius: 6px;
+    padding: 12px 15px;
+    transition: all 0.3s;
+}
+
+.form-control:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 0.2rem rgba(0, 102, 204, 0.25);
+}
+
+/* Additional styles for consistency */
+.section-title {
+    color: var(--primary);
+    font-weight: 600;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #eaeaea;
+}
+
+.text-primary {
+    color: var(--primary) !important;
+}
+
+.bg-primary {
+    background-color: var(--primary) !important;
+}
+
+.alert-primary {
+    background-color: rgba(0, 102, 204, 0.1);
+    border-color: rgba(0, 102, 204, 0.3);
+    color: var(--primary);
+}
+
+#mainCarousel .carousel-control-prev,
+#mainCarousel .carousel-control-next {
+    width: 40px;
+    height: 40px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.8;
+    transition: all 0.3s ease;
+}
+
+#mainCarousel .carousel-control-prev {
+    left: 15px;
+}
+
+#mainCarousel .carousel-control-next {
+    right: 15px;
+}
+
+#mainCarousel .carousel-control-prev:hover,
+#mainCarousel .carousel-control-next:hover {
+    background-color: rgba(0, 0, 0, 0.6);
+    opacity: 1;
+}
+#chat-bubble {
+    position: fixed; /* Cố định vị trí */
+    bottom: 2rem; /* Cách lề dưới 2rem */
+    right: 2rem; /* Cách lề phải 2rem */
+    width: 60px; /* Tăng kích thước nút */
+    height: 60px; /* Tăng kích thước nút */
+    font-size: 1.5rem; /* Tăng kích thước icon */
+    z-index: 1050; /* Đảm bảo nổi trên các element khác (như footer) */
+    transition: all 0.3s ease;
+}
+#chat-bubble:hover {
+    transform: scale(1.1); /* Hiệu ứng hover phóng to */
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+.navbar .dropdown-menu.mega-menu {
+    position: fixed; 
+    z-index: 1040;
+    
+    /* (Giả sử navbar của bạn cao 70px) */
+    top: 70px; 
+
+    left: 0;
+    right: 0;
+    width: 100vw;
+    max-width: 100%;
+    
+    border: none;
+    border-radius: 0;
+    margin-top: 0;
+    padding: 0;
+    background-color: transparent;
+    box-shadow: none;
+    
+    transition: transform 0.3s ease-out, visibility 0.3s ease-out, opacity 0.3s ease-out;
+    
+    /* Ẩn đi lúc đầu */
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-20px);
+}
+
+/* 2. HIỂN THỊ KHI MỞ (ĐÃ SỬA LỖI BOOTSTRAP 5) */
+/* Class .show được thêm vào chính .dropdown-menu */
+.navbar .dropdown-menu.mega-menu.show {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* 3. LỚP BỌC CĂN GIỮA NỘI DUNG (MỚI) */
+.mega-menu-inner-container {
+    width: 80vw;
+    max-width: 1100px;
+    margin: 0 auto; 
+    display: flex; 
+    border-radius: 0.375rem;
+    overflow: hidden; 
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+}
+
+/* 4. CỘT 1 (DANH MỤC) - Giữ nguyên */
+.mega-menu-column-1 {
+    background-color: #f8f9fa; 
+    border-right: 1px solid #dee2e6;
+    flex-shrink: 0; 
+}
+.mega-menu-column-1 .mega-menu-item a {
+    color: #333;
+    text-decoration: none;
+    transition: background-color 0.2s, color 0.2s;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+.mega-menu-column-1 .mega-menu-item:hover a,
+.mega-menu-column-1 .mega-menu-item.active a {
+    background-color: #ffffff;
+    color: #0d6efd;
+    font-weight: 600;
+}
+
+/* 5. CỘT 2 (HÃNG) - Giữ nguyên */
+.mega-menu-column-2 {
+    background-color: #ffffff;
+    flex-grow: 1; 
+}
+.mega-menu-column-2 h5 {
+    font-weight: 600;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.5rem;
+    color: #000;
+}
+
+/* 6. NÚT HÃNG (BRAND LINK) - Giữ nguyên */
+.mega-brand-link {
+    display: block;
+    padding: 0.75rem;
+    text-align: center;
+    text-decoration: none;
+    color: #333;
+    background-color: #f8f9fa;
+    border: 1px solid #eee;
+    border-radius: 0.375rem;
+    font-weight: 500;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+.mega-brand-link:hover {
+    background-color: #e9ecef;
+    border-color: #ccc;
+    color: #0d6efd;
+}
+
+/* 7. NỘI DUNG ẨN/HIỆN (CONTENT) - Giữ nguyên */
+.mega-menu-content {
+    display: none;
+}
+.mega-menu-content.active {
+    display: block;
+}
+.page-overlay {
+    position: fixed;
+    
+    /* Phủ toàn bộ màn hình */
+    inset: 0; 
+    
+    /* Màu đen mờ 50% */
+    background-color: rgba(0, 0, 0, 0.5); 
+    
+    /* Thứ tự xếp chồng (z-index):
+      - Nội dung chính <main>: 0
+      - Navbar: 1030
+      - Lớp phủ mờ (MỚI): 9900 (Nằm trên main và navbar)
+      - Mega Menu: 9999 (Nằm trên cùng)
+    */
+    z-index: 1020;
+    
+    /* Ẩn đi lúc đầu */
+    opacity: 0;
+    visibility: hidden;
+    
+    /* Hiệu ứng mượt */
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* Class 'show' để hiện lớp phủ */
+.page-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+ /* CSS cho modal chọn vị trí */
+    #locationModal .modal-body {
+        max-height: 450px;
+        /* Giới hạn chiều cao và cho phép cuộn */
+        overflow-y: auto;
+    }
+
+    #location-list-container .location-select-item {
+        display: flex; /* Đổi thành flex */
+        justify-content: space-between; /* Đẩy icon check sang phải */
+        align-items: center; /* Căn giữa */
+        padding: 8px 12px;
+        text-decoration: none;
+        color: #333;
+        border-radius: 4px;
+        font-weight: 500;
+    }
+
+    #location-list-container .location-select-item:hover {
+        background-color: #f4f4f4;
+        color: #0d6efd;
+    }
+
+    /* Thêm CSS cho icon check */
+    .location-check-icon {
+        display: none; /* Ẩn icon mặc định */
+        color: #0d6efd; /* Màu primary của Bootstrap */
+        font-size: 1.1rem; /* Kích thước icon (bạn có thể điều chỉnh) */
+    }
+
+    /* Khi item được active, hiển thị icon */
+    #location-list-container .location-select-item.active .location-check-icon {
+        display: inline-block; /* Hiển thị icon */
+    }
+    
+    /* Làm cho chữ của item active đậm hơn */
+    #location-list-container .location-select-item.active span {
+        font-weight: 700;
+        color: #0d6efd;
+    }
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .navbar-nav {
+        padding: 1rem 0;
+    }
+
+    .navbar-nav .nav-item {
+        margin-bottom: 0.5rem;
+    }
+
+    footer .col-4 {
+        width: 100%;
+        margin-bottom: 1.5rem;
+    }
+}
+
+/* ===== Fix Responsive Navbar (MỚI) ===== */
+@media (max-width: 991.98px) {
+    /* Thêm nền xanh cho menu khi mở */
+    .navbar .navbar-collapse {
+        background-color: #1565c0;
+        /* Màu xanh đậm của gradient */
+        padding: 15px;
+        margin-top: 10px;
+        border-radius: 8px;
+        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Bắt buộc các nhóm dãn 100% và xếp dọc */
+    .navbar-collapse .navbar-nav,
+    .navbar-collapse .d-flex {
+        align-items: stretch !important;
+        flex-direction: column;
+        width: 100%;
+        gap: 0;
+        /* Reset gap */
+    }
+
+    /* Sắp xếp lại nhóm search/location */
+    .navbar-collapse .d-flex {
+        margin: 15px 0;
+        /* Khoảng cách giữa các nhóm */
+    }
+
+    /* Nút location dãn 100% */
+    .navbar-collapse .location-display {
+        margin: 0 0 10px 0 !important;
+        /* Xóa margin cũ, thêm margin dưới */
+        justify-content: center;
+        /* Căn giữa chữ */
+    }
+
+    /* Form dãn 100% */
+    .navbar-collapse .d-flex form {
+        width: 100%;
+    }
+
+    /* Căn giữa các link */
+    .navbar-collapse .navbar-nav .nav-item {
+        margin: 5px 0;
+        text-align: center;
+    }
+
+    /* Sửa nền cho dropdown bên trong menu (nếu có) */
+    .navbar-collapse .dropdown-menu {
+        background-color: #f8f9fa;
+    }
+
+    .navbar-collapse .dropdown-item:hover {
+        color: white;
+    }
+}
+
+
+/* === 🚀 BỔ SUNG HIỆU ỨNG GIAO DIỆN MỚI === */
+
+/* 1. Hiệu ứng "Glow" cho nút bấm CTA */
+/* Tác dụng cho cả .btn-success (biến --secondary) và .btn-outline-primary */
+
+/* LƯU Ý: Nút .btn-success của bạn đang dùng biến --secondary (màu cam).
+   Tôi sẽ sửa lại hiệu ứng glow cho đúng màu cam.
+*/
+.btn-success {
+    /* Đã có transition ở trên, nhưng thêm ở đây để chắc chắn */
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+.btn-success:hover {
+    transform: translateY(-2px); /* Nhấc nút lên 1 chút */
+    /* Tỏa sáng màu cam (secondary) */
+    box-shadow: 0 4px 12px rgba(255, 102, 0, 0.3); 
+}
+
+.btn-outline-primary {
+     transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+.btn-outline-primary:hover {
+    transform: translateY(-2px);
+    /* Tỏa sáng màu xanh (primary) */
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+}
+
+
+/* 2. Hiệu ứng xuất hiện (Fade-in) khi tải trang */
+@keyframes fadeInSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Áp dụng cho các cột chứa card trong .row.g-4 */
+.row.g-4 > [class*="col-"] {
+    animation: fadeInSlideUp 0.6s ease-out forwards;
+    opacity: 0; /* Bắt đầu ẩn đi */
+}
+
+/* Hiệu ứng xuất hiện lần lượt (Staggered animation) */
+.row.g-4 > [class*="col-"]:nth-child(2) { animation-delay: 0.1s; }
+.row.g-4 > [class*="col-"]:nth-child(3) { animation-delay: 0.2s; }
+.row.g-4 > [class*="col-"]:nth-child(4) { animation-delay: 0.3s; }
+.row.g-4 > [class*="col-"]:nth-child(5) { animation-delay: 0.4s; }
+.row.g-4 > [class*="col-"]:nth-child(6) { animation-delay: 0.5s; }
+.row.g-4 > [class*="col-"]:nth-child(7) { animation-delay: 0.6s; }
+.row.g-4 > [class*="col-"]:nth-child(8) { animation-delay: 0.7s; }
+/* Bạn có thể thêm tiếp cho các hàng sau nếu muốn */
+.row.g-4 > [class*="col-"]:nth-child(9) { animation-delay: 0.15s; }
+.row.g-4 > [class*="col-"]:nth-child(10) { animation-delay: 0.25s; }
+.row.g-4 > [class*="col-"]:nth-child(11) { animation-delay: 0.35s; }
+.row.g-4 > [class*="col-"]:nth-child(12) { animation-delay: 0.45s; }
+
+
+/* 3. Hiệu ứng "Rung nhẹ" cho Badge giảm giá */
+@keyframes pulseBadge {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.08); } /* Hơi phồng to */
+    100% { transform: scale(1); }
+}
+
+.badge-discount {
+    /* Style đã có ở dòng 402 */
+    /* Thêm animation */
+    animation: pulseBadge 2.5s infinite ease-in-out;
+    transform-origin: center;
+}
+
+/* === KẾT THÚC BỔ SUNG HIỆU ỨNG === */

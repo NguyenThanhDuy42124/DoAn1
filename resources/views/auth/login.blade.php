@@ -5,9 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
-        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
     @vite(['resources/css/login.css', 'resources/js/app.js'])
     <title>Đăng nhập</title>
 </head>
@@ -26,8 +24,8 @@
                     <form action="/login" method="POST">
                         @csrf
                         <div class="form-group">
-                            <label for="name">Họ và Tên</label>
-                            <input type="text" class="form-control" id="name" name="name" placeholder="Nhập họ và tên"
+                            <label for="email">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" placeholder="Nhập email"
                                 required>
                         </div>
                         <div class="form-group">
@@ -35,14 +33,18 @@
                             <input type="password" class="form-control" id="password" name="password"
                                 placeholder="Nhập mật khẩu" required>
                             <div class="forgot-password">
-                                <a href="/forgot-password">Quên mật khẩu?</a>
+                                <a href="{{ route('forgetPassword.form') }}">Quên mật khẩu?</a>
+                                </div>
                             </div>
-                        </div>
                         <button type="submit" class="btn btn-login">Đăng Nhập</button>
 
                         {{-- Hiển thị lỗi đăng nhập --}}
+
                         @if($errors->has('login'))
                         <div class="alert alert-danger">{{ $errors->first('login') }}</div>
+                        @endif
+                        @if (session('error'))
+                            <div class="alert alert-danger">{{ session('error') }}</div>
                         @endif
                     </form>
 
@@ -51,10 +53,7 @@
                     </div>
 
                     <div class="social-login">
-                        <a href="#" class="social-btn fb-btn">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="#" class="social-btn google-btn">
+                        <a href="{{ route('google.auth.redirect') }}" class="social-btn google-btn">
                             <i class="fab fa-google"></i>
                         </a>
                     </div>
@@ -88,15 +87,7 @@
         </div>
     </div>
     @endsection
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"
-        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"
-        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
-    </script>
+
 </body>
 
 </html>
