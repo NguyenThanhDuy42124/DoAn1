@@ -109,14 +109,14 @@
                     <button type="button" class="btn-close" wire:click="closeImportModal"></button>
                 </div>
                 <div class="modal-body">
-                    
+
                     {{-- Sửa: Dùng vòng lặp @foreach --}}
                     @foreach($importItems as $index => $item)
                         <div class="row g-2 mb-2 align-items-center">
                             {{-- Cột chọn sản phẩm --}}
                             <div class="col-md-6">
                                 @if($index == 0) <label class="form-label">Sản phẩm</label> @endif
-                                <select wire:model="importItems.{{ $index }}.product_id" 
+                                <select wire:model="importItems.{{ $index }}.product_id"
                                         class="form-select @error('importItems.'.$index.'.product_id') is-invalid @enderror">
                                     <option value="">-- Chọn sản phẩm --</option>
                                     @foreach($importableProducts as $product)
@@ -129,8 +129,8 @@
                             {{-- Cột nhập số lượng --}}
                             <div class="col-md-4">
                                 @if($index == 0) <label class="form-label">Số lượng</label> @endif
-                                <input type="number" 
-                                       wire:model="importItems.{{ $index }}.quantity" 
+                                <input type="number"
+                                       wire:model="importItems.{{ $index }}.quantity"
                                        class="form-control @error('importItems.'.$index.'.quantity') is-invalid @enderror" min="1">
                                 @error('importItems.'.$index.'.quantity') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
                             </div>
@@ -138,7 +138,7 @@
                             {{-- Cột nút Xóa --}}
                             <div class="col-md-2 text-end" @if($index == 0) style="padding-top: 28px;" @endif>
                                 @if(count($importItems) > 1) {{-- Chỉ cho xóa nếu có nhiều hơn 1 dòng --}}
-                                <button class="btn btn-outline-danger btn-icon" 
+                                <button class="btn btn-outline-danger btn-icon"
                                         wire:click.prevent="removeImportItem({{ $index }})">
                                     <i class="bi bi-trash"></i>
                                 </button>
@@ -155,13 +155,13 @@
                     </div>
 
                     <hr>
-                    
+
                     {{-- Ghi chú chung (Giữ nguyên) --}}
                     <div class="mb-3">
                         <label class="form-label">Ghi chú chung (Tùy chọn)</label>
-                        <textarea wire:model="import_notes" 
-                                  class="form-control @error('import_notes') is-invalid @enderror" 
-                                  rows="3" 
+                        <textarea wire:model="import_notes"
+                                  class="form-control @error('import_notes') is-invalid @enderror"
+                                  rows="3"
                                   placeholder="Nhập từ nhà cung cấp X..."></textarea>
                         @error('import_notes') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
