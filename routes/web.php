@@ -232,6 +232,7 @@ Route::middleware('auth')->group(function () {
 
 
     Route::post('/carts', [CartController::class, 'store'])->name('buyer.carts.store');
+    Route::post('/carts/add', [CartController::class, 'AddCart'])->name('buyer.carts.add');
     Route::get('/cart-items/{id}/edit', [CartItemController::class, 'edit'])->name('buyer.cart_items.edit');
     Route::put('/cart-items/{id}', [CartItemController::class, 'update'])->name('buyer.cart_items.update');
     Route::delete('/cart/item/{id}', [CartItemController::class, 'destroy'])->name('buyer.cart_items.destroy');
