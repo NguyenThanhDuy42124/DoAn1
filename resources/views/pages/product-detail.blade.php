@@ -122,8 +122,9 @@
                             {{-- SỬA LỖI: Thêm action cho form (route cart.add phải tồn tại) --}}
                             @if (Auth::check())
                             @if (empty(Auth::user()->phoneNumber) || empty(Auth::user()->email) || empty(Auth::user()->address))
+
                             <a href="{{ route('general.users.edit', Auth::user()->id) }}" class="btn btn-warning btn-sm w-100 flex-grow-1">
-                                <i class="fas fa-user-edit"></i> Cập nhật
+                                <i class="fas fa-user-edit"></i> Cập nhật thêm thông tin để có thể mua hàng
                             </a>
                             @else
                             @if($product->stock > 0)
@@ -153,7 +154,7 @@
                             @endif
                         </div>
                     </div>
-                    
+
                         @if(session('success'))
                         <div class="alert alert-success alert-dismissible fade show" role="alert">
                             {{ session('success') }}

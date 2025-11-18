@@ -164,7 +164,7 @@
                             @if (Auth::check())
                             @if (empty(Auth::user()->phoneNumber) || empty(Auth::user()->email) || empty(Auth::user()->address))
                             <a href="{{ route('general.users.edit', Auth::user()->id) }}" class="btn btn-warning btn-sm">
-                                <i class="fas fa-user-edit"></i> Cập nhật
+                                <i class="fas fa-user-edit"></i>
                             </a>
                             @else
                             @if($product->stock > 0)
