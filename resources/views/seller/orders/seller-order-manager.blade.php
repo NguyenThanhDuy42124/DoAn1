@@ -2,22 +2,7 @@
 
 
     <!-- Flash messages -->
-    @if (session()->has('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ session('success') }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-    @endif
-    @if (session()->has('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            {{ session('error') }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-    @endif
+   
 
     <!-- Tabs -->
     <ul class="nav nav-tabs mt-4" id="orderTabs" role="tablist">
@@ -46,7 +31,25 @@
             </a>
         </li>
     </ul>
-
+    <div class="mt-3">
+     @if (session()->has('success'))
+            <div class="alert alert-success alert-dismissible fade show d-flex align-items-center justify-content-between" role="alert">
+                <div>
+                    <i class="fas fa-check-circle me-2"></i> {{ session('success') }}
+                </div>
+                {{-- Sử dụng btn-close thay vì class close cũ --}}
+                <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+   @if (session()->has('error'))
+            <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center justify-content-between" role="alert">
+                <div>
+                    <i class="fas fa-exclamation-circle me-2"></i> {{ session('error') }}
+                </div>
+                <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+        </div>
     <div class="tab-content mt-3">
         <div class="tab-pane fade show active">
             <!-- Bulk form chỉ cho Pending -->
