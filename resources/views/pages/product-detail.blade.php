@@ -167,6 +167,98 @@
                             <div class="card shadow-sm border-0">
                                 <div class="card-header bg-white py-3">
                                     <h5 class="mb-0">Mô tả sản phẩm</h5>
+                    {{-- PHẦN THÔNG SỐ (Giữ nguyên) --}}
+                  {{-- PHẦN THÔNG SỐ --}}
+<div class="col-12 mt-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0">Thông số kỹ thuật</h5>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped table-bordered">
+                <tbody>
+                    @php
+                        // Lấy mảng attributes
+                        $productData = $product->attributes ?? [];
+                        $hasData = false;
+                    @endphp
+
+                    {{-- Lặp qua danh sách "Khuôn Mẫu" --}}
+                    @foreach($specs as $spec)
+                        @php
+                            // --- LOGIC TÌM KIẾM THÔNG MINH ---
+                            
+                            // 1. Ưu tiên tìm theo ID (Vì dữ liệu hiện tại của mày đang lưu theo ID)
+                            $value = $productData[$spec->id] ?? null;
+
+                            // 2. Nếu không thấy, tìm theo ID dạng string (đề phòng)
+                            if (is_null($value)) {
+                                $value = $productData[(string)$spec->id] ?? null;
+                            }
+
+                            // 3. Nếu vẫn không thấy, tìm theo TÊN (Cho dữ liệu tương lai nếu mày đổi cách lưu)
+                            if (is_null($value)) {
+                                $value = $productData[$spec->name] ?? null;
+                            }
+                        @endphp
+
+                        {{-- Chỉ hiện nếu tìm thấy giá trị --}}
+                        @if(!empty($value))
+                            @php $hasData = true; @endphp
+                            <tr>
+                                <th style="width: 30%;">
+                                    {{ $spec->name }}
+                                </th>
+                                <td>
+                                    {{ $value }}
+                                    {{-- Hiển thị đơn vị tính nếu có --}}
+                                    @if(!empty($spec->unit))
+                                        <small class="text-muted">({{ $spec->unit }})</small>
+                                    @endif
+                                </td>
+                            </tr>
+                        @endif
+                    @endforeach
+
+                    @if(!$hasData)
+                        <tr>
+                            <td colspan="2" class="text-center text-muted">
+                                Chưa cập nhật thông số kỹ thuật.
+                            </td>
+                        </tr>
+                    @endif
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+                    {{-- PHẦN ĐÁNH GIÁ SẢN PHẨM (ĐÃ CHỈNH SỬA) --}}
+                    <div class="col-12 mt-4" id="reviews">
+                        <div class="card shadow-sm border-0">
+                            <div class="card-header bg-white py-3">
+                                <h5 class="mb-0">Đánh giá sản phẩm</h5>
+                            </div>
+                            <div class="card-body">
+
+                                {{-- Phần Tóm tắt Đánh giá --}}
+                                @if ($product->reviews_count > 0)
+                                <div class="row align-items-center mb-4">
+                                    <div class="col-md-3 text-center border-end">
+                                        <h1 class="display-5 text-danger fw-bold mb-0">
+                                            {{ number_format($product->reviews_avg_rating, 1) }}<span class="h4 text-muted">/5</span>
+                                        </h1>
+                                        <div class="text-warning mb-2">
+                                            @php $avg_rating = $product->reviews_avg_rating; @endphp
+                                            @foreach(range(1, 5) as $star)
+                                            <i class="{{ $avg_rating >= $star ? 'fas fa-star' : ($avg_rating >= $star - 0.5 ? 'fas fa-star-half-alt' : 'far fa-star') }}"></i>
+                                            @endforeach
+                                        </div>
+                                        <span class="text-muted">({{ $product->reviews_count }} đánh giá)</span>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <p class="text-muted">Hiển thị các đánh giá mới nhất của sản phẩm.</p>
+                                    </div>
                                 </div>
                                 <div class="card-body product-description">
                                     {!! nl2br($product->description) !!}

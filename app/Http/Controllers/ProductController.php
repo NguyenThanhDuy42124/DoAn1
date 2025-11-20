@@ -368,12 +368,17 @@ class ProductController extends Controller
             ->take(5) // Lấy 5 sản phẩm
             ->get();
 
+        $specs = Attribute::whereHas('categories', function($q) use ($product) {
+        $q->where('category_id', $product->category_id);
+    })->orderBy('name')->get(); // Hoặc orderBy('id')
+
         // 5. Trả về view và truyền TẤT CẢ các biến
         return view('pages.product-detail', compact(
             'product',
             'seller',
             'reviews', // <-- BIẾN MỚI
-            'relatedProducts' // <-- BIẾN MỚI
+            'relatedProducts',
+            'specs' // <-- BIẾN MỚI
         ));
     }
 
