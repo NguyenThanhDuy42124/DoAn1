@@ -11,7 +11,6 @@
 
     @section('account_content')
     <h1>Thanh toán thành công!</h1>
-    <p>{{ $customer->name}}</p>
     <a href="{{ route('products.list') }}" class="btn btn-primary">Tiếp tục mua hàng</a>
     @endsection
 </body>

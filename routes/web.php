@@ -33,6 +33,7 @@ use App\Livewire\Admin\Promotion\MainPagePromotionImage;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use App\Livewire\Admin\Categories\Manager as CategoryManager;
 use App\Livewire\Admin\Attributes\Manager as AttributeManager;
+use App\Livewire\Seller\VoucherManager;
 
 Route::get('/', MainPage::class)->name('main.page');
 
@@ -165,13 +166,7 @@ Route::prefix('seller')->middleware('role:seller')->group(function () {
 
 
 
-    //route vouchers
-    Route::get('/vouchers', [VoucherController::class, 'index'])->name('vouchers.index');
-    Route::get('/vouchers/create', [VoucherController::class, 'create'])->name('vouchers.create');
-    Route::post('/vouchers', [VoucherController::class, 'store'])->name('vouchers.store');
-    Route::get('/vouchers/{id}/edit', [VoucherController::class, 'edit'])->name('vouchers.edit');
-    Route::put('/vouchers/{id}', [VoucherController::class, 'update'])->name('vouchers.update');
-    Route::delete('/vouchers/{id}', [VoucherController::class, 'destroy'])->name('vouchers.destroy');
+    Route::get('/vouchers', VoucherManager::class)->name('seller.vouchers.index');
 
 
     Route::get('/orders/{id}', [SellerController::class, 'show'])->name('seller.orders.show');
@@ -256,6 +251,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/notifications/{notification}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
 
     Route::post('follow/{seller}', [FollowController::class, 'toggleFollow'])->name('seller.follow.toggle');
+
+    Route::get('/checkout/review', [CheckoutController::class, 'review'])->name('buyer.checkouts.review');
+    Route::post('/checkout/voucher/apply', [CheckoutController::class, 'applyVoucher'])->name('buyer.checkouts.apply-voucher');
+    Route::post('/checkout/voucher/remove', [CheckoutController::class, 'removeVoucher'])->name('buyer.checkouts.remove-voucher');
+    Route::post('/checkout/process', [CheckoutController::class, 'processPayment'])->name('buyer.checkouts.process');
+
 });
 Route::post('/buyer/request-seller', [\App\Http\Controllers\UserController::class, 'requestToBecomeSeller'])
     ->name('buyer.requestToBecomeSeller')

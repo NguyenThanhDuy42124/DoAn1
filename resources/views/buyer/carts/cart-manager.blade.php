@@ -35,7 +35,7 @@
                     <table class="table align-middle table-hover mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th class="text-center" style="width: 5%;"></th> {{-- Cột trống cho checkbox --}}
+                                <th class="text-center" style="width: 5%;"></th>
                                 <th colspan="2">Sản phẩm</th>
                                 <th class="text-center" style="width: 15%;">Đơn giá</th>
                                 <th class="text-center" style="width: 15%;">Số lượng</th>
@@ -44,63 +44,89 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($cartItems as $item)
+                            @foreach ($groupedItems as $sellerId => $items)
                                 @php
-                                    $maxStock = $item['product']['stock'];
-                                    $outOfStock = $maxStock == 0;
-                                    $itemTotal = $item['price'] * ($quantities[$item['id']] ?? 0);
+                                    $firstItem = $items->first();
+                                    $sellerName = $firstItem['product']['seller']['name'] ?? 'Shop #' . $sellerId;
                                 @endphp
 
-                                <tr wire:key="cart-item-{{$item['id']}}" class="{{ $outOfStock ? 'table-danger' : '' }}">
-                                    <td class="text-center">
-                                        <input type="checkbox" class="form-check-input" wire:model.live="selectedItems" value="{{ $item['id'] }}" />
-                                    </td>
-                                    
-                                    {{-- *** KHỐI HÌNH ẢNH ĐÃ ĐƯỢC CẬP NHẬT *** --}}
-                                    <td style="width: 80px;">
-                                        <img src="{{ !empty($item['product']['images']) ?
-                                                      asset('storage/' . $item['product']['images'][0]['image_path']) :
-                                                      asset('storage/product_images/default.jpg') }}" 
-                                             alt="{{ $item['product']['name'] }}" 
-                                             class="img-fluid rounded" 
-                                             style="width: 60px; height: 60px; object-fit: cover;">
-                                    </td>
-                                    {{-- *** KẾT THÚC CẬP NHẬT *** --}}
-                                    
-                                    <td>
-                                        {{ $item['product']['name'] }}
-                                        @if($outOfStock)
-                                            <br><span class="badge bg-danger">Hết hàng</span>
-                                        @endif
-                                    </td>
-                                    <td class="text-center">{{ number_format($item['price'], 0, ',', '.') }}₫</td>
-                                    <td>
-                                        @if(!$outOfStock)
-                                            <input type="number" 
-                                                   wire:model.live="quantities.{{ $item['id'] }}" 
-                                                   min="1" 
-                                                   max="{{ $maxStock }}" 
-                                                   class="form-control form-control-sm mx-auto" 
-                                                   style="width: 80px;" />
-                                        @endif
-                                    </td>
-                                    <td class="text-center fw-bold">{{ number_format($itemTotal, 0, ',', '.') }}₫</td>
-                                    <td class="text-center">
-                                        <button wire:click="removeItem({{ $item['id'] }})" class="btn btn-sm btn-link text-danger" title="Xóa">
-                                            <i class="fas fa-trash-alt fs-5"></i>
-                                        </button>
+                                {{-- Header Shop --}}
+                                <tr class="table-secondary">
+                                    <td colspan="7" class="py-2 px-3">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-store me-2 text-primary"></i>
+                                            <a href="{{ route('shop.show', ['id' => $sellerId]) }}" 
+                                               class="text-decoration-none fw-bold text-dark">
+                                                {{ $sellerName }}
+                                            </a>
+                                        </div>
                                     </td>
                                 </tr>
+
+                                {{-- Loop sản phẩm --}}
+                                @foreach ($items as $item)
+                                    @php
+                                        $maxStock = $item['product']['stock'];
+                                        $outOfStock = $maxStock == 0;
+                                        $itemTotal = $item['price'] * ($quantities[$item['id']] ?? 0);
+                                    @endphp
+
+                                    <tr wire:key="cart-item-{{$item['id']}}" class="{{ $outOfStock ? 'table-danger' : 'bg-white' }}">
+                                        <td class="text-center">
+                                            {{-- SỬA LỖI: Dùng toán tử 3 ngôi thay vì @if bên trong thẻ input --}}
+                                            <input type="checkbox" 
+                                                   class="form-check-input" 
+                                                   wire:model.live="selectedItems" 
+                                                   value="{{ $item['id'] }}" 
+                                                   {{ $outOfStock ? 'disabled' : '' }} />
+                                        </td>
+                                        
+                                        <td style="width: 80px;">
+                                            <img src="{{ !empty($item['product']['images']) ?
+                                                          asset('storage/' . $item['product']['images'][0]['image_path']) :
+                                                          asset('storage/product_images/default.jpg') }}" 
+                                                 class="img-fluid rounded" 
+                                                 style="width: 60px; height: 60px; object-fit: cover;">
+                                        </td>
+                                        
+                                        <td>
+                                            {{-- SỬA LẠI ROUTE: từ products.show thành products.detail --}}
+                                            <a href="{{ route('products.detail', ['id' => $item['product']['id']]) }}" class="text-decoration-none text-dark">
+                                                {{ $item['product']['name'] }}
+                                            </a>
+                                            
+                                            @if($outOfStock)
+                                                <br><span class="badge bg-danger">Hết hàng</span>
+                                            @endif
+                                        </td>
+                                        <td class="text-center">{{ number_format($item['price'], 0, ',', '.') }}₫</td>
+                                        <td>
+                                            @if(!$outOfStock)
+                                                <input type="number" 
+                                                       wire:model.live.debounce.500ms="quantities.{{ $item['id'] }}" 
+                                                       min="1" 
+                                                       max="{{ $maxStock }}" 
+                                                       class="form-control form-control-sm mx-auto text-center" 
+                                                       style="width: 70px;" />
+                                            @endif
+                                        </td>
+                                        <td class="text-center fw-bold">{{ number_format($itemTotal, 0, ',', '.') }}₫</td>
+                                        <td class="text-center">
+                                            <button wire:click="removeItem({{ $item['id'] }})" class="btn btn-sm btn-link text-danger">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @endforeach
                             @endforeach
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            {{-- Footer: Tổng tiền và nút bấm --}}
-            <div class="card-footer bg-white d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+            {{-- Footer --}}
+            <div class="card-footer bg-white d-flex flex-column flex-md-row justify-content-between align-items-md-center sticky-bottom shadow" style="bottom: 0; z-index: 100;">
                 
-                {{-- Khu vực bên trái --}}
                 <div class="d-flex align-items-center mb-2 mb-md-0">
                     <a href="{{ route('products.list') }}" class="btn btn-outline-primary me-3">
                         <i class="fas fa-arrow-left"></i> Tiếp tục mua hàng
@@ -114,7 +140,6 @@
                     </div>
                 </div>
                 
-                {{-- Khu vực bên phải --}}
                 <div class="d-flex align-items-center justify-content-end">
                     <span class="me-3 fs-5">
                         Tổng tiền ({{ count($selectedItems) }} sản phẩm):
@@ -126,6 +151,5 @@
                 </div>
             </div>
         @endif
-
     </div>
 </div>
