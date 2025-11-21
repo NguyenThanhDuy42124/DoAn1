@@ -111,7 +111,7 @@
                                 <div class="d-flex">
                                     {{-- Nút "Xem" (thay modal bằng link) --}}
                                     <a href="{{ route('products.detail', ['id' => $product->id]) }}"
-                                        class="btn btn-outline-primary btn-sm me-2" title="Xem chi tiết">
+                                        class="btn btn-outline-primary btn-sm me-2 w-100" title="Xem chi tiết">
                                         <i class="fas fa-eye"></i>
                                     </a>
 
@@ -120,7 +120,7 @@
                                         @if (Auth::check())
                                             @if (empty(Auth::user()->phoneNumber) || empty(Auth::user()->email) || empty(Auth::user()->address))
                                                 <a href="{{ route('general.users.edit', Auth::user()->id) }}"
-                                                    class="btn btn-warning btn-sm w-100" title="Cập nhật thông tin">
+                                                    class="btn btn-warning btn-sm " title="Cập nhật thông tin">
                                                     <i class="fas fa-user-edit"></i>
                                                 </a>
                                             @else
@@ -130,13 +130,13 @@
                                                         <input type="hidden" name="product_id"
                                                             value="{{ $product->id }}">
                                                         <input type="hidden" name="quantity" value="1">
-                                                        <button type="submit" class="btn btn-success btn-sm w-100"
+                                                        <button type="submit" class="btn btn-success btn-sm"
                                                             title="Thêm vào giỏ">
                                                             <i class="fas fa-cart-plus"></i>
                                                         </button>
                                                     </form>
                                                 @else
-                                                    <button class="btn btn-secondary btn-sm w-100" disabled>Hết
+                                                    <button class="btn btn-secondary btn-sm" disabled>Hết
                                                         hàng</button>
                                                 @endif
                                             @endif
