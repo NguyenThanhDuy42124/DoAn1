@@ -1,5 +1,5 @@
 <div>
-    {{-- Flash messages (Giữ nguyên) --}}
+    {{-- Flash messages --}}
     @if(session()->has('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             {{ session('success') }}
@@ -19,7 +19,7 @@
         </div>
 
         <div class="card-body">
-            {{-- Tabs (Giữ nguyên) --}}
+            {{-- Tabs --}}
             <ul class="nav nav-tabs" id="orderTabs" role="tablist">
                 <li class="nav-item" role="presentation">
                     <a class="nav-link {{ $status === 'Pending' ? 'active' : '' }}" href="#" 
@@ -53,12 +53,12 @@
                 </li>
             </ul>
 
-            {{-- Tab Content (Giữ nguyên) --}}
+            {{-- Tab Content --}}
             <div class="tab-content mt-3">
                 <div class="tab-pane fade show active" role="tabpanel">
 
                     @if ($orders->isEmpty())
-                        {{-- Giao diện khi không có đơn hàng (Giữ nguyên) --}}
+                        {{-- Giao diện khi không có đơn hàng --}}
                         <div class="text-center py-5">
                             <i class="fas fa-file-invoice-dollar fa-3x text-muted mb-3"></i>
                             <h5 class="text-muted">Không có đơn hàng nào.</h5>
@@ -77,11 +77,11 @@
                                         <th>Tổng tiền</th>
                                         <th>Trạng thái</th>
                                         <th>Hành động (Đơn hàng)</th>
-                                        <th>Đánh giá SP</th> {{-- Giữ nguyên --}}
+                                        <th>Đánh giá SP</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {{-- Lặp đơn hàng (Giữ nguyên) --}}
+                                    {{-- Lặp đơn hàng --}}
                                     @foreach ($orders as $order)
                                         @foreach ($order->items as $index => $item)
                                             <tr>
@@ -96,7 +96,7 @@
                                                     <td rowspan="{{ count($order->items) }}">{{ number_format($order->total_price, 0, ',', '.') }}₫</td>
                                                     <td rowspan="{{ count($order->items) }}">{{ $order->status }}</td>
                                                     <td rowspan="{{ count($order->items) }}">
-                                                        {{-- Actions (Giữ nguyên) --}}
+                                                        {{-- Actions --}}
                                                         @if ($order->status === 'Pending')
                                                             <button type="button" wire:click.prevent="cancelOrder({{ $order->id }})" onclick="if(!confirm('Bạn có chắc muốn hủy đơn hàng?')) return false;" class="btn btn-danger btn-sm">Hủy đơn</button>
                                                         @elseif ($order->status === 'Delivered' || $order->status === 'Completed')
@@ -119,16 +119,14 @@
                                                 @endif
                                                 
                                                 <td>
-                                                   {{-- ============================================== --}}
-                                                   {{-- CẬP NHẬT LOGIC NÚT ĐÁNH GIÁ --}}
-                                                   {{-- ============================================== --}}
-                                                   @if ($order->status === 'Completed')
-            
+                                                    {{-- NÚT ĐÁNH GIÁ --}}
+                                                    @if ($order->status === 'Completed')
+                                    
                                                         @php
                                                             // Kiểm tra xem đã review cho đơn hàng VÀ sản phẩm này chưa
                                                             $reviewed = $order->reviews
                                                                 ->where('product_id', $item->product_id)
-                                                                ->where('order_id', $order->id) // Đảm bảo đúng đơn hàng
+                                                                ->where('order_id', $order->id) 
                                                                 ->isNotEmpty();
                                                         @endphp
                                                         
@@ -141,7 +139,7 @@
                                                                 Xem Đánh giá
                                                             </button>
                                                         @else
-                                                            {{-- CHƯA ĐÁNH GIÁ: Nút "Đánh giá" như cũ --}}
+                                                            {{-- CHƯA ĐÁNH GIÁ: Nút "Đánh giá" --}}
                                                             <button 
                                                                 type="button" 
                                                                 class="btn btn-info btn-sm"
@@ -150,9 +148,6 @@
                                                             </button>
                                                         @endif
                                                     @endif
-                                                   {{-- ============================================== --}}
-                                                   {{-- KẾT THÚC CẬP NHẬT --}}
-                                                   {{-- ============================================== --}}
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -173,15 +168,22 @@
     </div>
 
     {{-- =================================================================== --}}
-    {{-- MODAL ĐÁNH GIÁ (ĐÃ CẬP NHẬT) --}}
+    {{-- MODAL ĐÁNH GIÁ (ĐÃ CHỈNH SỬA VỊ TRÍ VÀ PADDING) --}}
     {{-- =================================================================== --}}
     @if ($showReviewModal)
-    <div class="modal fade show" tabindex="-1" style="display: block; background-color: rgba(0,0,0,0.5);" aria-labelledby="reviewModalLabel" aria-modal="true" role="dialog">
-        <div class="modal-dialog modal-dialog-centered">
+    {{-- THÊM padding-top: 85px vào đây để né Navbar --}}
+    <div class="modal fade show" tabindex="-1" 
+         style="display: block; background-color: rgba(0,0,0,0.5); padding-top: 85px; z-index: 10050;" 
+         aria-labelledby="reviewModalLabel" aria-modal="true" role="dialog">
+         
+        {{-- Thêm padding-bottom để cuộn không bị sát đáy --}}
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="padding-bottom: 50px;">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="reviewModalLabel">Đánh giá & nhận xét</h5>
-                    <button type="button" class="btn-close" wire:click="closeReviewModal" aria-label="Close"></button>
+                    <button type="button"  wire:click="closeReviewModal" aria-label="Close">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
 
                 {{-- NỘI DUNG MODAL --}}
@@ -192,26 +194,24 @@
                     @endif
 
                     @if ($productToReview)
-                        {{-- 1. Thông tin sản phẩm (Giữ nguyên) --}}
+                        {{-- 1. Thông tin sản phẩm --}}
                         <div class="d-flex align-items-center mb-3">
                             <img src="{{ !empty($item['product']['images']) ?
-                                                      asset('storage/' . $item['product']['images'][0]['image_path']) :
-                                                      asset('storage/product_images/default.jpg') }}" 
-                                             alt="{{ $item['product']['name'] }}" 
-                                             class="img-fluid rounded" 
-                                             style="width: 60px; height: 60px; object-fit: cover;">
+                                         asset('storage/' . $item['product']['images'][0]['image_path']) :
+                                         asset('storage/product_images/default.jpg') }}" 
+                                 alt="{{ $item['product']['name'] }}" 
+                                 class="img-fluid rounded" 
+                                 style="width: 60px; height: 60px; object-fit: cover;">
                             <h6 class="ms-3">{{ $productToReview->name }}</h6>
                         </div>
                         <hr>
 
                         @if ($alreadyReviewed && $existingReview)
-                            {{-- =========================================== --}}
                             {{-- CASE 2: ĐÃ ĐÁNH GIÁ (CHẾ ĐỘ XEM/PHẢN HỒI) --}}
-                            {{-- =========================================== --}}
                             
                             <h5 class="text-center">Lịch sử Đánh giá</h5>
 
-                            {{-- 2a. Đánh giá gốc của Buyer (Chỉ đọc) --}}
+                            {{-- 2a. Đánh giá gốc của Buyer --}}
                             <div class="mb-3 text-center">
                                 <label class="form-label d-block">Đánh giá (Gốc)</label>
                                 <div class="rating-stars">
@@ -227,27 +227,23 @@
                                 <textarea class="form-control" rows="3" readonly disabled>{{ $comment }}</textarea>
                             </div>
 
-                            {{-- 2b. Phản hồi của Seller (Nếu có) --}}
+                            {{-- 2b. Phản hồi của Seller --}}
                             @if (!empty($existingReview->reply))
                                 <div class="alert alert-secondary mt-3">
                                     <h6 class="alert-heading fw-bold">Phản hồi từ Người bán:</h6>
                                     <p class="mb-0" style="white-space: pre-wrap;">{{ $existingReview->reply }}</p>
                                 </div>
 
-                                {{-- 2c. Phản hồi bổ sung của Buyer (Nếu có) --}}
+                                {{-- 2c. Phản hồi bổ sung của Buyer --}}
                                 @if (!empty($existingReview->buyer_additional_feedback))
-                                    {{-- Đã gửi phản hồi bổ sung -> Chỉ hiển thị --}}
                                     <div class="alert alert-info mt-3">
                                         <h6 class="alert-heading fw-bold">Phản hồi bổ sung của bạn (Đã cập nhật {{$existingReview->rating}} sao):</h6>
                                         <p class="mb-0" style="white-space: pre-wrap;">{{ $existingReview->buyer_additional_feedback }}</p>
                                     </div>
                                 @else
-                                    {{-- ============================================== --}}
-                                    {{-- FORM GỬI PHẢN HỒI BỔ SUNG (ĐÃ CẬP NHẬT) --}}
-                                    {{-- ============================================== --}}
+                                    {{-- FORM GỬI PHẢN HỒI BỔ SUNG --}}
                                     <form wire:submit.prevent="submitAdditionalFeedback" class="mt-3 border p-3 rounded bg-light">
                                         
-                                        {{-- THÊM PHẦN CHỌN SAO VÀO ĐÂY --}}
                                         <div class="mb-3 text-center">
                                             <label class="form-label d-block fw-bold">Thay đổi đánh giá (nếu muốn)</label>
                                             <p class="small text-muted">Đánh giá hiện tại của bạn là {{ $rating }} sao. Bạn có thể chọn lại.</p>
@@ -261,7 +257,6 @@
                                             </div>
                                             @error('rating') <span class="text-danger d-block mt-1">{{ $message }}</span> @enderror
                                         </div>
-                                        {{-- KẾT THÚC PHẦN THÊM --}}
 
                                         <div class="mb-3">
                                             <label for="additionalFeedbackText" class="form-label fw-bold">Gửi phản hồi bổ sung</label>
@@ -278,24 +273,17 @@
                                             </span>
                                         </button>
                                     </form>
-                                    {{-- ============================================== --}}
-                                    {{-- KẾT THÚC CẬP NHẬT FORM --}}
-                                    {{-- ============================================== --}}
                                 @endif
 
                             @else
-                                {{-- Seller chưa phản hồi (Giữ nguyên) --}}
                                 <div class="alert alert-warning text-center mt-3">
                                     <i class="fas fa-clock me-1"></i>
                                     Người bán chưa phản hồi đánh giá này.
                                 </div>
                             @endif
 
-
                         @else
-                            {{-- =========================================== --}}
-                            {{-- CASE 1: CHƯA ĐÁNH GIÁ (Giữ nguyên) --}}
-                            {{-- =========================================== --}}
+                            {{-- CASE 1: CHƯA ĐÁNH GIÁ --}}
                             <form wire:submit.prevent="submitReview">
                                 {{-- Đánh giá chung (Sao) --}}
                                 <div class="mb-3 text-center">
@@ -342,6 +330,6 @@
         </div>
     </div>
     {{-- Lớp phủ (backdrop) cho modal --}}
-    <div class="modal-backdrop fade show"></div>
+    <div class="modal-backdrop fade show" style="z-index: 10040;"></div>
     @endif
 </div>

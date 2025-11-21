@@ -127,8 +127,8 @@
                         <h5 class="modal-title" id="reviewModalLabel">
                             Đánh giá cho Đơn hàng #{{ $orderForReview->id }}
                         </h5>
-                        <button type="button" class="btn-close" wire:click="closeReviewModal"
-                            aria-label="Close"></button>
+                        <button type="button"  wire:click="closeReviewModal"
+                            aria-label="Close"><i class="fas fa-times"></i></button>
                     </div>
                     <div class="modal-body">
 
