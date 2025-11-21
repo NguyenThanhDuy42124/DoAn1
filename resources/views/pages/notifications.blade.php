@@ -103,7 +103,6 @@
                                 @if (!$notification->is_read)
                                     <form action="{{ route('notifications.markAsRead', $notification->id) }}" method="POST" class="d-inline">
                                         @csrf
-                                        @method('PATCH')
                                         <button type="submit" class="btn btn-sm btn-link" title="Đánh dấu đã đọc" onclick="event.stopPropagation();">
                                             <i class="fas fa-check-circle text-primary fs-5"></i>
                                         </button>

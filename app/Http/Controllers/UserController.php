@@ -99,13 +99,12 @@ class UserController extends Controller
                 ->with('error', 'Bạn cần hoàn thành eKYC và được xác minh trước khi gửi yêu cầu trở thành người bán.');
         }
         $admins = User::where('role', 'admin')->get();
-        foreach ($admins as $admin) {
+
             Notification::create([
                 'user_id' => $user->id,
                 'type' => 'Buyer_Request',
                 'message' => 'Bạn đã gửi yêu cầu trở thành người bán. với ID: ' . $user->id . ' Vui lòng chờ xác minh từ quản trị viên.',
             ]);
-        }
 
         return redirect()->back()->with('message', 'Yêu cầu của bạn đã được gửi thành công. Vui lòng chờ xét duyệt từ quản trị viên.');
     }
