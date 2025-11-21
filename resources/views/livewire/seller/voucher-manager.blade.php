@@ -134,14 +134,23 @@
                 </div>
                 <div class="modal-body">
                     <form wire:submit.prevent="save">
+                    
+                    @if($isEditMode && !$canEditSensitiveData)
+                        <div class="alert alert-warning mb-3">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            Voucher này đã có người sử dụng. Bạn chỉ có thể sửa Tên, Số lượng và Ngày kết thúc.
+                            Nếu muốn thay đổi giá trị, hãy <strong>Tắt (Inactive)</strong> voucher này và tạo mới.
+                        </div>
+                    @endif
     
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label class="form-label required">Mã Voucher</label>
                             {{-- FIX 1: Dùng wire:model.blur để đảm bảo dữ liệu được cập nhật --}}
-                            <input type="text" wire:model.live="code" 
+                            <input type="text" wire:model.blur="code" 
                                 class="form-control @error('code') is-invalid @enderror" 
-                                placeholder="VD: SALE50" style="text-transform: uppercase;">
+                                placeholder="VD: SALE50" style="text-transform: uppercase;"
+                                @if($isEditMode && !$canEditSensitiveData) disabled @endif>
                             @error('code') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
                         <div class="col-md-6">
@@ -158,7 +167,7 @@
                         <div class="col-md-4">
                             <label class="form-label required">Loại giảm giá</label>
                             {{-- Select dùng .live để đổi UI ngay lập tức --}}
-                            <select wire:model.live="type" class="form-select">
+                            <select wire:model.live="type" class="form-select" @if($isEditMode && !$canEditSensitiveData) disabled @endif>
                                 <option value="fixed">Giảm tiền mặt (VNĐ)</option>
                                 <option value="percent">Giảm phần trăm (%)</option>
                             </select>
@@ -166,7 +175,7 @@
                         <div class="col-md-4">
                             <label class="form-label required">Giá trị giảm</label>
                             <div class="input-group">
-                                <input type="number" wire:model.blur="value" class="form-control @error('value') is-invalid @enderror" min="1">
+                                <input type="number" wire:model.blur="value" class="form-control @error('value') is-invalid @enderror" min="1" @if($isEditMode && !$canEditSensitiveData) disabled @endif>
                                 <span class="input-group-text">{{ $type == 'fixed' ? 'VNĐ' : '%' }}</span>
                             </div>
                             @error('value') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
@@ -181,21 +190,27 @@
                     @if($type == 'percent')
                         <div class="mb-3">
                             <label class="form-label">Giảm tối đa (VNĐ)</label>
-                            <input type="number" wire:model.blur="max_discount_amount" class="form-control" placeholder="Để trống nếu không giới hạn">
+                            <input type="number" wire:model.blur="max_discount_amount" class="form-control" placeholder="Để trống nếu không giới hạn" @if($isEditMode && !$canEditSensitiveData) disabled @endif>
                         </div>
                     @endif
 
                     <div class="mb-3">
                         <label class="form-label">Đơn hàng tối thiểu (VNĐ)</label>
-                        <input type="number" wire:model.blur="min_order_value" class="form-control" value="0">
+                        <input type="number" wire:model.blur="min_order_value" class="form-control" value="0" @if($isEditMode && !$canEditSensitiveData) disabled @endif>
                     </div>
 
                     {{-- FIX 2: Cải thiện UX Ngày tháng --}}
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label class="form-label">Ngày bắt đầu</label>
-                            {{-- Thêm gợi ý cho người dùng --}}
-                            <input type="datetime-local" wire:model.blur="start_date" class="form-control">
+                            <input type="datetime-local" wire:model.blur="start_date" 
+                                class="form-control @error('start_date') is-invalid @enderror"
+                                {{-- 1. Chặn chọn ngày quá khứ trên lịch --}}
+                                min="{{ now()->format('Y-m-d\TH:i') }}"
+                                {{-- 2. Logic khóa input cũ --}}
+                                @if($isEditMode && !$canEditSensitiveData) disabled @endif>
+                                
+                            @error('start_date') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
                             <small class="form-hint text-muted">Bỏ trống nếu muốn bắt đầu ngay lập tức.</small>
                         </div>
                         <div class="col-md-6">

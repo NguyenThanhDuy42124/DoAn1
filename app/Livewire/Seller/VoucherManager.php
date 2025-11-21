@@ -22,6 +22,7 @@ class VoucherManager extends Component
     public $code, $name, $type = 'fixed', $value, $min_order_value = 0, $max_discount_amount;
     public $quantity = 100, $start_date, $expiry_date;
     public $is_active = true;
+    public $canEditSensitiveData = true;
 
     // Reset form khi đóng modal
     public function resetForm()
@@ -44,6 +45,7 @@ class VoucherManager extends Component
     public function openCreateModal()
     {
         $this->resetForm();
+        $this->start_date = now()->format('Y-m-d\TH:i');
         $this->showModal = true;
     }
 
@@ -55,11 +57,13 @@ class VoucherManager extends Component
 
         $voucher = Voucher::where('seller_id', Auth::id())->findOrFail($id);
 
+        $this->canEditSensitiveData = ($voucher->used_count == 0);
+
         $this->code = $voucher->code;
         $this->name = $voucher->name;
         $this->type = $voucher->type;
-        $this->value = $voucher->value; // Cần format nếu là float
-        $this->min_order_value = $voucher->min_order_value;
+        $this->value = 0 + $voucher->value; // Cần format nếu là float
+        $this->min_order_value = 0 + $voucher->min_order_value;
         $this->max_discount_amount = $voucher->max_discount_amount;
         $this->quantity = $voucher->quantity;
         // Format date cho input datetime-local (Y-m-d\TH:i)
@@ -90,9 +94,15 @@ class VoucherManager extends Component
             'min_order_value' => 'nullable|numeric|min:0',
             'max_discount_amount' => 'nullable|numeric|min:0',
             'quantity' => 'required|integer|min:1',
-            'start_date' => 'nullable|date',
             'expiry_date' => 'nullable|date|after:start_date',
         ];
+        if (!$this->isEditMode) {
+            $rules['start_date'] = 'nullable|date|after_or_equal:' . now()->subMinute()->format('Y-m-d H:i');
+        } else {
+            // Nếu đang Edit -> Chỉ cần là ngày hợp lệ (vì voucher cũ có thể đã bắt đầu từ hôm qua)
+            $rules['start_date'] = 'nullable|date';
+        }
+        return $rules;
     }
 
     public function save()
@@ -103,28 +113,25 @@ class VoucherManager extends Component
 
         // Data chuẩn bị lưu
         $data = [
+            // Những trường này luôn được phép sửa
             'seller_id' => Auth::id(),
-            'code' => strtoupper($this->code),
             'name' => $this->name,
-            'type' => $this->type,
-            'value' => (float)$this->value,
-            'min_order_value' => $this->min_order_value ?? 0,
-            'max_discount_amount' => $this->type === 'percent' ? $this->max_discount_amount : null,
             'quantity' => (int)$this->quantity,
-            'start_date' => $startDate,
             'expiry_date' => $this->expiry_date,
-            'is_active' => true, // Mặc định tạo mới là active
+            'is_active' => true,
         ];
+
+        if (!$this->isEditMode || $this->canEditSensitiveData) {
+            $data['code'] = strtoupper($this->code);
+            $data['type'] = $this->type;
+            $data['value'] = (float)$this->value;
+            $data['min_order_value'] = (float)($this->min_order_value ?? 0);
+            $data['max_discount_amount'] = $this->type === 'percent' ? (float)$this->max_discount_amount : null;
+            $data['start_date'] = $startDate; // Ngày bắt đầu cũng không nên sửa nếu đã chạy
+        }
 
         if ($this->isEditMode) {
             $voucher = Voucher::where('seller_id', Auth::id())->findOrFail($this->voucherIdBeingEdited);
-            
-            // Không cho sửa code nếu voucher đã có người dùng (optional logic)
-            if($voucher->used_count > 0 && $voucher->code !== $data['code']) {
-                $this->addError('code', 'Không thể đổi mã Voucher khi đã có người sử dụng.');
-                return;
-            }
-            
             $voucher->update($data);
             session()->flash('success', 'Cập nhật voucher thành công!');
         } else {
