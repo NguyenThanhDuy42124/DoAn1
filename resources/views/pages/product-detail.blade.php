@@ -151,7 +151,7 @@
                                     const form = document.getElementById('product-cart-form');
                                     if (!form) return;
                                     const qtyInput = document.getElementById('quantity');
-                                    const max = Number(@json($product - > stock));
+                                    const max = Number(@json($product->stock));
                                     form.addEventListener('submit', function(e) {
                                         const qty = Number(qtyInput.value) || 0;
                                         if (qty < 1 || qty > max) {
