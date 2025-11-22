@@ -118,28 +118,70 @@
                             </p>
 
                             {{-- SỬA LỖI: Thêm action cho form (route cart.add phải tồn tại) --}}
-                            <form action="" method="POST">
-                                @csrf
-                                <div class="d-flex mb-3">
-                                    <label for="quantity" class="col-form-label me-2">Số lượng:</label>
-                                    <input type="number" name="quantity" id="quantity" class="form-control" value="1" min="1" max="{{ $product->stock }}" style="width: 80px;">
-                                </div>
-
-                                @if ($product->stock > 0)
-                                <button type="submit" class="btn btn-danger btn-lg w-100 mb-2">
-                                    <i class="fas fa-cart-plus me-2"></i> Thêm vào giỏ hàng
-                                </button>
-                                <button type="submit" name="buy_now" value="1" class="btn btn-success btn-lg w-100">
-                                    Mua ngay
-                                </button>
+                            @if (Auth::check())
+                                @if (empty(Auth::user()->phoneNumber) || empty(Auth::user()->email) || empty(Auth::user()->address))
+                                    <a href="{{ route('general.users.edit', Auth::user()->id) }}" class="btn btn-warning btn-sm w-100 flex-grow-1">
+                                        <i class="fas fa-user-edit"></i> Cập nhật thêm thông tin để có thể mua hàng
+                                    </a>
                                 @else
-                                <button type="button" class="btn btn-secondary btn-lg w-100" disabled>
-                                    <i class="fas fa-times-circle me-2"></i> Hết hàng
-                                </button>
+                                    @if($product->stock > 0)
+                                        <form id="product-cart-form" action="{{ route('buyer.carts.add') }}" method="POST" class="d-flex flex-column gap-2">
+                                            @csrf
+                                            <input type="hidden" name="product_id" value="{{ $product->id }}">
+
+                                            <div class="d-flex align-items-center gap-2">
+                                                <label for="quantity" class="col-form-label me-2 mb-0">Số lượng:</label>
+                                                <input type="number" name="quantity" id="quantity" class="form-control form-control-sm" value="1" min="1" max="{{ $product->stock }}" style="width: 100px;" required>
+                                                <small class="text-muted ms-2">Tối đa: {{ $product->stock }}</small>
+                                            </div>
+
+                                            {{-- Nút thêm vào giỏ: mặc định gửi tới buyer.carts.add --}}
+                                            <button type="submit" class="btn btn-danger btn-lg w-100">
+                                                <i class="fas fa-cart-plus me-2"></i> Thêm vào giỏ hàng
+                                            </button>
+
+                                            {{-- Nút mua ngay: override action để gửi tới buyer.carts.store (chuyển tới trang giỏ hàng) --}}
+                                            <button type="submit" class="btn btn-success btn-lg w-100" formaction="{{ route('buyer.carts.store') }}" formmethod="POST">
+                                                <i class="fas fa-bolt me-2"></i> Mua ngay
+                                            </button>
+                                        </form>
+
+                                        <script>
+                                            (function(){
+                                                const form = document.getElementById('product-cart-form');
+                                                if (!form) return;
+                                                const qtyInput = document.getElementById('quantity');
+                                                const max = Number(@json($product->stock));
+                                                form.addEventListener('submit', function(e){
+                                                    const qty = Number(qtyInput.value) || 0;
+                                                    if (qty < 1 || qty > max) {
+                                                        e.preventDefault();
+                                                        alert('Số lượng không hợp lệ.');
+                                                        return;
+                                                    }
+                                                    // disable buttons to prevent double submit
+                                                    form.querySelectorAll('button[type="submit"]').forEach(b => b.disabled = true);
+                                                });
+                                            })();
+                                        </script>
+                                    @else
+                                        <button class="btn btn-secondary btn-sm w-100" disabled>Hết hàng</button>
+                                    @endif
                                 @endif
-                            </form>
+                            @else
+                                <a href="{{ route('login') }}" class="btn btn-success btn-sm w-100">
+                                    <i class="fas fa-cart-plus"></i> Đăng nhập để mua
+                                </a>
+                            @endif
                         </div>
                     </div>
+                    @if(session()->has('success'))
+                    <div class="col-12 mt-3">
+                        <div class="alert alert-info">
+                            {{ session('success') }}
+                        </div>
+                    </div>
+                    @endif
 
                     {{-- PHẦN MÔ TẢ (Giữ nguyên) --}}
                     <div class="col-12 mt-4">
@@ -173,7 +215,7 @@
                     @foreach($specs as $spec)
                         @php
                             // --- LOGIC TÌM KIẾM THÔNG MINH ---
-                            
+
                             // 1. Ưu tiên tìm theo ID (Vì dữ liệu hiện tại của mày đang lưu theo ID)
                             $value = $productData[$spec->id] ?? null;
 

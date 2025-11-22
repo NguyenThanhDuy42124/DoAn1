@@ -60,7 +60,7 @@ class CategoryController extends Controller
     }
      public function getCategories()
     {
-        $categories = ModelsCategory::select('name', 'description')->get();
+        $categories = ModelsCategory::select('id','name', 'description')->get();
         return $categories;
     }
 }
