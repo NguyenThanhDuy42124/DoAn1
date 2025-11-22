@@ -1,4 +1,5 @@
 <div>
+     <div class="container">
     {{-- Header --}}
     <div class="page-header d-print-none mb-3">
         <div class="row align-items-center">
@@ -122,7 +123,7 @@
             {{ $vouchers->links() }}
         </div>
     </div>
-
+</div>
     {{-- MODAL CREATE / EDIT --}}
     @if($showModal)
     <div class="modal modal-blur fade show" style="display: block; background: rgba(0,0,0,0.5);" tabindex="-1" role="dialog">
