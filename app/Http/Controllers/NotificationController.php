@@ -25,7 +25,7 @@ class NotificationController extends Controller
         }
         
         // Cho user thông thường
-        $notifications = Notification::where('user_id', Auth::id())->latest()->paginate(20);
+        $notifications = Notification::where('user_id', Auth::id())->latest()->paginate(5);
         
         // Đánh dấu tất cả là đã đọc khi vào trang (chỉ cho user thông thường)
         Notification::where('user_id', Auth::id())

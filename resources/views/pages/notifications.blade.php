@@ -124,7 +124,7 @@
             {{-- Phân trang --}}
             @if ($notifications->hasPages())
                 <div class="card-footer bg-white">
-                    {{ $notifications->links() }}
+                    {{ $notifications->links('pagination::bootstrap-5') }}
                 </div>
             @endif
             
