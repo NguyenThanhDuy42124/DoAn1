@@ -5,7 +5,7 @@
 
 @section('content')
 <div class="container mb-5">
-    <div class="card shadow-sm border-0">
+    <div class="card shadow-sm border-0" style="border-radius: 16px;"> {{-- Bo góc thẻ chính --}}
         @auth
         @php
         $restrictedStatuses = ['Pending', 'Rejected', 'Hidden'];
@@ -13,7 +13,7 @@
 
         @if(in_array($product->status, $restrictedStatuses) &&
         (auth()->user()->role === 'admin' || auth()->user()->id === $seller->id))
-        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center" style="border-radius: 16px 16px 0 0;">
             <h4 class="mb-0 fw-bold text-danger">
                 Demo sản phẩm sau khi lên sàn
             </h4>
@@ -117,7 +117,6 @@
                                 </span>
                             </p>
 
-                            {{-- SỬA LỖI: Thêm action cho form (route cart.add phải tồn tại) --}}
                             @if (Auth::check())
                             @if (empty(Auth::user()->phoneNumber) || empty(Auth::user()->email) || empty(Auth::user()->address))
                             <a href="{{ route('general.users.edit', Auth::user()->id) }}" class="btn btn-warning btn-sm w-100 flex-grow-1">
@@ -135,12 +134,10 @@
                                     <small class="text-muted ms-2">Tối đa: {{ $product->stock }}</small>
                                 </div>
 
-                                {{-- Nút thêm vào giỏ: mặc định gửi tới buyer.carts.add --}}
                                 <button type="submit" class="btn btn-danger btn-lg w-100">
                                     <i class="fas fa-cart-plus me-2"></i> Thêm vào giỏ hàng
                                 </button>
 
-                                {{-- Nút mua ngay: override action để gửi tới buyer.carts.store (chuyển tới trang giỏ hàng) --}}
                                 <button type="submit" class="btn btn-success btn-lg w-100" formaction="{{ route('buyer.carts.store') }}" formmethod="POST">
                                     <i class="fas fa-bolt me-2"></i> Mua ngay
                                 </button>
@@ -186,8 +183,8 @@
 
                     {{-- PHẦN MÔ TẢ (Giữ nguyên) --}}
                     <div class="col-12 mt-4">
-                        <div class="card shadow-sm border-0">
-                            <div class="card-header bg-white py-3">
+                        <div class="card shadow-sm border-0" style="border-radius: 16px;">
+                            <div class="card-header bg-white py-3" style="border-radius: 16px 16px 0 0;">
                                 <h5 class="mb-0">Mô tả sản phẩm</h5>
                             </div>
                             <div class="card-body product-description">
@@ -197,41 +194,30 @@
                     </div>
 
                     {{-- PHẦN THÔNG SỐ (Giữ nguyên) --}}
-                    {{-- PHẦN THÔNG SỐ --}}
                     <div class="col-12 mt-4">
-                        <div class="card shadow-sm border-0">
-                            <div class="card-header bg-white py-3">
+                        <div class="card shadow-sm border-0" style="border-radius: 16px;">
+                            <div class="card-header bg-white py-3" style="border-radius: 16px 16px 0 0;">
                                 <h5 class="mb-0">Thông số kỹ thuật</h5>
                             </div>
                             <div class="card-body">
                                 <table class="table table-striped table-bordered">
                                     <tbody>
                                         @php
-                                        // Lấy mảng attributes
                                         $productData = $product->attributes ?? [];
                                         $hasData = false;
                                         @endphp
 
-                                        {{-- Lặp qua danh sách "Khuôn Mẫu" --}}
                                         @foreach($specs as $spec)
                                         @php
-                                        // --- LOGIC TÌM KIẾM THÔNG MINH ---
-
-                                        // 1. Ưu tiên tìm theo ID (Vì dữ liệu hiện tại của mày đang lưu theo ID)
                                         $value = $productData[$spec->id] ?? null;
-
-                                        // 2. Nếu không thấy, tìm theo ID dạng string (đề phòng)
                                         if (is_null($value)) {
                                         $value = $productData[(string)$spec->id] ?? null;
                                         }
-
-                                        // 3. Nếu vẫn không thấy, tìm theo TÊN (Cho dữ liệu tương lai nếu mày đổi cách lưu)
                                         if (is_null($value)) {
                                         $value = $productData[$spec->name] ?? null;
                                         }
                                         @endphp
 
-                                        {{-- Chỉ hiện nếu tìm thấy giá trị --}}
                                         @if(!empty($value))
                                         @php $hasData = true; @endphp
                                         <tr>
@@ -240,7 +226,6 @@
                                             </th>
                                             <td>
                                                 {{ $value }}
-                                                {{-- Hiển thị đơn vị tính nếu có --}}
                                                 @if(!empty($spec->unit))
                                                 <small class="text-muted">({{ $spec->unit }})</small>
                                                 @endif
@@ -262,15 +247,13 @@
                         </div>
                     </div>
 
-                    {{-- PHẦN ĐÁNH GIÁ SẢN PHẨM (ĐÃ CHỈNH SỬA) --}}
+                    {{-- PHẦN ĐÁNH GIÁ SẢN PHẨM (Giữ nguyên) --}}
                     <div class="col-12 mt-4" id="reviews">
-                        <div class="card shadow-sm border-0">
-                            <div class="card-header bg-white py-3">
+                        <div class="card shadow-sm border-0" style="border-radius: 16px;">
+                            <div class="card-header bg-white py-3" style="border-radius: 16px 16px 0 0;">
                                 <h5 class="mb-0">Đánh giá sản phẩm</h5>
                             </div>
                             <div class="card-body">
-
-                                {{-- Phần Tóm tắt Đánh giá --}}
                                 @if ($product->reviews_count > 0)
                                 <div class="row align-items-center mb-4">
                                     <div class="col-md-3 text-center border-end">
@@ -292,42 +275,28 @@
                                 <hr>
                                 @endif
 
-                                {{-- Danh sách Đánh giá --}}
                                 <div class="review-list">
                                     @forelse ($reviews as $review)
                                     <div class="d-flex mb-4">
-
-                                        {{-- AVATAR NGƯỜI MUA (Đã cập nhật theo yêu cầu) --}}
                                         <div class="flex-shrink-0 me-3">
                                             @if ($review->buyer && $review->buyer->img)
-                                            {{-- Nếu người mua có ảnh, hiển thị ảnh của họ --}}
                                             <img src="{{ asset('storage/' . $review->buyer->img) }}" alt="{{ $review->buyer->name }}" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
                                             @else
-                                            {{-- Nếu không có, hiển thị ảnh default --}}
                                             <img src="{{ asset('storage/profile_images/default.jpg') }}" alt="{{ $review->buyer->name ?? 'User' }}" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
                                             @endif
                                         </div>
-
-                                        {{-- Nội dung đánh giá --}}
                                         <div class="flex-grow-1">
                                             <h6 class="mt-0 mb-1 fw-bold">{{ $review->buyer->name ?? 'Người dùng' }}</h6>
-
-                                            {{-- Sao --}}
                                             <div class="text-warning mb-1">
                                                 @foreach(range(1, 5) as $star)
                                                 <i class="fas fa-star" style="color: {{ $review->rating >= $star ? '#ffc107' : '#e0e0e0' }};"></i>
                                                 @endforeach
                                             </div>
-
-                                            {{-- Bình luận --}}
                                             <p class="mb-1" style="white-space: pre-wrap;">{{ $review->comment }}</p>
                                             <small class="text-muted">{{ $review->created_at->format('d/m/Y \l\ú\c H:i') }}</small>
 
-                                            {{-- ============================================= --}}
-                                            {{-- BẮT ĐẦU CHỈNH SỬA: PHẢN HỒI CỦA SELLER --}}
-                                            {{-- ============================================= --}}
                                             @if ($review->reply)
-                                            <div class="d-flex mt-3 ms-4"> {{-- Thụt lề --}}
+                                            <div class="d-flex mt-3 ms-4">
                                                 <div class="flex-shrink-0 me-3">
                                                     @if ($seller->img)
                                                     <img src="{{ asset('storage/' . $seller->img) }}" alt="{{ $seller->name }}" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
@@ -343,16 +312,9 @@
                                                 </div>
                                             </div>
                                             @endif
-                                            {{-- ============================================= --}}
-                                            {{-- KẾT THÚC CHỈNH SỬA: PHẢN HỒI CỦA SELLER --}}
-                                            {{-- ============================================= --}}
 
-
-                                            {{-- ============================================= --}}
-                                            {{-- BẮT ĐẦU CHỈNH SỬA: PHẢN HỒI BỔ SUNG CỦA BUYER --}}
-                                            {{-- ============================================= --}}
                                             @if ($review->buyer_additional_feedback)
-                                            <div class="d-flex mt-3 ms-4"> {{-- Thụt lề --}}
+                                            <div class="d-flex mt-3 ms-4">
                                                 <div class="flex-shrink-0 me-3">
                                                     @if ($review->buyer && $review->buyer->img)
                                                     <img src="{{ asset('storage/' . $review->buyer->img) }}" alt="{{ $review->buyer->name }}" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
@@ -368,10 +330,6 @@
                                                 </div>
                                             </div>
                                             @endif
-                                            {{-- ============================================= --}}
-                                            {{-- KẾT THÚC CHỈNH SỬA: PHẢN HỒI BỔ SUNG CỦA BUYER --}}
-                                            {{-- ============================================= --}}
-
                                         </div>
                                     </div>
                                     @if (!$loop->last)
@@ -382,10 +340,9 @@
                                         <i class="fas fa-comment-dots fa-2x text-muted mb-2"></i>
                                         <p class="text-muted mb-0">Chưa có đánh giá nào cho sản phẩm này.</p>
                                     </div>
-                                    @endforelse {{-- <-- SỬA LỖI CÚ PHÁP (từ @empty thành @endforelse) --}}
+                                    @endforelse
                                 </div>
 
-                                {{-- Phân trang cho Reviews --}}
                                 <div class="mt-4 d-flex justify-content-center">
                                     {{ $reviews->links('pagination::bootstrap-5') }}
                                 </div>
@@ -401,69 +358,89 @@
                 <div class="col-lg-4">
 
                     {{-- ============================================= --}}
-                    {{-- BỔ SUNG: PHẦN THÔNG TIN NGƯỜI BÁN (VỊ TRÍ MỚI) --}}
+                    {{-- 1. THÔNG TIN NGƯỜI BÁN (GIAO DIỆN HIỆN ĐẠI) --}}
                     {{-- ============================================= --}}
-                    <div class="card shadow-sm border-0 mb-4">
-                        <div class="card-header bg-white py-3">
-                            <h4 class="mb-0 fw-bold">Thông tin Người bán</h4>
-                        </div>
-                        <div class="card-body d-flex align-items-center">
-                            {{-- Sửa: Thêm logic ảnh default cho seller --}}
-                            @if ($seller->img)
-                            <img src="{{ asset('storage/' . $seller->img) }}" alt="{{ $seller->name }}" class="rounded-circle border me-4" style="width: 80px; height: 80px; object-fit: cover;">
-                            @else
-                            <img src="{{ asset('storage/profile_images/default.jpg') }}" alt="{{ $seller->name }}" class="rounded-circle border me-4" style="width: 80px; height: 80px; object-fit: cover;">
-                            @endif
+                    <div class="modern-shop-card mb-4" style="text-align: left; height: auto;"> {{-- Tái sử dụng class .modern-shop-card nhưng override --}}
+                        {{-- Banner giả lập --}}
+                        <div class="shop-card-banner" style="height: 60px; background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);"></div>
 
-                            <div>
-                                <h5 class="fw-semibold mb-1">{{ $seller->name }}</h5>
-                                <p class="mb-2 text-muted">Địa chỉ: {{ $seller->address ?? 'Chưa cập nhật' }}</p>
-                                <a href="/shop/{{ $seller->id }}" class="btn btn-outline-primary btn-sm">
-                                    Xem cửa hàng
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    {{-- ============================================= --}}
-                    {{-- KẾT THÚC BỔ SUNG --}}
-                    {{-- ============================================= --}}
+                        <div class="px-3 pb-3">
+                            <div class="d-flex align-items-center" style="margin-top: -30px;">
+                                {{-- Avatar Seller --}}
+                                <div class="shop-avatar-wrapper me-3">
+                                    @if ($seller->img)
+                                    <img src="{{ asset('storage/' . $seller->img) }}" alt="{{ $seller->name }}" class="shop-avatar-img" style="width: 70px; height: 70px; border: 3px solid #fff;">
+                                    @else
+                                    <img src="{{ asset('storage/profile_images/default.jpg') }}" alt="{{ $seller->name }}" class="shop-avatar-img" style="width: 70px; height: 70px; border: 3px solid #fff;">
+                                    @endif
+                                    <div class="verified-badge" style="width: 18px; height: 18px; font-size: 10px; bottom: 2px; right: 2px;">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                </div>
 
-
-                    {{-- SẢN PHẨM LIÊN QUAN (Nằm dưới Seller) --}}
-                    <div class="card shadow-sm border-0 sticky-top" style="top: 20px;">
-                        <div class="card-header bg-white py-3">
-                            <h5 class="mb-0">Sản phẩm liên quan</h5>
-                        </div>
-                        <div class="card-body">
-
-                            {{-- Vòng lặp sản phẩm liên quan --}}
-                            @forelse ($relatedProducts as $related)
-                            <div class="d-flex align-items-center mb-3">
-
-                                {{-- SỬA LỖI: Phải sử dụng $related cho hình ảnh --}}
-                                <img src="{{ $related->images->isNotEmpty() ?
-                         asset('storage/' . $related->images->first()->image_path) :
-                         asset('storage/product_images/default.jpg') }}" alt="{{ $related->name }}" {{-- SỬA LỖI: Dùng tên của $related --}} class="img-fluid rounded me-3" {{-- Thêm lại me-3 (margin) để ảnh không dính vào chữ --}} style="width: 60px; height: 60px; object-fit: cover;">
-
-                                <div>
-                                    {{-- SỬA LỖI: Link phải trỏ đến $related->id --}}
-                                    <a href="{{ route('products.detail', ['id' => $related->id]) }}" class="text-decoration-none text-dark fw-semibold d-block">
-                                        {{ $related->name }}
+                                {{-- Tên & Nút --}}
+                                <div class="mt-4 pt-1">
+                                    <h6 class="shop-name mb-1 text-truncate" style="font-size: 1.1rem;">{{ $seller->name }}</h6>
+                                    <a href="/shop/{{ $seller->id }}" class="btn btn-outline-primary btn-sm btn-shop-view" style="font-size: 0.8rem; padding: 4px 12px;">
+                                        Xem Shop
                                     </a>
-                                    <strong class="text-danger">{{ number_format($related->price, 0, ',', '.') }}₫</strong>
                                 </div>
                             </div>
-                            @empty
-                            <p class="text-muted">Không tìm thấy sản phẩm liên quan.</p>
-                            @endforelse
 
+                            <hr class="my-3 text-muted opacity-25">
+
+                            <div class="small text-muted">
+                                <p class="mb-1"><i class="fas fa-map-marker-alt me-2 text-danger"></i> {{ $seller->address ?? 'Chưa cập nhật địa chỉ' }}</p>
+                                <p class="mb-0"><i class="fas fa-calendar-alt me-2 text-primary"></i> Tham gia: {{ $seller->created_at->format('d/m/Y') }}</p>
+                            </div>
                         </div>
                     </div>
+
+                    {{-- ============================================= --}}
+                    {{-- 2. SẢN PHẨM LIÊN QUAN (GIAO DIỆN HIỆN ĐẠI) --}}
+                    {{-- ============================================= --}}
+                    <div class="card shadow-sm border-0 sticky-top" style="top: 20px; border-radius: 16px; overflow: hidden;">
+                        <div class="card-header bg-white py-3 border-bottom-0">
+                            <h5 class="mb-0 fw-bold">Sản phẩm liên quan</h5>
+                        </div>
+                        <div class="card-body p-0"> {{-- Padding 0 để list-group đẹp hơn --}}
+                            <div class="list-group list-group-flush">
+                                @forelse ($relatedProducts as $related)
+                                <a href="{{ route('products.detail', ['id' => $related->id]) }}" class="list-group-item list-group-item-action p-3 border-bottom-0 border-top">
+                                    <div class="d-flex align-items-center">
+                                        {{-- Ảnh thumbnail bo góc --}}
+                                        <div class="flex-shrink-0 me-3 position-relative">
+                                            <img src="{{ $related->images->isNotEmpty() ? asset('storage/' . $related->images->first()->image_path) : asset('storage/product_images/default.jpg') }}" alt="{{ $related->name }}" class="rounded" style="width: 60px; height: 60px; object-fit: cover;">
+                                            @if($related->stock == 0)
+                                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-secondary" style="font-size: 0.6rem;">Hết</span>
+                                            @endif
+                                        </div>
+
+                                        {{-- Thông tin tóm tắt --}}
+                                        <div class="flex-grow-1 overflow-hidden">
+                                            <h6 class="mb-1 text-truncate text-dark fw-semibold" style="font-size: 0.95rem;">{{ $related->name }}</h6>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span class="text-danger fw-bold">{{ number_format($related->price, 0, ',', '.') }}₫</span>
+                                                <small class="text-muted" style="font-size: 0.75rem;">
+                                                    <i class="fas fa-eye me-1"></i> Xem ngay
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                                @empty
+                                <div class="p-4 text-center text-muted">
+                                    <i class="fas fa-box-open mb-2"></i><br>
+                                    Không tìm thấy sản phẩm liên quan.
+                                </div>
+                                @endforelse
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
-            </div> {{-- Hết <div class="row g-5"> (Hàng chính) --}}
-
-            {{-- (Đã xóa khối Seller ở cuối) --}}
+            </div> {{-- Hết <div class="row g-5"> --}}
 
         </div> {{-- Hết <div class="card-body"> --}}
     </div> {{-- Hết <div class="card"> --}}
