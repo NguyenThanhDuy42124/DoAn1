@@ -14,18 +14,27 @@ class Pending extends Component
 
     protected $paginationTheme = 'bootstrap';
 
+    // --- BIẾN FILTER ---
     public $search = '';
+    protected $queryString = ['search'];
+
+    // --- BIẾN SELECTION ---
     public $selected = [];
     public $selectAll = false;
-    public $reason = ''; // Cho reject
 
-    protected $queryString = ['search'];
+    // --- BIẾN MODAL & LÝ DO ---
+    public $reasonType = ''; // Lý do chọn từ list
+    public $reasonNote = ''; // Ghi chú thêm
     public $selectedProductId;
-    public $actionType = 'reject'; // reject | hidden
+    public $actionType = 'reject'; // reject | hidden | approve
     public $reasonModalOpen = false;
+    public $isBulk = false; // Đánh dấu xử lý hàng loạt
 
-    // reset page khi thay đổi search
-    public function updatedSearch() { $this->resetPage(); }
+    // Reset phân trang khi search thay đổi (Lấy từ HEAD)
+    public function updatedSearch() 
+    { 
+        $this->resetPage(); 
+    }
 
     public function updatedSelectAll($value)
     {
@@ -36,6 +45,7 @@ class Pending extends Component
         }
     }
 
+    // --- DUYỆT NHANH (1 SẢN PHẨM) ---
     public function approve($id)
     {
         $product = Product::findOrFail($id);
@@ -49,38 +59,23 @@ class Pending extends Component
         ]);
 
         Session::flash('success', 'Đã duyệt sản phẩm!');
-        $this->resetPage();
+        // Không reset page để admin duyệt tiếp các sp khác cùng trang
     }
 
-    public function reject($id)
-    {
-        $this->validate(['reason' => 'required|string|max:255']);
-
-        $product = Product::findOrFail($id);
-        $product->update(['status' => Product::STATUS_REJECTED]);
-
-        Notification::create([
-            'user_id' => $product->seller_id,
-            'type' => 'product_rejected',
-            'message' => "Sản phẩm '{$product->name}' bị từ chối: {$this->reason}",
-            'is_read' => false,
-        ]);
-
-        $this->reason = '';
-        Session::flash('success', 'Đã từ chối sản phẩm!');
-        $this->resetPage();
-    }
-
+    // --- DUYỆT HÀNG LOẠT ---
     public function bulkApprove()
     {
         if (empty($this->selected)) {
-            Session::flash('error', 'Chọn ít nhất một sản phẩm!');
+            $this->dispatch('alert', ['type' => 'error', 'message' => 'Chưa chọn sản phẩm nào!']);
             return;
         }
 
+        // Lấy danh sách sản phẩm 1 lần thôi (Fix lỗi lặp query 2 lần của mày)
         $products = Product::whereIn('id', $this->selected)->get();
+        
         foreach ($products as $product) {
             $product->update(['status' => Product::STATUS_APPROVED]);
+            
             Notification::create([
                 'user_id' => $product->seller_id,
                 'type' => 'product_approved',
@@ -91,35 +86,111 @@ class Pending extends Component
 
         $this->selected = [];
         $this->selectAll = false;
-        Session::flash('success', 'Đã duyệt hàng loạt!');
-        $this->resetPage();
+        Session::flash('success', 'Đã duyệt hàng loạt ' . count($products) . ' sản phẩm!');
     }
 
-    public function bulkReject()
+    // --- MỞ MODAL CHO 1 SẢN PHẨM ---
+    public function openRejectModal($id, $type = 'reject')
     {
-        $this->validate(['reason' => 'required|string|max:255']);
+        $this->selectedProductId = $id;
+        $this->actionType = $type;
+        $this->isBulk = false; // Xử lý lẻ
+        
+        // Reset form
+        $this->reasonType = ''; 
+        $this->reasonNote = '';
+        $this->reasonModalOpen = true;
+    }
 
+    // --- MỞ MODAL HÀNG LOẠT ---
+    public function openBulkRejectModal()
+    {
         if (empty($this->selected)) {
-            Session::flash('error', 'Chọn ít nhất một sản phẩm!');
-            return;
+             session()->flash('error', 'Vui lòng chọn ít nhất 1 sản phẩm!');
+             return;
         }
 
-        $products = Product::whereIn('id', $this->selected)->get();
-        foreach ($products as $product) {
-            $product->update(['status' => Product::STATUS_REJECTED]);
-            Notification::create([
-                'user_id' => $product->seller_id,
-                'type' => 'product_rejected',
-                'message' => "Sản phẩm '{$product->name}' bị từ chối (hàng loạt): {$this->reason}",
-                'is_read' => false,
+        $this->isBulk = true; // Xử lý hàng loạt
+        $this->actionType = 'reject';
+        
+        $this->reasonType = ''; 
+        $this->reasonNote = '';
+        $this->reasonModalOpen = true;
+    }
+
+    public function closeRejectModal()
+    {
+        $this->reasonModalOpen = false;
+        $this->reasonType = '';
+        $this->reasonNote = '';
+        $this->selectedProductId = null;
+        $this->isBulk = false;
+    }
+
+    // --- XÁC NHẬN (XỬ LÝ CHUNG CHO CẢ LẺ VÀ BULK) ---
+    public function confirmReject()
+    {
+        // 1. Validate
+        if ($this->actionType !== 'approve') {
+             $this->validate([
+                'reasonType' => 'required|string',
             ]);
         }
 
-        $this->reason = '';
-        $this->selected = [];
-        $this->selectAll = false;
-        Session::flash('success', 'Đã từ chối hàng loạt!');
-        $this->resetPage();
+        // 2. Chuẩn bị lý do
+        $fullReason = $this->reasonType;
+        if (!empty($this->reasonNote)) {
+            $fullReason .= " - " . $this->reasonNote;
+        }
+
+        // --- TRƯỜNG HỢP 1: XỬ LÝ HÀNG LOẠT ---
+        if ($this->isBulk) {
+            $products = Product::whereIn('id', $this->selected)->get();
+            
+            foreach ($products as $product) {
+                $product->update(['status' => Product::STATUS_REJECTED]);
+                
+                Notification::create([
+                    'user_id' => $product->seller_id,
+                    'type' => 'product_rejected',
+                    'message' => "Sản phẩm '{$product->name}' bị từ chối. Lý do: {$fullReason}",
+                    'is_read' => false,
+                ]);
+            }
+            
+            $this->selected = [];
+            $this->selectAll = false;
+            session()->flash('success', 'Đã từ chối ' . count($products) . ' sản phẩm!');
+
+        } 
+        // --- TRƯỜNG HỢP 2: XỬ LÝ LẺ ---
+        else {
+            $product = Product::findOrFail($this->selectedProductId);
+            $msg = '';
+
+            if ($this->actionType === 'reject') {
+                $product->update(['status' => Product::STATUS_REJECTED]);
+                $msg = "bị từ chối";
+            } elseif ($this->actionType === 'hidden') {
+                $product->update(['status' => Product::STATUS_HIDDEN]);
+                $msg = "bị ẩn";
+            } else {
+                $product->update(['status' => Product::STATUS_APPROVED]);
+                $msg = "được duyệt";
+                $fullReason = "Sản phẩm hợp lệ";
+            }
+
+            Notification::create([
+                'user_id' => $product->seller_id,
+                'type' => 'product_' . $this->actionType,
+                'message' => "Sản phẩm '{$product->name}' {$msg}. Lý do: {$fullReason}",
+                'is_read' => false,
+            ]);
+            
+            session()->flash('success', 'Đã xử lý sản phẩm!');
+        }
+
+        $this->closeRejectModal();
     }
 
     protected function getProductsQuery()
@@ -140,46 +211,16 @@ class Pending extends Component
     {
         $products = $this->getProductsQuery()->paginate(10);
 
-        return view('admin.products.pending', compact('products'));
-    }
+        // List lý do mẫu
+        $reasonOptions = [
+            'Hình ảnh mờ, không rõ nét',
+            'Sản phẩm vi phạm bản quyền',
+            'Thông tin mô tả sai lệch/thiếu',
+            'Giá bán không hợp lý (quá cao/thấp)',
+            'Sản phẩm thuộc danh mục cấm',
+            'Spam/Đăng trùng lặp',
+        ];
 
-    public function openRejectModal($id)
-    {
-        $this->selectedProductId = $id;
-        $this->reasonModalOpen = true;
-    }
-    public function closeRejectModal()
-    {
-        $this->reasonModalOpen = false;
-        $this->reason = '';
-        $this->selectedProductId = null;
-    }
-    public function confirmReject()
-    {
-        $this->validate([
-            'reason' => 'required|string|max:255',
-            'actionType' => 'required|in:reject,hidden',
-        ]);
-
-        $product = Product::findOrFail($this->selectedProductId);
-
-        if ($this->actionType === 'reject') {
-            $product->update(['status' => Product::STATUS_REJECTED]);
-        } else {
-            $product->update(['status' => Product::STATUS_HIDDEN]);
-        }
-
-        Notification::create([
-            'user_id' => $product->seller_id,
-            'type' => 'product_' . $this->actionType,
-            'message' => "Sản phẩm '{$product->name}' bị {$this->actionType}: {$this->reason}",
-            'is_read' => false,
-        ]);
-
-        // Reset
-        $this->reason = '';
-        $this->reasonModalOpen = false;
-        $this->selectedProductId = null;
-        session()->flash('success', 'Đã xử lý sản phẩm!');
+        return view('admin.products.pending', compact('products', 'reasonOptions'));
     }
 }

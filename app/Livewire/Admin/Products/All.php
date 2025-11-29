@@ -30,10 +30,17 @@ class All extends Component
     public $price_max = '';
     public $sortField = 'created_at';
     public $sortDirection = 'desc';
+
+
+// --- PHẦN XỬ LÝ MODAL & LÝ DO ---
     public $selectedProductId;
-    public $actionType = 'reject'; // reject | hidden
     public $reasonModalOpen = false;
-    public $reason = ''; // Cho reject
+    public $actionType = 'reject'; 
+    
+    // Tách biến ra để Query được như ý mày muốn
+    public $reasonType = ''; // Lưu lý do chọn từ Select
+    public $reasonNote = ''; // Lưu ghi chú viết tay
+
 
     protected $queryString = [
         'search', 'status', 'category_id', 'seller_id',
@@ -109,6 +116,15 @@ class All extends Component
             ->limit(6)
             ->get();
 
+        $reasonOptions = [
+            'Hình ảnh mờ/kém chất lượng',
+            'Sản phẩm vi phạm bản quyền',
+            'Nội dung không phù hợp/phản cảm',
+            'Giá sai quy định thị trường',
+            'Thông tin mô tả sai lệch',
+            'Spam/Đăng trùng lặp',
+        ];
+
         $chartData = $topCategories->map(function ($cat) {
             return [
                 'label' => $cat->name,
@@ -119,53 +135,81 @@ class All extends Component
 
         return view('admin.products.all', [
             'products' => $products,
+            'reasonOptions' => $reasonOptions,
             'categories' => Category::orderBy('name')->get(),
             'users' => User::where('role', 'seller')->orderBy('name')->get(),
             'stats' => $stats,
             'chartData' => $chartData,
         ]);
     }
-        public function openRejectModal($id)
+    public function openRejectModal($id, $type = 'reject')
     {
         $this->selectedProductId = $id;
+        $this->actionType = $type; // Lưu lại hành động: reject/hidden/approve
+        
+        // Reset form
+        $this->reasonType = ''; 
+        $this->reasonNote = '';
+        
         $this->reasonModalOpen = true;
     }
+
     public function closeRejectModal()
     {
         $this->reasonModalOpen = false;
-        $this->reason = '';
+        $this->reasonType = '';
+        $this->reasonNote = '';
         $this->selectedProductId = null;
     }
     public function confirmReject()
     {
-        $this->validate([
-            'reason' => 'required|string|max:255',
-            'actionType' => 'required|in:reject,hidden,approve',
-        ]);
+        // Nếu là Approve (Duyệt/Khôi phục) thì không bắt buộc lý do
+        if ($this->actionType === 'approve') {
+            $this->validate(['actionType' => 'required']);
+        } else {
+            // Nếu Reject hoặc Hide thì bắt buộc chọn lý do chính
+            $this->validate([
+                'reasonType' => 'required|string', 
+                'actionType' => 'required',
+            ]);
+        }
 
         $product = Product::findOrFail($this->selectedProductId);
+        $statusMsg = '';
 
+        // Xử lý status
         if ($this->actionType === 'reject') {
             $product->update(['status' => Product::STATUS_REJECTED]);
+            $statusMsg = 'bị từ chối';
         } else if ($this->actionType === 'hidden') {
             $product->update(['status' => Product::STATUS_HIDDEN]);
-        }
-        else if ($this->actionType === 'approve') {
+            $statusMsg = 'bị ẩn';
+        } else if ($this->actionType === 'approve') {
             $product->update(['status' => Product::STATUS_APPROVED]);
+            $statusMsg = 'được duyệt/khôi phục';
         }
 
+        // GỘP LÝ DO ĐỂ LƯU VÀO DB (Notification)
+        // Format: "Lý do chính - Ghi chú thêm" -> Dễ query LIKE sau này
+        $fullReason = $this->reasonType;
+        if (!empty($this->reasonNote)) {
+            $fullReason .= " - " . $this->reasonNote;
+        }
+        
+        // Nếu là approve mà không ghi gì thì set default
+        if ($this->actionType === 'approve' && empty($fullReason)) {
+            $fullReason = 'Sản phẩm hợp lệ.';
+        }
 
         Notification::create([
             'user_id' => $product->seller_id,
             'type' => 'product_' . $this->actionType,
-            'message' => "Sản phẩm '{$product->name}' bị {$this->actionType}: {$this->reason}",
+            'message' => "Sản phẩm '{$product->name}' {$statusMsg}. Lý do: {$fullReason}",
             'is_read' => false,
         ]);
 
-        // Reset
-        $this->reason = '';
-        $this->reasonModalOpen = false;
-        $this->selectedProductId = null;
-        session()->flash('success', 'Đã xử lý sản phẩm!');
+        $this->closeRejectModal();
+        session()->flash('success', 'Đã xử lý xong!');
     }
+
 }

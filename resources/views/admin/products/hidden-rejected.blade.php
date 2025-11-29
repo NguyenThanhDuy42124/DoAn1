@@ -95,7 +95,7 @@
 </table>
 
         <div class="p-2 text-center">
-            {{ $products->links() }}
+            {{ $products->links('pagination::bootstrap-5') }}
         </div>
     </div>
 </div>
