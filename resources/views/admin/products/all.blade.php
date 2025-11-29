@@ -49,6 +49,30 @@
                         <input type="number" wire:model.live="price_max" class="form-control" placeholder="Max">
                     </div>
                 </div>
+                {{-- THANH CÔNG CỤ HÀNG LOẠT --}}
+                @if(!empty($selected))
+                <div class="alert alert-info d-flex justify-content-between align-items-center p-2 mb-3 shadow-sm fade show">
+                    <div>
+                        <i class="fas fa-check-square me-2"></i> Đã chọn <strong>{{ count($selected) }}</strong> sản phẩm
+                    </div>
+                    <div class="d-flex gap-2">
+                        {{-- Nút Ẩn Hàng Loạt --}}
+                        <button wire:click="openRejectModal(null, 'hidden')" class="btn btn-sm btn-warning">
+                            <i class="fas fa-eye-slash"></i> Ẩn tất cả
+                        </button>
+                        
+                        {{-- Nút Từ Chối Hàng Loạt --}}
+                        <button wire:click="openRejectModal(null, 'reject')" class="btn btn-sm btn-danger">
+                            <i class="fas fa-ban"></i> Từ chối tất cả
+                        </button>
+                        
+                        {{-- Nút Khôi Phục Hàng Loạt (Approve) --}}
+                        <button wire:click="openRejectModal(null, 'approve')" class="btn btn-sm btn-success">
+                            <i class="fas fa-undo"></i> Khôi phục tất cả
+                        </button>
+                    </div>
+                </div>
+                @endif
 
                 <div class="col-md-12 mt-3">
                     <button wire:click="export" class="btn btn-primary btn-sm me-2">
@@ -118,15 +142,7 @@
                     @forelse($products as $product)
                         <tr>
                             {{-- UX CAO CẤP: Bấm tên là xem chi tiết luôn --}}
-                            <td>
-                                <a href="{{ route('products.detail', ['id' => $product->id]) }}" 
-                                   class="text-decoration-none fw-bold text-primary"
-                                   target="_blank" {{-- Mở tab mới cho tiện check --}}
-                                   title="Xem chi tiết sản phẩm">
-                                    {{ Str::limit($product->name, 40) }} 
-                                </a>
-                            </td>
-                            
+                            <td>{{ Str::limit($product->name, 40) }}</td> 
                             <td>{{ number_format($product->price) }}đ</td>
                             <td>{{ $product->category?->name ?? '-' }}</td>
                             <td>{{ $product->seller?->name ?? '-' }}</td>
@@ -144,14 +160,6 @@
                             {{-- CỘT HÀNH ĐỘNG --}}
                             <td>
                                 <div class="d-flex gap-1">
-                                    
-                                    {{-- NÚT XEM CHI TIẾT (Luôn hiện, không cần if) --}}
-                                    <a href="{{ route('products.detail', ['id' => $product->id]) }}" 
-                                       class="btn btn-sm btn-outline-info" 
-                                       target="_blank"
-                                       title="Xem chi tiết">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
 
                                     {{-- CÁC NÚT XỬ LÝ (Tùy trạng thái) --}}
                                     

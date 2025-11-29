@@ -8,68 +8,102 @@ use App\Models\Notification;
 
 class ProductApproval extends Component
 {
+    public $productId; // ID nhận từ view cha
     public $reasonModalOpen = false;
-    public $selectedProductId;
     public $actionType = 'reject';
-    public $reason = '';
-    public $productId;
+    
+    // Dùng biến tách lẻ cho xịn sò giống trang danh sách
+    public $reasonType = ''; 
+    public $reasonNote = '';
 
-    protected $rules = [
-        'reason' => 'required|min:5',
-        'actionType' => 'required|in:reject,hidden',
-    ];
-
-    // ✅ Duyệt sản phẩm
-    public function approve($productId)
+    // Bắt buộc phải có mount để nhận ID sản phẩm
+    public function mount($productId)
     {
-        $product = Product::find($productId);
-        if (!$product) return;
-
-        $product->status = 'approved';
-        $product->save();
-        $message = "Sản phẩm #{$product->id} đã được duyệt.";
-
-        return redirect()->route('admin.products.index')->with('message', $message);
+        $this->productId = $productId;
     }
 
-    // ❌ Mở modal từ chối
-    public function openRejectModal($productId)
+    // ✅ Duyệt sản phẩm
+    public function approve()
     {
-        $this->selectedProductId = $productId;
+        $product = Product::find($this->productId);
+        if (!$product) return;
+
+        $product->update(['status' => 'approved']);
+        
+        Notification::create([
+            'user_id' => $product->seller_id,
+            'type' => 'product_approved',
+            'message' => "Sản phẩm '{$product->name}' đã được duyệt.",
+            'is_read' => false,
+        ]);
+
+        return redirect()->route('admin.products.index')->with('success', "Đã duyệt sản phẩm #{$product->id}");
+    }
+
+    // ❌ Mở modal (Nhận type để biết là Reject hay Hidden)
+    public function openRejectModal($type = 'reject')
+    {
+        $this->actionType = $type;
+        $this->reasonType = ''; // Reset
+        $this->reasonNote = ''; // Reset
         $this->reasonModalOpen = true;
     }
 
     // 🔒 Đóng modal
-    public function closeRejectModal()
+    public function closeModal()
     {
-        $this->reset(['reasonModalOpen', 'reason', 'actionType']);
+        $this->reasonModalOpen = false;
     }
 
     // ✅ Xác nhận từ chối
     public function confirmReject()
     {
-        $this->validate();
+        $this->validate([
+            'reasonType' => 'required|string',
+        ]);
 
-        $product = Product::find($this->selectedProductId);
+        $product = Product::find($this->productId);
         if (!$product) return;
 
-        $product->status = $this->actionType === 'hidden' ? 'hidden' : 'rejected';
-        $product->save();
+        // Xử lý status
+        if ($this->actionType === 'hidden') {
+            $product->update(['status' => 'hidden']);
+            $msgType = 'ẩn';
+        } else {
+            $product->update(['status' => 'rejected']);
+            $msgType = 'từ chối';
+        }
+
+        // Gộp lý do
+        $fullReason = $this->reasonType;
+        if (!empty($this->reasonNote)) {
+            $fullReason .= " - " . $this->reasonNote;
+        }
 
         Notification::create([
             'user_id' => $product->seller_id,
             'type' => "product_{$this->actionType}",
-            'message' => "Sản phẩm #{$product->id} bị {$this->actionType} vì: {$this->reason}",
+            'message' => "Sản phẩm '{$product->name}' bị {$msgType}. Lý do: {$fullReason}",
+            'is_read' => false,
         ]);
 
-        $this->closeRejectModal();
-        $message = $this->actionType === 'hidden' ? 'ẩn' : 'từ chối';
+        $this->closeModal();
 
-        return redirect()->route('admin.products.index')->with('error', "❌ Đã {$message} sản phẩm ID: {$this->selectedProductId}");
+        return redirect()->route('admin.products.index')
+            ->with('success', "Đã {$msgType} sản phẩm #{$product->id}");
     }
 
     public function render()
     {
-        return view('livewire.admin.product-approval');
+        $reasonOptions = [
+            'Hình ảnh mờ, không rõ nét',
+            'Sản phẩm vi phạm bản quyền',
+            'Thông tin mô tả sai lệch',
+            'Giá bán không hợp lý',
+            'Sản phẩm cấm',
+            'Spam/Trùng lặp',
+        ];
+
+        return view('livewire.admin.product-approval', compact('reasonOptions'));
     }
 }

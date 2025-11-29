@@ -42,11 +42,6 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ request('tab') == 'hidden-rejected' ? 'active' : '' }}" href="{{ route('admin.products.index', ['tab' => 'hidden-rejected']) }}">
-                        Bị ẩn & Từ chối
-                    </a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link {{ request('tab') == 'categories' ? 'active' : '' }}" href="{{ route('admin.products.index', ['tab' => 'categories']) }}">
                         Danh mục
                     </a>

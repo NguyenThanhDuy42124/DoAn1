@@ -9,76 +9,72 @@ use App\Models\Category;
 use Illuminate\Support\Str;
 use App\Models\Notification;
 use Livewire\WithPagination;
-use Illuminate\Support\Facades\DB;
 use Rap2hpoutre\FastExcel\FastExcel;
-use Illuminate\Support\Facades\Storage;
-use Rappasoft\LaravelLivewireTables\DataTableComponent;
 
 class All extends Component
 {
     use WithPagination;
 
-    // thêm theme để Livewire render pagination tương thích bootstrap
     protected $paginationTheme = 'bootstrap';
 
-    // Search & Filters
+    // --- FILTERS ---
     public $search = '';
     public $status = '';
     public $category_id = '';
     public $seller_id = '';
     public $price_min = '';
     public $price_max = '';
+    public $reason_filter = ''; // Lọc theo lý do
     public $sortField = 'created_at';
     public $sortDirection = 'desc';
 
+    // --- BULK ACTIONS ---
+    public $selected = []; 
+    public $selectAll = false;
+    public $isBulk = false; 
 
-// --- PHẦN XỬ LÝ MODAL & LÝ DO ---
+    // --- MODAL ---
     public $selectedProductId;
     public $reasonModalOpen = false;
     public $actionType = 'reject'; 
-    
-    // Tách biến ra để Query được như ý mày muốn
-    public $reasonType = ''; // Lưu lý do chọn từ Select
-    public $reasonNote = ''; // Lưu ghi chú viết tay
-
+    public $reasonType = ''; 
+    public $reasonNote = ''; 
 
     protected $queryString = [
-        'search', 'status', 'category_id', 'seller_id',
-        'price_min', 'price_max', 'sortField', 'sortDirection'
+        'search', 'status', 'category_id', 'seller_id', 
+        'reason_filter', 'price_min', 'price_max', 
+        'sortField', 'sortDirection'
     ];
 
-    public function updating($field)
+    public function updating($field) { $this->resetPage(); }
+
+    // --- LOGIC CHECKBOX HÀNG LOẠT ---
+    public function updatedSelectAll($value)
     {
-        $this->resetPage();
+        if ($value) {
+            // Lấy toàn bộ ID của trang hiện tại hoặc query (tùy nhu cầu)
+            // Ở đây tao lấy ID string để Livewire dễ xử lý
+            $this->selected = $this->getProductsQuery()->pluck('id')->map(fn($id) => (string) $id)->toArray();
+        } else {
+            $this->selected = [];
+        }
     }
 
     public function sortBy($field)
     {
-        if ($this->sortField === $field) {
-            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
-        } else {
-            $this->sortDirection = 'asc';
-        }
+        $this->sortDirection = $this->sortField === $field 
+            ? ($this->sortDirection === 'asc' ? 'desc' : 'asc') 
+            : 'asc';
         $this->sortField = $field;
     }
 
     public function export()
     {
         $products = $this->getProductsQuery()->get();
-
-        return (new FastExcel($products))->download('all-products-' . now()->format('Y-m-d') . '.xlsx', function ($product) {
-            return [
-                'ID' => $product->id,
-                'Tên sản phẩm' => $product->name,
-                'Giá' => $product->price,
-                'Trạng thái' => ucfirst($product->status),
-                'Danh mục' => $product->category?->name,
-                'Người bán' => $product->seller?->name,
-                'Ngày tạo' => $product->created_at->format('d/m/Y'),
-            ];
-        });
+        return (new FastExcel($products))->download('products.xlsx');
     }
 
+    // --- QUERY CHÍNH (Đã thêm lọc lý do) ---
     protected function getProductsQuery()
     {
         return Product::query()
@@ -88,6 +84,12 @@ class All extends Component
                   ->orWhere('description', 'like', "%{$this->search}%")
                   ->orWhereHas('seller', fn($q) => $q->where('name', 'like', "%{$this->search}%"));
             })
+            // LỌC THEO LÝ DO TỪ CHỐI
+            ->when($this->reason_filter, function($q) {
+                $q->whereHas('notifications', fn($sub) => 
+                    $sub->where('message', 'like', "%{$this->reason_filter}%")
+                );
+            })
             ->when($this->status, fn($q) => $q->where('status', $this->status))
             ->when($this->category_id, fn($q) => $q->where('category_id', $this->category_id))
             ->when($this->seller_id, fn($q) => $q->where('seller_id', $this->seller_id))
@@ -96,12 +98,100 @@ class All extends Component
             ->orderBy($this->sortField, $this->sortDirection);
     }
 
+    // --- MỞ MODAL (Xử lý cả Lẻ và Hàng loạt) ---
+    // Nếu $id = null -> Hiểu là đang bấm nút Hàng loạt
+    public function openRejectModal($id = null, $type = 'reject')
+    {
+        $this->actionType = $type;
+        $this->reasonType = ''; 
+        $this->reasonNote = '';
+        $this->reasonModalOpen = true;
+
+        if ($id) {
+            // Chế độ Lẻ
+            $this->selectedProductId = $id;
+            $this->isBulk = false;
+        } else {
+            // Chế độ Hàng loạt
+            if (empty($this->selected)) {
+                $this->reasonModalOpen = false;
+                $this->dispatch('alert', ['type' => 'error', 'message' => 'Chưa chọn sản phẩm nào!']);
+                return;
+            }
+            $this->isBulk = true;
+        }
+    }
+
+    public function closeRejectModal()
+    {
+        $this->reasonModalOpen = false;
+        $this->reasonType = '';
+        $this->reasonNote = '';
+        $this->selectedProductId = null;
+        $this->isBulk = false;
+    }
+
+    // --- XÁC NHẬN (CORE LOGIC) ---
+    public function confirmReject()
+    {
+        // 1. Validate
+        if ($this->actionType !== 'approve') {
+             $this->validate(['reasonType' => 'required|string']);
+        }
+
+        // 2. Chuẩn bị lý do
+        $fullReason = $this->reasonType;
+        if (!empty($this->reasonNote)) {
+            $fullReason .= " - " . $this->reasonNote;
+        }
+        
+        // Nếu duyệt mà không ghi lý do thì set default
+        if ($this->actionType === 'approve' && empty($fullReason)) {
+            $fullReason = 'Sản phẩm hợp lệ / Đã khắc phục vi phạm.';
+        }
+
+        // 3. Xác định danh sách ID cần xử lý
+        // Nếu là Bulk thì lấy mảng $selected, nếu Lẻ thì lấy [$selectedProductId]
+        $ids = $this->isBulk ? $this->selected : [$this->selectedProductId];
+        
+        $products = Product::whereIn('id', $ids)->get();
+        $statusMsg = '';
+
+        foreach ($products as $product) {
+            // Update status
+            if ($this->actionType === 'reject') {
+                $product->update(['status' => Product::STATUS_REJECTED]);
+                $statusMsg = 'bị từ chối';
+            } else if ($this->actionType === 'hidden') {
+                $product->update(['status' => Product::STATUS_HIDDEN]);
+                $statusMsg = 'bị ẩn';
+            } else if ($this->actionType === 'approve') {
+                $product->update(['status' => Product::STATUS_APPROVED]);
+                $statusMsg = 'được duyệt/khôi phục';
+            }
+
+            // Tạo thông báo
+            Notification::create([
+                'user_id' => $product->seller_id,
+                'type' => 'product_' . $this->actionType,
+                'message' => "Sản phẩm '{$product->name}' {$statusMsg}. Lý do: {$fullReason}",
+                'is_read' => false,
+            ]);
+        }
+
+        // 4. Reset & Close
+        $this->selected = [];
+        $this->selectAll = false;
+        $this->closeRejectModal();
+        
+        session()->flash('success', "Đã xử lý xong " . count($ids) . " sản phẩm!");
+    }
+
     public function render()
     {
-        // preserve query string khi phân trang
         $products = $this->getProductsQuery()->paginate(20)->withQueryString();
 
-        // Stats
+        // Stats & Charts (Giữ nguyên logic cũ của mày)
         $stats = [
             'total' => Product::count(),
             'approved' => Product::where('status', 'approved')->count(),
@@ -110,11 +200,8 @@ class All extends Component
         ];
         $stats['approved_percent'] = $stats['total'] > 0 ? round(($stats['approved'] / $stats['total']) * 100, 1) : 0;
 
-        // Top Categories (Pie Chart)
-        $topCategories = Category::withCount('products')
-            ->orderBy('products_count', 'desc')
-            ->limit(6)
-            ->get();
+        $topCategories = Category::withCount('products')->orderBy('products_count', 'desc')->limit(6)->get();
+        $chartData = $topCategories->map(fn($c) => ['label'=>$c->name, 'value'=>$c->products_count, 'color'=>'#'.substr(md5($c->id),0,6)])->toJson();
 
         $reasonOptions = [
             'Hình ảnh mờ/kém chất lượng',
@@ -123,15 +210,8 @@ class All extends Component
             'Giá sai quy định thị trường',
             'Thông tin mô tả sai lệch',
             'Spam/Đăng trùng lặp',
+            'Khác'
         ];
-
-        $chartData = $topCategories->map(function ($cat) {
-            return [
-                'label' => $cat->name,
-                'value' => $cat->products_count,
-                'color' => '#' . substr(md5($cat->id), 0, 6),
-            ];
-        })->toJson();
 
         return view('admin.products.all', [
             'products' => $products,
@@ -142,74 +222,4 @@ class All extends Component
             'chartData' => $chartData,
         ]);
     }
-    public function openRejectModal($id, $type = 'reject')
-    {
-        $this->selectedProductId = $id;
-        $this->actionType = $type; // Lưu lại hành động: reject/hidden/approve
-        
-        // Reset form
-        $this->reasonType = ''; 
-        $this->reasonNote = '';
-        
-        $this->reasonModalOpen = true;
-    }
-
-    public function closeRejectModal()
-    {
-        $this->reasonModalOpen = false;
-        $this->reasonType = '';
-        $this->reasonNote = '';
-        $this->selectedProductId = null;
-    }
-    public function confirmReject()
-    {
-        // Nếu là Approve (Duyệt/Khôi phục) thì không bắt buộc lý do
-        if ($this->actionType === 'approve') {
-            $this->validate(['actionType' => 'required']);
-        } else {
-            // Nếu Reject hoặc Hide thì bắt buộc chọn lý do chính
-            $this->validate([
-                'reasonType' => 'required|string', 
-                'actionType' => 'required',
-            ]);
-        }
-
-        $product = Product::findOrFail($this->selectedProductId);
-        $statusMsg = '';
-
-        // Xử lý status
-        if ($this->actionType === 'reject') {
-            $product->update(['status' => Product::STATUS_REJECTED]);
-            $statusMsg = 'bị từ chối';
-        } else if ($this->actionType === 'hidden') {
-            $product->update(['status' => Product::STATUS_HIDDEN]);
-            $statusMsg = 'bị ẩn';
-        } else if ($this->actionType === 'approve') {
-            $product->update(['status' => Product::STATUS_APPROVED]);
-            $statusMsg = 'được duyệt/khôi phục';
-        }
-
-        // GỘP LÝ DO ĐỂ LƯU VÀO DB (Notification)
-        // Format: "Lý do chính - Ghi chú thêm" -> Dễ query LIKE sau này
-        $fullReason = $this->reasonType;
-        if (!empty($this->reasonNote)) {
-            $fullReason .= " - " . $this->reasonNote;
-        }
-        
-        // Nếu là approve mà không ghi gì thì set default
-        if ($this->actionType === 'approve' && empty($fullReason)) {
-            $fullReason = 'Sản phẩm hợp lệ.';
-        }
-
-        Notification::create([
-            'user_id' => $product->seller_id,
-            'type' => 'product_' . $this->actionType,
-            'message' => "Sản phẩm '{$product->name}' {$statusMsg}. Lý do: {$fullReason}",
-            'is_read' => false,
-        ]);
-
-        $this->closeRejectModal();
-        session()->flash('success', 'Đã xử lý xong!');
-    }
-
 }
