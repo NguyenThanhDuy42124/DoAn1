@@ -18,6 +18,9 @@ class All extends Component
 {
     use WithPagination;
 
+    // thêm theme để Livewire render pagination tương thích bootstrap
+    protected $paginationTheme = 'bootstrap';
+
     // Search & Filters
     public $search = '';
     public $status = '';
@@ -88,7 +91,8 @@ class All extends Component
 
     public function render()
     {
-        $products = $this->getProductsQuery()->paginate(20);
+        // preserve query string khi phân trang
+        $products = $this->getProductsQuery()->paginate(20)->withQueryString();
 
         // Stats
         $stats = [

@@ -27,7 +27,7 @@
     {{-- Table --}}
      <div class="table-responsive">
         <table class="table table-striped ">
-    
+
     <thead class="table-light">
         <tr class="border px-4 py-2">
             <th class="text-left border px-4 py-2">Sản phẩm</th>
@@ -38,22 +38,22 @@
     </thead>
     <tbody class="border px-4 py-2">
         @forelse($products as $product)
-            
+
             <tr wire:click="toggleExpand({{ $product->id }})" style="cursor: pointer;">
-                
+
                 <td class="border px-4 py-2">
                     <div class="fw-medium">{{ Str::limit($product->name, 35) }}</div>
                     <div class="small text-muted">ID: {{ $product->id }}</div>
                 </td>
-                
+
                 <td class="text-body-secondary border px-4 py-2">
                     {{ $product->seller?->name ?? '—' }}
                 </td>
-                
+
                 <td class="small text-muted border px-4 py-2">
                     {{ $product->updated_at->format('d/m/Y') }}
                 </td>
-                
+
                 <td class="text-center border px-4 py-2">
                     <button wire:click.stop="restore({{ $product->id }})"
                             class="btn btn-link text-success text-decoration-none p-0 small fw-medium">

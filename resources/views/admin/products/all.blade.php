@@ -147,7 +147,7 @@
                                 </span>
                             </td>
                             <td class="border px-4 py-2">
-                   
+
                             </td>
                         </tr>
                     @empty
@@ -160,7 +160,7 @@
         </div>
 
         <div style="margin-top: 15px;">
-            {{ $products->links() }}
+            {{ $products->links('pagination::bootstrap-5') }}
 
         </div>
 

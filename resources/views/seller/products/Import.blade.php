@@ -1,6 +1,6 @@
 @extends('layouts.SellerDashBoard')
 @section('content')
-   
+
 
 <div class="container">
     <div class="page-header">
@@ -57,7 +57,7 @@
 
             <div class="form-group">
                 <label for="images">Các file ảnh liên quan</label>
-                <input type="file" name="images[]" id="images" class="form-control-file @error('images.*') is-invalid @enderror" multiple>
+                <input type="file" accept="image/*" name="images[]" id="images" class="form-control-file @error('images.*') is-invalid @enderror" multiple>
                 <small class="form-text text-danger">Tên file ảnh phải khớp với tên trong các cột image_X của file Excel.</small>
                 <small class="form-text text-danger">Tức cột image_1 có tên là <strong>image_1.jpg</strong> thì file phải có tên là <strong>image_1.jpg</strong></small>
                 @error('images.*') <span class="text-danger">{{ $message }}</span> @enderror

@@ -12,6 +12,8 @@ class Pending extends Component
 {
     use WithPagination;
 
+    protected $paginationTheme = 'bootstrap';
+
     public $search = '';
     public $selected = [];
     public $selectAll = false;
@@ -22,7 +24,8 @@ class Pending extends Component
     public $actionType = 'reject'; // reject | hidden
     public $reasonModalOpen = false;
 
-
+    // reset page khi thay đổi search
+    public function updatedSearch() { $this->resetPage(); }
 
     public function updatedSelectAll($value)
     {

@@ -140,8 +140,8 @@ class ProductController extends Controller
         // 1. Validation (Giữ nguyên)
         $request->validate([
             'category_id' => 'required|exists:categories,id',
-            'excel_file' => 'required|file|mimes:xlsx,xls,csv|max:5120',
-            'images.*'   => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
+            'excel_file'  => 'required|file|mimes:xlsx,xls,csv|max:5120',
+            'images.*'    => 'nullable|image|max:2048', // nhẹ nhàng hơn
         ]);
 
         $categoryId = $request->input('category_id');
@@ -157,9 +157,9 @@ class ProductController extends Controller
         // Tạo mảng chỉ chứa TÊN thuộc tính (RAM, CPU,...)
         $attributeColumnNames = $categoryAttributes->pluck('name')->all();
 
-        // Xử lý ảnh (Giữ nguyên)
-        $uploadedImages = collect($request->file('images'))->keyBy(function ($file) {
-            return $file->getClientOriginalName();
+        // Xử lý ảnh (Bảo đảm có collection và key bằng lowercase tên file)
+        $uploadedImages = collect($request->file('images') ?? [])->keyBy(function ($file) {
+            return strtolower(trim($file->getClientOriginalName()));
         });
 
         DB::beginTransaction();
@@ -222,10 +222,9 @@ class ProductController extends Controller
                         }, ARRAY_FILTER_USE_KEY);
 
                         foreach ($imageColumns as $imageName) {
-                            $imageName = trim($imageName);
-                            // Kiểm tra tên file ảnh có trong danh sách ảnh đã upload không
-                            if ($imageName && $uploadedImages->has($imageName)) {
-                                $imageFile = $uploadedImages->get($imageName);
+                            $imgKey = strtolower(trim($imageName));
+                            if ($imgKey && $uploadedImages->has($imgKey)) {
+                                $imageFile = $uploadedImages->get($imgKey);
 
                                 // Lưu file ảnh vào storage và tạo bản ghi DB
                                 $path = $imageFile->store('product_images', 'public');
