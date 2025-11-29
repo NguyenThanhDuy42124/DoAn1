@@ -28,7 +28,7 @@
                 <li><a href="{{ route('seller.vouchers.index') }}"><i class="fas fa-percent"></i> Khuyến mãi</a></li>
                 <li><a href="{{ route('seller.reports.index') }}"><i class="fas fa-chart-bar"></i> Thống kê & Báo
                         cáo</a></li>
-                <li><a href="#"><i class="fas fa-cog"></i> Cài đặt</a></li>
+                <li><!--<a href="#"><i class="fas fa-cog"></i> Cài đặt</a>--></li>
             </ul>
 
             <ul class="list-unstyled CTAs">

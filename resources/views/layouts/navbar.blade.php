@@ -112,7 +112,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link" href="/vouchers">KHUYẾN MÃI</a>
+                    <!--<a class="nav-link" href="/vouchers">KHUYẾN MÃI</a>-->
                 </li>
 
             </ul>

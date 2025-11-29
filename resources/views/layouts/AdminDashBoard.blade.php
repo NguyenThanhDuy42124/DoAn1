@@ -46,7 +46,7 @@
                 <li>
                     <a href="#storeSetupSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
                         <i class="fas fa-store"></i>
-                        Quản lý Cửa hàng
+                        Quản lý cửa hàng
                     </a>
                     <ul class="collapse list-unstyled" id="storeSetupSubmenu">
                         <li>
@@ -60,11 +60,11 @@
                         </li>
                     </ul>
                 </li>
-                <li>
+                <li> <!--
                     <a href="#">
                         <i class="fas fa-shopping-cart"></i>
                         Quản lý đơn hàng
-                    </a>
+                    </a> -->
                 </li>
                 <li>
                     <a href="{{ route('admin.notifications.index') }}">
@@ -72,17 +72,18 @@
                         Quản lý thông báo
                     </a>
                 </li>
-                <li>
-                    <a href="#">
+                <li> 
+                   <!-- <a href="#">
                         <i class="fas fa-cog"></i>
                         Cài đặt hệ thống
-                    </a>
+                    </a> -->
                 </li>
                 <li>
+                    <!--
                     <a href="#">
                         <i class="fas fa-chart-bar"></i>
                         Báo cáo & Thống kê
-                    </a>
+                    </a> -->
                 </li>
             </ul>
 
