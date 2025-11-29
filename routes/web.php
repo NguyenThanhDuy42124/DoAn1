@@ -20,6 +20,7 @@ use App\Http\Controllers\CartItemController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\UserInfoController;
+use App\Http\Controllers\ReviewController;
 use Illuminate\Auth\Middleware\Authenticate;
 use App\Livewire\Seller\Products\ProductForm;
 use App\Http\Controllers\StaticPageController;
@@ -182,7 +183,9 @@ Route::get('/products', [ProductController::class, 'listProducts'])->name('produ
 Route::get('/products/{id}', [ProductController::class, 'showProductDetail'])->name('products.detail');
 Route::get('/vouchers', [VoucherController::class, 'listVouchers'])->name('vouchers.list');
 Route::get('/', [SellerController::class, 'index'])->name('home');
-
+Route::post('/reviews/{id}/toggle-hide', [ReviewController::class, 'toggleHidden'])
+    ->name('reviews.toggleHidden')
+    ->middleware('auth');
 Route::post('/webhook', [CheckoutController::class, 'webhook'])
     ->name('buyer.checkout.webhook')
     ->withoutMiddleware([

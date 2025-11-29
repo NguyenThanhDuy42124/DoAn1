@@ -313,71 +313,67 @@ class ProductController extends Controller
         return view('pages.listproducts', compact('products', 'brands', 'categories'));
     }
 
-    public function showProductDetail($id)
+   public function showProductDetail($id)
     {
-        // 1. Tải sản phẩm chính VÀ đếm/tính trung bình reviews
-        // (Tôi thêm 'brand' và 'category' để hiển thị đầy đủ thông tin ở view)
-
+        // 1. Tải sản phẩm & Số liệu thống kê
+        // withCount và withAvg sẽ tính TOÀN BỘ database (kể cả bài ẩn)
         $product = Product::with(['images', 'brand', 'category'])
-            ->withCount('reviews') // <-- Tự động tạo biến 'reviews_count'
-            ->withAvg('reviews', 'rating') // <-- Tự động tạo biến 'reviews_avg_rating'
+            ->withCount('reviews') 
+            ->withAvg('reviews', 'rating') 
             ->findOrFail($id);
-        // Các trạng thái cần bảo mật
+
+        // --- Logic bảo mật (Giữ nguyên của bạn) ---
         $protectedStatuses = [
-            Product::STATUS_PENDING ?? 'pending',
-            Product::STATUS_REJECTED ?? 'rejected',
-            Product::STATUS_HIDDEN ?? 'hidden',
+            Product::STATUS_PENDING ?? 'Pending',
+            Product::STATUS_REJECTED ?? 'Rejected',
+            Product::STATUS_HIDDEN ?? 'Hidden',
         ];
 
-        // Nếu sản phẩm ở trạng thái "bảo mật" (pending/rejected/hidden)
         if (in_array($product->status, $protectedStatuses, true)) {
-            $user = auth()->user();
-
-            // Nếu chưa đăng nhập -> chặn (hoặc chuyển sang 404 để che thông tin)
-            if (!$user) {
-                abort(403, 'Bạn cần có quyền hạn để xem sản phẩm này.');
-                // hoặc: abort(404); // ít lộ thông tin hơn
-            }
-
-            // Chỉ admin hoặc chính seller mới được phép
-            if ($user->role !== 'admin' && $user->id !== $product->seller_id) {
-                abort(403, 'Bạn không có quyền truy cập sản phẩm này.');
-                // hoặc: abort(404);
-            }
+             $user = Auth::user();
+             if (!$user) { abort(403, 'Bạn cần đăng nhập để xem sản phẩm này.'); }
+             if ($user->role !== 'admin' && $user->id !== $product->seller_id) {
+                 abort(403, 'Bạn không có quyền truy cập sản phẩm này.');
+             }
         }
+        // ------------------------------------------
 
-        // 2. Lấy thông tin seller (Giữ nguyên)
+        // 2. Lấy thông tin seller
         $seller = $product->seller;
 
-        // 3. Tải các đánh giá (có phân trang)
-        // Sắp xếp mới nhất, và tải kèm thông tin người mua (buyer)
+        // 3. Tải danh sách đánh giá (LOGIC LỌC MỚI)
+        $currentUserId = Auth::id();
+
         $reviews = $product->reviews()
             ->with('buyer')
+            ->where(function($query) use ($currentUserId) {
+                // Lấy các bài KHÔNG bị ẩn
+                $query->where('is_hidden', false);
+                
+                // NẾU đã đăng nhập, lấy thêm bài của chính người đó (kể cả khi is_hidden = true)
+                if ($currentUserId) {
+                    $query->orWhere('buyer_id', $currentUserId);
+                }
+            })
             ->latest()
-            ->paginate(5, ['*'], 'reviews_page'); // Phân trang 5 review/trang
+            ->paginate(5, ['*'], 'reviews_page');
 
-        // 4. Tải sản phẩm liên quan (cùng danh mục)
+        // 4. Tải sản phẩm liên quan
         $relatedProducts = Product::where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
-            // Bổ sung điều kiện giống như hàm listProducts
-            ->where('status', Product::STATUS_APPROVED)
-            // Bổ sung eager load 'images' để tối ưu view (tránh N+1)
+            ->where('status', Product::STATUS_APPROVED ?? 'Approved') 
             ->with('images')
             ->latest()
-            ->take(5) // Lấy 5 sản phẩm
+            ->take(5)
             ->get();
 
+        // 5. Lấy thông số kỹ thuật (Specs)
         $specs = Attribute::whereHas('categories', function($q) use ($product) {
-        $q->where('category_id', $product->category_id);
-    })->orderBy('name')->get(); // Hoặc orderBy('id')
+            $q->where('category_id', $product->category_id);
+        })->orderBy('name')->get();
 
-        // 5. Trả về view và truyền TẤT CẢ các biến
         return view('pages.product-detail', compact(
-            'product',
-            'seller',
-            'reviews', // <-- BIẾN MỚI
-            'relatedProducts',
-            'specs' // <-- BIẾN MỚI
+            'product', 'seller', 'reviews', 'relatedProducts', 'specs'
         ));
     }
 
