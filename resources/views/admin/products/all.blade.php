@@ -85,45 +85,66 @@
         </div>
     </div>
 
-    <hr style="margin: 20px 0;">
-
-    {{-- Chart --}}
-    <div>
-        <h3>Top danh mục</h3>
-        <div wire:ignore>
-            <canvas id="categoryChart" height="100"></canvas>
-        </div>
-    </div>
-
-    <hr style="margin: 20px 0;">
-
     {{-- Table --}}
-    <div>
-        <div class="table-responsive">
+    {{-- Table --}}
+<div>
+    <div class="table-responsive">
         <table class="table table-striped">
-                <thead>
+            <thead>
+                <tr>
+                    <th wire:click="sortBy('name')" class="border px-4 py-2" style="cursor: pointer;">
+                        Tên sản phẩm @if($sortField === 'name') @if($sortDirection === 'asc') &uarr; @else &darr; @endif @endif
+                    </th>
+                    <th wire:click="sortBy('price')" class="border px-4 py-2" style="cursor: pointer;">
+                        Giá @if($sortField === 'price') @if($sortDirection === 'asc') &uarr; @else &darr; @endif @endif
+                    </th>
+                    <th class="border px-4 py-2">Danh mục</th>
+                    <th class="border px-4 py-2">Seller</th>
+                    <th wire:click="sortBy('status')" class="border px-4 py-2" style="cursor: pointer;">
+                        Trạng thái @if($sortField === 'status') @if($sortDirection === 'asc') &uarr; @else &darr; @endif @endif
+                    </th>
+                    {{-- SỬA LẠI CHỖ NÀY: Chỉ để tiêu đề thôi --}}
+                    <th class="border px-4 py-2">Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($products as $product)
                     <tr>
-                        <th wire:click="sortBy('name')" class="border px-4 py-2" style="cursor: pointer;">
-                            Tên sản phẩm
-                            @if($sortField === 'name') @if($sortDirection === 'asc') &uarr; @else &darr; @endif @endif
-                        </th>
-                        <th wire:click="sortBy('price')" class="border px-4 py-2" style="cursor: pointer;">
-                            Giá
-                            @if($sortField === 'price') @if($sortDirection === 'asc') &uarr; @else &darr; @endif @endif
-                        </th>
-                        <th class="border px-4 py-2">
-                            Danh mục
-                        </th>
-                        <th class="border px-4 py-2">
-                            Seller
-                        </th>
-                        <th wire:click="sortBy('status')" class="border px-4 py-2" style="cursor: pointer;">
-                            Trạng thái
-                            @if($sortField === 'status') @if($sortDirection === 'asc') &uarr; @else &darr; @endif @endif
-                        </th>
-                        <th class="border px-4 py-2">
-                            Hành động
-                        </th>
+                        <td class="border px-4 py-2">{{ Str::limit($product->name, 40) }}</td>
+                        <td class="border px-4 py-2">{{ number_format($product->price) }}đ</td>
+                        <td class="border px-4 py-2">{{ $product->category?->name ?? '-' }}</td>
+                        <td class="border px-4 py-2">{{ $product->seller?->name ?? '-' }}</td>
+                        <td class="border px-4 py-2">
+                            {{-- Badge màu mè cho đẹp --}}
+                            <span class="badge 
+                                @if($product->status == 'approved') bg-success 
+                                @elseif($product->status == 'rejected') bg-danger 
+                                @elseif($product->status == 'hidden') bg-secondary 
+                                @else bg-warning text-dark @endif">
+                                {{ ucfirst($product->status) }}
+                            </span>
+                        </td>
+                        
+                        {{-- SỬA LẠI CHỖ NÀY: Logic hiển thị nút --}}
+                        <td class="border px-4 py-2">
+                            <div class="d-flex gap-1">
+                                {{-- Case: Pending --}}
+                                @if($product->status === 'pending')
+                                    <button wire:click="openRejectModal({{ $product->id }}, 'approve')" class="btn btn-sm btn-success">Duyệt</button>
+                                    <button wire:click="openRejectModal({{ $product->id }}, 'reject')" class="btn btn-sm btn-danger">Từ chối</button>
+                                @endif
+
+                                {{-- Case: Approved --}}
+                                @if($product->status === 'approved')
+                                    <button wire:click="openRejectModal({{ $product->id }}, 'hidden')" class="btn btn-sm btn-warning">Ẩn</button>
+                                @endif
+
+                                {{-- Case: Rejected / Hidden --}}
+                                @if(in_array($product->status, ['rejected', 'hidden']))
+                                    <button wire:click="openRejectModal({{ $product->id }}, 'approve')" class="btn btn-sm btn-primary">Khôi phục</button>
+                                @endif
+                            </div>
+                        </td>
                     </tr>
                 </thead>
                 <tbody>
@@ -165,78 +186,57 @@
         </div>
 
     </div>
+    
+    <div class="mt-3">
+        {{ $products->links() }}
+    </div>
+</div>
         {{-- Modal cho reason (Fix lỗi căn giữa) --}}
-    <div x-data="{ open: @entangle('reasonModalOpen') }">
-        <div x-show="open"
-             style="position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-             background-color: rgba(0, 0, 0, 0.6); z-index: 1050;"
-             x-transition:enter="ease-out duration-300"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-100"
-             x-transition:leave="ease-in duration-200"
-             x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0">
+    {{-- Modal --}}
+<div x-data="{ open: @entangle('reasonModalOpen') }">
+    <div x-show="open" 
+         style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1050;"
+         x-transition.opacity>
 
-            <div class="card shadow-lg col-md-4"
-                 style="position: absolute; top: 50%; left: 50%;
-                 transform: translate(-50%, -50%);">
+        <div class="card shadow-lg" 
+             style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 400px; max-width: 90%;">
 
-                <div class="card-body p-4">
-                    <h5 class="card-title mb-3">Lý do từ chối sản phẩm</h5>
-                    <h6 class="card-subtitle mb-3 text-muted">
-                        Từ chối đơn bán số ID: <strong>{{ $selectedProductId }}</strong>
-                    </h6>
+            <div class="card-body p-4">
+                {{-- Tiêu đề động dựa vào actionType --}}
+                <h5 class="card-title mb-3 fw-bold">
+                    @if($actionType === 'reject')
+                        ⛔ Từ chối sản phẩm
+                    @elseif($actionType === 'hidden')
+                        🔒 Ẩn sản phẩm
+                    @elseif($actionType === 'approve')
+                        ✅ Duyệt / Khôi phục
+                    @endif
+                </h5>
 
-                    <div class="mb-3">
-                        <label class="form-label">Hành động:</label>
-                        <select wire:model="actionType" class="form-select">
-                            <option value="reject">Từ chối</option>
-                            <option value="hidden">Ẩn sản phẩm</option>
-                            <option value="approve">Duyệt</option>
-                        </select>
-                    </div>
+                <p class="text-muted small">ID sản phẩm: <strong>{{ $selectedProductId }}</strong></p>
 
-                    <div class="mb-3">
-                        <label class="form-label">Lý do (tell me why):</label>
-                        <textarea wire:model="reason" class="form-control" rows="4" placeholder="Lý do..."></textarea>
-                    </div>
+                {{-- BỎ CÁI SELECT ACTION TYPE ĐI, KHÔNG CẦN THIẾT --}}
 
-                    <div class="d-flex justify-content-end">
-                        <button wire:click="closeRejectModal" class="btn btn-secondary me-2">Hủy</button>
-                        <button wire:click="confirmReject" class="btn btn-danger">Xác nhận</button>
-                    </div>
+                <div class="mb-3">
+                    <label class="form-label">Lý do / Ghi chú:</label>
+                    <textarea wire:model="reason" class="form-control" rows="4" placeholder="Nhập nội dung..."></textarea>
+                    
+                    {{-- QUAN TRỌNG: Hiển thị lỗi nếu quên nhập --}}
+                    @error('reason') <span class="text-danger small">{{ $message }}</span> @enderror
+                </div>
+
+                <div class="d-flex justify-content-end gap-2">
+                    <button wire:click="closeRejectModal" class="btn btn-secondary">Hủy</button>
+                    
+                    {{-- Nút xác nhận đổi màu theo hành động --}}
+                    <button wire:click="confirmReject" 
+                        class="btn @if($actionType == 'approve') btn-success @elseif($actionType == 'hidden') btn-warning @else btn-danger @endif">
+                        Xác nhận
+                    </button>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-
-    {{-- Chart.js Script --}}
-    @push('scripts')
-    <script>
-        document.addEventListener('livewire:load', () => {
-            const ctx = document.getElementById('categoryChart').getContext('2d');
-            const data = @json(json_decode($chartData, true));
-
-            new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: data.map(d => d.label),
-                    datasets: [{
-                        data: data.map(d => d.value),
-                        backgroundColor: data.map(d => d.color),
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: { position: 'right' },
-                        tooltip: { callbacks: { label: ctx => `${ctx.label}: ${ctx.raw} sản phẩm` } }
-                    }
-                }
-            });
-        });
-    </script>
-    @endpush
 </div>
