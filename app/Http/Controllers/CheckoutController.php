@@ -84,7 +84,7 @@ class CheckoutController extends Controller
     {
         $sellerId = $request->seller_id;
         $appliedVouchers = session('applied_vouchers', []);
-        
+
         if (isset($appliedVouchers[$sellerId])) {
             unset($appliedVouchers[$sellerId]);
             session(['applied_vouchers' => $appliedVouchers]);
@@ -106,7 +106,7 @@ class CheckoutController extends Controller
         $selectedCartItemIds = $data['selectedCartItemIds'];
 
         $lineItems = [];
-        $metadataVouchers = []; 
+        $metadataVouchers = [];
 
         foreach ($ordersBySeller as $sellerId => $group) {
             $lineItems[] = [
@@ -116,7 +116,7 @@ class CheckoutController extends Controller
                         'name' => "Đơn hàng từ shop: " . $group['seller_name'],
                         'description' => "Gồm " . count($group['items']) . " sản phẩm",
                     ],
-                    'unit_amount' => $group['final_total'], 
+                    'unit_amount' => $group['final_total'],
                 ],
                 'quantity' => 1,
             ];
@@ -131,7 +131,7 @@ class CheckoutController extends Controller
         }
 
         Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
-        
+
         $stripeCustomer = Customer::create([
             'email' => $user->email,
             'name' => $user->name,
@@ -151,7 +151,7 @@ class CheckoutController extends Controller
                 'buyer_email' => $user->email,
                 'buyer_phone' => $user->phoneNumber ?? 'N/A',
                 'shipping_address' => $user->address ?? 'Chưa cung cấp',
-                'applied_vouchers_json' => json_encode($metadataVouchers), 
+                'applied_vouchers_json' => json_encode($metadataVouchers),
             ]
         ]);
 
@@ -203,7 +203,14 @@ class CheckoutController extends Controller
         // Tính toán Voucher
         foreach ($ordersBySeller as $sellerId => &$group) {
             $subtotal = $group['subtotal'];
-            
+            $group['available_vouchers'] = Voucher::where('seller_id', $sellerId)
+                ->where('is_active', true)
+                ->get()
+                ->filter(function ($v) use ($subtotal) {
+                    return $v->isValid() && $subtotal >= $v->min_order_value;
+                })
+                ->values();
+
             if (isset($appliedVouchersSession[$sellerId])) {
                 $code = $appliedVouchersSession[$sellerId];
                 // Tìm voucher active (không cần check used_count của user nữa)
@@ -212,8 +219,8 @@ class CheckoutController extends Controller
                 if ($voucher && $voucher->isValid()) {
                     if ($subtotal >= $voucher->min_order_value) {
                         // Logic tính tiền
-                        $discount = ($voucher->type === 'fixed') 
-                            ? $voucher->value 
+                        $discount = ($voucher->type === 'fixed')
+                            ? $voucher->value
                             : ($subtotal * $voucher->value) / 100;
 
                         if ($voucher->type === 'percent' && $voucher->max_discount_amount && $discount > $voucher->max_discount_amount) {
@@ -267,20 +274,20 @@ class CheckoutController extends Controller
             $appliedVouchersInfo = json_decode($metadata->applied_vouchers_json ?? '[]', true);
 
             $cartItems = CartItem::with('product')->whereIn('id', $selectedCartItemIds)->get();
-            
+
             DB::beginTransaction();
             try {
                 $hasInsufficientStock = false;
-                foreach($cartItems as $item) {
-                    $item->product->refresh(); 
-                    if($item->product->stock < $item->quantity) $hasInsufficientStock = true;
+                foreach ($cartItems as $item) {
+                    $item->product->refresh();
+                    if ($item->product->stock < $item->quantity) $hasInsufficientStock = true;
                 }
 
                 $itemsBySeller = $cartItems->groupBy('product.seller_id');
 
                 foreach ($itemsBySeller as $sellerId => $sellerItems) {
                     $subtotal = $sellerItems->sum(fn($item) => $item->price * $item->quantity);
-                    
+
                     // Voucher info
                     $voucherInfo = $appliedVouchersInfo[$sellerId] ?? null;
                     $discountAmount = $voucherInfo ? $voucherInfo['discount_amount'] : 0;
@@ -328,7 +335,7 @@ class CheckoutController extends Controller
                     }
 
                     if (!$hasInsufficientStock) {
-                         Notification::create([
+                        Notification::create([
                             'user_id' => $sellerId,
                             'type' => 'new_order',
                             'message' => "Đơn hàng #{$order->id}",
@@ -338,13 +345,12 @@ class CheckoutController extends Controller
                 }
 
                 if ($hasInsufficientStock) {
-                     Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
-                     Refund::create(['payment_intent' => $session->payment_intent]);
+                    Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
+                    Refund::create(['payment_intent' => $session->payment_intent]);
                 }
 
                 CartItem::whereIn('id', $selectedCartItemIds)->delete();
                 DB::commit();
-
             } catch (\Exception $e) {
                 DB::rollBack();
                 \Log::error($e->getMessage());
@@ -353,8 +359,14 @@ class CheckoutController extends Controller
         }
         return response('');
     }
-    
+
     // Cancel & Success giữ nguyên...
-    public function cancel(Request $request) { return view('buyer.checkouts.cancel'); }
-    public function success(Request $request) { return view('buyer.checkouts.success'); }
+    public function cancel(Request $request)
+    {
+        return view('buyer.checkouts.cancel');
+    }
+    public function success(Request $request)
+    {
+        return view('buyer.checkouts.success');
+    }
 }
