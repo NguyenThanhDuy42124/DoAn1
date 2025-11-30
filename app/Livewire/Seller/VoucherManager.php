@@ -82,10 +82,9 @@ class VoucherManager extends Component
     // Validate Rules
     protected function rules()
     {
-        return [
+        $rules = [
             'code' => [
                 'required', 'string', 'max:50',
-                // Code phải unique trong bảng vouchers, trừ chính nó ra khi edit
                 Rule::unique('vouchers', 'code')->ignore($this->voucherIdBeingEdited),
             ],
             'name' => 'required|string|max:255',
@@ -96,12 +95,13 @@ class VoucherManager extends Component
             'quantity' => 'required|integer|min:1',
             'expiry_date' => 'nullable|date|after:start_date',
         ];
+
         if (!$this->isEditMode) {
-            $rules['start_date'] = 'nullable|date|after_or_equal:' . now()->subMinute()->format('Y-m-d H:i');
+            $rules['start_date'] = 'nullable|date|after_or_equal:' . now()->subDay()->format('Y-m-d H:i');
         } else {
-            // Nếu đang Edit -> Chỉ cần là ngày hợp lệ (vì voucher cũ có thể đã bắt đầu từ hôm qua)
             $rules['start_date'] = 'nullable|date';
         }
+
         return $rules;
     }
 
@@ -117,7 +117,7 @@ class VoucherManager extends Component
             'seller_id' => Auth::id(),
             'name' => $this->name,
             'quantity' => (int)$this->quantity,
-            'expiry_date' => $this->expiry_date,
+            'expiry_date' => $this->expiry_date ?: null,
             'is_active' => true,
         ];
 
