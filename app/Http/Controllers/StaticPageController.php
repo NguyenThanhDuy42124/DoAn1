@@ -24,7 +24,7 @@ class StaticPageController extends Controller
      */
     public function faq(): View
     {
-        $title = 'Câu hỏi thường gặp (FAQ)';
+        $title = 'Câu hỏi thường gặp';
         $content = '
             <div class="accordion" id="faqAccordion">
 
@@ -38,7 +38,7 @@ class StaticPageController extends Controller
                     <div class="accordion-body">
                         <ul>
                             <li><strong>Hàng Chính hãng VNA:</strong> Là hàng được phân phối chính thức tại thị trường Việt Nam (ví dụ: iPhone VNA). Bạn được hưởng bảo hành tại tất cả trung tâm bảo hành ủy quyền của hãng trên toàn quốc.</li>
-                            <li><strong>Hàng Nhập khẩu/Xách tay:</strong> Là hàng được nhập từ thị trường nước ngoài. Sản phẩm này thường có giá tốt hơn nhưng sẽ do <strong>DKDSHOP</strong> trực tiếp bảo hành theo chính sách của cửa hàng, thay vì bảo hành tại hãng.</li>
+                            <li><strong>Hàng Nhập khẩu/Xách tay:</strong> Là hàng được nhập từ thị trường nước ngoài. Sản phẩm này thường có giá tốt hơn nhưng sẽ do <strong>DDK Mobile Market</strong> trực tiếp bảo hành theo chính sách của cửa hàng, thay vì bảo hành tại hãng.</li>
                         </ul>
                         <p>Chúng tôi cam kết cả hai loại hàng đều là hàng chính hãng (Apple, Samsung...) và sẽ ghi rõ "Loại hàng" trong mô tả sản phẩm.</p>
                     </div>
@@ -103,12 +103,12 @@ class StaticPageController extends Controller
     {
         $title = 'Chính sách bảo hành';
         $content = '
-            <p class="lead">An tâm của bạn là ưu tiên hàng đầu của DKDSHOP. Chúng tôi cam kết cung cấp chính sách bảo hành rõ ràng, minh bạch cho mọi sản phẩm bán ra.</p>
+            <p class="lead">An tâm của bạn là ưu tiên hàng đầu của DDK Mobile Market. Chúng tôi cam kết cung cấp chính sách bảo hành rõ ràng, minh bạch cho mọi sản phẩm bán ra.</p>
             
             <h3>1. Thời hạn bảo hành</h3>
             <ul>
                 <li><strong>Điện thoại - Máy tính bảng (Hàng Mới - New Fullbox):</strong> Bảo hành 12 tháng (hoặc 24 tháng tùy hãng) theo chính sách của nhà sản xuất.</li>
-                <li><strong>Điện thoại - Máy tính bảng (Hàng Likenew 99%):</strong> Bảo hành 6 tháng tại DKDSHOP (bao gồm cả nguồn và màn hình).</li>
+                <li><strong>Điện thoại - Máy tính bảng (Hàng Likenew 99%):</strong> Bảo hành 6 tháng tại DDK Mobile Market (bao gồm cả nguồn và màn hình).</li>
                 <li><strong>Phụ kiện (Cáp, Sạc, Tai nghe...):</strong> Bảo hành 1 đổi 1 trong 3-6 tháng (tùy sản phẩm) nếu có lỗi nhà sản xuất.</li>
             </ul>
 
@@ -116,7 +116,7 @@ class StaticPageController extends Controller
             <ul>
                 <li>Sản phẩm còn trong thời hạn bảo hành.</li>
                 <li>Lỗi phát sinh là lỗi kỹ thuật từ phía nhà sản xuất.</li>
-                <li>Sản phẩm còn nguyên tem bảo hành của DKDSHOP (không rách, tẩy xóa).</li>
+                <li>Sản phẩm còn nguyên tem bảo hành của DDK Mobile Market (không rách, tẩy xóa).</li>
                 <li>Số IMEI trên máy phải trùng khớp với phiếu mua hàng.</li>
             </ul>
 
@@ -142,7 +142,7 @@ class StaticPageController extends Controller
     {
         $title = 'Chính sách đổi trả 1 Đổi 1';
         $content = '
-            <p class="lead">DKDSHOP áp dụng chính sách đổi trả linh hoạt nhằm mang lại sự hài lòng tối đa cho khách hàng.</p>
+            <p class="lead">DDK Mobile Market áp dụng chính sách đổi trả linh hoạt nhằm mang lại sự hài lòng tối đa cho khách hàng.</p>
             
             <h3>1. Đổi trả trong 7 ngày đầu (1 Đổi 1)</h3>
             <p>Áp dụng 1 Đổi 1 (đổi máy mới cùng loại) nếu sản phẩm phát sinh <strong>lỗi phần cứng do nhà sản xuất</strong>.</p>
@@ -158,7 +158,7 @@ class StaticPageController extends Controller
             <h3 class_="text-danger">3. Điều kiện bắt buộc (Rất quan trọng)</h3>
             <ul>
                 <li>Máy phải đã được <strong>đăng xuất khỏi tất cả các tài khoản cá nhân</strong> như: iCloud, Google Account, Samsung Account, Mi Account...</li>
-                <li>DKDSHOP sẽ <strong>từ chối đổi trả</strong> nếu máy bị khóa tài khoản mà khách hàng không cung cấp được mật khẩu.</li>
+                <li>DDK Mobile Market sẽ <strong>từ chối đổi trả</strong> nếu máy bị khóa tài khoản mà khách hàng không cung cấp được mật khẩu.</li>
             </ul>
 
             <h3>4. Các trường hợp không áp dụng đổi trả</h3>
@@ -166,7 +166,7 @@ class StaticPageController extends Controller
                 <li>Sản phẩm bị trầy xước, cấn móp do lỗi người dùng.</li>
                 <li>Sản phẩm không còn đầy đủ phụ kiện, hộp.</li>
                 <li>Sản phẩm đã bị can thiệp phần mềm (Root, Jailbreak).</li>
-                <li>Quý khách không thích sản phẩm (đổi trả vì lý do cá nhân). Trong trường hợp này, DKDSHOP có thể hỗ trợ nhập lại máy với một khoản phí khấu hao (từ 10-20% giá trị máy).</li>
+                <li>Quý khách không thích sản phẩm (đổi trả vì lý do cá nhân). Trong trường hợp này, DDK Mobile Market có thể hỗ trợ nhập lại máy với một khoản phí khấu hao (từ 10-20% giá trị máy).</li>
             </ul>
         ';
         return $this->showStaticPage($title, $content);
@@ -185,12 +185,12 @@ class StaticPageController extends Controller
      */
     public function about(): View
     {
-        $title = 'Về DKDSHOP - Chuyên gia Điện thoại';
+        $title = 'Về DDK Mobile Market - Chuyên gia Điện thoại';
         $content = '
-            <p class="lead">DKDSHOP được thành lập với một mục tiêu duy nhất: trở thành điểm đến tin cậy hàng đầu cho những người yêu công nghệ tại Việt Nam, chuyên cung cấp điện thoại thông minh, máy tính bảng, và phụ kiện công nghệ.</p>
+            <p class="lead">DDK Mobile Market được thành lập với một mục tiêu duy nhất: trở thành điểm đến tin cậy hàng đầu cho những người yêu công nghệ tại Việt Nam, chuyên cung cấp điện thoại thông minh, máy tính bảng, và phụ kiện công nghệ.</p>
             
             <h3>Sứ mệnh</h3>
-            <p>Chúng tôi mang đến cho khách hàng những sản phẩm công nghệ (Điện thoại, Phụ kiện) chính hãng, chất lượng đảm bảo, với mức giá cạnh tranh nhất. Sứ mệnh của DKDSHOP là "Minh bạch về nguồn gốc - Tận tâm về bảo hành".</p>
+            <p>Chúng tôi mang đến cho khách hàng những sản phẩm công nghệ (Điện thoại, Phụ kiện) chính hãng, chất lượng đảm bảo, với mức giá cạnh tranh nhất. Sứ mệnh của DDK Mobile Market là "Minh bạch về nguồn gốc - Tận tâm về bảo hành".</p>
 
             <h3>Triết lý kinh doanh</h3>
             <ul>
@@ -207,10 +207,10 @@ class StaticPageController extends Controller
      */
     public function careers(): View
     {
-        $title = 'Cơ hội nghề nghiệp tại DKDSHOP';
+        $title = 'Cơ hội nghề nghiệp tại DDK Mobile Market';
         $content = '
             <h3>Gia nhập đội ngũ đam mê công nghệ</h3>
-            <p class="lead">Bạn có đam mê với những chiếc smartphone mới nhất? Bạn thích "vọc vạch" công nghệ? Hãy về với đội của DKDSHOP!</p>
+            <p class="lead">Bạn có đam mê với những chiếc smartphone mới nhất? Bạn thích "vọc vạch" công nghệ? Hãy về với đội của DDK Mobile Market!</p>
             
             <h3>Các vị trí đang tuyển dụng</h3>
             <p>Chúng tôi luôn tìm kiếm những tài năng:</p>
@@ -222,8 +222,8 @@ class StaticPageController extends Controller
             </ul>
 
             <h3>Cách thức ứng tuyển</h3>
-            <p>Gửi CV của bạn kèm một thư ngỏ ngắn gọn về email: <a href="mailto:tuyendung@dkdshop.com"><strong>tuyendung@dkdshop.com</strong></a></p>
-            <p>Tiêu đề email ghi rõ: <strong>[DKDSHOP] Ứng tuyển vị trí [Tên vị trí] - [Họ và tên]</strong></p>
+            <p>Gửi CV của bạn kèm một thư ngỏ ngắn gọn về email: <a href="mailto:tuyendung@DDK Mobile Market.com"><strong>tuyendung@DDK Mobile Market.com</strong></a></p>
+            <p>Tiêu đề email ghi rõ: <strong>[DDK Mobile Market] Ứng tuyển vị trí [Tên vị trí] - [Họ và tên]</strong></p>
         ';
         return $this->showStaticPage($title, $content);
     }
@@ -235,7 +235,7 @@ class StaticPageController extends Controller
     {
         $title = 'Chính sách bảo mật thông tin';
         $content = '
-            <p>DKDSHOP cam kết bảo vệ thông tin cá nhân của bạn. Vui lòng đọc kỹ chính sách dưới đây.</p>
+            <p>DDK Mobile Market cam kết bảo vệ thông tin cá nhân của bạn. Vui lòng đọc kỹ chính sách dưới đây.</p>
 
             <h3>1. Mục đích thu thập thông tin</h3>
             <p>Chúng tôi thu thập thông tin để:</p>
@@ -250,7 +250,7 @@ class StaticPageController extends Controller
             <p>Chúng tôi <strong>KHÔNG</strong> lưu trữ thông tin thẻ tín dụng của bạn. Việc thanh toán online được xử lý qua cổng thanh toán thứ ba được bảo mật.</p>
 
             <h3>3. Cam kết bảo mật</h3>
-            <p>DKDSHOP cam kết không chia sẻ, bán, hoặc cho thuê thông tin cá nhân của bạn cho bất kỳ bên thứ ba nào, ngoại trừ:</p>
+            <p>DDK Mobile Market cam kết không chia sẻ, bán, hoặc cho thuê thông tin cá nhân của bạn cho bất kỳ bên thứ ba nào, ngoại trừ:</p>
             <ul>
                 <li>Cho đơn vị vận chuyển để giao hàng.</li>
                 <li>Khi có yêu cầu của cơ quan pháp luật.</li>
@@ -266,13 +266,13 @@ class StaticPageController extends Controller
     {
         $title = 'Điều khoản sử dụng dịch vụ';
         $content = '
-            <p class="lead">Bằng việc truy cập và mua hàng tại DKDSHOP, bạn đồng ý với các điều khoản và điều kiện dưới đây.</p>
+            <p class="lead">Bằng việc truy cập và mua hàng tại DDK Mobile Market, bạn đồng ý với các điều khoản và điều kiện dưới đây.</p>
 
             <h3>1. Trách nhiệm về tài khoản cá nhân (iCloud, Google)</h3>
             <ul>
                 <li>Khách hàng có trách nhiệm tự bảo quản tài khoản cá nhân của mình.</li>
                 <li>Khi mang máy đến bảo hành hoặc sửa chữa, Quý khách vui lòng đăng xuất khỏi tất cả tài khoản.</li>
-                <li>DKDSHOP không chịu trách nhiệm về dữ liệu cá nhân của khách. Chúng tôi cũng <strong>từ chối</strong> tiếp nhận bảo hành/đổi trả nếu máy bị khóa tài khoản mà không có mật khẩu.</li>
+                <li>DDK Mobile Market không chịu trách nhiệm về dữ liệu cá nhân của khách. Chúng tôi cũng <strong>từ chối</strong> tiếp nhận bảo hành/đổi trả nếu máy bị khóa tài khoản mà không có mật khẩu.</li>
             </ul>
 
             <h3>2. Quy định về tình trạng sản phẩm</h3>
@@ -283,7 +283,7 @@ class StaticPageController extends Controller
 
             <h3>3. Đặt hàng và Hủy đơn</h3>
             <ul>
-                <li>DKDSHOP có quyền gọi điện xác nhận trước khi gửi hàng.</li>
+                <li>DDK Mobile Market có quyền gọi điện xác nhận trước khi gửi hàng.</li>
                 <li>Chúng tôi có quyền từ chối đơn hàng nếu phát hiện dấu hiệu gian lận, hoặc sai sót nghiêm trọng về giá cả do lỗi hệ thống.</li>
                 <li>Khách hàng vui lòng kiểm tra hàng (đồng kiểm) với bưu tá. Nếu sản phẩm móp méo, vỡ, sai mẫu mã, vui lòng từ chối nhận hàng và liên hệ ngay với Hotline.</li>
             </ul>

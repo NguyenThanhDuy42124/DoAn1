@@ -41,7 +41,7 @@
                     </li>
                     <li class="mb-2">
                         <span class="fw-semibold">Email:</span> 
-                        <a href="mailto:truongduy112098@gmail.com" class="text-muted text-decoration-none">hotro@trduy.dkdshop.com</a>
+                        <a href="mailto:truongduy112098@gmail.com" class="text-muted text-decoration-none">hotro@ddkm.com</a>
                     </li>
                     <li class="mb-2">
                         {{-- Cập nhật --}}
@@ -83,7 +83,7 @@
                 <ul class="list-unstyled mb-0">
                     <li class="mb-2">
                         {{-- Cập nhật --}}
-                        <a href="{{ route('pages.about') }}" class="text-muted text-decoration-none">Giới thiệu DKDSHOP</a>
+                        <a href="{{ route('pages.about') }}" class="text-muted text-decoration-none">Giới thiệu DDK Mobile Market</a>
                     </li>
                     <li class="mb-2">
                         {{-- Cập nhật --}}
@@ -130,9 +130,9 @@
         </div>
 
         <div class="text-center pt-4 mt-4 border-top">
-            <p class="mb-1 text-muted">&copy; {{ date('Y') }} DKDSHOP. Đã đăng ký bản quyền.</p>
+            <p class="mb-1 text-muted">&copy; {{ date('Y') }} DDK Mobile Market.</p>
             <p class="mb-0 text-muted small">
-                Công ty TNHH DKDSHOP | Địa chỉ: 255 Đường Nguyễn Văn Cừ, Phường Cái Khế, TP. Cần Thơ
+                DDK Mobile Market | Địa chỉ: 255 Đường Nguyễn Văn Cừ, Phường Cái Khế, TP. Cần Thơ
             </p>
         </div>
     </div>

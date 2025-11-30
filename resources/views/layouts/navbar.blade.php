@@ -4,8 +4,18 @@
 <nav class="navbar navbar-expand-lg navbar-dark fixed-top" aria-label="Eleventh navbar example">
 
     <div class="container-lg">
-        <a class="navbar-brand fw-bold" href="/">
-            <span>DDK</span><span>Market</span>
+        <a class="navbar-brand d-flex align-items-center" href="/" style="font-family: sans-serif;">
+            <div class="me-2 d-flex align-items-center justify-content-center bg-primary text-white rounded-circle"
+                style="width: 40px; height: 40px;">
+                <i class="bi bi-phone-flip" style="font-size: 1.2rem;"></i>
+            </div>
+
+            <div class="d-flex flex-column justify-content-center" style="line-height: 1;">
+                <span class="fw-black text-primary"
+                    style="font-weight: 900; font-size: 1.1rem; letter-spacing: -0.5px;">DDK</span>
+                <span class="fw-bold text-dark" style="font-size: 0.75rem; text-transform: uppercase;">Mobile
+                    Market</span>
+            </div>
         </a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample09"
@@ -255,7 +265,8 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="locationModalLabel">Chọn tỉnh, thành phố của bạn</h5>
-                <button type="button"  data-bs-dismiss="modal" aria-label="Close"><i class="fas fa-times"></i></button>
+                <button type="button" data-bs-dismiss="modal" aria-label="Close"><i
+                        class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
                 {{-- Thanh tìm kiếm --}}
@@ -272,7 +283,7 @@
                       Mỗi item <a> giờ đây chứa 1 <span> (cho văn bản) và 1 <i> (cho icon)
                       Bạn cần áp dụng cấu trúc này cho TẤT CẢ 63 tỉnh thành của bạn.
                     --}}
-                    
+
                     <div>
                         <a href="#" class="location-select-item" data-location="An Giang">
                             <span>An Giang</span>
@@ -581,17 +592,17 @@
         const locationItems = listContainer.querySelectorAll('div'); // Các 'div' bọc 'a'
 
         const defaultLocationText = "Chọn vị trí...";
-        const chosenLocationKey = 'userChosenLocation'; 
-        const detectedLocationKey = 'userDetectedLocation'; 
+        const chosenLocationKey = 'userChosenLocation';
+        const detectedLocationKey = 'userDetectedLocation';
 
         // 1. Tải vị trí khi trang được tải (giữ nguyên)
         loadLocation();
 
         // 2. Xử lý khi người dùng CHỌN một vị trí từ modal (ĐÃ CẬP NHẬT)
         listContainer.addEventListener('click', function(e) {
-            
+
             // Tìm thẻ <a> cha gần nhất, đề phòng user click vào <span> hoặc <i>
-            const clickedLink = e.target.closest('.location-select-item'); 
+            const clickedLink = e.target.closest('.location-select-item');
 
             if (clickedLink) {
                 e.preventDefault();
@@ -611,7 +622,7 @@
                 listContainer.querySelectorAll('.location-select-item').forEach(link => {
                     link.classList.remove('active');
                 });
-                
+
                 // 2. Thêm active class cho item được click
                 clickedLink.classList.add('active');
                 // *** KẾT THÚC LOGIC ACTIVE CLASS ***
@@ -624,7 +635,7 @@
         // 3. Xử lý TÌM KIẾM trong modal (ĐÃ CẬP NHẬT để lọc cả <span>)
         searchInput.addEventListener('input', function() {
             const filter = searchInput.value.toLowerCase().trim();
-            
+
             locationItems.forEach(itemWrapper => {
                 const link = itemWrapper.querySelector('.location-select-item');
                 if (link) {
@@ -645,7 +656,7 @@
         // 4. Reset thanh tìm kiếm khi modal được mở (ĐÃ CẬP NHẬT)
         locationModalEl.addEventListener('show.bs.modal', function() {
             searchInput.value = ''; // Xóa nội dung tìm kiếm cũ
-            
+
             // Reset lại danh sách (hiển thị tất cả)
             locationItems.forEach(itemWrapper => {
                 itemWrapper.style.display = 'block';
@@ -653,7 +664,8 @@
 
             // *** BẮT ĐẦU LOGIC CẬP NHẬT CHECKMARK ***
             // 1. Lấy vị trí đang được lưu (ưu tiên đã chọn)
-            const currentSavedLocation = localStorage.getItem(chosenLocationKey) || sessionStorage.getItem(detectedLocationKey);
+            const currentSavedLocation = localStorage.getItem(chosenLocationKey) || sessionStorage
+                .getItem(detectedLocationKey);
 
             // 2. Lặp qua tất cả các link và đặt active class
             listContainer.querySelectorAll('.location-select-item').forEach(link => {
