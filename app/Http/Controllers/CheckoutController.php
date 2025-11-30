@@ -216,26 +216,43 @@ class CheckoutController extends Controller
                 // Tìm voucher active (không cần check used_count của user nữa)
                 $voucher = Voucher::where('code', $code)->where('seller_id', $sellerId)->first();
 
+                // ... bên trong vòng lặp foreach ($ordersBySeller ...)
+
                 if ($voucher && $voucher->isValid()) {
                     if ($subtotal >= $voucher->min_order_value) {
-                        // Logic tính tiền
-                        $discount = ($voucher->type === 'fixed')
-                            ? $voucher->value
-                            : ($subtotal * $voucher->value) / 100;
 
-                        if ($voucher->type === 'percent' && $voucher->max_discount_amount && $discount > $voucher->max_discount_amount) {
-                            $discount = $voucher->max_discount_amount;
+                        // 1. Tính toán giá trị giảm sơ bộ
+                        $discount = 0;
+                        $voucherValue = (float)$voucher->value; // Ép kiểu float để tính toán
+
+                        if ($voucher->type === 'fixed') {
+                            $discount = $voucherValue;
+                        } elseif ($voucher->type === 'percent') {
+                            $discount = ($subtotal * $voucherValue) / 100;
                         }
 
-                        if ($discount > $subtotal) $discount = $subtotal;
+                        // 2. Kiểm tra giảm tối đa (QUAN TRỌNG: Phải check > 0)
+                        $maxDiscount = (float)$voucher->max_discount_amount;
+
+                        if (
+                            $voucher->type === 'percent'
+                            && $maxDiscount > 0  // <--- THÊM DÒNG NÀY ĐỂ FIX LỖI 0đ
+                            && $discount > $maxDiscount
+                        ) {
+
+                            $discount = $maxDiscount;
+                        }
+
+                        // 3. Đảm bảo không giảm quá tiền hàng
+                        if ($discount > $subtotal) {
+                            $discount = $subtotal;
+                        }
 
                         $group['discount_amount'] = $discount;
                         $group['voucher'] = $voucher;
                     } else {
-                        $group['voucher_error'] = "Cần mua thêm để dùng mã này.";
+                        $group['voucher_error'] = "Đơn tối thiểu " . number_format($voucher->min_order_value) . "đ";
                     }
-                } else {
-                    $group['voucher_error'] = "Mã không hợp lệ.";
                 }
             }
 
