@@ -318,8 +318,8 @@ class ProductController extends Controller
         // 1. Tải sản phẩm & Số liệu thống kê
         // withCount và withAvg sẽ tính TOÀN BỘ database (kể cả bài ẩn)
         $product = Product::with(['images', 'brand', 'category'])
-            ->withCount('reviews') 
-            ->withAvg('reviews', 'rating') 
+            ->withCount('reviews')
+            ->withAvg('reviews', 'rating')
             ->findOrFail($id);
 
         // --- Logic bảo mật (Giữ nguyên của bạn) ---
@@ -349,7 +349,7 @@ class ProductController extends Controller
             ->where(function($query) use ($currentUserId) {
                 // Lấy các bài KHÔNG bị ẩn
                 $query->where('is_hidden', false);
-                
+
                 // NẾU đã đăng nhập, lấy thêm bài của chính người đó (kể cả khi is_hidden = true)
                 if ($currentUserId) {
                     $query->orWhere('buyer_id', $currentUserId);
@@ -361,7 +361,7 @@ class ProductController extends Controller
         // 4. Tải sản phẩm liên quan
         $relatedProducts = Product::where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
-            ->where('status', Product::STATUS_APPROVED ?? 'Approved') 
+            ->where('status', Product::STATUS_APPROVED ?? 'Approved')
             ->with('images')
             ->latest()
             ->take(5)
@@ -387,6 +387,28 @@ class ProductController extends Controller
         return redirect()->route('seller.products.index')
             ->with('success', 'Xóa sản phẩm thành công!');
     }
+    public function hidden($id)
+    {
+        // (Giữ nguyên, không thay đổi)
+        $product = Product::findOrFail($id);
+        $product->previous_status = $product->status;
+        $product->status = Product::STATUS_HIDDEN ?? 'Hidden';
+        $product->save();
+        return redirect()->route('seller.products.index')
+            ->with('success', 'Sản phẩm đã được ẩn thành công!');
+    }
+    public function RestoreFromHidden($id)
+    {
+        // (Giữ nguyên, không thay đổi)
+        $product = Product::findOrFail($id);
+        $product->status = $product->previous_status ?? Product::STATUS_APPROVED;
+        $product->previous_status = null;
+        $product->save();
+        return redirect()->route('seller.products.index')
+            ->with('success', 'Sản phẩm đã được khôi phục thành công!');
+    }   
+
+
 
     public function edit($id)
     {

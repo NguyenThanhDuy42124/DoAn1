@@ -153,6 +153,8 @@ Route::prefix('seller')->middleware('role:seller')->group(function () {
     Route::get('/products/create', ProductForm::class)->name('seller.products.create');
     // Laravel tự động tìm product dựa trên ID {product} và truyền vào mount()
     Route::get('/products/{productId}/edit', ProductForm::class)->name('seller.products.edit');
+    Route::post('/products/{product}/hidden', [ProductController::class, 'hidden'])->name('seller.products.hidden');
+    Route::post('/products/{product}/restore', [ProductController::class, 'RestoreFromHidden'])->name('seller.products.restore');
 
     // Chỉ giữ lại index và destroy cho ProductController
     Route::resource('products', ProductController::class, ['names' => 'seller.products'])
