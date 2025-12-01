@@ -86,6 +86,28 @@
                             </div>
                             
                             <hr>
+
+                            <h5>Gán Thương hiệu (Cho phép bán trong danh mục này)</h5>
+                            <div class="brand-list" style="max-height: 200px; overflow-y: auto; border: 1px solid #eee; padding: 10px;">
+                                <div class="row"> {{-- Dùng row/col để chia cột cho đẹp nếu nhiều brand --}}
+                                    @foreach($allBrands as $brand)
+                                        <div class="col-md-6">
+                                            <div class="form-check">
+                                                {{-- Bind vào mảng selectedBrands --}}
+                                                <input class="form-check-input" type="checkbox" 
+                                                    value="{{ $brand->id }}" 
+                                                    id="brand-{{ $brand->id }}"
+                                                    wire:model.defer="selectedBrands">
+                                                <label class="form-check-label" for="brand-{{ $brand->id }}">
+                                                    {{ $brand->name }}
+                                                </label>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            <hr>
                             
                             <div class="d-flex justify-content-between">
                                 <button type="submit" class="btn btn-success">

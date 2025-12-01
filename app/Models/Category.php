@@ -21,5 +21,9 @@ class Category extends Model
         return $this->belongsToMany(Attribute::class, 'category_attribute');
     }
      
+    public function brands()
+    {
+        return $this->belongsToMany(Brand::class, 'brand_category');
+    }
 
 }

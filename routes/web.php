@@ -35,6 +35,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use App\Livewire\Admin\Categories\Manager as CategoryManager;
 use App\Livewire\Admin\Attributes\Manager as AttributeManager;
 use App\Livewire\Seller\VoucherManager;
+use App\Livewire\Seller\Products\ImportProducts;
 
 Route::get('/', MainPage::class)->name('main.page');
 
@@ -159,10 +160,10 @@ Route::prefix('seller')->middleware('role:seller')->group(function () {
 
 
     // [GET] Route để hiển thị trang form
-    Route::get('/products/import/form', [ProductController::class, 'showImportForm'])->name('seller.products.import.form');
+   // Route::get('/products/import/form', [ProductController::class, 'showImportForm'])->name('seller.products.import.form');
 
     // [POST] Route để xử lý dữ liệu từ form
-    Route::post('/products/import', [ProductController::class, 'import'])->name('seller.products.import');
+   Route::get('/products/import', ImportProducts::class)->name('products.import');
 
 
 

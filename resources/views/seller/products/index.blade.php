@@ -6,7 +6,7 @@
     <div class="page-header mt-4">
         <div class="d-flex flex-wrap justify-content-between align-items-center">
             <div class="mb-3 d-flex flex-wrap">
-                <a href="{{ route('seller.products.import.form') }}" class="btn btn-primary mr-2 mb-2 flex-fill text-nowrap">
+                <a href="{{ route('products.import') }}" class="btn btn-primary mr-2 mb-2 flex-fill text-nowrap">
                     <i class="fas fa-plus mr-2"></i>Thêm sản phẩm bằng File excel
                 </a>
                 <a href="{{ route('seller.products.create') }}" class="btn btn-primary mb-2 flex-fill text-nowrap">

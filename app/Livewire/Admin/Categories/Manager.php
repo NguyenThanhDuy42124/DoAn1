@@ -4,6 +4,7 @@ namespace App\Livewire\Admin\Categories;
 
 use App\Models\Category;
 use App\Models\Attribute; // Giữ lại
+use App\Models\Brand; // <--- 1. THÊM MODEL BRAND
 use Livewire\Component;
 
 class Manager extends Component
@@ -20,6 +21,10 @@ class Manager extends Component
     public $allAttributes;
     public $selectedAttributes = []; // Mảng các ID thuộc tính được check
 
+    // --- Brands (THÊM MỚI) ---
+    public $allBrands; // <--- 2. Biến chứa tất cả Brand
+    public $selectedBrands = []; // <--- 3. Biến chứa ID các Brand được chọn
+
     /**
      * Khởi chạy component
      */
@@ -27,6 +32,7 @@ class Manager extends Component
     {
         // Vẫn load "Khuôn Mẫu"
         $this->allAttributes = Attribute::orderBy('name')->get(); 
+        $this->allBrands = Brand::orderBy('name')->get(); // <--- 4. Load tất cả Brand
         
         // Load danh sách đơn giản
         $this->loadCategories(); 
@@ -55,6 +61,7 @@ class Manager extends Component
         $this->editingCategory = new Category(); // Model rỗng
         $this->state = []; // Xóa dữ liệu form
         $this->selectedAttributes = []; // Xóa thuộc tính đã chọn
+        $this->selectedBrands = []; // <--- 5. Reset brand khi tạo mới
         $this->showModal = true;
     }
 
@@ -64,14 +71,24 @@ class Manager extends Component
     public function editCategory($categoryId)
     {
         $this->resetErrorBag();
-        // Vẫn load 'attributes' để biết cái nào đã check
-        $this->editingCategory = Category::with('attributes')->find($categoryId);
         
-        // Nạp dữ liệu vào form (chỉ còn 'name')
+        // *** SỬA DÒNG NÀY: Thêm 'brands' vào with() ***
+        $this->editingCategory = Category::with(['attributes', 'brands'])->find($categoryId);
+        
+        // Kiểm tra nếu không tìm thấy (để tránh lỗi crash)
+        if (!$this->editingCategory) {
+            $this->dispatch('error', 'Danh mục không tồn tại!');
+            return;
+        }
+        
+        // Nạp dữ liệu vào form
         $this->state = $this->editingCategory->only(['name']); 
         
-        // Nạp các thuộc tính đã được gán (GIỮ NGUYÊN)
+        // Fill dữ liệu cho checkbox
         $this->selectedAttributes = $this->editingCategory->attributes->pluck('id')->toArray();
+        
+        // *** DÒNG NÀY SẼ CHẠY NGON NẾU MODEL ĐÃ CÓ QUAN HỆ brands() ***
+        $this->selectedBrands = $this->editingCategory->brands->pluck('id')->toArray(); 
         
         $this->showModal = true;
     }
@@ -95,6 +112,8 @@ class Manager extends Component
         // 2. Đồng bộ hóa (sync) các thuộc tính (VẪN GIỮ NGUYÊN)
         // Đây là logic "Khuôn Mẫu"
         $this->editingCategory->attributes()->sync($this->selectedAttributes);
+
+        $this->editingCategory->brands()->sync($this->selectedBrands); // <--- 8. Lưu vào bảng pivot
 
         // 3. Đóng modal và tải lại danh sách
         $this->showModal = false;
