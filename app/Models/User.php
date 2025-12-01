@@ -90,6 +90,19 @@ class User extends Authenticatable
         // Khóa ngoại của model liên kết (User as follower) là 'user_id'
         return $this->belongsToMany(User::class, 'followers', 'seller_id', 'user_id');
     }
+    // Trong file User.php
+
+public function getRoleLabelAttribute()
+{
+    $roles = [
+        'buyer'  => 'Người mua',
+        'seller' => 'Người bán',
+        'admin'  => 'Quản trị viên', // Hoặc 'Admin' tùy bạn chọn
+    ];
+
+    // Trả về tên tiếng Việt, nếu không khớp thì trả về role gốc
+    return $roles[$this->role] ?? $this->role;
+}
     public function isAdmin()
     {
         return $this->role === 'admin';

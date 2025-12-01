@@ -1,12 +1,12 @@
     <div>
         {{-- Flash messages --}}
-        @if(session()->has('success'))
+        @if (session()->has('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 {{ session('success') }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif
-        @if(session()->has('error'))
+        @if (session()->has('error'))
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 {{ session('error') }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -22,33 +22,33 @@
                 {{-- Tabs --}}
                 <ul class="nav nav-tabs" id="orderTabs" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link {{ $status === 'Pending' ? 'active' : '' }}" href="#" 
-                        wire:click.prevent="updateStatus('Pending')">
-                        Chờ xác nhận ({{ $pendingCount }})
+                        <a class="nav-link {{ $status === 'Pending' ? 'active' : '' }}" href="#"
+                            wire:click.prevent="updateStatus('Pending')">
+                            Chờ xác nhận ({{ $pendingCount }})
                         </a>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link {{ $status === 'Shipping' ? 'active' : '' }}" href="#" 
-                        wire:click.prevent="updateStatus('Shipping')">
-                        Đang giao ({{ $shippingCount }})
+                        <a class="nav-link {{ $status === 'Shipping' ? 'active' : '' }}" href="#"
+                            wire:click.prevent="updateStatus('Shipping')">
+                            Đang giao ({{ $shippingCount }})
                         </a>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link {{ $status === 'Delivered' ? 'active' : '' }}" href="#" 
-                        wire:click.prevent="updateStatus('Delivered')">
-                        Đã giao ({{ $deliveredCount }})
+                        <a class="nav-link {{ $status === 'Delivered' ? 'active' : '' }}" href="#"
+                            wire:click.prevent="updateStatus('Delivered')">
+                            Đã giao ({{ $deliveredCount }})
                         </a>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link {{ $status === 'Cancelled' ? 'active' : '' }}" href="#" 
-                        wire:click.prevent="updateStatus('Cancelled')">
-                        Đã hủy ({{ $cancelledCount }})
+                        <a class="nav-link {{ $status === 'Cancelled' ? 'active' : '' }}" href="#"
+                            wire:click.prevent="updateStatus('Cancelled')">
+                            Đã hủy ({{ $cancelledCount }})
                         </a>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link {{ $status === 'Returned' ? 'active' : '' }}" href="#" 
-                        wire:click.prevent="updateStatus('Returned')">
-                        Trả hàng ({{ $returnedCount }})
+                        <a class="nav-link {{ $status === 'Returned' ? 'active' : '' }}" href="#"
+                            wire:click.prevent="updateStatus('Returned')">
+                            Trả hàng ({{ $returnedCount }})
                         </a>
                     </li>
                 </ul>
@@ -86,63 +86,104 @@
                                             @foreach ($order->items as $index => $item)
                                                 <tr>
                                                     @if ($index === 0)
-                                                        <td rowspan="{{ count($order->items) }}">{{ $order->id }}</td>
-                                                        <td rowspan="{{ count($order->items) }}">{{ $order->created_at->format('d/m/Y H:i') }}</td>
+                                                        <td rowspan="{{ count($order->items) }}">{{ $order->id }}
+                                                        </td>
+                                                        <td rowspan="{{ count($order->items) }}">
+                                                            {{ $order->created_at->format('d/m/Y H:i') }}</td>
                                                     @endif
                                                     <td>{{ $item->product->name }}</td>
                                                     <td>{{ $item->quantity }}</td>
-                                                    <td>{{ number_format($item->price * $item->quantity, 0, ',', '.') }}₫</td>
+                                                    <td>{{ number_format($item->price * $item->quantity, 0, ',', '.') }}₫
+                                                    </td>
                                                     @if ($index === 0)
-                                                        <td rowspan="{{ count($order->items) }}">{{ number_format($order->total_price, 0, ',', '.') }}₫</td>
-                                                        <td rowspan="{{ count($order->items) }}">{{ $order->status }}</td>
+                                                        <td rowspan="{{ count($order->items) }}">
+                                                            {{ number_format($order->total_price, 0, ',', '.') }}₫</td>
+                                                        <td rowspan="{{ count($order->items) }}">
+                                                            @php
+                                                                $statusColors = [
+                                                                    'Pending' => 'bg-warning text-dark', // Vàng
+                                                                    'Shipping' => 'bg-info text-dark', // Xanh dương nhạt
+                                                                    'Delivered' => 'bg-primary', // Xanh dương đậm
+                                                                    'Completed' => 'bg-success', // Xanh lá
+                                                                    'Cancelled' => 'bg-danger', // Đỏ
+                                                                    'Returned' => 'bg-secondary', // Xám
+                                                                ];
+
+                                                                $statusNames = [
+                                                                    'Pending' => 'Chờ xác nhận',
+                                                                    'Shipping' => 'Đang giao',
+                                                                    'Delivered' => 'Đã giao',
+                                                                    'Completed' => 'Hoàn thành',
+                                                                    'Cancelled' => 'Đã hủy',
+                                                                    'Returned' => 'Trả hàng',
+                                                                ];
+                                                            @endphp
+
+                                                            <span
+                                                                class="badge {{ $statusColors[$order->status] ?? 'bg-secondary' }}">
+                                                                {{ $statusNames[$order->status] ?? $order->status }}
+                                                            </span>
+                                                        </td>
                                                         <td rowspan="{{ count($order->items) }}">
                                                             {{-- Actions --}}
                                                             @if ($order->status === 'Pending')
-                                                                <button type="button" wire:click.prevent="cancelOrder({{ $order->id }})" onclick="if(!confirm('Bạn có chắc muốn hủy đơn hàng?')) return false;" class="btn btn-danger btn-sm">Hủy đơn</button>
+                                                                <button type="button"
+                                                                    wire:click.prevent="cancelOrder({{ $order->id }})"
+                                                                    onclick="if(!confirm('Bạn có chắc muốn hủy đơn hàng?')) return false;"
+                                                                    class="btn btn-danger btn-sm">Hủy đơn</button>
                                                             @elseif ($order->status === 'Delivered' || $order->status === 'Completed')
-                                                                @if($order->status === 'Delivered')
-                                                                <button type="button" wire:click.prevent="confirmOrder({{ $order->id }})" onclick="if(!confirm('Xác nhận đã nhận hàng?')) return false;" class="btn btn-success btn-sm">Đã nhận</button>
-                                                                <button type="button" wire:click.prevent="returnOrder({{ $order->id }})" onclick="if(!confirm('Yêu cầu trả hàng?')) return false;" class="btn btn-warning btn-sm mt-1">Trả hàng</button>
+                                                                @if ($order->status === 'Delivered')
+                                                                    <button type="button"
+                                                                        wire:click.prevent="confirmOrder({{ $order->id }})"
+                                                                        onclick="if(!confirm('Xác nhận đã nhận hàng?')) return false;"
+                                                                        class="btn btn-success btn-sm">Đã nhận</button>
+                                                                    <button type="button"
+                                                                        wire:click.prevent="returnOrder({{ $order->id }})"
+                                                                        onclick="if(!confirm('Yêu cầu trả hàng?')) return false;"
+                                                                        class="btn btn-warning btn-sm mt-1">Trả
+                                                                        hàng</button>
                                                                 @elseif($order->status === 'Completed')
-                                                                <form action="{{ route('orders.repurchase', $order->id) }}" method="POST" class="d-inline mt-1">
-                                                                    @csrf
-                                                                    <button type="submit" class="btn btn-warning btn-sm">Mua lại</button>
-                                                                </form>
+                                                                    <form
+                                                                        action="{{ route('orders.repurchase', $order->id) }}"
+                                                                        method="POST" class="d-inline mt-1">
+                                                                        @csrf
+                                                                        <button type="submit"
+                                                                            class="btn btn-warning btn-sm">Mua
+                                                                            lại</button>
+                                                                    </form>
                                                                 @endif
                                                             @elseif ($order->status == 'Cancelled')
-                                                                <form action="{{ route('orders.repurchase', $order->id) }}" method="POST" class="d-inline">
+                                                                <form
+                                                                    action="{{ route('orders.repurchase', $order->id) }}"
+                                                                    method="POST" class="d-inline">
                                                                     @csrf
-                                                                    <button type="submit" class="btn btn-warning btn-sm">Mua lại</button>
+                                                                    <button type="submit"
+                                                                        class="btn btn-warning btn-sm">Mua lại</button>
                                                                 </form>
                                                             @endif
                                                         </td>
                                                     @endif
-                                                    
+
                                                     <td>
                                                         {{-- NÚT ĐÁNH GIÁ --}}
                                                         @if ($order->status === 'Completed')
-                                        
                                                             @php
                                                                 // Kiểm tra xem đã review cho đơn hàng VÀ sản phẩm này chưa
                                                                 $reviewed = $order->reviews
                                                                     ->where('product_id', $item->product_id)
-                                                                    ->where('order_id', $order->id) 
+                                                                    ->where('order_id', $order->id)
                                                                     ->isNotEmpty();
                                                             @endphp
-                                                            
+
                                                             @if ($reviewed)
                                                                 {{-- ĐÃ ĐÁNH GIÁ: Đổi thành nút "Xem Đánh giá" --}}
-                                                                <button 
-                                                                    type="button" 
-                                                                    class="btn btn-secondary btn-sm"
+                                                                <button type="button" class="btn btn-secondary btn-sm"
                                                                     wire:click.prevent="openReviewModal({{ $item->product_id }}, {{ $order->id }})">
                                                                     Xem Đánh giá
                                                                 </button>
                                                             @else
                                                                 {{-- CHƯA ĐÁNH GIÁ: Nút "Đánh giá" --}}
-                                                                <button 
-                                                                    type="button" 
-                                                                    class="btn btn-info btn-sm"
+                                                                <button type="button" class="btn btn-info btn-sm"
                                                                     wire:click.prevent="openReviewModal({{ $item->product_id }}, {{ $order->id }})">
                                                                     Đánh giá
                                                                 </button>
@@ -171,165 +212,185 @@
         {{-- MODAL ĐÁNH GIÁ (ĐÃ CHỈNH SỬA VỊ TRÍ VÀ PADDING) --}}
         {{-- =================================================================== --}}
         @if ($showReviewModal)
-        {{-- THÊM padding-top: 85px vào đây để né Navbar --}}
-        <div class="modal fade show" tabindex="-1" 
-            style="display: block; background-color: rgba(0,0,0,0.5); padding-top: 85px; z-index: 10050;" 
-            aria-labelledby="reviewModalLabel" aria-modal="true" role="dialog">
-            
-            {{-- Thêm padding-bottom để cuộn không bị sát đáy --}}
-            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="padding-bottom: 50px;">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="reviewModalLabel">Đánh giá & nhận xét</h5>
-                        <button type="button"  wire:click="closeReviewModal" aria-label="Close">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
+            {{-- THÊM padding-top: 85px vào đây để né Navbar --}}
+            <div class="modal fade show" tabindex="-1"
+                style="display: block; background-color: rgba(0,0,0,0.5); padding-top: 85px; z-index: 10050;"
+                aria-labelledby="reviewModalLabel" aria-modal="true" role="dialog">
 
-                    {{-- NỘI DUNG MODAL --}}
-                    <div class="modal-body">
+                {{-- Thêm padding-bottom để cuộn không bị sát đáy --}}
+                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="padding-bottom: 50px;">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="reviewModalLabel">Đánh giá & nhận xét</h5>
+                            <button type="button" wire:click="closeReviewModal" aria-label="Close">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
 
-                        @if (session()->has('error_modal'))
-                            <div class="alert alert-danger">{{ session('error_modal') }}</div>
-                        @endif
+                        {{-- NỘI DUNG MODAL --}}
+                        <div class="modal-body">
 
-                        @if ($productToReview)
-                            {{-- 1. Thông tin sản phẩm --}}
-                            <div class="d-flex align-items-center mb-3">
-                             <img src="{{ ($productToReview->images && $productToReview->images->isNotEmpty()) 
-            ? asset('storage/' . $productToReview->images->first()->image_path) 
-            : asset('storage/product_images/default.jpg') }}" 
-     alt="{{ $productToReview->name }}" 
-     class="img-fluid rounded" 
-     style="width: 60px; height: 60px; object-fit: cover;">
-                                <h6 class="ms-3">{{ $productToReview->name }}</h6>
-                            </div>
-                            <hr>
+                            @if (session()->has('error_modal'))
+                                <div class="alert alert-danger">{{ session('error_modal') }}</div>
+                            @endif
 
-                            @if ($alreadyReviewed && $existingReview)
-                                {{-- CASE 2: ĐÃ ĐÁNH GIÁ (CHẾ ĐỘ XEM/PHẢN HỒI) --}}
-                                
-                                <h5 class="text-center">Lịch sử Đánh giá</h5>
-
-                                {{-- 2a. Đánh giá gốc của Buyer --}}
-                                <div class="mb-3 text-center">
-                                    <label class="form-label d-block">Đánh giá (Gốc)</label>
-                                    <div class="rating-stars">
-                                        @foreach(range(1, 5) as $star)
-                                            <i class="fas fa-star" 
-                                            style="font-size: 2rem; color: {{ $existingReview->rating >= $star ? '#ffc107' : '#e0e0e0' }};">
-                                            </i>
-                                        @endforeach
-                                    </div>
+                            @if ($productToReview)
+                                {{-- 1. Thông tin sản phẩm --}}
+                                <div class="d-flex align-items-center mb-3">
+                                    <img src="{{ $productToReview->images && $productToReview->images->isNotEmpty()
+                                        ? asset('storage/' . $productToReview->images->first()->image_path)
+                                        : asset('storage/product_images/default.jpg') }}"
+                                        alt="{{ $productToReview->name }}" class="img-fluid rounded"
+                                        style="width: 60px; height: 60px; object-fit: cover;">
+                                    <h6 class="ms-3">{{ $productToReview->name }}</h6>
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Nhận xét (Gốc):</label>
-                                    <textarea class="form-control" rows="3" readonly disabled>{{ $comment }}</textarea>
-                                </div>
+                                <hr>
 
-                                {{-- 2b. Phản hồi của Seller --}}
-                                @if (!empty($existingReview->reply))
-                                    <div class="alert alert-secondary mt-3">
-                                        <h6 class="alert-heading fw-bold">Phản hồi từ Người bán:</h6>
-                                        <p class="mb-0" style="white-space: pre-wrap;">{{ $existingReview->reply }}</p>
-                                    </div>
+                                @if ($alreadyReviewed && $existingReview)
+                                    {{-- CASE 2: ĐÃ ĐÁNH GIÁ (CHẾ ĐỘ XEM/PHẢN HỒI) --}}
 
-                                    {{-- 2c. Phản hồi bổ sung của Buyer --}}
-                                    @if (!empty($existingReview->buyer_additional_feedback))
-                                        <div class="alert alert-info mt-3">
-                                            <h6 class="alert-heading fw-bold">Phản hồi bổ sung của bạn (Đã cập nhật {{$existingReview->rating}} sao):</h6>
-                                            <p class="mb-0" style="white-space: pre-wrap;">{{ $existingReview->buyer_additional_feedback }}</p>
-                                        </div>
-                                    @else
-                                        {{-- FORM GỬI PHẢN HỒI BỔ SUNG --}}
-                                        <form wire:submit.prevent="submitAdditionalFeedback" class="mt-3 border p-3 rounded bg-light">
-                                            
-                                            <div class="mb-3 text-center">
-                                                <label class="form-label d-block fw-bold">Thay đổi đánh giá (nếu muốn)</label>
-                                                <p class="small text-muted">Đánh giá hiện tại của bạn là {{ $rating }} sao. Bạn có thể chọn lại.</p>
-                                                <div class="rating-stars">
-                                                    @foreach(range(1, 5) as $star)
-                                                        <i class="fas fa-star" 
-                                                        wire:click="$set('rating', {{ $star }})" 
-                                                        style="font-size: 2rem; cursor: pointer; color: {{ $rating >= $star ? '#ffc107' : '#e0e0e0' }}; transition: color 0.2s;">
-                                                        </i>
-                                                    @endforeach
-                                                </div>
-                                                @error('rating') <span class="text-danger d-block mt-1">{{ $message }}</span> @enderror
-                                            </div>
+                                    <h5 class="text-center">Lịch sử Đánh giá</h5>
 
-                                            <div class="mb-3">
-                                                <label for="additionalFeedbackText" class="form-label fw-bold">Gửi phản hồi bổ sung</label>
-                                                <textarea class="form-control @error('additionalFeedback') is-invalid @enderror" id="additionalFeedbackText" rows="4" wire:model.defer="additionalFeedback" placeholder="Gửi phản hồi của bạn về trả lời của người bán (tối thiểu 10 ký tự)"></textarea>
-                                                @error('additionalFeedback') <span class="invalid-feedback">{{ $message }}</span> @enderror
-                                            </div>
-                                            <button type="submit" class="btn btn-danger w-100" wire:loading.attr="disabled" wire:target="submitAdditionalFeedback">
-                                                <span wire:loading.remove wire:target="submitAdditionalFeedback">
-                                                    GỬI PHẢN HỒI VÀ CẬP NHẬT
-                                                </span>
-                                                <span wire:loading wire:target="submitAdditionalFeedback">
-                                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                                    Đang gửi...
-                                                </span>
-                                            </button>
-                                        </form>
-                                    @endif
-
-                                @else
-                                    <div class="alert alert-warning text-center mt-3">
-                                        <i class="fas fa-clock me-1"></i>
-                                        Người bán chưa phản hồi đánh giá này.
-                                    </div>
-                                @endif
-
-                            @else
-                                {{-- CASE 1: CHƯA ĐÁNH GIÁ --}}
-                                <form wire:submit.prevent="submitReview">
-                                    {{-- Đánh giá chung (Sao) --}}
+                                    {{-- 2a. Đánh giá gốc của Buyer --}}
                                     <div class="mb-3 text-center">
-                                        <label class="form-label d-block">Đánh giá chung</label>
+                                        <label class="form-label d-block">Đánh giá (Gốc)</label>
                                         <div class="rating-stars">
-                                            @foreach(range(1, 5) as $star)
-                                                <i class="fas fa-star" 
-                                                wire:click="$set('rating', {{ $star }})" 
-                                                style="font-size: 2rem; cursor: pointer; color: {{ $rating >= $star ? '#ffc107' : '#e0e0e0' }}; transition: color 0.2s;">
+                                            @foreach (range(1, 5) as $star)
+                                                <i class="fas fa-star"
+                                                    style="font-size: 2rem; color: {{ $existingReview->rating >= $star ? '#ffc107' : '#e0e0e0' }};">
                                                 </i>
                                             @endforeach
                                         </div>
-                                        @error('rating') <span class="text-danger d-block mt-1">{{ $message }}</span> @enderror
                                     </div>
-
-                                    {{-- Nhận xét chi tiết --}}
                                     <div class="mb-3">
-                                        <label for="commentText" class="form-label">Xin mời chia sẻ một số cảm nhận</label>
-                                        <textarea class="form-control @error('comment') is-invalid @enderror" id="commentText" rows="4" wire:model.defer="comment" placeholder="Nhận xét của bạn (tối thiểu 15 ký tự)"></textarea>
-                                        @error('comment') <span class="invalid-feedback">{{ $message }}</span> @enderror
+                                        <label class="form-label">Nhận xét (Gốc):</label>
+                                        <textarea class="form-control" rows="3" readonly disabled>{{ $comment }}</textarea>
                                     </div>
 
-                                    {{-- Nút Gửi --}}
-                                    <button type="submit" class="btn btn-danger w-100" wire:loading.attr="disabled">
-                                        <span wire:loading.remove wire:target="submitReview">
-                                            GỬI ĐÁNH GIÁ
-                                        </span>
-                                        <span wire:loading wire:target="submitReview">
-                                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                            Đang gửi...
-                                        </span>
-                                    </button>
-                                </form>
-                            @endif
-                        
-                        @else
-                            {{-- Lỗi không tìm thấy sản phẩm --}}
-                            <div class="alert alert-danger">Đã có lỗi xảy ra. Vui lòng thử lại.</div>
-                        @endif
-                    </div>
-                    {{-- KẾT THÚC NỘI DUNG MODAL --}}
+                                    {{-- 2b. Phản hồi của Seller --}}
+                                    @if (!empty($existingReview->reply))
+                                        <div class="alert alert-secondary mt-3">
+                                            <h6 class="alert-heading fw-bold">Phản hồi từ Người bán:</h6>
+                                            <p class="mb-0" style="white-space: pre-wrap;">
+                                                {{ $existingReview->reply }}</p>
+                                        </div>
 
+                                        {{-- 2c. Phản hồi bổ sung của Buyer --}}
+                                        @if (!empty($existingReview->buyer_additional_feedback))
+                                            <div class="alert alert-info mt-3">
+                                                <h6 class="alert-heading fw-bold">Phản hồi bổ sung của bạn (Đã cập nhật
+                                                    {{ $existingReview->rating }} sao):</h6>
+                                                <p class="mb-0" style="white-space: pre-wrap;">
+                                                    {{ $existingReview->buyer_additional_feedback }}</p>
+                                            </div>
+                                        @else
+                                            {{-- FORM GỬI PHẢN HỒI BỔ SUNG --}}
+                                            <form wire:submit.prevent="submitAdditionalFeedback"
+                                                class="mt-3 border p-3 rounded bg-light">
+
+                                                <div class="mb-3 text-center">
+                                                    <label class="form-label d-block fw-bold">Thay đổi đánh giá (nếu
+                                                        muốn)</label>
+                                                    <p class="small text-muted">Đánh giá hiện tại của bạn là
+                                                        {{ $rating }} sao. Bạn có thể chọn lại.</p>
+                                                    <div class="rating-stars">
+                                                        @foreach (range(1, 5) as $star)
+                                                            <i class="fas fa-star"
+                                                                wire:click="$set('rating', {{ $star }})"
+                                                                style="font-size: 2rem; cursor: pointer; color: {{ $rating >= $star ? '#ffc107' : '#e0e0e0' }}; transition: color 0.2s;">
+                                                            </i>
+                                                        @endforeach
+                                                    </div>
+                                                    @error('rating')
+                                                        <span class="text-danger d-block mt-1">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <label for="additionalFeedbackText" class="form-label fw-bold">Gửi
+                                                        phản hồi bổ sung</label>
+                                                    <textarea class="form-control @error('additionalFeedback') is-invalid @enderror" id="additionalFeedbackText"
+                                                        rows="4" wire:model.defer="additionalFeedback"
+                                                        placeholder="Gửi phản hồi của bạn về trả lời của người bán (tối thiểu 10 ký tự)"></textarea>
+                                                    @error('additionalFeedback')
+                                                        <span class="invalid-feedback">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
+                                                <button type="submit" class="btn btn-danger w-100"
+                                                    wire:loading.attr="disabled"
+                                                    wire:target="submitAdditionalFeedback">
+                                                    <span wire:loading.remove wire:target="submitAdditionalFeedback">
+                                                        GỬI PHẢN HỒI VÀ CẬP NHẬT
+                                                    </span>
+                                                    <span wire:loading wire:target="submitAdditionalFeedback">
+                                                        <span class="spinner-border spinner-border-sm" role="status"
+                                                            aria-hidden="true"></span>
+                                                        Đang gửi...
+                                                    </span>
+                                                </button>
+                                            </form>
+                                        @endif
+                                    @else
+                                        <div class="alert alert-warning text-center mt-3">
+                                            <i class="fas fa-clock me-1"></i>
+                                            Người bán chưa phản hồi đánh giá này.
+                                        </div>
+                                    @endif
+                                @else
+                                    {{-- CASE 1: CHƯA ĐÁNH GIÁ --}}
+                                    <form wire:submit.prevent="submitReview">
+                                        {{-- Đánh giá chung (Sao) --}}
+                                        <div class="mb-3 text-center">
+                                            <label class="form-label d-block">Đánh giá chung</label>
+                                            <div class="rating-stars">
+                                                @foreach (range(1, 5) as $star)
+                                                    <i class="fas fa-star"
+                                                        wire:click="$set('rating', {{ $star }})"
+                                                        style="font-size: 2rem; cursor: pointer; color: {{ $rating >= $star ? '#ffc107' : '#e0e0e0' }}; transition: color 0.2s;">
+                                                    </i>
+                                                @endforeach
+                                            </div>
+                                            @error('rating')
+                                                <span class="text-danger d-block mt-1">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+
+                                        {{-- Nhận xét chi tiết --}}
+                                        <div class="mb-3">
+                                            <label for="commentText" class="form-label">Xin mời chia sẻ một số cảm
+                                                nhận</label>
+                                            <textarea class="form-control @error('comment') is-invalid @enderror" id="commentText" rows="4"
+                                                wire:model.defer="comment" placeholder="Nhận xét của bạn (tối thiểu 15 ký tự)"></textarea>
+                                            @error('comment')
+                                                <span class="invalid-feedback">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+
+                                        {{-- Nút Gửi --}}
+                                        <button type="submit" class="btn btn-danger w-100"
+                                            wire:loading.attr="disabled">
+                                            <span wire:loading.remove wire:target="submitReview">
+                                                GỬI ĐÁNH GIÁ
+                                            </span>
+                                            <span wire:loading wire:target="submitReview">
+                                                <span class="spinner-border spinner-border-sm" role="status"
+                                                    aria-hidden="true"></span>
+                                                Đang gửi...
+                                            </span>
+                                        </button>
+                                    </form>
+                                @endif
+                            @else
+                                {{-- Lỗi không tìm thấy sản phẩm --}}
+                                <div class="alert alert-danger">Đã có lỗi xảy ra. Vui lòng thử lại.</div>
+                            @endif
+                        </div>
+                        {{-- KẾT THÚC NỘI DUNG MODAL --}}
+
+                    </div>
                 </div>
             </div>
-        </div>
-        {{-- Lớp phủ (backdrop) cho modal --}}
-        <div class="modal-backdrop fade show" style="z-index: 10040;"></div>
+            {{-- Lớp phủ (backdrop) cho modal --}}
+            <div class="modal-backdrop fade show" style="z-index: 10040;"></div>
         @endif
     </div>
