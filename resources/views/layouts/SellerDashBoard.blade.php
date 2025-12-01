@@ -133,13 +133,13 @@
                         <button class="btn btn-light dropdown-toggle d-flex align-items-center" type="button"
                             id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             @if (Auth::user()->img == '')
-                                <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=ff6600&color=fff"
+                                <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->shop_name) }}&background=ff6600&color=fff"
                                     width="30" height="30" class="rounded-circle mr-2">
                             @else
                                 <img src="{{ asset('storage/' . Auth::user()->img) }}" width="30" height="30"
                                     class="rounded-circle mr-2">
                             @endif
-                            {{ Auth::user()->name }}
+                            {{ Auth::user()->shop_name }}
                         </button>
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
                             <a class="dropdown-item" href="/dashboard"><i class="fas fa-user-circle mr-2"></i> Hồ sơ</a>
@@ -157,14 +157,14 @@
             </nav>
 
             <div class="container-fluid">
-    
+
     {{-- 1. THÊM ĐOẠN NÀY: Để hiển thị Header tách biệt --}}
     @if (isset($header))
         <div class="page-header d-flex justify-content-between align-items-center">
             <div class="header-content">
                 {{ $header }}
             </div>
-            
+
             {{-- Hiển thị nút bấm (Actions) nếu có --}}
             @if (isset($actions))
                 <div class="btn-list">

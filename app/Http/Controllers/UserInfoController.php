@@ -46,6 +46,7 @@ class UserInfoController extends Controller
             'cccd_front_image' => 'nullable|image|max:2048|mimes:jpeg,png,jpg,gif,svg',
             'cccd_back_image' => 'nullable|image|max:2048|mimes:jpeg,png,jpg,gif,svg',
             'selfie_image' => 'nullable|image|max:2048|mimes:jpeg,png,jpg,gif,svg',
+            'shop_name' => 'nullable|string|max:255',
         ]);
         if ($request->hasFile('img')) {
 

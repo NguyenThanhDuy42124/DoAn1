@@ -14,7 +14,7 @@
                         style="width: 120px; height: 120px; object-fit: cover;">
 
                     <div class="ms-md-4 text-center text-md-start mt-3 mt-md-0">
-                        <h1 class="fw-bold display-6 mb-1">{{ $shop->name }}</h1>
+                        <h1 class="fw-bold display-6 mb-1">{{ $shop->shop_name }}</h1>
                         <p class="text-muted mb-2">Tham gia từ: {{ $shop->created_at->format('d/m/Y') }}</p>
                         <form action="{{ route('seller.follow.toggle', $shop->id) }}" method="POST"
                             style="display: inline-block;">
@@ -135,14 +135,14 @@
                     <div class="row g-4">
                         @forelse ($products as $product)
                             <div class="col-6 col-md-4"> {{-- Grid 3 cột cho trang Shop (vì có sidebar) --}}
-                                
+
                                 {{-- BẮT ĐẦU MODERN CARD --}}
                                 <div class="modern-product-card">
 
                                     {{-- Link bao quanh ảnh và nội dung --}}
-                                    <a href="{{ route('products.detail', ['id' => $product->id]) }}" 
+                                    <a href="{{ route('products.detail', ['id' => $product->id]) }}"
                                        class="text-decoration-none text-dark d-contents">
-                                        
+
                                         {{-- 1. Ảnh sản phẩm --}}
                                         <div class="product-img-wrapper">
                                             {{-- Badge giảm giá --}}
@@ -164,7 +164,7 @@
                                             <h5 class="product-title" title="{{ $product->name }}">
                                                 {{ $product->name }}
                                             </h5>
-                                            
+
                                             {{-- Thông tin phụ --}}
                                             <div class="mb-2">
                                                  <span class="badge bg-light text-dark border fw-normal me-1">
@@ -193,8 +193,8 @@
                                     <div class="product-footer">
                                         <div class="d-flex gap-2">
                                             {{-- Nút Xem --}}
-                                            <a href="{{ route('products.detail', ['id' => $product->id]) }}" 
-                                               class="btn btn-outline-primary btn-action-sm" 
+                                            <a href="{{ route('products.detail', ['id' => $product->id]) }}"
+                                               class="btn btn-outline-primary btn-action-sm"
                                                title="Xem chi tiết">
                                                 <i class="fas fa-eye"></i>
                                             </a>
@@ -231,7 +231,7 @@
                                         </div>
                                     </div>
 
-                                </div> 
+                                </div>
                                 {{-- KẾT THÚC CARD --}}
 
                             </div>

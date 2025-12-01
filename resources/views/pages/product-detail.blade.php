@@ -5,7 +5,7 @@
 
 @section('content')
 <div class="container mb-5">
-    
+
 
     <div class="card shadow-sm border-0" style="border-radius: 16px;"> {{-- Bo góc thẻ chính --}}
         @auth
@@ -286,14 +286,14 @@
                                                     <img src="{{ asset('storage/profile_images/default.jpg') }}" alt="{{ $review->buyer->name ?? 'User' }}" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
                                                 @endif
                                             </div>
-                                            
+
                                             <div class="flex-grow-1">
                                                 {{-- Header đánh giá: Tên + Badge Ẩn + Nút Thao tác --}}
                                                 <div class="d-flex justify-content-between align-items-start">
                                                     <div>
                                                         <h6 class="mt-0 mb-1 fw-bold">
                                                             {{ $review->buyer->name ?? 'Người dùng' }}
-                                                            
+
                                                             {{-- 2. LOGIC GIAO DIỆN: Badge thông báo nếu đang ẩn --}}
                                                             @if($review->is_hidden)
                                                                 <span class="badge bg-warning text-dark ms-2" style="font-size: 0.75rem;">
@@ -301,7 +301,7 @@
                                                                 </span>
                                                             @endif
                                                         </h6>
-                                                        
+
                                                         <div class="text-warning mb-1">
                                                             @foreach(range(1, 5) as $star)
                                                                 <i class="fas fa-star" style="color: {{ $review->rating >= $star ? '#ffc107' : '#e0e0e0' }};"></i>
@@ -313,7 +313,7 @@
                                                     @if(auth()->check() && auth()->id() === $review->buyer_id)
                                                         <form action="{{ route('reviews.toggleHidden', $review->id) }}" method="POST" class="d-inline">
                                                             @csrf
-                                                            <button type="submit" class="btn btn-sm {{ $review->is_hidden ? 'btn-outline-success' : 'btn-outline-secondary' }}" 
+                                                            <button type="submit" class="btn btn-sm {{ $review->is_hidden ? 'btn-outline-success' : 'btn-outline-secondary' }}"
                                                                     title="{{ $review->is_hidden ? 'Hiện đánh giá này cho mọi người' : 'Ẩn đánh giá này đi' }}">
                                                                 @if($review->is_hidden)
                                                                     <i class="fas fa-eye"></i> Hiện lại
@@ -332,13 +332,13 @@
                                                     <div class="d-flex mt-3 ms-4">
                                                         <div class="flex-shrink-0 me-3">
                                                             @if ($seller->img)
-                                                                <img src="{{ asset('storage/' . $seller->img) }}" alt="{{ $seller->name }}" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                                                                <img src="{{ asset('storage/' . $seller->img) }}" alt="{{ $seller->shop_name }}" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
                                                             @else
-                                                                <img src="{{ asset('storage/profile_images/default.jpg') }}" alt="{{ $seller->name }}" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                                                                <img src="{{ asset('storage/profile_images/default.jpg') }}" alt="{{ $seller->shop_name }}" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
                                                             @endif
                                                         </div>
                                                         <div class="flex-grow-1 bg-light rounded p-3">
-                                                            <h6 class="mt-0 mb-1 fw-bold">{{ $seller->name }}
+                                                            <h6 class="mt-0 mb-1 fw-bold">{{ $seller->shop_name }}
                                                                 <span class="badge bg-secondary fw-normal ms-1">Người bán</span>
                                                             </h6>
                                                             <p class="mb-0" style="white-space: pre-wrap;">{{ $review->reply }}</p>
@@ -401,9 +401,9 @@
                             <div class="d-flex align-items-center" style="margin-top: -30px;">
                                 <div class="shop-avatar-wrapper me-3">
                                     @if ($seller->img)
-                                        <img src="{{ asset('storage/' . $seller->img) }}" alt="{{ $seller->name }}" class="shop-avatar-img" style="width: 70px; height: 70px; border: 3px solid #fff;">
+                                        <img src="{{ asset('storage/' . $seller->img) }}" alt="{{ $seller->shop_name }}" class="shop-avatar-img" style="width: 70px; height: 70px; border: 3px solid #fff;">
                                     @else
-                                        <img src="{{ asset('storage/profile_images/default.jpg') }}" alt="{{ $seller->name }}" class="shop-avatar-img" style="width: 70px; height: 70px; border: 3px solid #fff;">
+                                        <img src="{{ asset('storage/profile_images/default.jpg') }}" alt="{{ $seller->shop_name }}" class="shop-avatar-img" style="width: 70px; height: 70px; border: 3px solid #fff;">
                                     @endif
                                     <div class="verified-badge" style="width: 18px; height: 18px; font-size: 10px; bottom: 2px; right: 2px;">
                                         <i class="fas fa-check-circle"></i>
@@ -411,7 +411,7 @@
                                 </div>
 
                                 <div class="mt-4 pt-1">
-                                    <h6 class="shop-name mb-1 text-truncate" style="font-size: 1.1rem;">{{ $seller->name }}</h6>
+                                    <h6 class="shop-name mb-1 text-truncate" style="font-size: 1.1rem;">{{ $seller->shop_name }}</h6>
                                     <a href="/shop/{{ $seller->id }}" class="btn btn-outline-primary btn-sm btn-shop-view" style="font-size: 0.8rem; padding: 4px 12px;">
                                         Xem Shop
                                     </a>

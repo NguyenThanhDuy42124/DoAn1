@@ -20,7 +20,8 @@ class User extends Authenticatable
     protected $fillable = ['name', 'email', 'password',
     'google_id', 'role','gender','phoneNumber',
      'address','dateOfBirth', 'status', 'img', 'ekyc_status',
-     'cccd_front_image_path', 'cccd_back_image_path', 'cccd_selfie_image_path'];
+     'cccd_front_image_path', 'cccd_back_image_path', 'cccd_selfie_image_path'
+    ,'shop_name'];
 
     /**
      * The attributes that should be hidden for serialization.

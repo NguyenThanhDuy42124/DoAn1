@@ -97,6 +97,13 @@
                             <input type="text" class="form-control" id="address" name="address" value="{{ old('address', $user->address) }}" placeholder="Nhập địa chỉ shop" required>
                             @endif
                             @error('address') <span class="text-danger">{{ $message }}</span> @enderror
+                            @if(Auth::user()->role == 'seller')
+                            <div class="form-group">
+                                <label for="shop_name">Tên cửa hàng</label>
+                                <input type="text" class="form-control" id="shop_name" name="shop_name" value="{{ old('shop_name', $user->shop_name) }}" placeholder="Nhập tên cửa hàng" required>
+                                @error('shop_name') <span class="text-danger">{{ $message }}</span> @enderror
+                            </div>
+                            @endif
                         </div>
                         <h5 class="mt-4">Xác thực EKYC</h5>
                         <hr>

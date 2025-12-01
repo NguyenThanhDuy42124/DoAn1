@@ -66,6 +66,12 @@
             <div class="info-label">Quyền hạn:</div>
             <div class="info-value text-capitalize">{{ Auth::user()->role }}</div>
         </div>
+        @if(Auth::user()->role == 'seller')
+        <div class="info-item">
+            <div class="info-label">Tên cửa hàng:</div>
+            <div class="info-value">{{ Auth::user()->shop_name ?? 'Chưa cập nhật' }}</div>
+        </div>
+        @endif
 
         <div class="info-item">
             <div class="info-label">Trạng thái EKYC:</div>
