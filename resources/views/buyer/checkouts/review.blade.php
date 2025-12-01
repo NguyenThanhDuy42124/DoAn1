@@ -39,7 +39,7 @@
                             <h6 class="fw-bold mb-1">{{ $user->name }} <span class="fw-normal text-muted">({{ $user->phoneNumber ?? 'Chưa có SĐT' }})</span></h6>
                             <p class="mb-0 text-secondary">{{ $shippingAddress }}</p>
                         </div>
-                        <button class="btn btn-outline-primary btn-sm" disabled>Thay đổi (Dev sau)</button>
+                        <button class="btn btn-outline-primary btn-sm" disabled>Thay đổi </button>
                     </div>
                 </div>
             </div>

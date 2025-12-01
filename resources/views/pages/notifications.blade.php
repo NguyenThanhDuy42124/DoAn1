@@ -95,7 +95,7 @@
                                         {!! strip_tags(\Illuminate\Support\Str::before($notification->message, "||---REPLY---||")) !!}
                                     </div>
                                 </div>
-                                <small class="text-muted">{{ $notification->created_at->diffForHumans() }}</small>
+                                <small class="text-muted">{{ $notification->created_at->locale('vi')->diffForHumans() }}</small>
                             </div>
 
                             {{-- Actions --}}

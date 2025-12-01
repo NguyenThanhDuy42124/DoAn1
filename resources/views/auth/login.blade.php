@@ -1,93 +1,85 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+@extends('layouts.app')
+@section('title', 'Đăng nhập')
+@section('content')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-    @vite(['resources/css/login.css', 'resources/js/app.js'])
-    <title>Đăng nhập</title>
-</head>
-
-<body>
-    @extends('layouts.app')
-    @section('content')
-    <div class="container">
-        <div class="login-container">
-            <div class="login-card">
-                <div class="login-header">
-                    <div class="store-logo">ten shop</div>
-                    <h1>Đăng Nhập</h1>
+<div class="login-wrapper">
+    <div class="container d-flex justify-content-center">
+        
+        <div class="login-card-modern">
+            
+            {{-- CỘT TRÁI: BANNER --}}
+            <div class="login-banner">
+                <div class="store-logo-large">DDK Mobile Market</div>
+                <p class="banner-text">
+                    Chào mừng bạn quay trở lại.<br>
+                    Đăng nhập để tiếp tục mua sắm và quản lý đơn hàng.
+                </p>
+                {{-- Ảnh minh họa login --}}
+                <div style="font-size: 5rem; opacity: 0.2; margin-top: 20px;">
+                    <i class="fas fa-user-circle"></i>
                 </div>
-                <div class="login-body">
-                    <form action="/login" method="POST">
-                        @csrf
-                        <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" class="form-control" id="email" name="email" placeholder="Nhập email"
-                                required>
-                        </div>
-                        <div class="form-group">
-                            <label for="password">Mật Khẩu</label>
-                            <input type="password" class="form-control" id="password" name="password"
-                                placeholder="Nhập mật khẩu" required>
-                            <div class="forgot-password">
-                                <a href="{{ route('forgetPassword.form') }}">Quên mật khẩu?</a>
-                                </div>
-                            </div>
-                        <button type="submit" class="btn btn-login">Đăng Nhập</button>
+            </div>
 
-                        {{-- Hiển thị lỗi đăng nhập --}}
+            {{-- CỘT PHẢI: FORM ĐĂNG NHẬP --}}
+            <div class="login-form-section">
+                <h3 class="form-title">Đăng Nhập</h3>
+                <p class="form-subtitle">Vui lòng nhập thông tin tài khoản của bạn</p>
 
-                        @if($errors->has('login'))
-                        <div class="alert alert-danger">{{ $errors->first('login') }}</div>
-                        @endif
-                        @if (session('error'))
-                            <div class="alert alert-danger">{{ session('error') }}</div>
-                        @endif
-                    </form>
+                {{-- Hiển thị thông báo lỗi (Logic cũ) --}}
+                @if($errors->has('login'))
+                    <div class="alert alert-danger text-center py-2" role="alert">
+                        <i class="fas fa-exclamation-circle me-1"></i> {{ $errors->first('login') }}
+                    </div>
+                @endif
+                @if (session('error'))
+                    <div class="alert alert-danger text-center py-2" role="alert">
+                        <i class="fas fa-exclamation-circle me-1"></i> {{ session('error') }}
+                    </div>
+                @endif
 
-                    <div class="divider">
-                        <span>Hoặc đăng nhập bằng</span>
+                <form action="/login" method="POST">
+                    @csrf
+                    
+                    {{-- Email --}}
+                    <div class="custom-form-group">
+                        <label for="email" class="custom-label">Email</label>
+                        <input type="email" class="custom-input" id="email" name="email"
+                            placeholder="Nhập email của bạn" required autofocus>
                     </div>
 
-                    <div class="social-login">
-                        <a href="{{ route('google.auth.redirect') }}" class="social-btn google-btn">
-                            <i class="fab fa-google"></i>
+                    {{-- Password --}}
+                    <div class="custom-form-group">
+                        <label for="password" class="custom-label">Mật Khẩu</label>
+                        <input type="password" class="custom-input" id="password" name="password"
+                            placeholder="Nhập mật khẩu" required>
+                        
+                        {{-- Link quên mật khẩu (Logic cũ) --}}
+                        <a href="{{ route('forgetPassword.form') }}" class="forgot-password-link">
+                            Quên mật khẩu?
                         </a>
                     </div>
 
-                    <div class="register-link">
-                        Chưa có tài khoản? <a href="/register">Đăng ký ngay</a>
-                    </div>
+                    <button type="submit" class="btn-login-modern">Đăng Nhập</button>
+                </form>
 
-                    <div class="features">
-                        <div class="feature-item">
-                            <div class="feature-icon">
-                                <i class="fas fa-shipping-fast"></i>
-                            </div>
-                            <div class="feature-text">Giao hàng nhanh</div>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-icon">
-                                <i class="fas fa-shield-alt"></i>
-                            </div>
-                            <div class="feature-text">Bảo mật thông tin</div>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-icon">
-                                <i class="fas fa-headset"></i>
-                            </div>
-                            <div class="feature-text">Hỗ trợ 24/7</div>
-                        </div>
-                    </div>
+                <div class="modern-divider">
+                    <span>Hoặc đăng nhập bằng</span>
+                </div>
+
+                {{-- Social Login (Chỉ có Google theo code cũ) --}}
+                <div class="social-buttons">
+                    <a href="{{ route('google.auth.redirect') }}" class="btn-social-modern">
+                        <i class="fab fa-google"></i> Google
+                    </a>
+                </div>
+
+                <div class="register-redirect">
+                    Chưa có tài khoản? <a href="/register">Đăng ký ngay</a>
                 </div>
             </div>
+
         </div>
     </div>
-    @endsection
-
-</body>
-
-</html>
+</div>
+@endsection
