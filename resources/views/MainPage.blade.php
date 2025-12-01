@@ -256,7 +256,7 @@
 
                             {{-- Thông tin Shop --}}
                             <div class="px-3">
-                                <h6 class="shop-name text-truncate">{{ $shop->name }}</h6>
+                                <h6 class="shop-name text-truncate">{{ $shop->shop_name }}</h6>
 
                                 <p class="small mb-3">
                                     @if ($shop->seller_reviews_avg_rating)
