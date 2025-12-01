@@ -22,6 +22,30 @@ class Order extends Model
     {
         return $this->belongsTo(User::class, 'seller_id');
     }
+    // Hàm này tạo ra thuộc tính ảo tên là: status_vn
+public function getStatusVnAttribute()
+{
+    $map = [
+        'pending'   => 'Chờ xác nhận',
+        'shipping'  => 'Đang giao hàng',
+        'delivered' => 'Đã giao',
+        'completed' => 'Hoàn thành',
+        'cancelled' => 'Đã hủy',
+    ];
+
+    // Trả về tiếng Việt, nếu không có thì trả về nguyên gốc
+    return $map[$this->status] ?? $this->status;
+}
+
+// Hàm này tạo ra thuộc tính ảo tên là: payment_status_vn
+public function getPaymentStatusVnAttribute()
+{
+    $map = [
+        'paid'   => 'Đã thanh toán',
+        'unpaid' => 'Chưa thanh toán',
+    ];
+    return $map[$this->payment_status] ?? $this->payment_status;
+}
     public function reviews()
 {
     // Giả định bạn đã thêm cột 'order_id' vào bảng 'reviews'

@@ -9,25 +9,25 @@
         <li class="nav-item">
             <a class="nav-link {{ $status === 'Pending' ? 'active' : '' }}" href="#"
                 wire:click.prevent="filterByStatus('Pending')">
-                Pending ({{ $pendingCount }})
+                Chờ xác nhận ({{ $pendingCount }})
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link {{ $status === 'Shipping' ? 'active' : '' }}" href="#"
                 wire:click.prevent="filterByStatus('Shipping')">
-                Shipping ({{ $shippingCount }})
+                Đang giao hàng ({{ $shippingCount }})
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link {{ $status === 'Delivered' ? 'active' : '' }}" href="#"
                 wire:click.prevent="filterByStatus('Delivered')">
-                Delivered ({{ $deliveredCount }})
+                Đã giao ({{ $deliveredCount }})
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link {{ $status === 'Completed' ? 'active' : '' }}" href="#"
                 wire:click.prevent="filterByStatus('Completed')">
-                Completed ({{ $completedCount }})
+                Hoàn thành ({{ $completedCount }})
             </a>
         </li>
     </ul>
@@ -86,8 +86,8 @@
                             <td>{{ $order->id }}</td>
                             <td>{{ $order->buyer->name ?? $order->buyer_name }}</td>
                             <td>{{ number_format($order->total_price) }} VND</td>
-                            <td>{{ $order->status }}</td>
-                            <td>{{ $order->payment_status }}</td>
+                            <td>{{ $order->status_vn }}</td>
+                            <td>{{ $order->payment_status_vn }}</td>
                             <td>{{ $order->created_at->format('d/m/Y H:i') }}</td>
                             <td>
                                 <a href="{{ route('seller.orders.show', $order->id) }}" class="btn btn-info btn-sm">Xem
