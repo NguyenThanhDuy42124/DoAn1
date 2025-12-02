@@ -3,7 +3,7 @@
 skinparam classAttributeIconSize 0
 skinparam linetype ortho
 hide circle
-skinparam titleFontSize 20
+skinparam titleFontSize 30
 skinparam titleFontName Arial
 skinparam titleFontStyle bold
 title MODULE 1: USER & SALES MANAGEMENT
@@ -27,7 +27,7 @@ skinparam class {
     FontSize 12
     AttributeFontSize 19
 }
-scale 2
+scale 1.7
 
 
 class "Users" {
@@ -50,6 +50,7 @@ class "Users" {
     + createdAt : DateTime
     + updatedAt : DateTime
     + role : String
+    + shopName : String
     + shopInfo : String
     + img : String
     + activeStatus : Boolean
@@ -58,19 +59,30 @@ class "Users" {
     + messengerColor : String
 }
 
-  
-class "Reviews" {
+
+class "Wallets" {
     + id : Long
-    + buyerId : Long
-    + productId : Long
-    + orderId : Long
-    + rating : Integer
-    + comment : String
-    + reply : String
-    + buyerAdditionalFeedback : String
+    + user_id : Long
+    + balance : Double
+    + currency : String
+    + status : String
     + createdAt : DateTime
     + updatedAt : DateTime
 }
+
+
+class "Transactions" {
+    + id : Long
+    + wallet_id : Long
+    + amount : Double
+    + type : String
+    + description : String
+    + reference_id : Long
+    + createdAt : DateTime
+    + updatedAt : DateTime
+}
+
+
 class "Carts" {
         + id : Long
         + userId : Long
@@ -78,39 +90,15 @@ class "Carts" {
         + updatedAt : DateTime
     }
 
-    class "CartItems" {
-        + id : Long
-        + cartId : Long
-        + productId : Long
-        + quantity : Integer
-        + price : Double
-        + createdAt : DateTime
-        + updatedAt : DateTime
-    }
-
-
-class "Vouchers" {
+class "CartItems" {
     + id : Long
-    + sellerId : Long
-    + code : String
-    + name : String
-    + type : String
-    + value : Double
-    + max_discount_amount : Double
-    + min_order_value : Double
-    + quantity : Long
-    + used_count : Long
-    + expiryDate : DateTime
-    + start_date : DateTime
-    + is_active : Boolean
+    + cartId : Long
+    + productId : Long
+    + quantity : Integer
+    + price : Double
     + createdAt : DateTime
     + updatedAt : DateTime
 }
-
-
-
-
-
 
 class "Orders" {
     + id : Long
@@ -143,6 +131,47 @@ class "OrderItems" {
     + updatedAt : DateTime
 }
 
+  
+
+
+
+class "Vouchers" {
+    + id : Long
+    + sellerId : Long
+    + code : String
+    + name : String
+    + type : String
+    + value : Double
+    + max_discount_amount : Double
+    + min_order_value : Double
+    + quantity : Long
+    + used_count : Long
+    + expiryDate : DateTime
+    + start_date : DateTime
+    + is_active : Boolean
+    + createdAt : DateTime
+    + updatedAt : DateTime
+}
+
+
+
+
+class "Reviews" {
+    + id : Long
+    + buyerId : Long
+    + productId : Long
+    + orderId : Long
+    + rating : Integer
+    + comment : String
+    + isHidden : Boolean
+    + reply : String
+    + buyerAdditionalFeedback : String
+    + createdAt : DateTime
+    + updatedAt : DateTime
+}
+
+
+
 
 
 
@@ -172,7 +201,9 @@ class "Product_Ref" <<Stub>> {
 ' === QUAN HỆ ===
 
 ' 1 User sở hữu 1 Cart (Nếu chưa có thì tạo)
-Users "1" -- "0..1" Carts : owns >
+Users "1" -left- "0..1" Carts : owns >
+Users "1" -- "1" Wallets : owns >
+Wallets "1" -- "0..1" Transactions : owns >
 
 ' 1 Cart có nhiều Item
 Carts "1" *-- "0..*" CartItems : contains >
@@ -192,7 +223,7 @@ Users "1" -- "0..*" Vouchers : creates (Seller) >
 Vouchers "1" -- "0..*" Orders : applied to >
 
 ' Các quan hệ khác
-Users "1" -- "0..*" Reviews : writes >
+Users "1" -down- "0..*" Reviews : writes >
 Users "1" -- "0..*" Notifications : receives >
 Users "1" -- "0..*" Followers : follows >
 Users "1" -- "0..*" Followers : seller >

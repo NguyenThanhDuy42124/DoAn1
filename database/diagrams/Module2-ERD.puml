@@ -15,7 +15,7 @@ skinparam class {
 
 skinparam titleFontSize 24
 title Module 2: PRODUCT CATALOG & INVENTORY
-scale 5
+scale 10
 
 ' === ĐỊNH NGHĨA THỰC THỂ (ENTITIES) ===
 
@@ -36,12 +36,20 @@ entity "brands" as brands {
     updated_at : TIMESTAMP
 }
 
+entity "brand_category" as brand_category {
+    *id : BIGINT UNSIGNED <<PK>>
+    --
+    *category_id : BIGINT UNSIGNED <<FK>>
+    *brand_id : BIGINT UNSIGNED <<FK>>
+}
+
 entity "attributes" as attributes {
     *id : BIGINT UNSIGNED <<PK>>
     --
     name : VARCHAR(255)
     type : VARCHAR(255)
     unit : VARCHAR(255)
+    is_filterable : TINYINT(1)
     created_at : TIMESTAMP
     updated_at : TIMESTAMP
 }
@@ -126,6 +134,10 @@ categories ||..o{ products : "classifies"
 
 ' 1 Brand có nhiều Product
 brands ||..o{ products : "manufactures"
+
+' Quan hệ N-N giữa Category và Brand (qua bảng trung gian brand_category)
+categories ||..o{ brand_category : "contains brands"
+brands ||..o{ brand_category : "belongs to"
 
 ' 1 Product có nhiều ảnh
 products ||..o{ product_images : "has"

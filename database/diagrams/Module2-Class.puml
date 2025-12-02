@@ -17,9 +17,9 @@ skinparam class {
 
 
 
-scale 5
+scale 10
 
-  
+
   
 class "Categories" {
     + id : Long
@@ -27,6 +27,12 @@ class "Categories" {
     + createdAt : DateTime
     + updatedAt : DateTime
     + description : String
+}
+
+class "BrandCategory" {
+    + id : Long
+    + category_id : Long
+    + brand_id : Long
 }
 
 class "Brands" {
@@ -41,6 +47,7 @@ class "Attributes" {
     + name : String
     + type : String
     + unit : String
+    + is_filterable : Boolean
     + createdAt : DateTime
     + updatedAt : DateTime
 }
@@ -146,6 +153,10 @@ Attributes "1" *-- "0..*" AttributeOptions : has options >
 ' Quan hệ lịch sử/log
 Products "1" -- "0..*" InventoryTransactions : history >
 Products "1" -up- "0..*" ModerationLogs : audited by >
+
+
+Categories "1" -up- "0..*" BrandCategory : parents >
+Brands "1" -up- "0..*"  BrandCategory : used in >
 
 
 ' Quan hệ với Module bên ngoài (User/Seller)
