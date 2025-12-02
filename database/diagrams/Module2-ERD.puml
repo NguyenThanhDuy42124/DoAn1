@@ -1,0 +1,158 @@
+@startuml
+
+' === CẤU HÌNH HIỂN THỊ ===
+!theme plain
+hide circle
+hide methods
+skinparam linetype ortho
+
+' Màu sắc
+skinparam class {
+    BackgroundColor White
+    BorderColor #333333
+    ArrowColor #333333
+}
+
+skinparam titleFontSize 24
+title Module 2: PRODUCT CATALOG & INVENTORY
+scale 5
+
+' === ĐỊNH NGHĨA THỰC THỂ (ENTITIES) ===
+
+entity "categories" as categories {
+    *id : BIGINT UNSIGNED <<PK>>
+    --
+    name : VARCHAR(255)
+    description : TEXT
+    created_at : TIMESTAMP
+    updated_at : TIMESTAMP
+}
+
+entity "brands" as brands {
+    *id : BIGINT UNSIGNED <<PK>>
+    --
+    name : VARCHAR(255)
+    created_at : TIMESTAMP
+    updated_at : TIMESTAMP
+}
+
+entity "attributes" as attributes {
+    *id : BIGINT UNSIGNED <<PK>>
+    --
+    name : VARCHAR(255)
+    type : VARCHAR(255)
+    unit : VARCHAR(255)
+    created_at : TIMESTAMP
+    updated_at : TIMESTAMP
+}
+
+entity "attribute_options" as attribute_options {
+    *id : BIGINT UNSIGNED <<PK>>
+    --
+    *attribute_id : BIGINT UNSIGNED <<FK>>
+    value : VARCHAR(255)
+    sort_order : INT
+}
+
+entity "category_attribute" as category_attribute {
+    *category_id : BIGINT UNSIGNED <<PK, FK>>
+    *attribute_id : BIGINT UNSIGNED <<PK, FK>>
+}
+
+entity "products" as products {
+    *id : BIGINT UNSIGNED <<PK>>
+    --
+    *seller_id : BIGINT UNSIGNED <<FK>>
+    *category_id : BIGINT UNSIGNED <<FK>>
+    brand_id : BIGINT UNSIGNED <<FK>>
+    name : VARCHAR(255)
+    price : DOUBLE
+    stock : INT
+    description : TEXT
+    status : ENUM('Pending','Approved','Hidden','Rejected','Deleted')
+    previous_status : VARCHAR(255)
+    attributes : JSON
+    created_at : TIMESTAMP
+    updated_at : TIMESTAMP
+}
+
+entity "product_images" as product_images {
+    *id : BIGINT UNSIGNED <<PK>>
+    --
+    *product_id : BIGINT UNSIGNED <<FK>>
+    image_path : VARCHAR(255)
+    created_at : TIMESTAMP
+    updated_at : TIMESTAMP
+}
+
+entity "inventory_transactions" as inventory_transactions {
+    *id : BIGINT UNSIGNED <<PK>>
+    --
+    *product_id : BIGINT UNSIGNED <<FK>>
+    *seller_id : BIGINT UNSIGNED <<FK>>
+    transaction_type : ENUM('import','export','sale')
+    quantity : INT UNSIGNED
+    notes : TEXT
+    created_at : TIMESTAMP
+    updated_at : TIMESTAMP
+}
+
+entity "moderation_logs" as moderation_logs {
+    *id : BIGINT UNSIGNED <<PK>>
+    --
+    *product_id : BIGINT UNSIGNED <<FK>>
+    *admin_id : BIGINT UNSIGNED <<FK>>
+    action : VARCHAR(255)
+    from_status : VARCHAR(255)
+    to_status : VARCHAR(255)
+    note : TEXT
+    created_at : TIMESTAMP
+    updated_at : TIMESTAMP
+}
+
+' === STUB ENTITY (Tham chiếu Module User) ===
+entity "users (Ref)" as users_ref #F0F0F0 {
+    *id : BIGINT UNSIGNED <<PK>>
+    name : VARCHAR(255)
+    role : VARCHAR(255)
+    (Seller / Admin)
+}
+
+' === QUAN HỆ (RELATIONSHIPS) ===
+
+' Quan hệ Catalog cơ bản
+' 1 Category có nhiều Product
+categories ||..o{ products : "classifies"
+
+' 1 Brand có nhiều Product
+brands ||..o{ products : "manufactures"
+
+' 1 Product có nhiều ảnh
+products ||..o{ product_images : "has"
+
+' QUAN HỆ NHIỀU - NHIỀU GIỮA CATEGORY VÀ ATTRIBUTE
+' Category -> CategoryAttributes
+categories ||..o{ category_attribute : "defines structure"
+' Attributes -> CategoryAttributes
+attributes ||..o{ category_attribute : "used in"
+
+' Quan hệ Attribute và Option (1 Attribute có nhiều Option)
+attributes ||..|{ attribute_options : "has options"
+
+' Quan hệ lịch sử/log
+' 1 Product có nhiều giao dịch kho
+products ||..o{ inventory_transactions : "history"
+' 1 Product có nhiều log kiểm duyệt
+products ||..up..o{ moderation_logs : "audited by"
+
+' Quan hệ với Module bên ngoài (User/Seller/Admin)
+' 1 Seller bán nhiều Product
+users_ref ||..o{ products : "sells"
+
+' 1 User (Seller) thực hiện nhiều giao dịch kho
+users_ref ||..o{ inventory_transactions : "performed by"
+
+' 1 Admin thực hiện nhiều log kiểm duyệt
+users_ref ||..up..o{ moderation_logs : "reviewed by"
+
+@enduml

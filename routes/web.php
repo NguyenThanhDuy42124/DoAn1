@@ -36,6 +36,7 @@ use App\Livewire\Admin\Categories\Manager as CategoryManager;
 use App\Livewire\Admin\Attributes\Manager as AttributeManager;
 use App\Livewire\Seller\VoucherManager;
 use App\Livewire\Seller\Products\ImportProducts;
+use App\Livewire\Admin\WalletDashboard;
 
 Route::get('/', MainPage::class)->name('main.page');
 
@@ -123,6 +124,7 @@ Route::prefix('admin')->middleware('role:admin')->group(function () {
     Route::resource('products', ProductController::class, ['names' => 'admin.products'])
         ->except(['index']);   // <-- loại bỏ GET /admin/products
 
+    Route::get('/admin/wallet', WalletDashboard::class)->name('admin.wallet');
 
 
     //route thong bao

@@ -28,3 +28,21 @@ Homestead.json
 .env.production
 .phpactor.json
 auth.json
+
+# ═══════════════════════════════════════════
+# PlantUML – CẤM COMMIT HÌNH, CHỈ COMMIT .PUML
+# ═══════════════════════════════════════════
+*.puml.png
+*.puml.svg
+*.puml.jpg
+*.png
+*.svg
+*.jpg
+*.jpeg
+
+# Thư mục một số extension PlantUML hay sinh rác
+__plantuml__/
+.vscode/plantuml/
+plantuml-previewer/
+export/
+out/

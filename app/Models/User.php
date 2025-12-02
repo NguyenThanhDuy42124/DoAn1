@@ -47,6 +47,18 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    protected static function booted()
+    {
+        static::created(function ($user) {
+            // Khi user vừa được tạo xong, tạo ngay cho nó cái ví
+            $user->wallet()->create([
+                'balance' => 0,
+                'currency' => 'VND',
+                'status' => 'active'
+            ]);
+        });
+    }
     public function products()
     {
         return $this->hasMany(Product::class, 'seller_id');
@@ -114,6 +126,11 @@ public function getRoleLabelAttribute()
     public function isBuyer()
     {
         return $this->role === 'buyer';
+    }
+    public function wallet()
+    {
+        // Một user có một cái ví
+        return $this->hasOne(Wallet::class);
     }
 
 }

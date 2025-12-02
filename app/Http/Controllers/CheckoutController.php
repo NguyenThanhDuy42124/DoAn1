@@ -358,8 +358,58 @@ class CheckoutController extends Controller
                             'message' => "Đơn hàng #{$order->id}",
                             'is_read' => false,
                         ]);
+                        // =================================================================
+                    // 🔴 BẮT ĐẦU XỬ LÝ VÍ HỆ THỐNG (CHỈ CHẠY KHI CÓ HÀNG)
+                    // =================================================================
+                    
+                    // 1. Cấu hình hoa hồng (Ví dụ 10%) - Sau này lôi từ config hoặc bảng settings
+                    $commissionRate = 0.10; 
+                    
+                    // 2. Tính toán chia tiền
+                    $commissionAmount = $totalPrice * $commissionRate; // Tiền sàn ăn
+                    $sellerReceivedAmount = $totalPrice - $commissionAmount; // Tiền Seller nhận
+
+                    // 3. CỘNG TIỀN VÀO VÍ SELLER
+                    // Dùng lockForUpdate để tránh xung đột dữ liệu khi cộng tiền
+                    $sellerWallet = \App\Models\Wallet::where('user_id', $sellerId)->lockForUpdate()->first();
+                    if ($sellerWallet) {
+                        $sellerWallet->balance += $sellerReceivedAmount;
+                        $sellerWallet->save();
+
+                        // Ghi lịch sử cho Seller
+                        \App\Models\Transaction::create([
+                            'wallet_id' => $sellerWallet->id,
+                            'amount' => $sellerReceivedAmount,
+                            'type' => 'deposit', // Hoặc 'payment'
+                            'description' => "Thanh toán đơn hàng #{$order->id}",
+                            'reference_id' => $order->id
+                        ]);
+                    }
+
+                    // 4. CỘNG TIỀN VÀO VÍ ADMIN (HOA HỒNG)
+                    // Giả sử Admin ID là 1 (Hoặc em query lấy thằng role='admin' đầu tiên)
+                    $adminId = 1; 
+                    $adminWallet = \App\Models\Wallet::where('user_id', $adminId)->lockForUpdate()->first();
+                    if ($adminWallet) {
+                        $adminWallet->balance += $commissionAmount;
+                        $adminWallet->save();
+
+                        // Ghi lịch sử cho Admin
+                        \App\Models\Transaction::create([
+                            'wallet_id' => $adminWallet->id,
+                            'amount' => $commissionAmount,
+                            'type' => 'commission',
+                            'description' => "Hoa hồng từ đơn hàng #{$order->id} (Seller ID: {$sellerId})",
+                            'reference_id' => $order->id
+                        ]);
+                    }
+                    // =================================================================
+                    // 🔴 KẾT THÚC XỬ LÝ VÍ
+                    // =================================================================
                     }
                 }
+
+
 
                 if ($hasInsufficientStock) {
                     Stripe::setApiKey(env('STRIPE_SECRET_KEY'));

@@ -60,11 +60,11 @@
                         </li>
                     </ul>
                 </li>
-                <li> <!--
-                    <a href="#">
-                        <i class="fas fa-shopping-cart"></i>
-                        Quản lý đơn hàng
-                    </a> -->
+                <li> 
+                    <a href="{{ route('admin.wallet') }}">
+                        <i class="fas fa-wallet"></i>
+                        Quản lý ví hệ thống
+                    </a> 
                 </li>
                 <li>
                     <a href="{{ route('admin.notifications.index') }}">
