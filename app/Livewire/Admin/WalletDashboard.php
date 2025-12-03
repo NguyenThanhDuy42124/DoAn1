@@ -10,26 +10,27 @@ use Illuminate\Support\Facades\Auth;
 
 class WalletDashboard extends Component
 {
-    use WithPagination; // Để phân trang mượt mà
+    use WithPagination;
 
     public function render()
     {
-        // 1. Lấy ví của Admin hiện tại (Hoặc fix cứng ID admin chính chủ)
-        // Giả sử mày đang login bằng Admin
-        $adminWallet = Wallet::where('user_id', Auth::id())->first();
+        // 1. Ví Admin (Doanh thu sàn)
+        $adminBalance = Wallet::where('user_id', Auth::id())->value('balance') ?? 0;
         
-        // 2. Tính tổng tiền đang nằm trong ví các Seller (Đây là tiền sàn NỢ seller)
-        // Lấy tất cả ví trừ ví Admin ra
-        $totalSellerBalance = Wallet::where('user_id', '!=', Auth::id())->sum('balance');
+        // 2. Ví System (Tiền treo - Escrow) - ID 12
+        $systemBalance = Wallet::where('user_id', 12)->value('balance') ?? 0;
 
-        // 3. Lấy lịch sử giao dịch (Mới nhất lên đầu)
-        $transactions = Transaction::with(['wallet.user']) // Eager load để lấy tên user cho nhanh
+        // 3. Tổng ví Seller (Nợ phải trả)
+        $sellerBalance = Wallet::whereNotIn('user_id', [Auth::id(), 12])->sum('balance');
+
+        $transactions = Transaction::with(['wallet.user'])
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
         return view('livewire.admin.wallet-dashboard', [
-            'adminBalance' => $adminWallet ? $adminWallet->balance : 0,
-            'totalSellerBalance' => $totalSellerBalance,
+            'adminBalance' => $adminBalance,
+            'systemHoldingBalance' => $systemBalance,
+            'totalSellerBalance' => $sellerBalance,
             'transactions' => $transactions
         ])->layout('layouts.AdminDashBoard');
     }

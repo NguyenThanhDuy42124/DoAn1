@@ -5,7 +5,7 @@ namespace App\Livewire\Admin\Attributes;
 use Livewire\Component;
 use App\Models\Attribute;
 use App\Models\AttributeOption;
-use Illuminate\Support\Facades\DB; // <-- Thêm
+use Illuminate\Support\Facades\DB;
 
 class Manager extends Component
 {
@@ -14,15 +14,14 @@ class Manager extends Component
     public ?Attribute $editingAttribute; 
     public $state = []; 
 
-    // *** THÊM 2 DÒNG NÀY ***
-    public $options = []; // Mảng quản lý các tùy chọn (cho type 'select')
-    public $newOptionValue = ''; // Biến cho ô input "Thêm tùy chọn mới"
+    public $options = []; 
+    public $newOptionValue = ''; 
 
     public function mount()
     {
         $this->loadAttributes();
         $this->editingAttribute = new Attribute(); 
-        $this->state = ['type' => 'text']; // Mặc định là 'text'
+        $this->state = ['type' => 'text']; 
     }
 
     public function loadAttributes()
@@ -30,65 +29,56 @@ class Manager extends Component
         $this->allAttributes = Attribute::orderBy('name')->get();
     }
 
-    //--- PHẦN XỬ LÝ FORM ---
-
+    // Reset các biến khi mở modal tạo mới
     public function createNewAttribute()
     {
-        $this->resetErrorBag();
+        $this->resetValidation(); // Xóa các thông báo lỗi cũ
         $this->editingAttribute = new Attribute(); 
-        $this->state = ['type' => 'text']; // Mặc định
-        $this->options = []; // Reset mảng
+        $this->state = ['type' => 'text']; 
+        $this->options = []; 
         $this->newOptionValue = '';
         $this->showModal = true;
     }
 
+    // Load dữ liệu khi sửa
     public function editAttribute($attributeId)
     {
-        $this->resetErrorBag();
-        // Load kèm quan hệ 'options'
+        $this->resetValidation();
         $this->editingAttribute = Attribute::with('options')->find($attributeId); 
         
         $this->state = $this->editingAttribute->toArray(); 
-        // Nạp các options vào mảng
         $this->options = $this->editingAttribute->options->toArray(); 
         $this->newOptionValue = '';
         
         $this->showModal = true;
     }
 
-    // *** THÊM 2 HÀM MỚI ĐỂ QUẢN LÝ OPTIONS ***
     public function addOption()
     {
         if (empty(trim($this->newOptionValue))) {
             return;
         }
-        // Thêm option mới vào mảng (chưa lưu DB)
         $this->options[] = [
             'id' => null, 
             'value' => trim($this->newOptionValue)
         ];
-        $this->newOptionValue = ''; // Reset ô input
+        $this->newOptionValue = ''; 
     }
 
     public function removeOption($index)
     {
-        // Xóa option khỏi mảng (chưa xóa DB)
         unset($this->options[$index]);
-        $this->options = array_values($this->options); // Sắp xếp lại index
+        $this->options = array_values($this->options); 
     }
 
-    /**
-     * CẬP NHẬT HÀM LƯU (Quan trọng)
-     */
     public function saveAttribute()
     {
         $rules = [
             'state.name' => 'required|string|max:255',
             'state.type' => 'required|string|in:text,select,number', 
-            'state.unit' => 'nullable|string|max:50', // Rule cho 'unit'
+            'state.unit' => 'nullable|string|max:50', 
         ];
         
-        // Rule: Nếu type là 'select', mảng options không được rỗng
         if ($this->state['type'] == 'select' && empty($this->options)) {
             $this->addError('newOptionValue', 'Bạn phải thêm ít nhất một tùy chọn.');
             return;
@@ -96,34 +86,24 @@ class Manager extends Component
 
         $this->validate($rules);
 
-        // Dùng transaction vì ta sửa 2 bảng
         DB::transaction(function () {
-            
-            // 1. Nếu type không phải 'number', xóa 'unit' đi
             if ($this->state['type'] != 'number') {
                 $this->state['unit'] = null;
             }
             
-            // 2. Lưu thuộc tính chính (bảng 'attributes')
             $this->editingAttribute->fill($this->state);
             $this->editingAttribute->save();
 
-            // 3. Xử lý Options (bảng 'attribute_options')
             if ($this->state['type'] == 'select') {
-                // Lấy ID của các options còn lại trong mảng $this->options
                 $existingOptionIds = array_filter(array_column($this->options, 'id'));
                 
-                // Xóa các options đã bị xóa (những cái không còn trong mảng)
                 AttributeOption::where('attribute_id', $this->editingAttribute->id)
                                ->whereNotIn('id', $existingOptionIds)
                                ->delete();
                 
-                // Cập nhật/Tạo mới các options
                 foreach ($this->options as $index => $optionData) {
                     AttributeOption::updateOrCreate(
-                        [
-                            'id' => $optionData['id'] // Tìm bằng ID (nếu có)
-                        ],
+                        ['id' => $optionData['id']],
                         [
                             'attribute_id' => $this->editingAttribute->id,
                             'value' => $optionData['value'],
@@ -132,29 +112,22 @@ class Manager extends Component
                     );
                 }
             } else {
-                // Nếu type không phải là 'select' (text, number), 
-                // XÓA HẾT options của nó đi (phòng trường hợp đổi type)
                 AttributeOption::where('attribute_id', $this->editingAttribute->id)->delete();
             }
         });
 
-        // 4. Đóng modal và tải lại danh sách
-        $this->showModal = false;
+        $this->showModal = false; // Đóng modal
         $this->loadAttributes(); 
     }
 
-    /**
-     * Xóa thuộc tính
-     */
-    
     public function deleteAttribute($attributeId)
     {
+        // Thêm try-catch để an toàn
         try {
             Attribute::find($attributeId)->delete();
             $this->loadAttributes();
         } catch (\Exception $e) {
-            // Xử lý lỗi nếu nó bị khóa ngoại ràng buộc
-            // $dispatch('show-error', 'Không thể xóa thuộc tính này...')
+             // Có thể dispatch browser event báo lỗi nếu muốn
         }
     }
 

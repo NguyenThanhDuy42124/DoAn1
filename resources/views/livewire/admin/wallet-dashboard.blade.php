@@ -2,7 +2,13 @@
     <h1 class="text-2xl font-bold mb-6">Quản Lý Ví Hệ Thống</h1>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        
+        <div class="bg-white rounded-lg shadow p-6 border-l-4 border-yellow-500">
+            <div class="text-gray-500 text-sm">Tiền Tạm Giữ (Escrow)</div>
+            <div class="text-2xl font-bold text-yellow-600">
+                {{ number_format($systemHoldingBalance, 0, ',', '.') }} VNĐ
+            </div>
+            <div class="text-xs text-gray-400 mt-1">Tiền chờ khách nhận hàng</div>
+        </div>
         <div class="bg-white rounded-lg shadow p-6 border-l-4 border-green-500">
             <div class="text-gray-500 text-sm font-medium uppercase">Doanh Thu Sàn (Ví Admin)</div>
             <div class="text-3xl font-bold text-green-600 mt-2">

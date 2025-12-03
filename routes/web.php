@@ -37,6 +37,7 @@ use App\Livewire\Admin\Attributes\Manager as AttributeManager;
 use App\Livewire\Seller\VoucherManager;
 use App\Livewire\Seller\Products\ImportProducts;
 use App\Livewire\Admin\WalletDashboard;
+use App\Livewire\CategoryProduct;
 
 Route::get('/', MainPage::class)->name('main.page');
 
@@ -168,6 +169,7 @@ Route::prefix('seller')->middleware('role:seller')->group(function () {
 
     // [POST] Route để xử lý dữ liệu từ form
    Route::get('/products/import', ImportProducts::class)->name('products.import');
+   
 
 
 
@@ -185,6 +187,10 @@ Route::prefix('seller')->middleware('role:seller')->group(function () {
 });
 Route::get('/shop/{id}', [SellerController::class, 'showShop'])->name('shop.show');
 Route::get('/products', [ProductController::class, 'listProducts'])->name('products.list');
+
+Route::get('/danh-muc/{category}', CategoryProduct::class)->name('category.product');
+
+
 Route::get('/products/{id}', [ProductController::class, 'showProductDetail'])->name('products.detail');
 Route::get('/vouchers', [VoucherController::class, 'listVouchers'])->name('vouchers.list');
 Route::get('/', [SellerController::class, 'index'])->name('home');

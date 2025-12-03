@@ -358,51 +358,35 @@ class CheckoutController extends Controller
                             'message' => "Đơn hàng #{$order->id}",
                             'is_read' => false,
                         ]);
-                        // =================================================================
-                    // 🔴 BẮT ĐẦU XỬ LÝ VÍ HỆ THỐNG (CHỈ CHẠY KHI CÓ HÀNG)
+                    // =================================================================
+                    // 🔴 BẮT ĐẦU XỬ LÝ VÍ HỆ THỐNG (MÔ HÌNH GIỮ TIỀN - ESCROW)
                     // =================================================================
                     
-                    // 1. Cấu hình hoa hồng (Ví dụ 10%) - Sau này lôi từ config hoặc bảng settings
-                    $commissionRate = 0.10; 
+                    // 1. Tìm ví trung gian (System Wallet) - ID 12
+                    // Lưu ý: Phải chắc chắn trong Database bảng wallets đã có dòng user_id = 99 nha!
+                    $systemWallet = \App\Models\Wallet::where('user_id', 12)->lockForUpdate()->first();
+
+                    if ($systemWallet) {
+                        // Cộng TOÀN BỘ tiền vào ví trung gian
+                        $systemWallet->balance += $totalPrice;
+                        $systemWallet->save();
+
+                        // Ghi lịch sử: Tiền đang tạm giữ
+                        \App\Models\Transaction::create([
+                            'wallet_id' => $systemWallet->id,
+                            'amount' => $totalPrice,
+                            'type' => 'deposit',
+                            'description' => "Tạm giữ tiền đơn hàng #{$order->id} (Chờ hoàn thành)",
+                            'reference_id' => $order->id
+                        ]);
+                    } else {
+                        // Log lỗi để biết đường mà sửa nếu quên tạo ví cho thằng ID 99
+                        \Log::error("Không tìm thấy ví hệ thống cho User ID 99");
+                    }
+
+                    // 🔴 CẤM: Không cộng tiền Seller ở đây
+                    // 🔴 CẤM: Không cộng tiền Admin ở đây (Xóa luôn đoạn Admin phía dưới đi)
                     
-                    // 2. Tính toán chia tiền
-                    $commissionAmount = $totalPrice * $commissionRate; // Tiền sàn ăn
-                    $sellerReceivedAmount = $totalPrice - $commissionAmount; // Tiền Seller nhận
-
-                    // 3. CỘNG TIỀN VÀO VÍ SELLER
-                    // Dùng lockForUpdate để tránh xung đột dữ liệu khi cộng tiền
-                    $sellerWallet = \App\Models\Wallet::where('user_id', $sellerId)->lockForUpdate()->first();
-                    if ($sellerWallet) {
-                        $sellerWallet->balance += $sellerReceivedAmount;
-                        $sellerWallet->save();
-
-                        // Ghi lịch sử cho Seller
-                        \App\Models\Transaction::create([
-                            'wallet_id' => $sellerWallet->id,
-                            'amount' => $sellerReceivedAmount,
-                            'type' => 'deposit', // Hoặc 'payment'
-                            'description' => "Thanh toán đơn hàng #{$order->id}",
-                            'reference_id' => $order->id
-                        ]);
-                    }
-
-                    // 4. CỘNG TIỀN VÀO VÍ ADMIN (HOA HỒNG)
-                    // Giả sử Admin ID là 1 (Hoặc em query lấy thằng role='admin' đầu tiên)
-                    $adminId = 1; 
-                    $adminWallet = \App\Models\Wallet::where('user_id', $adminId)->lockForUpdate()->first();
-                    if ($adminWallet) {
-                        $adminWallet->balance += $commissionAmount;
-                        $adminWallet->save();
-
-                        // Ghi lịch sử cho Admin
-                        \App\Models\Transaction::create([
-                            'wallet_id' => $adminWallet->id,
-                            'amount' => $commissionAmount,
-                            'type' => 'commission',
-                            'description' => "Hoa hồng từ đơn hàng #{$order->id} (Seller ID: {$sellerId})",
-                            'reference_id' => $order->id
-                        ]);
-                    }
                     // =================================================================
                     // 🔴 KẾT THÚC XỬ LÝ VÍ
                     // =================================================================

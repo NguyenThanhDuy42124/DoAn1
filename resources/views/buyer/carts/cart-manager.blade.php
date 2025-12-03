@@ -47,7 +47,13 @@
                             @foreach ($groupedItems as $sellerId => $items)
                                 @php
                                     $firstItem = $items->first();
-                                    $sellerName = $firstItem['product']['seller']['name'] ?? 'Shop #' . $sellerId;
+                                    
+                                    // SỬA Ở ĐÂY:
+                                    // 1. Đổi thành biến $shopName cho đồng bộ với bên dưới.
+                                    // 2. Gọi ưu tiên cột 'shop_name'. Nếu shop_name null thì mới lấy 'name'.
+                                    $shopName = $firstItem['product']['seller']['shop_name'] 
+                                                ?? $firstItem['product']['seller']['name'] 
+                                                ?? 'Shop #' . $sellerId;
                                 @endphp
 
                                 {{-- Header Shop --}}
@@ -56,14 +62,15 @@
                                         <div class="d-flex align-items-center">
                                             <i class="fas fa-store me-2 text-primary"></i>
                                             <a href="{{ route('shop.show', ['id' => $sellerId]) }}" 
-                                               class="text-decoration-none fw-bold text-dark">
-                                                {{ $sellerName }}
+                                            class="text-decoration-none fw-bold text-dark">
+                                                {{-- Bây giờ nó sẽ hiện đúng shop_name --}}
+                                                {{ $shopName }}
                                             </a>
                                         </div>
                                     </td>
                                 </tr>
 
-                                {{-- Loop sản phẩm --}}
+                                {{-- Loop sản phẩm (Phần dưới này giữ nguyên như cũ) --}}
                                 @foreach ($items as $item)
                                     @php
                                         $maxStock = $item['product']['stock'];
@@ -73,24 +80,22 @@
 
                                     <tr wire:key="cart-item-{{$item['id']}}" class="{{ $outOfStock ? 'table-danger' : 'bg-white' }}">
                                         <td class="text-center">
-                                            {{-- SỬA LỖI: Dùng toán tử 3 ngôi thay vì @if bên trong thẻ input --}}
                                             <input type="checkbox" 
-                                                   class="form-check-input" 
-                                                   wire:model.live="selectedItems" 
-                                                   value="{{ $item['id'] }}" 
-                                                   {{ $outOfStock ? 'disabled' : '' }} />
+                                                class="form-check-input" 
+                                                wire:model.live="selectedItems" 
+                                                value="{{ $item['id'] }}" 
+                                                {{ $outOfStock ? 'disabled' : '' }} />
                                         </td>
                                         
                                         <td style="width: 80px;">
                                             <img src="{{ !empty($item['product']['images']) ?
-                                                          asset('storage/' . $item['product']['images'][0]['image_path']) :
-                                                          asset('storage/product_images/default.jpg') }}" 
-                                                 class="img-fluid rounded" 
-                                                 style="width: 60px; height: 60px; object-fit: cover;">
+                                                        asset('storage/' . $item['product']['images'][0]['image_path']) :
+                                                        asset('storage/product_images/default.jpg') }}" 
+                                                class="img-fluid rounded" 
+                                                style="width: 60px; height: 60px; object-fit: cover;">
                                         </td>
                                         
                                         <td>
-                                            {{-- SỬA LẠI ROUTE: từ products.show thành products.detail --}}
                                             <a href="{{ route('products.detail', ['id' => $item['product']['id']]) }}" class="text-decoration-none text-dark">
                                                 {{ $item['product']['name'] }}
                                             </a>
@@ -103,11 +108,11 @@
                                         <td>
                                             @if(!$outOfStock)
                                                 <input type="number" 
-                                                       wire:model.live.debounce.500ms="quantities.{{ $item['id'] }}" 
-                                                       min="1" 
-                                                       max="{{ $maxStock }}" 
-                                                       class="form-control form-control-sm mx-auto text-center" 
-                                                       style="width: 70px;" />
+                                                    wire:model.live.debounce.500ms="quantities.{{ $item['id'] }}" 
+                                                    min="1" 
+                                                    max="{{ $maxStock }}" 
+                                                    class="form-control form-control-sm mx-auto text-center" 
+                                                    style="width: 70px;" />
                                             @endif
                                         </td>
                                         <td class="text-center fw-bold">{{ number_format($itemTotal, 0, ',', '.') }}₫</td>

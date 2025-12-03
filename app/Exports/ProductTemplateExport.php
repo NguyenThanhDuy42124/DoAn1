@@ -19,6 +19,7 @@ class ProductTemplateExport implements FromArray, WithHeadings, ShouldAutoSize, 
     protected $categoryId;
     protected $attributes;
     protected $brands;
+    protected $imageCount = 10; // Cấu hình cho phép nhập tối đa 10 ảnh
 
     public function __construct($categoryId)
     {
@@ -42,13 +43,15 @@ class ProductTemplateExport implements FromArray, WithHeadings, ShouldAutoSize, 
     public function headings(): array
     {
         $headers = [
-            'name', 'price', 'brand', 'description', 
-            'image_1', 'image_2', 'image_3'
+            'name', 'price', 'brand', 'description'
         ];
 
+        // --- SỬA: Loop tạo cột ảnh động ---
+        for ($i = 1; $i <= $this->imageCount; $i++) {
+            $headers[] = "image_" . $i;
+        }
+
         foreach ($this->attributes as $attribute) {
-            // *** 1. GẮN ĐƠN VỊ VÀO HEADER ***
-            // Nếu có unit thì nối thêm vào. VD: "Pin (mAh)"
             $headerName = $attribute->name;
             if (!empty($attribute->unit)) {
                 $headerName .= " ({$attribute->unit})";
@@ -61,12 +64,15 @@ class ProductTemplateExport implements FromArray, WithHeadings, ShouldAutoSize, 
 
     public function array(): array
     {
-        // Dữ liệu mẫu (Giữ nguyên logic của mày)
         $dummyRow = [
-            'Samsung Galaxy S24', '20000000', '', 'Hàng chính hãng...', 
-            'anh1.jpg', '', '' 
+            'Samsung Galaxy S24', '20000000', '', 'Mô tả sản phẩm...'
         ];
         
+        // Tạo ô trống cho các cột ảnh
+        for ($i = 1; $i <= $this->imageCount; $i++) {
+            $dummyRow[] = ($i === 1) ? 'anh1.jpg' : ''; // Ví dụ mẫu cho cột 1
+        }
+
         foreach ($this->attributes as $attribute) {
             $dummyRow[] = '';
         }
@@ -79,7 +85,7 @@ class ProductTemplateExport implements FromArray, WithHeadings, ShouldAutoSize, 
         return [
             1 => [
                 'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
-                'fill' => ['fillType' => 'solid', 'startColor' => ['rgb' => '4CAF50']] // Tô màu header cho đẹp
+                'fill' => ['fillType' => 'solid', 'startColor' => ['rgb' => '4CAF50']] 
             ],
         ];
     }
@@ -90,9 +96,12 @@ class ProductTemplateExport implements FromArray, WithHeadings, ShouldAutoSize, 
             AfterSheet::class => function(AfterSheet $event) {
                 $sheet = $event->sheet;
                 $rowCount = 1000; 
-                $staticColumnCount = 7; // Số cột cố định đầu tiên
+                
+                // --- TÍNH LẠI SỐ CỘT CỐ ĐỊNH ---
+                // Name, Price, Brand, Desc (4) + ImageCount (10) = 14
+                $staticColumnCount = 4 + $this->imageCount; 
 
-                // --- 1. DROPDOWN BRAND (Giữ nguyên code của mày) ---
+                // 1. DROPDOWN BRAND
                 if ($this->brands->isNotEmpty()) {
                     $brandColumn = 'C'; 
                     $brandOptions = '"' . implode(',', $this->brands->pluck('name')->toArray()) . '"';
@@ -102,55 +111,42 @@ class ProductTemplateExport implements FromArray, WithHeadings, ShouldAutoSize, 
                         $validation->setErrorStyle(DataValidation::STYLE_STOP);
                         $validation->setAllowBlank(true);
                         $validation->setShowDropDown(true);
-                        $validation->setErrorTitle('Lỗi nhập liệu');
                         $validation->setError('Chọn thương hiệu từ danh sách.');
                         $validation->setFormula1($brandOptions);
                         $sheet->setDataValidation($brandColumn . '2:' . $brandColumn . $rowCount, $validation);
                     }
                 }
 
-                // --- 2. XỬ LÝ CÁC CỘT THUỘC TÍNH ---
+                // 2. XỬ LÝ ATTRIBUTES
                 foreach ($this->attributes as $index => $attribute) {
                     $columnIndex = $staticColumnCount + $index + 1; 
                     $columnLetter = Coordinate::stringFromColumnIndex($columnIndex);
                     $range = $columnLetter . '2:' . $columnLetter . $rowCount;
-
-                    // Lấy đối tượng validation cho ô đầu tiên rồi áp dụng cho cả cột
                     $validation = $sheet->getCell($columnLetter . '2')->getDataValidation();
 
-                    // TRƯỜNG HỢP: SELECT (Dropdown)
                     if ($attribute->type === 'select' && $attribute->options->isNotEmpty()) {
                         $optionsString = '"' . implode(',', $attribute->options->pluck('value')->toArray()) . '"';
-                        // Giới hạn chuỗi của Excel là 255 ký tự cho list
                         if (strlen($optionsString) < 255) {
                             $validation->setType(DataValidation::TYPE_LIST);
                             $validation->setErrorStyle(DataValidation::STYLE_STOP);
                             $validation->setAllowBlank(true);
                             $validation->setShowDropDown(true);
                             $validation->setFormula1($optionsString);
-                            $validation->setErrorTitle('Sai dữ liệu');
                             $validation->setError('Vui lòng chọn từ danh sách.');
                         }
-                    } 
-                    // TRƯỜNG HỢP: NUMBER (Validation số + Tooltip unit)
-                    elseif ($attribute->type === 'number') {
-                        // *** 2. VALIDATION CHỈ CHO NHẬP SỐ ***
+                    } elseif ($attribute->type === 'number') {
                         $validation->setType(DataValidation::TYPE_DECIMAL);
                         $validation->setOperator(DataValidation::OPERATOR_GREATERTHANOREQUAL);
-                        $validation->setFormula1(0); // Phải lớn hơn hoặc bằng 0
+                        $validation->setFormula1(0);
                         $validation->setErrorStyle(DataValidation::STYLE_STOP);
-                        $validation->setErrorTitle('Lỗi định dạng');
                         $validation->setError('Vui lòng chỉ nhập số dương.');
 
-                        // *** 3. HIỆN TOOLTIP KHI CLICK VÀO Ô ***
                         if (!empty($attribute->unit)) {
                             $validation->setShowInputMessage(true);
                             $validation->setPromptTitle('Lưu ý');
                             $validation->setPrompt("Nhập số (Đơn vị: {$attribute->unit})");
                         }
                     }
-
-                    // Áp dụng validation cho cả cột
                     $sheet->setDataValidation($range, $validation);
                 }
             },
