@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 use Stripe\Stripe;
 use Stripe\Customer;
 use Stripe\Checkout\Session;
+use Stripe\PaymentIntent;
 use Stripe\Refund;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -79,7 +80,7 @@ class CheckoutController extends Controller
         return back()->with('success', 'Đã áp mã ' . $code);
     }
 
-    // 3. GỠ VOUCHER (Giữ nguyên)
+    // 3. GỬ VOUCHER (Giữ nguyên)
     public function removeVoucher(Request $request)
     {
         $sellerId = $request->seller_id;
@@ -302,6 +303,30 @@ class CheckoutController extends Controller
 
                 $itemsBySeller = $cartItems->groupBy('product.seller_id');
 
+                // =========================
+                // THÊM ĐOẠN LẤY CHARGE ID
+                // =========================
+                Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
+                $paymentIntentId = $session->payment_intent ?? null;
+                $chargeId = null;
+                $fee = 0;
+
+                if ($paymentIntentId) {
+                    try {
+                        $pi = \Stripe\PaymentIntent::retrieve($paymentIntentId);
+                        $chargeId = $pi->charges->data[0]->id ?? null;
+                        $charge = \Stripe\Charge::retrieve($chargeId);
+                        $balance = \Stripe\BalanceTransaction::retrieve($charge->balance_transaction);
+                        $fee = $balance->fee / 100;
+                    } catch (\Throwable $e) {
+                        \Log::warning('Could not retrieve PaymentIntent: ' . $e->getMessage());
+                    }
+                }
+
+                // =========================
+                // KẾT THÚC ĐOẠN THÊM
+                // =========================
+
                 foreach ($itemsBySeller as $sellerId => $sellerItems) {
                     $subtotal = $sellerItems->sum(fn($item) => $item->price * $item->quantity);
 
@@ -317,6 +342,9 @@ class CheckoutController extends Controller
                         'status' => $hasInsufficientStock ? 'Cancelled' : 'Pending',
                         'payment_status' => 'paid',
                         'session_id' => $session->id,
+                        'transaction_id' => $paymentIntentId,
+                        'charge_id' => $chargeId, // <-- thêm
+                        'transaction_fee' => $fee, // <-- thêm (nullable)
                         'subtotal' => $subtotal,
                         'discount_amount' => $discountAmount,
                         'voucher_id' => $voucherId,
@@ -358,38 +386,38 @@ class CheckoutController extends Controller
                             'message' => "Đơn hàng #{$order->id}",
                             'is_read' => false,
                         ]);
-                    // =================================================================
-                    // 🔴 BẮT ĐẦU XỬ LÝ VÍ HỆ THỐNG (MÔ HÌNH GIỮ TIỀN - ESCROW)
-                    // =================================================================
-                    
-                    // 1. Tìm ví trung gian (System Wallet) - ID 12
-                    // Lưu ý: Phải chắc chắn trong Database bảng wallets đã có dòng user_id = 99 nha!
-                    $systemWallet = \App\Models\Wallet::where('user_id', 12)->lockForUpdate()->first();
+                        // =================================================================
+                        // 🔴 BẮT ĐẦU XỬ LÝ VÍ HỆ THỐNG (MÔ HÌNH GIỮ TIỀN - ESCROW)
+                        // =================================================================
 
-                    if ($systemWallet) {
-                        // Cộng TOÀN BỘ tiền vào ví trung gian
-                        $systemWallet->balance += $totalPrice;
-                        $systemWallet->save();
+                        // 1. Tìm ví trung gian (System Wallet) - ID 12
+                        // Lưu ý: Phải chắc chắn trong Database bảng wallets đã có dòng user_id = 99 nha!
+                        $systemWallet = \App\Models\Wallet::where('user_id', 12)->lockForUpdate()->first();
 
-                        // Ghi lịch sử: Tiền đang tạm giữ
-                        \App\Models\Transaction::create([
-                            'wallet_id' => $systemWallet->id,
-                            'amount' => $totalPrice,
-                            'type' => 'deposit',
-                            'description' => "Tạm giữ tiền đơn hàng #{$order->id} (Chờ hoàn thành)",
-                            'reference_id' => $order->id
-                        ]);
-                    } else {
-                        // Log lỗi để biết đường mà sửa nếu quên tạo ví cho thằng ID 99
-                        \Log::error("Không tìm thấy ví hệ thống cho User ID 99");
-                    }
+                        if ($systemWallet) {
+                            // Cộng TOÀN BỘ tiền vào ví trung gian
+                            $systemWallet->balance += $totalPrice;
+                            $systemWallet->save();
 
-                    // 🔴 CẤM: Không cộng tiền Seller ở đây
-                    // 🔴 CẤM: Không cộng tiền Admin ở đây (Xóa luôn đoạn Admin phía dưới đi)
-                    
-                    // =================================================================
-                    // 🔴 KẾT THÚC XỬ LÝ VÍ
-                    // =================================================================
+                            // Ghi lịch sử: Tiền đang tạm giữ
+                            \App\Models\Transaction::create([
+                                'wallet_id' => $systemWallet->id,
+                                'amount' => $totalPrice,
+                                'type' => 'deposit',
+                                'description' => "Tạm giữ tiền đơn hàng #{$order->id} (Chờ hoàn thành)",
+                                'reference_id' => $order->id
+                            ]);
+                        } else {
+                            // Log lỗi để biết đường mà sửa nếu quên tạo ví cho thằng ID 99
+                            \Log::error("Không tìm thấy ví hệ thống cho User ID 99");
+                        }
+
+                        // 🔴 CẤM: Không cộng tiền Seller ở đây
+                        // 🔴 CẤM: Không cộng tiền Admin ở đây (Xóa luôn đoạn Admin phía dưới đi)
+
+                        // =================================================================
+                        // 🔴 KẾT THÚC XỬ LÝ VÍ
+                        // =================================================================
                     }
                 }
 

@@ -1,8 +1,8 @@
 <style>
     /* --- BẢNG MÀU TÙY CHỈNH (Tối ưu độ tương phản trên nền trắng) --- */
-    
+
     /* 1. Vàng (Warning) -> Chuyển sang Vàng Cam Đậm */
-    .text-warning-dark { color: #b45309 !important; } 
+    .text-warning-dark { color: #b45309 !important; }
     .bg-warning-subtle-custom { background-color: #fffbeb; color: #b45309; }
     .border-warning-dark { border-color: #f59e0b !important; }
 
@@ -15,7 +15,7 @@
     .text-success-dark { color: #0ea5e9 !important; } /* Đổi từ xanh lá sang xanh dương sáng */
     .text-success-content { color: #0369a1 !important; } /* Màu chữ nội dung đậm hơn */
     .bg-success-subtle-custom { background-color: #e0f2fe; color: #0369a1; } /* Nền xanh dương nhạt */
-    
+
     /* 4. Xanh dương (Primary) -> Xanh Lá Cây Đậm (Dễ đọc) */
     .text-primary-dark { color: #059669 !important; } /* Đổi từ xanh dương sang xanh lá đậm */
     .text-primary-content { color: #047857 !important; } /* Màu chữ nội dung */
@@ -25,7 +25,7 @@
     /* Scrollbar đẹp */
     .table-responsive::-webkit-scrollbar { height: 6px; }
     .table-responsive::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-    
+
     /* Hover Effect */
     .stats-card { transition: all 0.2s ease-in-out; }
     .stats-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important; }
@@ -42,7 +42,7 @@
     </div>
 
     <div class="row g-3 mb-4">
-        
+
         <div class="col-12 col-md-6 col-xl-3">
             <div class="card stats-card shadow-sm h-100 border-0 border-start border-4 border-warning-dark">
                 <div class="card-body p-3">
@@ -53,7 +53,7 @@
                         </div>
                     </div>
                     <div class="h4 fw-bold text-dark mb-1">
-                        {{ number_format($systemHoldingBalance, 0, ',', '.') }} <span class="fs-6  fw-normal">đ</span>
+                        {{ number_format($StripeIncoming, 0, ',', '.') }} <span class="fs-6  fw-normal">đ</span>
                     </div>
                     <div class="d-flex align-items-center small ">
                         <i class="bi bi-info-circle me-1"></i> Chờ khách nhận hàng
@@ -72,7 +72,7 @@
                         </div>
                     </div>
                     <div class="h4 fw-bold text-dark mb-1">
-                        {{ number_format($adminBalance, 0, ',', '.') }} <span class="fs-6  fw-normal">đ</span>
+                        {{ number_format($realIncome, 0, ',', '.') }} <span class="fs-6  fw-normal">đ</span>
                     </div>
                     <div class="d-flex align-items-center small ">
                         <i class="bi bi-info-circle me-1"></i> Lợi nhuận thực tế
@@ -91,7 +91,7 @@
                         </div>
                     </div>
                     <div class="h4 fw-bold text-dark mb-1">
-                        {{ number_format($totalSellerBalance, 0, ',', '.') }} <span class="fs-6 fw-normal">đ</span>
+                        {{ number_format($totalLoanSeller, 0, ',', '.') }} <span class="fs-6 fw-normal">đ</span>
                     </div>
                     <div class="d-flex align-items-center small ">
                         <i class="bi bi-info-circle me-1"></i> Ví người bán
@@ -110,7 +110,7 @@
                         </div>
                     </div>
                     <div class="h4 fw-bold text-dark mb-1">
-                        {{ number_format($testballace, 0, ',', '.') }} <span class="fs-6  fw-normal">đ</span>
+                        {{ number_format($Stripebalance, 0, ',', '.') }} <span class="fs-6  fw-normal">đ</span>
                     </div>
                     <div class="d-flex align-items-center small ">
                         <i class="bi bi-info-circle me-1"></i> Thực tế
@@ -131,77 +131,72 @@
         </div>
 
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0 text-sm">
-                <thead class="bg-light">
-                    <tr class="text-uppercase text-secondary small" style="font-size: 0.75rem;">
-                        <th class="py-3 ps-4 fw-bold">Thời gian / Ref</th>
-                        <th class="py-3 fw-bold">User</th>
-                        <th class="py-3 fw-bold">Loại GD</th>
-                        <th class="py-3 text-end fw-bold">Số tiền</th>
-                        <th class="py-3 pe-4 fw-bold">Nội dung</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($transactions as $tx)
-                    <tr>
-                        <td class="ps-4">
-                            <div class="d-flex flex-column">
-                                <span class="fw-medium text-dark">{{ $tx->created_at->format('d/m/Y') }} <span class="text-muted fw-normal ms-1">{{ $tx->created_at->format('H:i') }}</span></span>
-                                <span class="text-muted small font-monospace">#{{ $tx->reference_id ?? 'N/A' }}</span>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <div class="avatar-circle bg-light text-secondary rounded-circle d-flex align-items-center justify-content-center me-2 border" style="width: 32px; height: 32px; font-weight: 600;">
-                                    {{ substr($tx->wallet->user->name ?? 'U', 0, 1) }}
-                                </div>
-                                <div class="d-flex flex-column">
-                                    <span class="fw-bold text-dark small">{{ $tx->wallet->user->name ?? 'Unknown' }}</span>
-                                    <span class="text-muted" style="font-size: 0.7rem;">{{ $tx->wallet->user->role }}</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            @php
-                                $badgeClass = match($tx->type) {
-                                    'commission' => 'bg-success-subtle-custom text-success-dark border-success-subtle-custom',
-                                    'deposit' => 'bg-primary-subtle-custom text-primary-dark border-primary-subtle-custom',
-                                    'withdraw' => 'bg-danger-subtle text-danger border-danger-subtle',
-                                    default => 'bg-secondary-subtle text-secondary border-secondary-subtle'
-                                };
-                                $typeName = match($tx->type) {
-                                    'commission' => 'Hoa hồng',
-                                    'deposit' => 'Nạp tiền',
-                                    'withdraw' => 'Rút tiền',
-                                    default => ucfirst($tx->type)
-                                };
-                            @endphp
-                            <span class="badge {{ $badgeClass }} border rounded-pill px-2 py-1 fw-normal">
-                                {{ $typeName }}
-                            </span>
-                        </td>
-                        <td class="text-end">
-                            <span class="fw-bold {{ $tx->amount > 0 ? 'text-success-dark' : 'text-danger' }}">
-                                {{ $tx->amount > 0 ? '+' : '' }}{{ number_format($tx->amount, 0, ',', '.') }}
-                            </span>
-                        </td>
-                        <td class="pe-4">
-                            <div class="text-truncate text-secondary small" style="max-width: 250px;" title="{{ $tx->description }}">
-                                {{ $tx->description }}
-                            </div>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
+    <table class="table table-hover align-middle mb-0 text-sm">
+        <thead class="bg-light">
+            <tr class="text-uppercase text-secondary small" style="font-size: 0.75rem;">
+                <th class="py-3 ps-4 fw-bold">Thời gian / Ref</th>
+                <th class="py-3 fw-bold">Người mua</th>
+                <th class="py-3 fw-bold">Người bán</th>
+                <th class="py-3 text-end fw-bold">Tổng tiền</th>
+                <th class="py-3 fw-bold">Mã GD</th>
+                <th class="py-3 fw-bold">Phí GD</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($orders as $order)
+            <tr>
+                <td class="ps-4">
+                    <div class="d-flex flex-column">
+                        <span class="fw-medium text-dark">
+                            {{ $order->created_at->format('d/m/Y') }}
+                            <span class="text-muted fw-normal ms-1">{{ $order->created_at->format('H:i') }}</span>
+                        </span>
+                        <span class="text-muted small font-monospace">#{{ $order->id }}</span>
+                    </div>
+                </td>
+                <td>
+                    <div class="d-flex align-items-center">
+                        <div class="avatar-circle bg-light text-secondary rounded-circle d-flex align-items-center justify-content-center me-2 border" style="width: 32px; height: 32px; font-weight: 600;">
+                            {{ substr($order->buyer->name ?? 'U', 0, 1) }}
+                        </div>
+                        <div class="d-flex flex-column">
+                            <span class="fw-bold text-dark small">{{ $order->buyer->name ?? 'Unknown' }}</span>
+                            <span class="text-muted" style="font-size: 0.7rem;">{{ $order->buyer->email ?? '' }}</span>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div class="d-flex align-items-center">
+                        <div class="avatar-circle bg-light text-secondary rounded-circle d-flex align-items-center justify-content-center me-2 border" style="width: 32px; height: 32px; font-weight: 600;">
+                            {{ substr($order->seller->name ?? 'S', 0, 1) }}
+                        </div>
+                        <div class="d-flex flex-column">
+                            <span class="fw-bold text-dark small">{{ $order->seller->name ?? 'Unknown' }}</span>
+                            <span class="text-muted" style="font-size: 0.7rem;">{{ $order->seller->email ?? '' }}</span>
+                        </div>
+                    </div>
+                </td>
+                <td class="text-end">
+                    <span class="fw-bold text-dark">{{ number_format($order->total_price, 0, ',', '.') }}</span>
+                </td>
+                <td>
+                    <span class="text-secondary small font-monospace">{{ $order->transaction_id ?? 'N/A' }}</span>
+                </td>
+                <td>
+                    <span class="text-secondary small font-monospace">{{ $order->transaction_fee ? number_format($order->transaction_fee, 0, ',', '.') : '0' }}</span>
+                </td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+</div>
 
-        @if($transactions->hasPages())
-        <div class="card-footer bg-white border-top py-3">
-            <div class="d-flex justify-content-end">
-                {{ $transactions->links('pagination::bootstrap-5') }}
-            </div>
-        </div>
-        @endif
+@if($orders->hasPages())
+<div class="card-footer bg-white border-top py-3">
+    <div class="d-flex justify-content-end">
+        {{ $orders->links('pagination::bootstrap-5') }}
     </div>
+</div>
+@endif
+
 </div>
