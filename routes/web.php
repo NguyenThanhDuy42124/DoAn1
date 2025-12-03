@@ -222,8 +222,8 @@ Route::prefix('info')->name('pages.')->group(function () {
     Route::get('/terms-of-service', [StaticPageController::class, 'termsOfService'])->name('terms');
 
     // Bạn có thể thêm các trang Kênh Người Bán ở đây sau
-    // Route::get('/seller-support', [StaticPageController::class, 'sellerSupport'])->name('seller-support');
-    // Route::get('/marketplace-rules', [StaticPageController::class, 'marketplaceRules'])->name('marketplace-rules');
+    Route::get('/ho-tro-nguoi-ban', [StaticPageController::class,'sellerSupport'])->name('seller-support');
+    Route::get('/quy-che-hoat-dong', [StaticPageController::class,'marketplaceRules'])->name('marketplace-rules');
 });
 
 Route::middleware('auth')->group(function () {

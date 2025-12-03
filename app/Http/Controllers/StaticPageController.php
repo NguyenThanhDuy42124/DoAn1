@@ -175,7 +175,86 @@ class StaticPageController extends Controller
     /**
      * Trang Tra cứu đơn hàng
      */
-  
+    // ==========================================
+    // === NHÓM KÊNH NGƯỜI BÁN
+    // ==========================================
+
+    /**
+     * Hiển thị trang Hỗ trợ Người Bán.
+     */
+    public function sellerSupport(): View
+    {
+        $title = 'Trung tâm Hỗ trợ Người Bán';
+        $content = '
+            <p class="lead">Chào mừng đối tác! DDK Mobile Market cung cấp nền tảng giúp bạn tiếp cận hàng ngàn khách hàng yêu công nghệ mỗi ngày. Dưới đây là hướng dẫn để bắt đầu kinh doanh hiệu quả.</p>
+
+            <h3>1. Quy trình trở thành Người bán</h3>
+            <ul>
+                <li><strong>Bước 1 - Đăng ký:</strong> Truy cập vào mục "Đăng ký bán hàng", điền đầy đủ thông tin cửa hàng/cá nhân và xác thực danh tính (CCCD/CMND).</li>
+                <li><strong>Bước 2 - Duyệt hồ sơ:</strong> Ban quản trị sàn sẽ kiểm duyệt thông tin của bạn trong vòng 24h làm việc để đảm bảo uy tín.</li>
+                <li><strong>Bước 3 - Đăng bán sản phẩm:</strong> Sau khi được duyệt, bạn có thể truy cập trang quản trị (Dashboard) để đăng tải hình ảnh, mô tả sản phẩm và giá bán.</li>
+            </ul>
+
+            <h3>2. Bí quyết bán hàng hiệu quả</h3>
+            <ul>
+                <li><strong>Hình ảnh chân thực:</strong> Với đồ công nghệ (đặc biệt là hàng cũ/likenew), hãy chụp ảnh rõ nét các góc cạnh, tình trạng trầy xước (nếu có) để tránh tranh chấp sau này.</li>
+                <li><strong>Mô tả chi tiết:</strong> Ghi rõ tình trạng pin, phụ kiện đi kèm, chế độ bảo hành riêng của shop bạn.</li>
+                <li><strong>Phản hồi nhanh:</strong> Khách hàng thường hỏi về cấu hình hoặc tình trạng máy, việc trả lời tin nhắn nhanh giúp tăng tỷ lệ chốt đơn.</li>
+            </ul>
+
+            <h3>3. Chính sách phí và thanh toán</h3>
+            <ul>
+                <li><strong>Phí sàn:</strong> DDK Mobile Market thu một khoản phí cố định nhỏ trên mỗi đơn hàng thành công để duy trì hệ thống (chi tiết trong hợp đồng điện tử khi đăng ký).</li>
+                <li><strong>Thanh toán:</strong> Doanh thu sẽ được đối soát và chuyển vào tài khoản ngân hàng của bạn định kỳ vào thứ 6 hàng tuần hoặc khi bạn gửi yêu cầu rút tiền (với số dư tối thiểu quy định).</li>
+            </ul>
+
+            <p><em>Cần hỗ trợ gấp? Vui lòng liên hệ bộ phận chăm sóc đối tác qua email: <a href="mailto:partners@ddkm.com">partners@ddkm.com</a></em></p>
+        ';
+        return $this->showStaticPage($title, $content);
+    }
+
+    /**
+     * Hiển thị trang Quy chế hoạt động Sàn.
+     */
+    public function marketplaceRules(): View
+    {
+        $title = 'Quy chế hoạt động Sàn TMĐT DDK Mobile Market';
+        $content = '
+            <p class="lead">Quy chế này áp dụng cho các thành viên (Người mua, Người bán) tham gia giao dịch trên sàn thương mại điện tử DDK Mobile Market.</p>
+
+            <h3>Điều 1: Nguyên tắc chung</h3>
+            <ul>
+                <li>Sàn giao dịch là nơi kết nối giữa người mua và người bán các thiết bị công nghệ.</li>
+                <li>Hoạt động mua bán phải công khai, minh bạch, đảm bảo quyền lợi của người tiêu dùng.</li>
+                <li>Hàng hóa tham gia giao dịch phải được phép lưu thông theo quy định của pháp luật.</li>
+            </ul>
+
+            <h3>Điều 2: Quy định về hàng hóa</h3>
+            <p><strong>Nghiêm cấm đăng bán các sản phẩm sau:</strong></p>
+            <ul>
+                <li>Hàng giả, hàng nhái, hàng vi phạm sở hữu trí tuệ (Fake loại 1, Replica...).</li>
+                <li>Hàng không rõ nguồn gốc xuất xứ, hàng trộm cắp, hàng bị khóa báo mất (iCloud ẩn, Blacklist).</li>
+                <li>Các thiết bị cấm theo quy định pháp luật (thiết bị nghe lén, phá sóng...).</li>
+            </ul>
+            <p>Nếu phát hiện vi phạm, Ban quản trị sẽ khóa tài khoản vĩnh viễn và phối hợp với cơ quan chức năng nếu cần thiết.</p>
+
+            <h3>Điều 3: Quy trình giải quyết tranh chấp</h3>
+            <p>Khi phát sinh tranh chấp (hàng không đúng mô tả, lỗi kỹ thuật...), DDK Mobile Market đề cao giải pháp thương lượng:</p>
+            <ol>
+                <li>Người mua gửi khiếu nại trong vòng 3 ngày kể từ khi nhận hàng.</li>
+                <li>Sàn sẽ tạm giữ tiền hàng và yêu cầu Người bán giải trình/cung cấp bằng chứng.</li>
+                <li>Dựa trên bằng chứng, Sàn sẽ đưa ra phán quyết cuối cùng (Hoàn tiền cho người mua hoặc Chuyển tiền cho người bán).</li>
+            </ol>
+
+            <h3>Điều 4: Trách nhiệm của các bên</h3>
+            <ul>
+                <li><strong>Người bán:</strong> Chịu trách nhiệm về tính trung thực của thông tin sản phẩm, chất lượng hàng hóa và chế độ bảo hành đã cam kết.</li>
+                <li><strong>Người mua:</strong> Có trách nhiệm tìm hiểu kỹ thông tin, kiểm tra hàng hóa khi nhận (đồng kiểm) và thanh toán đầy đủ.</li>
+                <li><strong>Ban quản trị Sàn:</strong> Đảm bảo hệ thống vận hành ổn định, bảo mật thông tin khách hàng và hỗ trợ giải quyết khiếu nại công bằng.</li>
+            </ul>
+        ';
+        return $this->showStaticPage($title, $content);
+    }
     // ==========================================
     // === NHÓM THÔNG TIN & CHÍNH SÁCH
     // ==========================================
