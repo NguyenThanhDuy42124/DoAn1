@@ -91,7 +91,7 @@
                                                         <td rowspan="{{ count($order->items) }}">
                                                             {{ $order->created_at->format('d/m/Y H:i') }}</td>
                                                     @endif
-                                                    <td>{{ $item->product->name }}</td>
+                                                    <td><a href="{{ route('products.detail', ['id' => $item->product->id]) }}">{{ $item->product->name }}</a></td>
                                                     <td>{{ $item->quantity }}</td>
                                                     <td>{{ number_format($item->price * $item->quantity, 0, ',', '.') }}₫
                                                     </td>
