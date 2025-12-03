@@ -22,14 +22,19 @@
                 {{ number_format($totalSellerBalance, 0, ',', '.') }} VNĐ
             </div>
         </div>
-
+        <div class="bg-white rounded-lg shadow p-6 border-l-4 border-purple-500">
+            <div class="text-gray-500 text-sm font-medium uppercase">Số Dư Stripe (Thực tế)</div>
+            <div class="text-3xl font-bold text-purple-600 mt-2">
+                {{ number_format($testballace, 0, ',', '.') }} VNĐ
+            </div>
+        </div>
     </div>
 
     <div class="bg-white rounded-lg shadow overflow-hidden">
         <div class="px-6 py-4 border-b">
             <h3 class="font-bold text-gray-700">Lịch sử giao dịch gần đây</h3>
         </div>
-        
+
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead>
