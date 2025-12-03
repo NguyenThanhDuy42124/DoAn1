@@ -68,6 +68,7 @@ class WalletDashboard extends Component
             ->where('status', '!=', 'cancelled')
             ->where('payment_status', 'paid')
             ->sum('total_price');
+            
         $fees = Order::where('pay_to_seller', 0)
             ->where('status', '!=', 'cancelled')
             ->where('payment_status', 'paid')
