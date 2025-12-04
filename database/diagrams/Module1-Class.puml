@@ -18,7 +18,7 @@ skinparam class {
 }
 
 ' 1. Ép khoảng cách giữa các Class (Quan trọng nhất)
-skinparam nodesep 50 
+skinparam nodesep 50
 skinparam ranksep 50
 
 ' 2. Giảm padding bên trong Class cho hộp bé lại
@@ -60,27 +60,7 @@ class "Users" {
 }
 
 
-class "Wallets" {
-    + id : Long
-    + user_id : Long
-    + balance : Double
-    + currency : String
-    + status : String
-    + createdAt : DateTime
-    + updatedAt : DateTime
-}
 
-
-class "Transactions" {
-    + id : Long
-    + wallet_id : Long
-    + amount : Double
-    + type : String
-    + description : String
-    + reference_id : Long
-    + createdAt : DateTime
-    + updatedAt : DateTime
-}
 
 
 class "Carts" {
@@ -118,6 +98,8 @@ class "Orders" {
     + buyerEmail : String
     + buyerPhone : String
     + sessionId : String
+    + Transaction_id : String
+    + Transaction_fee : Double
     + shippingAddress : String
 }
 
@@ -131,7 +113,7 @@ class "OrderItems" {
     + updatedAt : DateTime
 }
 
-  
+
 
 
 
@@ -202,8 +184,7 @@ class "Product_Ref" <<Stub>> {
 
 ' 1 User sở hữu 1 Cart (Nếu chưa có thì tạo)
 Users "1" -left- "0..1" Carts : owns >
-Users "1" -- "1" Wallets : owns >
-Wallets "1" -- "0..1" Transactions : owns >
+
 
 ' 1 Cart có nhiều Item
 Carts "1" *-- "0..*" CartItems : contains >
