@@ -183,7 +183,7 @@ class "Product_Ref" <<Stub>> {
 ' === QUAN HỆ ===
 
 ' 1 User sở hữu 1 Cart (Nếu chưa có thì tạo)
-Users "1" -left- "0..1" Carts : owns >
+Users "1" -- "0..1" Carts : owns >
 
 
 ' 1 Cart có nhiều Item
@@ -204,7 +204,7 @@ Users "1" -- "0..*" Vouchers : creates (Seller) >
 Vouchers "1" -- "0..*" Orders : applied to >
 
 ' Các quan hệ khác
-Users "1" -down- "0..*" Reviews : writes >
+Users "1" -- "0..*" Reviews : writes >
 Users "1" -- "0..*" Notifications : receives >
 Users "1" -- "0..*" Followers : follows >
 Users "1" -- "0..*" Followers : seller >

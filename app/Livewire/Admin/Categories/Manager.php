@@ -48,6 +48,13 @@ class Manager extends Component
         $this->state = [];
         $this->selectedAttributes = [];
         $this->selectedBrands = [];
+
+        // --- THÊM 2 DÒNG NÀY ---
+        // 1. Để quên hẳn cái danh mục đang sửa đi
+        $this->editingCategory = new Category(); 
+        
+        // 2. Để lấy lại số lượng thuộc tính/hãng hiển thị ra bảng
+        $this->loadCategories(); 
     }
 
     public function createNewCategory()
@@ -94,7 +101,19 @@ class Manager extends Component
     }
     
     public function deleteCategory($id) {
-        Category::find($id)->delete();
+        $category = Category::find($id);
+        
+        if($category) {
+            $category->delete();
+        }
+
+        // --- THÊM ĐOẠN NÀY QUAN TRỌNG ---
+        // Nếu cái thằng vừa xóa chính là thằng đang được chọn để sửa (lưu trong bộ nhớ)
+        // Thì phải reset về rỗng ngay, nếu không Livewire sẽ tìm nó và báo lỗi 404
+        if($this->editingCategory && $this->editingCategory->id == $id) {
+            $this->editingCategory = new Category();
+        }
+        
         $this->loadCategories();
     }
 
