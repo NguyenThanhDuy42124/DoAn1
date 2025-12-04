@@ -39,7 +39,7 @@
                             <h6 class="fw-bold mb-1">{{ $user->name }} <span class="fw-normal text-muted">({{ $user->phoneNumber ?? 'Chưa có SĐT' }})</span></h6>
                             <p class="mb-0 text-secondary">{{ $shippingAddress }}</p>
                         </div>
-                        <button class="btn btn-outline-primary btn-sm" disabled>Thay đổi </button>
+
                     </div>
                 </div>
             </div>
@@ -197,10 +197,7 @@
                         <span class="text-muted">Tổng giảm giá:</span>
                         <span>-{{ number_format(collect($ordersBySeller)->sum('discount_amount'), 0, ',', '.') }}₫</span>
                     </div>
-                    <div class="d-flex justify-content-between mb-4">
-                        <span class="text-muted">Phí vận chuyển:</span>
-                        <span class="text-muted fst-italic">Tính sau</span>
-                    </div>
+
 
                     <hr>
 
@@ -216,7 +213,6 @@
                             Xác nhận thanh toán
                         </button>
                     </form>
-
                     <div class="text-center mt-3">
                         <small class="text-muted"><i class="fas fa-shield-alt me-1"></i> Thanh toán an toàn & bảo mật</small>
                     </div>
