@@ -20,6 +20,7 @@ use App\Http\Controllers\CartItemController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\UserInfoController;
+use App\Http\Controllers\ReviewController;
 use Illuminate\Auth\Middleware\Authenticate;
 use App\Livewire\Seller\Products\ProductForm;
 use App\Http\Controllers\StaticPageController;
@@ -33,6 +34,10 @@ use App\Livewire\Admin\Promotion\MainPagePromotionImage;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use App\Livewire\Admin\Categories\Manager as CategoryManager;
 use App\Livewire\Admin\Attributes\Manager as AttributeManager;
+use App\Livewire\Seller\VoucherManager;
+use App\Livewire\Seller\Products\ImportProducts;
+use App\Livewire\Admin\WalletDashboard;
+use App\Livewire\CategoryProduct;
 
 Route::get('/', MainPage::class)->name('main.page');
 
@@ -120,6 +125,7 @@ Route::prefix('admin')->middleware('role:admin')->group(function () {
     Route::resource('products', ProductController::class, ['names' => 'admin.products'])
         ->except(['index']);   // <-- loại bỏ GET /admin/products
 
+    Route::get('/admin/wallet', WalletDashboard::class)->name('admin.wallet');
 
 
     //route thong bao
@@ -150,6 +156,8 @@ Route::prefix('seller')->middleware('role:seller')->group(function () {
     Route::get('/products/create', ProductForm::class)->name('seller.products.create');
     // Laravel tự động tìm product dựa trên ID {product} và truyền vào mount()
     Route::get('/products/{productId}/edit', ProductForm::class)->name('seller.products.edit');
+    Route::post('/products/{product}/hidden', [ProductController::class, 'hidden'])->name('seller.products.hidden');
+    Route::post('/products/{product}/restore', [ProductController::class, 'RestoreFromHidden'])->name('seller.products.restore');
 
     // Chỉ giữ lại index và destroy cho ProductController
     Route::resource('products', ProductController::class, ['names' => 'seller.products'])
@@ -157,21 +165,16 @@ Route::prefix('seller')->middleware('role:seller')->group(function () {
 
 
     // [GET] Route để hiển thị trang form
-    Route::get('/products/import/form', [ProductController::class, 'showImportForm'])->name('seller.products.import.form');
+   // Route::get('/products/import/form', [ProductController::class, 'showImportForm'])->name('seller.products.import.form');
 
     // [POST] Route để xử lý dữ liệu từ form
-    Route::post('/products/import', [ProductController::class, 'import'])->name('seller.products.import');
+   Route::get('/products/import', ImportProducts::class)->name('products.import');
+   
 
 
 
 
-    //route vouchers
-    Route::get('/vouchers', [VoucherController::class, 'index'])->name('vouchers.index');
-    Route::get('/vouchers/create', [VoucherController::class, 'create'])->name('vouchers.create');
-    Route::post('/vouchers', [VoucherController::class, 'store'])->name('vouchers.store');
-    Route::get('/vouchers/{id}/edit', [VoucherController::class, 'edit'])->name('vouchers.edit');
-    Route::put('/vouchers/{id}', [VoucherController::class, 'update'])->name('vouchers.update');
-    Route::delete('/vouchers/{id}', [VoucherController::class, 'destroy'])->name('vouchers.destroy');
+    Route::get('/vouchers', VoucherManager::class)->name('seller.vouchers.index');
 
 
     Route::get('/orders/{id}', [SellerController::class, 'show'])->name('seller.orders.show');
@@ -184,10 +187,16 @@ Route::prefix('seller')->middleware('role:seller')->group(function () {
 });
 Route::get('/shop/{id}', [SellerController::class, 'showShop'])->name('shop.show');
 Route::get('/products', [ProductController::class, 'listProducts'])->name('products.list');
+
+Route::get('/danh-muc/{category}', CategoryProduct::class)->name('category.product');
+
+
 Route::get('/products/{id}', [ProductController::class, 'showProductDetail'])->name('products.detail');
 Route::get('/vouchers', [VoucherController::class, 'listVouchers'])->name('vouchers.list');
 Route::get('/', [SellerController::class, 'index'])->name('home');
-
+Route::post('/reviews/{id}/toggle-hide', [ReviewController::class, 'toggleHidden'])
+    ->name('reviews.toggleHidden')
+    ->middleware('auth');
 Route::post('/webhook', [CheckoutController::class, 'webhook'])
     ->name('buyer.checkout.webhook')
     ->withoutMiddleware([
@@ -213,8 +222,8 @@ Route::prefix('info')->name('pages.')->group(function () {
     Route::get('/terms-of-service', [StaticPageController::class, 'termsOfService'])->name('terms');
 
     // Bạn có thể thêm các trang Kênh Người Bán ở đây sau
-    // Route::get('/seller-support', [StaticPageController::class, 'sellerSupport'])->name('seller-support');
-    // Route::get('/marketplace-rules', [StaticPageController::class, 'marketplaceRules'])->name('marketplace-rules');
+    Route::get('/ho-tro-nguoi-ban', [StaticPageController::class,'sellerSupport'])->name('seller-support');
+    Route::get('/quy-che-hoat-dong', [StaticPageController::class,'marketplaceRules'])->name('marketplace-rules');
 });
 
 Route::middleware('auth')->group(function () {
@@ -232,6 +241,7 @@ Route::middleware('auth')->group(function () {
 
 
     Route::post('/carts', [CartController::class, 'store'])->name('buyer.carts.store');
+    Route::post('/carts/add', [CartController::class, 'AddCart'])->name('buyer.carts.add');
     Route::get('/cart-items/{id}/edit', [CartItemController::class, 'edit'])->name('buyer.cart_items.edit');
     Route::put('/cart-items/{id}', [CartItemController::class, 'update'])->name('buyer.cart_items.update');
     Route::delete('/cart/item/{id}', [CartItemController::class, 'destroy'])->name('buyer.cart_items.destroy');
@@ -255,6 +265,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/notifications/{notification}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
 
     Route::post('follow/{seller}', [FollowController::class, 'toggleFollow'])->name('seller.follow.toggle');
+
+    Route::get('/checkout/review', [CheckoutController::class, 'review'])->name('buyer.checkouts.review');
+    Route::post('/checkout/voucher/apply', [CheckoutController::class, 'applyVoucher'])->name('buyer.checkouts.apply-voucher');
+    Route::post('/checkout/voucher/remove', [CheckoutController::class, 'removeVoucher'])->name('buyer.checkouts.remove-voucher');
+    Route::post('/checkout/process', [CheckoutController::class, 'processPayment'])->name('buyer.checkouts.process');
+
 });
 Route::post('/buyer/request-seller', [\App\Http\Controllers\UserController::class, 'requestToBecomeSeller'])
     ->name('buyer.requestToBecomeSeller')

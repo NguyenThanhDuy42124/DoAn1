@@ -2,51 +2,56 @@
 
 
     <!-- Flash messages -->
-    @if (session()->has('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ session('success') }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-    @endif
-    @if (session()->has('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            {{ session('error') }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-    @endif
+
 
     <!-- Tabs -->
     <ul class="nav nav-tabs mt-4" id="orderTabs" role="tablist">
         <li class="nav-item">
             <a class="nav-link {{ $status === 'Pending' ? 'active' : '' }}" href="#"
                 wire:click.prevent="filterByStatus('Pending')">
-                Pending ({{ $pendingCount }})
+                Chờ xác nhận ({{ $pendingCount }})
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link {{ $status === 'Shipping' ? 'active' : '' }}" href="#"
                 wire:click.prevent="filterByStatus('Shipping')">
-                Shipping ({{ $shippingCount }})
+                Đang giao hàng ({{ $shippingCount }})
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link {{ $status === 'Delivered' ? 'active' : '' }}" href="#"
                 wire:click.prevent="filterByStatus('Delivered')">
-                Delivered ({{ $deliveredCount }})
+                Đã giao ({{ $deliveredCount }})
             </a>
         </li>
         <li class="nav-item">
             <a class="nav-link {{ $status === 'Completed' ? 'active' : '' }}" href="#"
                 wire:click.prevent="filterByStatus('Completed')">
-                Completed ({{ $completedCount }})
+                Hoàn thành ({{ $completedCount }})
             </a>
         </li>
     </ul>
-
+    <div class="mt-3">
+        @if (session()->has('success'))
+            <div class="alert alert-success alert-dismissible fade show d-flex align-items-center justify-content-between"
+                role="alert">
+                <div>
+                    <i class="fas fa-check-circle me-2"></i> {{ session('success') }}
+                </div>
+                {{-- Sử dụng btn-close thay vì class close cũ --}}
+                <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+        @if (session()->has('error'))
+            <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center justify-content-between"
+                role="alert">
+                <div>
+                    <i class="fas fa-exclamation-circle me-2"></i> {{ session('error') }}
+                </div>
+                <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+    </div>
     <div class="tab-content mt-3">
         <div class="tab-pane fade show active">
             <!-- Bulk form chỉ cho Pending -->
@@ -83,8 +88,32 @@
                             <td>{{ $order->id }}</td>
                             <td>{{ $order->buyer->name ?? $order->buyer_name }}</td>
                             <td>{{ number_format($order->total_price) }} VND</td>
-                            <td>{{ $order->status }}</td>
-                            <td>{{ $order->payment_status }}</td>
+                            <td>
+                                @php
+                                    $statusColors = [
+                                        'Pending' => 'bg-warning text-dark', // Vàng
+                                        'Shipping' => 'bg-info text-dark', // Xanh dương nhạt
+                                        'Delivered' => 'bg-primary', // Xanh dương đậm
+                                        'Completed' => 'bg-success', // Xanh lá
+                                        'Cancelled' => 'bg-danger', // Đỏ
+                                        'Returned' => 'bg-secondary', // Xám
+                                    ];
+
+                                    $statusNames = [
+                                        'Pending' => 'Chờ xác nhận',
+                                        'Shipping' => 'Đang giao',
+                                        'Delivered' => 'Đã giao',
+                                        'Completed' => 'Hoàn thành',
+                                        'Cancelled' => 'Đã hủy',
+                                        'Returned' => 'Trả hàng',
+                                    ];
+                                @endphp
+
+                                <span class="badge {{ $statusColors[$order->status] ?? 'bg-secondary' }}">
+                                    {{ $statusNames[$order->status] ?? $order->status }}
+                                </span>
+                            </td>
+                            <td>{{ $order->payment_status_vn }}</td>
                             <td>{{ $order->created_at->format('d/m/Y H:i') }}</td>
                             <td>
                                 <a href="{{ route('seller.orders.show', $order->id) }}" class="btn btn-info btn-sm">Xem
@@ -124,8 +153,8 @@
                         <h5 class="modal-title" id="reviewModalLabel">
                             Đánh giá cho Đơn hàng #{{ $orderForReview->id }}
                         </h5>
-                        <button type="button" class="btn-close" wire:click="closeReviewModal"
-                            aria-label="Close"></button>
+                        <button type="button" wire:click="closeReviewModal" aria-label="Close"><i
+                                class="fas fa-times"></i></button>
                     </div>
                     <div class="modal-body">
 
@@ -175,7 +204,7 @@
 
                                         <div class="w-100">
                                             <strong>{{ $review->buyer->name ?? 'Người dùng' }}</strong>
-                                            
+
                                             <div class="text-warning mb-1">
                                                 @for ($i = 0; $i < 5; $i++)
                                                     <i
@@ -186,11 +215,11 @@
 
                                             <div class="bg-light p-3 rounded">
                                                 <form wire:submit.prevent="submitReply({{ $review->id }})">
-                                                    <label for="reply-{{ $review->id }}" class="form-label fw-bold">Phản hồi của
+                                                    <label for="reply-{{ $review->id }}"
+                                                        class="form-label fw-bold">Phản hồi của
                                                         bạn:</label>
                                                     <textarea class="form-control" id="reply-{{ $review->id }}" rows="3"
-                                                        placeholder="Viết phản hồi cho khách hàng..."
-                                                        wire:model.defer="replies.{{ $review->id }}">
+                                                        placeholder="Viết phản hồi cho khách hàng..." wire:model.defer="replies.{{ $review->id }}">
                                                     </textarea>
                                                     <button type="submit" class="btn btn-primary btn-sm mt-2"
                                                         wire:loading.attr="disabled"
@@ -208,7 +237,7 @@
                                                     </button>
                                                 </form>
                                             </div>
-                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             @endforeach

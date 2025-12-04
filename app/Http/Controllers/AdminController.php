@@ -33,6 +33,13 @@ class AdminController extends Controller
         // --- THÊM LOGIC ĐẾM ĐƠN HÀNG ---
         $totalOrders = Order::count(); //
         $totalProducts = Product::count();
+        $totalRevenue = 0;
+
+        for ($i = 0; $i < $totalOrders; $i++) {
+            $order = Order::all()[$i];
+            $totalRevenue += $order->total_price;
+        }
+
         // (Giả định role của người mua là 'buyer' và người bán là 'seller')
         $sellerCount = User::where('role', 'seller')->count();
         $buyerCount = User::where('role', 'buyer')->count();
@@ -73,7 +80,8 @@ class AdminController extends Controller
             'totalOrders',
             'totalProducts',
             'userChartData',
-            'productStatusData'
+            'productStatusData',
+            'totalRevenue'
         ));
     }
     public function userDashboard(Request $request)
@@ -119,29 +127,36 @@ class AdminController extends Controller
             Storage::delete('public/' . $user->img);
             $user->img = null;
         }
+        $oldRole = $user->role;
+        $newRole = $request->role;
+
+        // Nếu từ buyer lên seller → tự động tạo shop_name
+        if ($oldRole === 'buyer' && $newRole === 'seller') {
+            $user->shop_name = $user->name;
+        }
 
 
-        $data = $request->only(['role', 'status', 'img','ekyc_status']);
 
-        if($request->status=='inactive' && $user->role == 'seller'){
+        $data = $request->only(['role', 'status', 'img', 'ekyc_status']);
+
+        if ($request->status == 'inactive' && $user->role == 'seller') {
             // lưu trạng thái hiện tại vào previous_status trước khi cập nhật
             $product = Product::where('seller_id', $user->id)->first();
-            if($product){
+            if ($product) {
                 $product->previous_status = $product->status;
                 $product->status = Product::STATUS_HIDDEN;
                 $product->save();
             }
-        }
-        elseif($request)
-        if($request->status=='active' && $user->role == 'seller'){
-            // khôi phục trạng thái từ previous_status khi kích hoạt lại
-            $product = Product::where('seller_id', $user->id)->first();
-            if($product && $product->previous_status){
-                $product->status = $product->previous_status;
-                $product->previous_status = null; // xóa previous_status sau khi khôi phục
-                $product->save();
+        } elseif ($request)
+            if ($request->status == 'active' && $user->role == 'seller') {
+                // khôi phục trạng thái từ previous_status khi kích hoạt lại
+                $product = Product::where('seller_id', $user->id)->first();
+                if ($product && $product->previous_status) {
+                    $product->status = $product->previous_status;
+                    $product->previous_status = null; // xóa previous_status sau khi khôi phục
+                    $product->save();
+                }
             }
-        }
         if ($request->filled('ekyc_status') && $request->ekyc_status === 'rejected') {
             // xóa ảnh eKYC nếu bị từ chối (dùng disk rõ ràng)
             if ($user->cccd_front_image_path && Storage::disk('local')->exists($user->cccd_front_image_path)) {

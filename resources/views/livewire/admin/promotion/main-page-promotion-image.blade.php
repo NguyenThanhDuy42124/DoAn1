@@ -20,7 +20,7 @@
         </li>
         <li class="nav-item">
             <button class="nav-link {{ $tab === 'other' ? 'active' : '' }}" wire:click="setTab('other')">
-                Promotion?
+                Promotion
             </button>
         </li>
     </ul>

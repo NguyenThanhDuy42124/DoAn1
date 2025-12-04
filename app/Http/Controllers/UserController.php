@@ -22,12 +22,28 @@ class UserController extends Controller
             "gender" => "nullable|string|in:male,female,other",
             "address" => "nullable|string|max:255",
         ]);
+        try {
+            $existingUser = User::where('email', $incomingData['email'])->first();
+            if ($existingUser) {
+                return back()->withErrors([
+                    'email' => 'Email đã được sử dụng. Vui lòng chọn email khác.',
+                ])->onlyInput('email');
+            }
+        } catch (\Exception $e) {
+            return back()->withErrors([
+                'database' => 'Đã xảy ra lỗi trong quá trình kiểm tra email. Vui lòng thử lại sau.',
+            ])->onlyInput('email');
+        }
+
         $incomingData['img'] = null; // default null for profile image
         $incomingData["password"] = bcrypt($incomingData["password"]);
         $incomingData["status"] = "active";
         $user = User::create($incomingData);
+
+
         Auth::login($user);
         return redirect('/dashboard');
+
     }
     // hàm này để đăng xuất
     public function logout(Request $request)
@@ -99,13 +115,12 @@ class UserController extends Controller
                 ->with('error', 'Bạn cần hoàn thành eKYC và được xác minh trước khi gửi yêu cầu trở thành người bán.');
         }
         $admins = User::where('role', 'admin')->get();
-        foreach ($admins as $admin) {
+
             Notification::create([
                 'user_id' => $user->id,
                 'type' => 'Buyer_Request',
                 'message' => 'Bạn đã gửi yêu cầu trở thành người bán. với ID: ' . $user->id . ' Vui lòng chờ xác minh từ quản trị viên.',
             ]);
-        }
 
         return redirect()->back()->with('message', 'Yêu cầu của bạn đã được gửi thành công. Vui lòng chờ xét duyệt từ quản trị viên.');
     }

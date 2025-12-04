@@ -63,20 +63,20 @@ class ProductForm extends Component
      */
    public function mount($productId = null)
     {
-        // *** SỬA: Đơn giản hóa query Category ***
         $this->allCategories = Category::orderBy('name')->get();
         
-        $this->allBrands = Brand::orderBy('name')->get();
+        // *** SỬA 1: Mặc định KHÔNG load brand nào cả (để user phải chọn category trước) ***
+        $this->allBrands = collect(); 
         $this->categoryAttributes = collect();
 
         if ($productId) {
-            // *** SỬA: Bỏ 'attributeValues' ra khỏi query ***
+            // EDIT MODE
             $productModel = Product::with(['images'])->findOrFail($productId);
 
             $this->product = $productModel;
             $this->productId = $productModel->id;
 
-            // Fill dữ liệu tĩnh (Giữ nguyên)
+            // Fill data
             $this->category_id = $productModel->category_id;
             $this->name = $productModel->name;
             $this->price = $productModel->price;
@@ -84,14 +84,18 @@ class ProductForm extends Component
             $this->stock = $productModel->stock;
             $this->description = $productModel->description;
             $this->existingImages = $productModel->images->toArray();
-
-            // Load "Khuôn Mẫu" (Logic này vẫn đúng)
-            $this->loadCategoryAttributes(); 
-
-            // *** SỬA: Đọc thuộc tính từ cột JSON (Model đã cast sang array) ***
+            
+            // Fill Attributes from JSON
             $this->attributeValues = $productModel->attributes ?? [];
 
-        } else { // Nếu là Create
+            // *** SỬA 2: Nếu đang Edit, load Brand và Attribute của Category hiện tại ***
+            if ($this->category_id) {
+                $this->loadBrandsForCategory($this->category_id);
+                $this->loadCategoryAttributes();
+            }
+
+        } else { 
+            // CREATE MODE
             $this->product = new Product(); 
         }
     }
@@ -101,10 +105,24 @@ class ProductForm extends Component
      */
     public function updatedCategoryId($value)
     {
+        // 1. Load Attribute (Code cũ)
         $this->loadCategoryAttributes();
         $this->attributeValues = [];
-    }
+        $this->brand_id = ''; // Quan trọng: Reset brand đã chọn vì nó không còn hợp lệ
 
+        // 2. Load Brand theo Category (CODE MỚI - Magic ở đây)
+        if (!empty($value)) {
+            // Lấy danh sách Brand thuộc về Category này
+            $this->allBrands = Brand::whereHas('categories', function($q) use ($value) {
+                $q->where('category_id', $value);
+            })->orderBy('name')->get();
+        } else {
+            // Nếu bỏ chọn category, reset danh sách brand
+            $this->allBrands = collect(); 
+        }
+        
+        // Reset brand đã chọn (tránh trường hợp chọn Brand của Laptop rồi đổi sang Áo thun)
+    }
     /**
      * Helper: Tải "Khuôn Mẫu" thuộc tính (Giữ nguyên)
      */
@@ -120,6 +138,12 @@ class ProductForm extends Component
         } else {
             $this->categoryAttributes = collect(); 
         }
+    }
+    public function loadBrandsForCategory($categoryId)
+    {
+        $this->allBrands = Brand::whereHas('categories', function($q) use ($categoryId) {
+            $q->where('category_id', $categoryId);
+        })->orderBy('name')->get();
     }
 
      /**

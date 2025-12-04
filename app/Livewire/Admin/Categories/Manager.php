@@ -3,115 +3,122 @@
 namespace App\Livewire\Admin\Categories;
 
 use App\Models\Category;
-use App\Models\Attribute; // Giữ lại
+use App\Models\Attribute;
+use App\Models\Brand;
 use Livewire\Component;
 
 class Manager extends Component
 {
-    // 1. Thuộc tính cho Danh sách
-    public $categories; // Collection của TẤT CẢ danh mục
+    // Danh sách
+    public $categories;
 
-    // 2. Thuộc tính cho Form (Modal)
+    // Modal & Form
     public $showModal = false;
-    public ?Category $editingCategory; // Category đang được sửa
-    public $state = []; // Dữ liệu form (wire:model="state.name")
+    public ?Category $editingCategory;
+    public $state = []; // Chứa name, slug...
 
-    // 3. Thuộc tính cho việc Gán Thuộc tính (VẪN GIỮ NGUYÊN)
+    // Quan hệ
     public $allAttributes;
-    public $selectedAttributes = []; // Mảng các ID thuộc tính được check
+    public $selectedAttributes = [];
 
-    /**
-     * Khởi chạy component
-     */
+    public $allBrands;
+    public $selectedBrands = [];
+
     public function mount()
     {
-        // Vẫn load "Khuôn Mẫu"
         $this->allAttributes = Attribute::orderBy('name')->get(); 
-        
-        // Load danh sách đơn giản
+        $this->allBrands = Brand::orderBy('name')->get();
         $this->loadCategories(); 
-
-        // Khởi tạo model rỗng
         $this->editingCategory = new Category();
     }
 
-    /**
-     * Lấy dữ liệu danh sách (siêu đơn giản)
-     */
     public function loadCategories()
     {
-        // Không còn whereNull, không còn 'children', không còn 'sort_order'
-        $this->categories = Category::orderBy('name')->get(); 
+        // Load kèm đếm số lượng cho nhẹ query
+        $this->categories = Category::withCount(['attributes', 'brands'])->orderBy('name')->get(); 
     }
 
-    //--- PHẦN 2: XỬ LÝ FORM ---
+    // --- XỬ LÝ FORM ---
 
-    /**
-     * Mở modal để tạo mới
-     */
+    // HÀM MỚI: Đóng modal và reset sạch sẽ
+    public function closeModal()
+    {
+        $this->showModal = false;
+        $this->resetErrorBag();
+        $this->state = [];
+        $this->selectedAttributes = [];
+        $this->selectedBrands = [];
+
+        // --- THÊM 2 DÒNG NÀY ---
+        // 1. Để quên hẳn cái danh mục đang sửa đi
+        $this->editingCategory = new Category(); 
+        
+        // 2. Để lấy lại số lượng thuộc tính/hãng hiển thị ra bảng
+        $this->loadCategories(); 
+    }
+
     public function createNewCategory()
     {
-        $this->resetErrorBag();
-        $this->editingCategory = new Category(); // Model rỗng
-        $this->state = []; // Xóa dữ liệu form
-        $this->selectedAttributes = []; // Xóa thuộc tính đã chọn
-        $this->showModal = true;
+        $this->closeModal(); // Reset trước cho chắc
+        $this->editingCategory = new Category();
+        $this->showModal = true; // Bật modal
     }
 
-    /**
-     * Mở modal để sửa
-     */
     public function editCategory($categoryId)
     {
         $this->resetErrorBag();
-        // Vẫn load 'attributes' để biết cái nào đã check
-        $this->editingCategory = Category::with('attributes')->find($categoryId);
         
-        // Nạp dữ liệu vào form (chỉ còn 'name')
+        $this->editingCategory = Category::with(['attributes', 'brands'])->find($categoryId);
+        
+        if (!$this->editingCategory) {
+            return;
+        }
+        
         $this->state = $this->editingCategory->only(['name']); 
-        
-        // Nạp các thuộc tính đã được gán (GIỮ NGUYÊN)
         $this->selectedAttributes = $this->editingCategory->attributes->pluck('id')->toArray();
+        $this->selectedBrands = $this->editingCategory->brands->pluck('id')->toArray(); 
         
         $this->showModal = true;
     }
 
-    /**
-     * Lưu (Tạo mới hoặc Cập nhật)
-     */
     public function saveCategory()
     {
-        // Rule siêu đơn giản
-        $rules = [
+        $this->validate([
             'state.name' => 'required|string|max:255|unique:categories,name,' . $this->editingCategory->id,
-        ];
+        ]);
 
-        $this->validate($rules);
-
-        // 1. Lưu thông tin cơ bản (chỉ có 'name')
+        // 1. Lưu Category
         $this->editingCategory->fill($this->state);
         $this->editingCategory->save();
 
-        // 2. Đồng bộ hóa (sync) các thuộc tính (VẪN GIỮ NGUYÊN)
-        // Đây là logic "Khuôn Mẫu"
+        // 2. Lưu quan hệ (Pivot table)
         $this->editingCategory->attributes()->sync($this->selectedAttributes);
+        $this->editingCategory->brands()->sync($this->selectedBrands);
 
-        // 3. Đóng modal và tải lại danh sách
-        $this->showModal = false;
-        $this->loadCategories(); // Tải lại danh sách
-        // Không cần redirect cả trang
+        // 3. Xong việc
+        $this->closeModal();
+        $this->loadCategories(); 
+    }
+    
+    public function deleteCategory($id) {
+        $category = Category::find($id);
+        
+        if($category) {
+            $category->delete();
+        }
+
+        // --- THÊM ĐOẠN NÀY QUAN TRỌNG ---
+        // Nếu cái thằng vừa xóa chính là thằng đang được chọn để sửa (lưu trong bộ nhớ)
+        // Thì phải reset về rỗng ngay, nếu không Livewire sẽ tìm nó và báo lỗi 404
+        if($this->editingCategory && $this->editingCategory->id == $id) {
+            $this->editingCategory = new Category();
+        }
+        
+        $this->loadCategories();
     }
 
-    //--- XÓA TOÀN BỘ PHẦN KÉO-THẢ VÀ ĐỆ QUY ---
-    // Xóa hàm updateOrder()
-    // Xóa hàm updateRecursive()
-    // Xóa hàm loadFormattedCategories()
-    // Xóa hàm buildCategoryList()
-
-    //--- PHẦN RENDER ---
     public function render()
     {
-        // Không cần gọi loadFormattedCategories() nữa
         return view('admin.categories.manager')->layout('layouts.AdminDashBoard');
     }
 }

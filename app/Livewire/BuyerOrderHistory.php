@@ -122,11 +122,12 @@ class BuyerOrderHistory extends Component
      */
     public function openReviewModal($productId, $orderId)
     {
-        $this->productToReview = Product::find($productId);
+        $this->productToReview = Product::with('images')->find($productId); 
         $this->current_order_id = $orderId;
         
         $this->resetValidation();
-        $this->resetReviewFields(); 
+        $this->resetReviewFields();
+        
 
         // ==========================================================
         // SỬA LỖI: Khôi phục lại điều kiện ->where('order_id', $orderId)

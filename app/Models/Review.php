@@ -14,6 +14,7 @@ class Review extends Model
         'reply', // Thêm 'reply' dựa trên CSDL của bạn
         'order_id', // Bạn cũng nên xem xét thêm cột này
         'buyer_additional_feedback',
+        'is_hidden',
     ];
 
     /**

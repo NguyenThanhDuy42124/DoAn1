@@ -12,12 +12,19 @@ class HiddenRejected extends Component
 {
     use WithPagination;
 
+    // hiển thị chuẩn bootstrap
+    protected $paginationTheme = 'bootstrap';
+
     public $tab = 'hidden'; // hidden | rejected
     public $search = '';
     public $reason_filter = '';
     public $expanded = [];
 
     protected $queryString = ['tab', 'search', 'reason_filter'];
+
+    // reset page khi thay đổi các filter
+    public function updatedSearch() { $this->resetPage(); }
+    public function updatedReasonFilter() { $this->resetPage(); }
 
     public function mount()
     {
@@ -33,7 +40,8 @@ class HiddenRejected extends Component
 
     public function toggleExpand($id)
     {
-        $this->expanded = $this->expanded[0] == $id ? [] : [$id];
+        // an toàn khi $this->expanded rỗng
+        $this->expanded = (count($this->expanded) && $this->expanded[0] == $id) ? [] : [$id];
     }
 
     public function restore($id)

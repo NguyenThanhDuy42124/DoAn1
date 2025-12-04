@@ -95,7 +95,7 @@
                                         {!! strip_tags(\Illuminate\Support\Str::before($notification->message, "||---REPLY---||")) !!}
                                     </div>
                                 </div>
-                                <small class="text-muted">{{ $notification->created_at->diffForHumans() }}</small>
+                                <small class="text-muted">{{ $notification->created_at->locale('vi')->diffForHumans() }}</small>
                             </div>
 
                             {{-- Actions --}}
@@ -103,7 +103,6 @@
                                 @if (!$notification->is_read)
                                     <form action="{{ route('notifications.markAsRead', $notification->id) }}" method="POST" class="d-inline">
                                         @csrf
-                                        @method('PATCH')
                                         <button type="submit" class="btn btn-sm btn-link" title="Đánh dấu đã đọc" onclick="event.stopPropagation();">
                                             <i class="fas fa-check-circle text-primary fs-5"></i>
                                         </button>
@@ -125,7 +124,7 @@
             {{-- Phân trang --}}
             @if ($notifications->hasPages())
                 <div class="card-footer bg-white">
-                    {{ $notifications->links() }}
+                    {{ $notifications->links('pagination::bootstrap-5') }}
                 </div>
             @endif
             

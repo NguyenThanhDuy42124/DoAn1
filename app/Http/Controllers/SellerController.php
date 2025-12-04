@@ -17,23 +17,50 @@ use App\Models\Brand;
 
 class SellerController extends Controller
 {   
-   public function index()
-{
-    // Lấy top 4 cửa hàng uy tín (seller)
+  public function index(Request $request) 
+{   
+    
+    // 1. Lấy danh sách Top Seller (Giữ nguyên code cũ của bạn)
     $shops = User::where('role', 'seller')
-                     ->withAvg('sellerReviews', 'rating') // <-- THAY ĐỔI Ở ĐÂY
+                     ->withAvg('sellerReviews', 'rating')
                      ->take(4)
                      ->get();
 
-    // Lấy sản phẩm (đã lọc status)
-    // Tải kèm 'seller' và 'images' để dùng ở view
-    $products = Product::with(['seller', 'images']) 
-                       ->where('status', 'Approved') // Chỉ lấy sản phẩm đã duyệt
-                       ->orderByDesc('created_at')
-                       ->paginate(12); // Phân trang
+    // 2. Xử lý Logic lọc sản phẩm
+    $sort = $request->get('sort', 'newest'); // Mặc định là 'newest'
 
-    // Trả về view, chỉ truyền 'shops' và 'products'
-    return view('MainPage', compact('shops', 'products'));
+    // Khởi tạo query cơ bản
+    $productQuery = Product::with(['seller', 'images'])
+                           ->where('status', 'Approved');
+
+    switch ($sort) {
+        case 'top_rated':
+            // Sắp xếp theo Rating trung bình (dựa vào bảng reviews)
+            // Cần định nghĩa relationship reviews() trong model Product
+            $productQuery->withAvg('reviews', 'rating')
+                         ->orderByDesc('reviews_avg_rating');
+            break;
+
+        case 'best_seller':
+            // Sắp xếp theo số lượng bán (dựa vào bảng order_items)
+            $productQuery->leftJoin('order_items', 'products.id', '=', 'order_items.product_id')
+                         ->select('products.*', DB::raw('COALESCE(SUM(order_items.quantity), 0) as total_sold'))
+                         ->groupBy('products.id')
+                         ->orderByDesc('total_sold');
+            break;
+
+        case 'newest':
+        default:
+            // Sắp xếp theo mới nhất (dựa vào bảng products)
+            $productQuery->orderByDesc('created_at');
+            break;
+    }
+
+    // Thực hiện truy vấn và phân trang
+    // appends($request->all()) giúp giữ lại tham số sort trên URL khi chuyển trang
+    $products = $productQuery->paginate(8)->appends($request->all());
+
+    return view('MainPage', compact('shops', 'products', 'sort'));
 }
     public function dashboard()
 {

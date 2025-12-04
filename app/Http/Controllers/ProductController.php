@@ -127,130 +127,7 @@ class ProductController extends Controller
         return view('seller.products.index', compact('products', 'categories', 'brands'));
     }
 
-    public function showImportForm()
-    {
-        // *** SỬA: Đơn giản hóa query Category ***
-        $categories = Category::orderBy('name')->get(); // Không cần 'whereDoesntHave'
-        return view('seller.products.Import', compact('categories'));
-    }
-
-    // Phương thức xử lý Import (Bước 4)
-    public function import(Request $request)
-    {
-        // 1. Validation (Giữ nguyên)
-        $request->validate([
-            'category_id' => 'required|exists:categories,id',
-            'excel_file' => 'required|file|mimes:xlsx,xls,csv|max:5120',
-            'images.*'   => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
-        ]);
-
-        $categoryId = $request->input('category_id');
-        $sellerId = Auth::id();
-        $filePath = $request->file('excel_file')->path();
-
-        // *** THÊM MỚI: Lấy "Khuôn Mẫu" thuộc tính của danh mục này ***
-        // (Logic này vẫn đúng)
-        $categoryAttributes = Attribute::whereHas('categories', function ($q) use ($categoryId) {
-            $q->where('category_id', $categoryId);
-        })->get();
-
-        // Tạo mảng chỉ chứa TÊN thuộc tính (RAM, CPU,...)
-        $attributeColumnNames = $categoryAttributes->pluck('name')->all();
-
-        // Xử lý ảnh (Giữ nguyên)
-        $uploadedImages = collect($request->file('images'))->keyBy(function ($file) {
-            return $file->getClientOriginalName();
-        });
-
-        DB::beginTransaction();
-        $importedCount = 0;
-
-        try {
-            (new FastExcel())
-                ->import($filePath, function ($row) use (
-                    $categoryId,
-                    $sellerId,
-                    $uploadedImages,
-                    &$importedCount,
-                    $categoryAttributes,
-                    $attributeColumnNames
-                ) {
-
-                    if (empty($row['name']) || empty($row['price'])) {
-                        return null;
-                    }
-
-                    // Xử lý Brand (Giữ nguyên)
-                    $brand_id = null;
-                    if (!empty($row['brand'])) {
-                        $brand = Brand::firstOrCreate(['name' => trim($row['brand'])]);
-                        $brand_id = $brand->id;
-                    }
-
-                    // *** THÊM MỚI: Tách dữ liệu tĩnh và dữ liệu động (JSON) ***
-                    $staticData = [
-                        'seller_id'   => $sellerId,
-                        'category_id' => $categoryId,
-                        'brand_id'    => $brand_id,
-                        'name'        => $row['name'],
-                        'price'       => (float)($row['price']),
-                        'stock'       => (int)($row['stock'] ?? 0),
-                        'description' => $row['description'] ?? null,
-                    ];
-
-                    // Lọc mảng $row, chỉ lấy các cột có tên nằm trong "Khuôn Mẫu"
-                    $attributesData = [];
-                    foreach ($attributeColumnNames as $columnName) {
-                        if (isset($row[$columnName]) && !empty($row[$columnName])) {
-                            $attributesData[$columnName] = $row[$columnName];
-                        }
-                    }
-
-                    // *** SỬA: Tạo sản phẩm với cột 'attributes' (JSON) ***
-                    $product = Product::create($staticData + [
-                        'attributes' => $attributesData // Gán mảng thuộc tính vào đây
-                    ]);
-
-                    // *** XÓA: Bỏ toàn bộ khối xử lý EAV cũ ***
-                    // foreach ($categoryAttributes as $attribute) { ... }
-
-                    // Xử lý hình ảnh (Giữ nguyên)
-                    if ($uploadedImages->isNotEmpty()) {
-                        // Tìm tất cả các cột ảnh trong dòng hiện tại
-                        $imageColumns = array_filter($row, function ($key) {
-                            return str_contains(strtolower($key), 'image_');
-                        }, ARRAY_FILTER_USE_KEY);
-
-                        foreach ($imageColumns as $imageName) {
-                            $imageName = trim($imageName);
-                            // Kiểm tra tên file ảnh có trong danh sách ảnh đã upload không
-                            if ($imageName && $uploadedImages->has($imageName)) {
-                                $imageFile = $uploadedImages->get($imageName);
-
-                                // Lưu file ảnh vào storage và tạo bản ghi DB
-                                $path = $imageFile->store('product_images', 'public');
-
-                                ProductImage::create([
-                                    'product_id' => $product->id,
-                                    'image_path' => $path,
-                                ]);
-                            }
-                        }
-                    }
-
-                    $importedCount++;
-                    return $product;
-                });
-
-            DB::commit();
-
-            return redirect()->back()->with('success', 'Đã nhập thành công ' . $importedCount . ' sản phẩm.');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error("Import Error: " . $e->getMessage() . " on line " . $e->getLine());
-            return redirect()->back()->with('error', 'Lỗi nhập dữ liệu: Đã xảy ra lỗi. Vui lòng kiểm tra file Excel và Log.');
-        }
-    }
+    
 
     public function listProducts(Request $request)
     {
@@ -314,66 +191,67 @@ class ProductController extends Controller
         return view('pages.listproducts', compact('products', 'brands', 'categories'));
     }
 
-    public function showProductDetail($id)
+   public function showProductDetail($id)
     {
-        // 1. Tải sản phẩm chính VÀ đếm/tính trung bình reviews
-        // (Tôi thêm 'brand' và 'category' để hiển thị đầy đủ thông tin ở view)
-
+        // 1. Tải sản phẩm & Số liệu thống kê
+        // withCount và withAvg sẽ tính TOÀN BỘ database (kể cả bài ẩn)
         $product = Product::with(['images', 'brand', 'category'])
-            ->withCount('reviews') // <-- Tự động tạo biến 'reviews_count'
-            ->withAvg('reviews', 'rating') // <-- Tự động tạo biến 'reviews_avg_rating'
+            ->withCount('reviews')
+            ->withAvg('reviews', 'rating')
             ->findOrFail($id);
-        // Các trạng thái cần bảo mật
+
+        // --- Logic bảo mật (Giữ nguyên của bạn) ---
         $protectedStatuses = [
-            Product::STATUS_PENDING ?? 'pending',
-            Product::STATUS_REJECTED ?? 'rejected',
-            Product::STATUS_HIDDEN ?? 'hidden',
+            Product::STATUS_PENDING ?? 'Pending',
+            Product::STATUS_REJECTED ?? 'Rejected',
+            Product::STATUS_HIDDEN ?? 'Hidden',
         ];
 
-        // Nếu sản phẩm ở trạng thái "bảo mật" (pending/rejected/hidden)
         if (in_array($product->status, $protectedStatuses, true)) {
-            $user = auth()->user();
-
-            // Nếu chưa đăng nhập -> chặn (hoặc chuyển sang 404 để che thông tin)
-            if (!$user) {
-                abort(403, 'Bạn cần có quyền hạn để xem sản phẩm này.');
-                // hoặc: abort(404); // ít lộ thông tin hơn
-            }
-
-            // Chỉ admin hoặc chính seller mới được phép
-            if ($user->role !== 'admin' && $user->id !== $product->seller_id) {
-                abort(403, 'Bạn không có quyền truy cập sản phẩm này.');
-                // hoặc: abort(404);
-            }
+             $user = Auth::user();
+             if (!$user) { abort(403, 'Bạn cần đăng nhập để xem sản phẩm này.'); }
+             if ($user->role !== 'admin' && $user->id !== $product->seller_id) {
+                 abort(403, 'Bạn không có quyền truy cập sản phẩm này.');
+             }
         }
+        // ------------------------------------------
 
-        // 2. Lấy thông tin seller (Giữ nguyên)
+        // 2. Lấy thông tin seller
         $seller = $product->seller;
 
-        // 3. Tải các đánh giá (có phân trang)
-        // Sắp xếp mới nhất, và tải kèm thông tin người mua (buyer)
+        // 3. Tải danh sách đánh giá (LOGIC LỌC MỚI)
+        $currentUserId = Auth::id();
+
         $reviews = $product->reviews()
             ->with('buyer')
-            ->latest()
-            ->paginate(5, ['*'], 'reviews_page'); // Phân trang 5 review/trang
+            ->where(function($query) use ($currentUserId) {
+                // Lấy các bài KHÔNG bị ẩn
+                $query->where('is_hidden', false);
 
-        // 4. Tải sản phẩm liên quan (cùng danh mục)
+                // NẾU đã đăng nhập, lấy thêm bài của chính người đó (kể cả khi is_hidden = true)
+                if ($currentUserId) {
+                    $query->orWhere('buyer_id', $currentUserId);
+                }
+            })
+            ->latest()
+            ->paginate(5, ['*'], 'reviews_page');
+
+        // 4. Tải sản phẩm liên quan
         $relatedProducts = Product::where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
-            // Bổ sung điều kiện giống như hàm listProducts
-            ->where('status', Product::STATUS_APPROVED)
-            // Bổ sung eager load 'images' để tối ưu view (tránh N+1)
+            ->where('status', Product::STATUS_APPROVED ?? 'Approved')
             ->with('images')
             ->latest()
-            ->take(5) // Lấy 5 sản phẩm
+            ->take(5)
             ->get();
 
-        // 5. Trả về view và truyền TẤT CẢ các biến
+        // 5. Lấy thông số kỹ thuật (Specs)
+        $specs = Attribute::whereHas('categories', function($q) use ($product) {
+            $q->where('category_id', $product->category_id);
+        })->orderBy('name')->get();
+
         return view('pages.product-detail', compact(
-            'product',
-            'seller',
-            'reviews', // <-- BIẾN MỚI
-            'relatedProducts' // <-- BIẾN MỚI
+            'product', 'seller', 'reviews', 'relatedProducts', 'specs'
         ));
     }
 
@@ -387,6 +265,28 @@ class ProductController extends Controller
         return redirect()->route('seller.products.index')
             ->with('success', 'Xóa sản phẩm thành công!');
     }
+    public function hidden($id)
+    {
+        // (Giữ nguyên, không thay đổi)
+        $product = Product::findOrFail($id);
+        $product->previous_status = $product->status;
+        $product->status = Product::STATUS_HIDDEN ?? 'Hidden';
+        $product->save();
+        return redirect()->route('seller.products.index')
+            ->with('success', 'Sản phẩm đã được ẩn thành công!');
+    }
+    public function RestoreFromHidden($id)
+    {
+        // (Giữ nguyên, không thay đổi)
+        $product = Product::findOrFail($id);
+        $product->status = $product->previous_status ?? Product::STATUS_APPROVED;
+        $product->previous_status = null;
+        $product->save();
+        return redirect()->route('seller.products.index')
+            ->with('success', 'Sản phẩm đã được khôi phục thành công!');
+    }   
+
+
 
     public function edit($id)
     {

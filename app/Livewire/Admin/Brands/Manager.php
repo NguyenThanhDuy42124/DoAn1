@@ -3,101 +3,85 @@
 namespace App\Livewire\Admin\Brands;
 
 use Livewire\Component;
-use App\Models\Brand; // <-- Đổi
+use App\Models\Brand;
 
 class Manager extends Component
 {
-    // 1. Dùng để render cái bảng
-    public $brands; // <-- Đổi
+    // Danh sách brands
+    public $brands;
 
-    // 2. Thuộc tính cho Form (Modal)
+    // Modal & Form
     public $showModal = false;
-    public ?Brand $editingBrand; // <-- Đổi
+    public ?Brand $editingBrand;
     public $state = []; 
 
-    /**
-     * Khởi chạy component
-     */
     public function mount()
     {
-        $this->loadBrands(); // <-- Đổi
-        $this->editingBrand = new Brand(); // <-- Đổi
+        $this->loadBrands();
+        $this->editingBrand = new Brand();
     }
 
-    /**
-     * Lấy danh sách
-     */
-    public function loadBrands() // <-- Đổi
+    public function loadBrands()
     {
-        $this->brands = Brand::orderBy('name')->get(); // <-- Đổi
+        $this->brands = Brand::orderBy('name')->get();
     }
 
-    //--- PHẦN XỬ LÝ FORM ---
+    // --- XỬ LÝ FORM ---
 
-    /**
-     * Mở modal để tạo mới
-     */
-    public function createNewBrand() // <-- Đổi
+    // HÀM QUAN TRỌNG: Đóng modal và reset
+    public function closeModal()
     {
+        $this->showModal = false;
         $this->resetErrorBag();
-        $this->editingBrand = new Brand(); // <-- Đổi
-        $this->state = []; 
+        $this->state = [];
+    }
+
+    public function createNewBrand()
+    {
+        $this->closeModal(); // Reset trước
+        $this->editingBrand = new Brand();
         $this->showModal = true;
     }
 
-    /**
-     * Mở modal để sửa
-     */
-    public function editBrand($brandId) // <-- Đổi
+    public function editBrand($brandId)
     {
         $this->resetErrorBag();
-        $this->editingBrand = Brand::find($brandId); // <-- Đổi
-        $this->state = $this->editingBrand->toArray(); 
-        $this->showModal = true;
-    }
-
-    /**
-     * Lưu (Tạo mới hoặc Cập nhật)
-     */
-    public function saveBrand() // <-- Đổi
-    {
-        $rules = [
-            'state.name' => 'required|string|max:255',
-            // Xóa trường 'type'
-        ];
-
-        // Kiểm tra trùng lặp tên
-        if (!$this->editingBrand->exists) {
-            $rules['state.name'] .= '|unique:brands,name'; // <-- Đổi
+        $this->editingBrand = Brand::find($brandId);
+        
+        if ($this->editingBrand) {
+            $this->state = $this->editingBrand->toArray();
+            $this->showModal = true;
         }
+    }
 
-        $this->validate($rules);
+    public function saveBrand()
+    {
+        // Validate gọn: Bắt buộc, tối đa 255 ký tự, không trùng tên (trừ chính nó ra khi sửa)
+        $this->validate([
+            'state.name' => 'required|string|max:255|unique:brands,name,' . $this->editingBrand->id,
+        ]);
 
-        // 1. Lưu thông tin
+        // Lưu
         $this->editingBrand->fill($this->state);
         $this->editingBrand->save();
 
-        // 2. Đóng modal và tải lại danh sách
-        $this->showModal = false;
-        $this->loadBrands(); // <-- Đổi
+        // Xong phim
+        $this->closeModal();
+        $this->loadBrands();
     }
 
-    /**
-     * Xóa
-     */
-    public function deleteBrand($brandId) // <-- Đổi
+    public function deleteBrand($brandId)
     {
         try {
-            Brand::find($brandId)->delete(); // <-- Đổi
-            $this->loadBrands(); // <-- Đổi
+            Brand::find($brandId)->delete();
+            $this->loadBrands();
         } catch (\Exception $e) {
-            // Xử lý lỗi
+            // Có thể thêm thông báo lỗi nếu cần (vd: đang có sản phẩm dùng brand này)
         }
     }
 
     public function render()
     {
-        return view('admin.brands.manager') // <-- Đổi
-               ->layout('layouts.AdminDashBoard');
+        return view('admin.brands.manager')->layout('layouts.AdminDashBoard');
     }
 }

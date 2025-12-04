@@ -14,6 +14,7 @@ class CartManager extends Component
     public $cartItems = [];
     public $selectedItems = [];
     public $quantities = [];
+    public $selectAll = false;
 
     public function mount()
     {
@@ -48,28 +49,39 @@ class CartManager extends Component
     public function loadCart()
     {
         $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
-        $items = CartItem::with('product.images')
+        
+        // 1. SỬA: Load thêm 'product.seller'
+        $items = CartItem::with(['product.images', 'product.seller']) 
                            ->where('cart_id', $cart->id)
                            ->orderBy('created_at', 'desc')
                            ->get();
-        // Convert to array và add stock_status để view dùng
+
         $this->cartItems = $items->map(function ($item) {
             $maxStock = $item->product->stock;
             $displayQty = min($item->quantity, $maxStock);
 
+            // Logic fix quantity nếu vượt quá stock
             if ($item->quantity > $maxStock) {
                 $item->quantity = $maxStock;
                 $item->save();
             }
 
             $item->stock_status = ($maxStock == 0) ? 'out_of_stock' : ($item->quantity > $maxStock ? 'limited_stock' : 'in_stock');
-
-            // Init quantities
             $this->quantities[$item->id] = $displayQty;
 
-            return $item->toArray();  // Bao gồm stock_status
+            return $item->toArray(); 
         })->toArray();
-
+    }
+    public function updatedSelectAll($value)
+    {
+        if ($value) {
+            $this->selectedItems = collect($this->cartItems)
+                ->pluck('id')
+                ->map(fn($id) => (string) $id)
+                ->toArray();
+        } else {
+            $this->selectedItems = [];
+        }
     }
 
     public function updatedQuantities($value, $key)  // Hook khi quantity thay đổi
@@ -98,10 +110,15 @@ class CartManager extends Component
 
         $this->loadCart();  // Refresh data để update total/stock_status
     }
+    public function updatedSelectedItems()
+    {
+        // Kiểm tra: Nếu số lượng item đã chọn == tổng số item trong giỏ
+        // Thì bật SelectAll lên, ngược lại thì tắt đi.
+        $this->selectAll = count($this->cartItems) > 0 && count($this->selectedItems) === count($this->cartItems);
+    }
 
     public function removeItem($cartItemId)
     {
-        $cartItem = CartItem::find($cartItemId);
         $cartItem = CartItem::find($cartItemId);
         if ($cartItem && $cartItem->cart->user_id === Auth::id()) {
             
@@ -150,11 +167,15 @@ class CartManager extends Component
         session(['selected_cart_items' => $this->selectedItems]);
 
         // Fix: Dùng $this->redirect() trong Livewire 3
-        $this->redirect(route('buyer.checkouts.checkout'));
+        return redirect()->route('buyer.checkouts.review');
     }
 
     public function render()
     {
-        return view('buyer.carts.cart-manager')->layout('layouts.app');  // Đảm bảo path view đúng
+        $groupedItems = collect($this->cartItems)->groupBy(function($item) {
+            return $item['product']['seller_id'];
+        });
+
+        return view('buyer.carts.cart-manager', ['groupedItems' => $groupedItems])->layout('layouts.app');  // Đảm bảo path view đúng
     }
 }

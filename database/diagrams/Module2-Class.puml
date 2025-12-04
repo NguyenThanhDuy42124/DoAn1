@@ -1,0 +1,171 @@
+@startuml
+' Cấu hình hiển thị
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide circle
+title MODULE 2: PRODUCT CATALOG & INVENTORY
+
+' Cấu hình cho STUB CLASS
+skinparam class {
+    BackgroundColor<<Stub>> #F0F0F0
+    BorderColor<<Stub>> #Gray
+    BorderStyle<<Stub>> dashed
+    FontColor<<Stub>> #555555
+}
+
+
+
+
+
+scale 2
+
+
+  
+class "Categories" {
+    + id : Long
+    + name : String
+    + createdAt : DateTime
+    + updatedAt : DateTime
+    + description : String
+}
+
+class "BrandCategory" {
+    + id : Long
+    + category_id : Long
+    + brand_id : Long
+}
+
+class "Brands" {
+    + id : Long
+    + name : String
+    + createdAt : DateTime
+    + updatedAt : DateTime
+}
+
+class "Attributes" {
+    + id : Long
+    + name : String
+    + type : String
+    + unit : String
+    + is_filterable : Boolean
+    + createdAt : DateTime
+    + updatedAt : DateTime
+}
+
+class "AttributeOptions" {
+    + id : Long
+    + attributeId : Long
+    + value : String
+    + label : String
+    + sortOrder : Integer
+}
+
+class "CategoryAttributes" {
+    + categoryId : Long
+    + attributeId : Long
+}
+
+
+  
+
+
+class "Products" {
+    + id : Long
+    + sellerId : Long
+    + categoryId : Long
+    + brandId : Long
+    + name : String
+    + price : Double
+    + stock : Integer
+    + description : String
+    + status : String
+    + previousStatus : String
+    + createdAt : DateTime
+    + updatedAt : DateTime
+    + attributes : String
+}
+
+class "ProductImages" {
+    + id : Long
+    + productId : Long
+    + imagePath : String
+    + createdAt : DateTime
+    + updatedAt : DateTime
+}
+
+
+
+' === STUB CLASS (Đại diện từ Module khác) ===
+class "User_Ref" <<Stub>> {
+    + id : Long
+    + name : String
+    (Seller / Admin Identity)
+}
+
+
+together {
+class "InventoryTransactions" {
+    + id : Long
+    + productId : Long
+    + sellerId : Long
+    + transactionType : String
+    + quantity : Integer
+    + notes : String
+    + createdAt : DateTime
+    + updatedAt : DateTime
+}
+
+
+class "ModerationLogs" {
+    + id : Long
+    + productId : Long
+    + adminId : Long
+    + action : String
+    + fromStatus : String
+    + toStatus : String
+    + note : String
+    + createdAt : DateTime
+    + updatedAt : DateTime
+}
+}
+
+
+
+
+
+' === QUAN HỆ ===
+
+' Quan hệ Catalog cơ bản
+Categories "1" -- "0..*" Products : classifies >
+Brands "1" -- "0..*" Products : manufactures >
+Products "1" *-- "0..*" ProductImages : has >
+
+' 
+
+
+' QUAN HỆ NHIỀU - NHIỀU GIỮA CATEGORY VÀ ATTRIBUTE
+' Được tách thành 2 quan hệ 1-Nhiều thông qua bảng trung gian
+Categories "1" -- "0..*" CategoryAttributes : defines structure >
+Attributes "1" -- "0..*" CategoryAttributes : used in >
+
+' Quan hệ Attribute và Option
+Attributes "1" *-- "0..*" AttributeOptions : has options >
+
+' Quan hệ lịch sử/log
+Products "1" -- "0..*" InventoryTransactions : history >
+Products "1" -up- "0..*" ModerationLogs : audited by >
+
+
+Categories "1" -up- "0..*" BrandCategory : parents >
+Brands "1" -up- "0..*"  BrandCategory : used in >
+
+
+' Quan hệ với Module bên ngoài (User/Seller)
+' 1 Seller bán nhiều Product
+"User_Ref" "1" -- "0..*" Products : sells >
+' 1 User (Kho/Seller) thực hiện nhiều giao dịch kho
+"User_Ref" "1" -- "0..*" InventoryTransactions : performed by >
+' 1 Admin thực hiện nhiều log kiểm duyệt
+"User_Ref" "1" -up- "0..*" ModerationLogs : reviewed by >
+
+@enduml

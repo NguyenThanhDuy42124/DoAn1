@@ -58,7 +58,7 @@
                                                 <td>{{ $user->name }}</td>
                                                 <td>{{ $user->email }}</td>
                                                 <td>
-                                                    {{ $user->role }}
+                                                    {{ $user->role_label }}
                                                     <!-- cái này nữa làm cái form select để đổi role
                                                         form này sẽ xuất hiện khi bấm nút edit ( edit sẽ thay đổi dc tên email vs role)
                                                         <select class="form-control" style="height: 50px;">
@@ -68,9 +68,9 @@
                                                     </select>-->
                                                 </td>
                                                 @if($user->status == 'inactive')
-                                                    <td><span class="badge badge-warning">Inactive</span></td>
+                                                    <td><span class="badge badge-warning">Vô hiệu hóa</span></td>
                                                 @else
-                                                    <td><span class="badge badge-success">Active</span></td>
+                                                    <td><span class="badge badge-success">Hoạt động</span></td>
                                                 @endif
                                                 <td class="text-center">
                                                     @if($user->ekyc_status == 'verified')

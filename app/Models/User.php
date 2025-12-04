@@ -20,7 +20,8 @@ class User extends Authenticatable
     protected $fillable = ['name', 'email', 'password',
     'google_id', 'role','gender','phoneNumber',
      'address','dateOfBirth', 'status', 'img', 'ekyc_status',
-     'cccd_front_image_path', 'cccd_back_image_path', 'cccd_selfie_image_path'];
+     'cccd_front_image_path', 'cccd_back_image_path', 'cccd_selfie_image_path'
+    ,'shop_name'];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -45,6 +46,18 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    protected static function booted()
+    {
+        static::created(function ($user) {
+            // Khi user vừa được tạo xong, tạo ngay cho nó cái ví
+            $user->wallet()->create([
+                'balance' => 0,
+                'currency' => 'VND',
+                'status' => 'active'
+            ]);
+        });
     }
     public function products()
     {
@@ -89,6 +102,19 @@ class User extends Authenticatable
         // Khóa ngoại của model liên kết (User as follower) là 'user_id'
         return $this->belongsToMany(User::class, 'followers', 'seller_id', 'user_id');
     }
+    // Trong file User.php
+
+public function getRoleLabelAttribute()
+{
+    $roles = [
+        'buyer'  => 'Người mua',
+        'seller' => 'Người bán',
+        'admin'  => 'Quản trị viên', // Hoặc 'Admin' tùy bạn chọn
+    ];
+
+    // Trả về tên tiếng Việt, nếu không khớp thì trả về role gốc
+    return $roles[$this->role] ?? $this->role;
+}
     public function isAdmin()
     {
         return $this->role === 'admin';
@@ -100,6 +126,11 @@ class User extends Authenticatable
     public function isBuyer()
     {
         return $this->role === 'buyer';
+    }
+    public function wallet()
+    {
+        // Một user có một cái ví
+        return $this->hasOne(Wallet::class);
     }
 
 }

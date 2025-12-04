@@ -1,0 +1,218 @@
+@startuml
+' Cấu hình hiển thị
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide circle
+skinparam titleFontSize 30
+skinparam titleFontName Arial
+skinparam titleFontStyle bold
+title MODULE 1: USER & SALES MANAGEMENT
+
+
+' Cấu hình cho STUB CLASS (Class đại diện)
+skinparam class {
+    BackgroundColor<<Stub>> #F0F0F0
+    BorderColor<<Stub>> #Gray
+    BorderStyle<<Stub>> dashed
+    FontColor<<Stub>> #555555
+}
+
+' 1. Ép khoảng cách giữa các Class (Quan trọng nhất)
+skinparam nodesep 50
+skinparam ranksep 50
+
+' 2. Giảm padding bên trong Class cho hộp bé lại
+skinparam class {
+    Padding 2
+    FontSize 12
+    AttributeFontSize 19
+}
+scale 1.7
+
+
+class "Users" {
+    + id : Long
+    + name : String
+    + phoneNumber : String
+    + gender : String
+    + dateOfBirth : Date
+    + email : String
+    + status : String
+    + ekycStatus : String
+    + cccdFrontImagePath : String
+    + cccdBackImagePath : String
+    + cccdSelfieImagePath : String
+    + address : String
+    + emailVerifiedAt : DateTime
+    + password : String
+    + googleId : String
+    + rememberToken : String
+    + createdAt : DateTime
+    + updatedAt : DateTime
+    + role : String
+    + shopName : String
+    + shopInfo : String
+    + img : String
+    + activeStatus : Boolean
+    + avatar : String
+    + darkMode : Boolean
+    + messengerColor : String
+}
+
+
+
+
+
+class "Carts" {
+        + id : Long
+        + userId : Long
+        + createdAt : DateTime
+        + updatedAt : DateTime
+    }
+
+class "CartItems" {
+    + id : Long
+    + cartId : Long
+    + productId : Long
+    + quantity : Integer
+    + price : Double
+    + createdAt : DateTime
+    + updatedAt : DateTime
+}
+
+class "Orders" {
+    + id : Long
+    + userId : Long
+    + sellerId : Long
+    + status : String
+    + paymentStatus : String
+    + subtotal : Double
+    + totalPrice : Double
+    + voucher_id : Long
+    + discount_amount : Double
+    + createdAt : DateTime
+    + updatedAt : DateTime
+    + trackingCode : String
+    + cancellationReason : String
+    + buyerName : String
+    + buyerEmail : String
+    + buyerPhone : String
+    + sessionId : String
+    + Transaction_id : String
+    + Transaction_fee : Double
+    + shippingAddress : String
+}
+
+class "OrderItems" {
+    + id : Long
+    + orderId : Long
+    + productId : Long
+    + quantity : Integer
+    + price : Double
+    + createdAt : DateTime
+    + updatedAt : DateTime
+}
+
+
+
+
+
+class "Vouchers" {
+    + id : Long
+    + sellerId : Long
+    + code : String
+    + name : String
+    + type : String
+    + value : Double
+    + max_discount_amount : Double
+    + min_order_value : Double
+    + quantity : Long
+    + used_count : Long
+    + expiryDate : DateTime
+    + start_date : DateTime
+    + is_active : Boolean
+    + createdAt : DateTime
+    + updatedAt : DateTime
+}
+
+
+
+
+class "Reviews" {
+    + id : Long
+    + buyerId : Long
+    + productId : Long
+    + orderId : Long
+    + rating : Integer
+    + comment : String
+    + isHidden : Boolean
+    + reply : String
+    + buyerAdditionalFeedback : String
+    + createdAt : DateTime
+    + updatedAt : DateTime
+}
+
+
+
+
+
+
+class "Notifications" {
+    + id : Long
+    + userId : Long
+    + type : String
+    + message : String
+    + data : String
+    + isRead : Boolean
+    + createdAt : DateTime
+    + updatedAt : DateTime
+}
+
+class "Followers" {
+    + userId : Long
+    + sellerId : Long
+}
+
+' === STUB CLASS (Đại diện từ Module khác) ===
+class "Product_Ref" <<Stub>> {
+    + id : Long
+    + name : String
+    (Catalog Module)
+}
+
+' === QUAN HỆ ===
+
+' 1 User sở hữu 1 Cart (Nếu chưa có thì tạo)
+Users "1" -- "0..1" Carts : owns >
+
+
+' 1 Cart có nhiều Item
+Carts "1" *-- "0..*" CartItems : contains >
+
+' 1 User (Buyer) có thể đặt 0 hoặc nhiều đơn hàng
+Users "1" -- "0..*" Orders : places >
+
+' 1 Order gồm nhiều Item
+Orders "1" *-- "1...*" OrderItems : includes >
+
+' 1 User (Seller) tạo ra 0 hoặc nhiều Voucher
+' Chiều ngược lại: 1 Voucher phải thuộc về 1 Seller
+Users "1" -- "0..*" Vouchers : creates (Seller) >
+
+' 1 Order áp dụng tối đa 0 hoặc 1 Voucher
+' Chiều ngược lại: 1 Voucher có thể nằm trong nhiều Order
+Vouchers "1" -- "0..*" Orders : applied to >
+
+' Các quan hệ khác
+Users "1" -- "0..*" Reviews : writes >
+Users "1" -- "0..*" Notifications : receives >
+Users "1" -- "0..*" Followers : follows >
+Users "1" -- "0..*" Followers : seller >
+
+' Quan hệ với Module bên ngoài
+OrderItems .up.> "Product_Ref" : refers to >
+CartItems .up.> "Product_Ref" : refers to >
+Reviews .up.> "Product_Ref" : targets >
+
+@enduml
+

@@ -4,123 +4,180 @@
     <div class="container">
         @livewire('main-page')
         <!--
-        <section class="container my-5">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h2 class="fw-bold text-danger"><i class="fas fa-bolt"></i> FLASH SALE TOÀN SÀN</h2>
-                <a href="/products" class="text-primary">Xem tất cả ></a>
-            </div>
-            <div class="row g-3">
+                                        <section class="container my-5">
+                                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                                <h2 class="fw-bold text-danger"><i class="fas fa-bolt"></i> FLASH SALE TOÀN SÀN</h2>
+                                                <a href="/products" class="text-primary">Xem tất cả ></a>
+                                            </div>
+                                            <div class="row g-3">
 
-                <div class="col-6 col-md-3">
-                    <div class="card h-100 border-0 shadow-sm text-center">
-                        <div class="position-relative">
-                            <img src="https://cdn.tgdd.vn/Products/Images/42/309821/iphone-15-pro-max-blue-thumbnew-600x600.jpg"
-                                class="card-img-top p-3" alt="SP">
-                            <span class="badge bg-danger position-absolute top-0 start-0 m-2">-15%</span>
-                        </div>
-                        <div class="card-body">
-                            <h6 class="fw-semibold">iPhone 15 Pro Max 256GB</h6>
-                            <p class="text-danger fw-bold mb-1">28.990.000₫
-                                <span class="text-muted text-decoration-line-through small">31.990.000₫</span>
-                            </p>
-                            <p class="small text-muted mb-2">Được bán bởi <strong>TechZoneVN</strong></p>
-                            <button class="btn btn-outline-primary btn-sm w-100">Thêm vào giỏ</button>
-                        </div>
-                    </div>
-                </div>
+                                                <div class="col-6 col-md-3">
+                                                    <div class="card h-100 border-0 shadow-sm text-center">
+                                                        <div class="position-relative">
+                                                            <img src="https://cdn.tgdd.vn/Products/Images/42/309821/iphone-15-pro-max-blue-thumbnew-600x600.jpg"
+                                                                class="card-img-top p-3" alt="SP">
+                                                            <span class="badge bg-danger position-absolute top-0 start-0 m-2">-15%</span>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <h6 class="fw-semibold">iPhone 15 Pro Max 256GB</h6>
+                                                            <p class="text-danger fw-bold mb-1">28.990.000₫
+                                                                <span class="text-muted text-decoration-line-through small">31.990.000₫</span>
+                                                            </p>
+                                                            <p class="small text-muted mb-2">Được bán bởi <strong>TechZoneVN</strong></p>
+                                                            <button class="btn btn-outline-primary btn-sm w-100">Thêm vào giỏ</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
 
+                                            </div>
+                                        </section>
+                                    -->
+        <section class="container my-5 category-section">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold display-6">KHÁM PHÁ DANH MỤC</h2>
+                <div class="d-inline-block bg-primary" style="height: 4px; width: 60px; border-radius: 2px;"></div>
             </div>
-        </section>
-    -->
-        <section class="container my-5 text-center">
-            <h2 class="fw-bold mb-4">KHÁM PHÁ DANH MỤC</h2>
+
             <div class="row g-4">
                 @php
+                    // Lưu ý: Tốt nhất nên truyền biến này từ Controller thay vì gọi trực tiếp ở View
                     $categories = app(App\Http\Controllers\CategoryController::class)->getCategories();
+
+                    // Mảng màu gradient ngẫu nhiên để mỗi danh mục 1 màu khác nhau (cho sinh động)
+                    $gradients = [
+                        'linear-gradient(45deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%)',
+                        'linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%)',
+                        'linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%)',
+                        'linear-gradient(120deg, #fccb90 0%, #d57eeb 100%)',
+                    ];
                 @endphp
 
-                @foreach ($categories as $cat)
+                @foreach ($categories as $index => $cat)
                     <div class="col-6 col-md-3">
-                        <div class="p-4 bg-light rounded shadow-sm category-item">
-                            <h6 class="mt-3">{{ $cat->name }}</h6>
-                        </div>
+                        <a href="{{ route('products.list', ['category' => $cat->id]) }}" class="text-decoration-none">
+                            <div class="modern-cat-card">
+                                {{-- Tạo Icon tự động từ chữ cái đầu và màu ngẫu nhiên --}}
+                                <div class="cat-icon-placeholder"
+                                    style="background: {{ $gradients[$index % count($gradients)] }};">
+                                    {{ Str::substr($cat->name, 0, 1) }}
+                                </div>
+
+                                <h6>{{ $cat->name }}</h6>
+
+                                {{-- Mũi tên chỉ hiện khi hover --}}
+                                <div class="cat-arrow">
+                                    <i class="fas fa-arrow-right"></i>
+                                </div>
+                            </div>
+                        </a>
                     </div>
                 @endforeach
             </div>
         </section>
 
         <section class="container my-5">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h2 class="fw-bold">TOP SẢN PHẨM NỔI BẬT</h2>
-                {{-- Giả sử bạn có route tên 'products.list' cho trang listproducts --}}
-                <a href="{{ route('products.list') }}" class="text-primary">Xem thêm ></a>
+            {{-- HEADER VÀ BỘ LỌC --}}
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="fw-bold mb-2 mb-md-0 display-6">SẢN PHẨM NỔI BẬT</h2>
+                    <div class="bg-primary d-none d-md-block" style="height: 4px; width: 60px; border-radius: 2px;"></div>
+                </div>
+
+                <div class="d-flex align-items-center gap-3 mt-3 mt-md-0">
+                    <div class="btn-group shadow-sm" role="group">
+                        <a href="{{ route('home', ['sort' => 'newest']) }}"
+                            class="btn btn-sm px-3 {{ request('sort') == 'newest' || !request('sort') ? 'btn-primary' : 'btn-outline-primary' }}">Mới
+                            nhất</a>
+                        <a href="{{ route('home', ['sort' => 'best_seller']) }}"
+                            class="btn btn-sm px-3 {{ request('sort') == 'best_seller' ? 'btn-primary' : 'btn-outline-primary' }}">Bán
+                            chạy</a>
+                        <a href="{{ route('home', ['sort' => 'top_rated']) }}"
+                            class="btn btn-sm px-3 {{ request('sort') == 'top_rated' ? 'btn-primary' : 'btn-outline-primary' }}">Đánh
+                            giá cao</a>
+                    </div>
+                    <a href="{{ route('products.list') }}"
+                        class="text-primary text-decoration-none fw-bold text-nowrap ms-2">Xem tất cả <i
+                            class="fas fa-arrow-right small ms-1"></i></a>
+                </div>
             </div>
 
+            {{-- DANH SÁCH SẢN PHẨM --}}
             <div class="row g-4">
-                {{-- Dùng $products->take(8) để chỉ lấy 8 sản phẩm đầu tiên --}}
-                @forelse ($products->take(8) as $product)
+                @forelse ($products as $product)
                     <div class="col-6 col-md-3">
-                        {{-- Thêm d-flex flex-column để footer luôn ở dưới cùng --}}
-                        <div class="card product-card h-100 shadow-sm d-flex flex-column">
 
-                            {{-- === BỌC LINK BẮT ĐẦU === --}}
+                        {{-- CARD BẮT ĐẦU --}}
+                        <div class="modern-product-card">
+
+                            {{-- Link bao quanh Ảnh & Nội dung (trừ nút bấm) --}}
                             <a href="{{ route('products.detail', ['id' => $product->id]) }}"
-                                class="text-decoration-none text-dark" style="flex-grow: 1;">
+                                class="text-decoration-none text-dark d-contents">
 
-                                {{-- Badge giảm giá (Logic từ listproducts) --}}
-                                @if ($product->original_price && $product->original_price > $product->price)
-                                    <span
-                                        class="badge-discount">-{{ round(100 - ($product->price / $product->original_price) * 100) }}%</span>
-                                @endif
-
-                                <img src="{{ $product->images->isNotEmpty()
-                                    ? asset('storage/' . $product->images->first()->image_path)
-                                    : asset('storage/product_images/default.jpg') }}"
-                                    alt="{{ $product->name }}" class="card-img-top product-img"
-                                    style="height: 200px; object-fit: cover;"> {{-- Đồng bộ style ảnh --}}
-
-                                <div class="card-body"> {{-- Bỏ d-flex và mt-auto --}}
-                                    <div>
-                                        <h5 class="card-title h6">{{ $product->name }}</h5>
-                                        <p class="card-text text-muted small">{{ Str::limit($product->description, 50) }}
-                                        </p>
-
-                                        <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <div>
-                                                <span class="text-muted small">Thương hiệu:</span>
-                                                <span class="fw-bold small">{{ $product->brand->name ?? 'N/A' }}</span>
-                                            </div>
-                                            <div>
-                                                <span class="text-muted small">Tồn kho:</span>
-                                                <span class="fw-bold small">{{ $product->stock }}</span>
-                                            </div>
+                                {{-- 1. Ảnh sản phẩm --}}
+                                <div class="product-img-wrapper">
+                                    @if ($product->original_price && $product->original_price > $product->price)
+                                        <div class="modern-discount-badge">
+                                            -{{ round(100 - ($product->price / $product->original_price) * 100) }}%
                                         </div>
+                                    @endif
+
+                                    <img src="{{ $product->images->isNotEmpty() ? asset('storage/' . $product->images->first()->image_path) : asset('storage/product_images/default.jpg') }}"
+                                        alt="{{ $product->name }}" class="modern-product-img">
+                                </div>
+
+                                {{-- 2. Nội dung (Body) --}}
+                                <div class="product-body">
+                                    {{-- Tên --}}
+                                    <h5 class="product-title" title="{{ $product->name }}">
+                                        {{ $product->name }}
+                                    </h5>
+
+                                    {{-- Thông tin phụ --}}
+                                    <div class="d-flex justify-content-between align-items-center mb-2 small text-muted">
+                                        <span>{{ Str::limit($product->brand->name ?? 'N/A', 15) }}</span>
+
+                                        {{-- Logic hiển thị phụ (Rating hoặc Tồn kho) --}}
+                                        @if (request('sort') == 'top_rated' && isset($product->reviews_avg_rating))
+                                            <span class="text-warning fw-bold"><i class="fas fa-star"></i>
+                                                {{ round($product->reviews_avg_rating, 1) }}</span>
+                                        @elseif (request('sort') == 'best_seller' && isset($product->order_items_sum_quantity))
+                                            <span class="text-success fw-bold">Đã bán:
+                                                {{ $product->order_items_sum_quantity }}</span>
+                                        @else
+                                            <span>Kho: <b>{{ $product->stock }}</b></span>
+                                        @endif
                                     </div>
 
-                                    {{-- Giá được đưa vào đây để có thể click --}}
-                                    <div class="mt-3">
-                                        <span
-                                            class="product-price fs-6 fw-bold text-danger">{{ number_format($product->price, 0, ',', '.') }}₫</span>
+                                    {{-- Giá tiền --}}
+                                    <div class="mt-auto">
+                                        <span class="product-price-highlight">
+                                            {{ number_format($product->price, 0, ',', '.') }}₫
+                                        </span>
+                                        @if ($product->original_price > $product->price)
+                                            <span class="text-muted text-decoration-line-through small ms-1">
+                                                {{ number_format($product->original_price, 0, ',', '.') }}₫
+                                            </span>
+                                        @endif
                                     </div>
                                 </div>
-                                {{-- === BỌC LINK KẾT THÚC === --}}
                             </a>
 
-                            {{-- PHẦN NÚT BẤM (ĐỂ BÊN NGOÀI <a>) --}}
-                            <div class="card-footer bg-white border-top-0 pt-0 pb-3">
-                                <div class="d-flex">
-                                    {{-- Nút "Xem" (thay modal bằng link) --}}
+                            {{-- 3. Nút bấm (Footer) --}}
+                            <div class="product-footer">
+                                <div class="d-flex gap-2">
+                                    {{-- Nút Xem --}}
                                     <a href="{{ route('products.detail', ['id' => $product->id]) }}"
-                                        class="btn btn-outline-primary btn-sm me-2" title="Xem chi tiết">
+                                        class="btn btn-outline-primary btn-action-sm" title="Xem">
                                         <i class="fas fa-eye"></i>
                                     </a>
 
-                                    {{-- Toàn bộ logic nút bấm "Thêm vào giỏ" --}}
+                                    {{-- Nút Mua --}}
                                     <div class="flex-grow-1">
                                         @if (Auth::check())
-                                            @if (empty(Auth::user()->phoneNumber) || empty(Auth::user()->email) || empty(Auth::user()->address))
+                                            @if (empty(Auth::user()->phoneNumber) || empty(Auth::user()->address))
                                                 <a href="{{ route('general.users.edit', Auth::user()->id) }}"
-                                                    class="btn btn-warning btn-sm w-100" title="Cập nhật thông tin">
+                                                    class="btn btn-warning btn-action-sm w-100 text-white"
+                                                    title="Cập nhật thông tin">
                                                     <i class="fas fa-user-edit"></i>
                                                 </a>
                                             @else
@@ -130,56 +187,99 @@
                                                         <input type="hidden" name="product_id"
                                                             value="{{ $product->id }}">
                                                         <input type="hidden" name="quantity" value="1">
-                                                        <button type="submit" class="btn btn-success btn-sm w-100"
-                                                            title="Thêm vào giỏ">
-                                                            <i class="fas fa-cart-plus"></i>
+                                                        <button type="submit" class="btn btn-success btn-action-sm w-100">
+                                                            <i class="fas fa-cart-plus me-1"></i> Thêm
                                                         </button>
                                                     </form>
                                                 @else
-                                                    <button class="btn btn-secondary btn-sm w-100" disabled>Hết
+                                                    <button class="btn btn-secondary btn-action-sm w-100" disabled>Hết
                                                         hàng</button>
                                                 @endif
                                             @endif
                                         @else
-                                            <a href="{{ route('login') }}" class="btn btn-success btn-sm w-100"
-                                                title="Thêm vào giỏ">
-                                                <i class="fas fa-cart-plus"></i>
+                                            <a href="{{ route('login') }}" class="btn btn-success btn-action-sm w-100">
+                                                <i class="fas fa-cart-plus me-1"></i> Thêm
                                             </a>
                                         @endif
                                     </div>
                                 </div>
                             </div>
+
                         </div>
+                        {{-- CARD KẾT THÚC --}}
+
                     </div>
                 @empty
-                    <p class="text-center text-muted">Chưa có sản phẩm nào.</p>
+                    <div class="col-12 text-center py-5">
+                        <div class="opacity-50">
+                            <i class="fas fa-box-open fa-3x mb-3 text-secondary"></i>
+                        </div>
+                        <p class="text-muted">Chưa có sản phẩm nào phù hợp.</p>
+                    </div>
                 @endforelse
             </div>
         </section>
 
-
-
         <section class="container my-5">
-            <h2 class="fw-bold text-center mb-4">TOP CỬA HÀNG UY TÍN</h2>
-            <div class="row g-4">
-                @forelse ($shops as $shop)
-                    <div class="col-6 col-md-3 text-center">
-                        <div class="p-4 bg-light rounded shadow-sm">
-                            <img src="{{ !empty($shop->img) ? asset('storage/' . $shop->img) : asset('storage/profile_images/default.jpg') }}"
-                                alt="{{ $shop->name }}" class="rounded-circle"
-                                style="width: 80px; height: 80px; object-fit: cover;">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold display-6">TOP CỬA HÀNG UY TÍN</h2>
+                <div class="d-inline-block bg-primary" style="height: 4px; width: 60px; border-radius: 2px;"></div>
+            </div>
 
-                            <h6 class="mt-3">{{ $shop->name }}</h6>
-                            <p
-                                class="small mb-2 {{ $shop->seller_reviews_avg_rating ? 'text-warning fw-bold' : 'text-muted' }}">
-                                <i class="fas fa-star"></i>
-                                {{ $shop->seller_reviews_avg_rating ? round($shop->seller_reviews_avg_rating, 1) : 'Chưa có' }}
-                            </p>
-                            <a href="{{ route('shop.show', ['id' => $shop->id]) }}"
-                                class="btn btn-sm btn-outline-primary">Xem cửa hàng</a> </div>
+            <div class="row g-4">
+                @forelse ($shops as $index => $shop)
+                    <div class="col-6 col-md-3">
+                        <div class="modern-shop-card pb-4">
+                            {{-- Banner màu --}}
+                            {{-- Mẹo: Dùng index để thay đổi màu banner cho mỗi shop khác nhau --}}
+                            @php
+                                $gradients = [
+                                    'linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%)', // Xanh ngọc
+                                    'linear-gradient(120deg, #fccb90 0%, #d57eeb 100%)', // Cam tím
+                                    'linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%)', // Tím xanh
+                                    'linear-gradient(120deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%)', // Hồng phấn
+                                ];
+                                $bgGradient = $gradients[$index % count($gradients)];
+                            @endphp
+                            <div class="shop-card-banner" style="background: {{ $bgGradient }};"></div>
+
+                            {{-- Avatar Shop --}}
+                            <div class="shop-avatar-wrapper">
+                                <img src="{{ !empty($shop->img) ? asset('storage/' . $shop->img) : asset('storage/profile_images/default.jpg') }}"
+                                    alt="{{ $shop->name }}" class="shop-avatar-img">
+
+                                {{-- Thêm icon tích xanh cho xịn --}}
+                                <div class="verified-badge" title="Đã xác minh">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                            </div>
+
+                            {{-- Thông tin Shop --}}
+                            <div class="px-3">
+                                <h6 class="shop-name text-truncate">{{ $shop->shop_name }}</h6>
+
+                                <p class="small mb-3">
+                                    @if ($shop->seller_reviews_avg_rating)
+                                        <span class="text-warning fw-bold">
+                                            <i class="fas fa-star"></i> {{ round($shop->seller_reviews_avg_rating, 1) }}
+                                        </span>
+                                        <span class="text-muted">/ 5.0</span>
+                                    @else
+                                        <span class="text-muted">Chưa có đánh giá</span>
+                                    @endif
+                                </p>
+
+                                <a href="{{ route('shop.show', ['id' => $shop->id]) }}"
+                                    class="btn btn-sm btn-outline-primary btn-shop-view w-100">
+                                    Xem Shop <i class="fas fa-arrow-right ms-1 small"></i>
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 @empty
-                    <p class="text-center text-muted">Chưa có cửa hàng nào.</p>
+                    <div class="col-12 text-center py-5">
+                        <p class="text-muted fs-5">Chưa có cửa hàng nổi bật nào.</p>
+                    </div>
                 @endforelse
             </div>
         </section>

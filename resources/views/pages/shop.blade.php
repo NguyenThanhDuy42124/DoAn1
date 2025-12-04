@@ -1,10 +1,9 @@
 @extends('layouts.app')
 
-
-
 @section('content')
     <div class="container mb-5">
 
+        {{-- PHẦN HEADER SHOP (GIỮ NGUYÊN) --}}
         <section class="shop-header-wrapper mb-4">
             <div class="shop-banner"></div>
 
@@ -15,7 +14,7 @@
                         style="width: 120px; height: 120px; object-fit: cover;">
 
                     <div class="ms-md-4 text-center text-md-start mt-3 mt-md-0">
-                        <h1 class="fw-bold display-6 mb-1">{{ $shop->name }}</h1>
+                        <h1 class="fw-bold display-6 mb-1">{{ $shop->shop_name }}</h1>
                         <p class="text-muted mb-2">Tham gia từ: {{ $shop->created_at->format('d/m/Y') }}</p>
                         <form action="{{ route('seller.follow.toggle', $shop->id) }}" method="POST"
                             style="display: inline-block;">
@@ -69,14 +68,16 @@
 
         <div class="row g-4 mt-4">
 
+            {{-- SIDEBAR DANH MỤC (GIỮ NGUYÊN) --}}
             <div class="col-lg-3">
-                <div class="card shadow-sm border-0 sticky-top" style="top: 20px;">
+                <div class="card shadow-sm border-0 sticky-top" style="top: 20px; border-radius: 16px; overflow: hidden;">
                     <div class="card-header bg-white border-0 py-3">
                         <h5 class="fw-bold mb-0"><i class="fas fa-list-ul me-2"></i> Danh mục</h5>
                     </div>
                     <div class="list-group list-group-flush p-2">
                         <a href="{{ route('shop.show', array_merge(['id' => $shop->id], request()->except('category', 'page'))) }}"
                             class="list-group-item list-group-item-action {{ !$selectedCategory ? 'active' : '' }}"
+                            style="border-radius: 8px;"
                             aria-current="{{ !$selectedCategory ? 'true' : 'false' }}">
                             Tất cả sản phẩm
                         </a>
@@ -84,6 +85,7 @@
                         @foreach ($categories as $category)
                             <a href="{{ route('shop.show', array_merge(['id' => $shop->id], request()->query(), ['category' => $category->id, 'page' => 1])) }}"
                                 class="list-group-item list-group-item-action {{ (int) $selectedCategory === $category->id ? 'active' : '' }}"
+                                style="border-radius: 8px; margin-top: 2px;"
                                 aria-current="{{ (int) $selectedCategory === $category->id ? 'true' : 'false' }}">
                                 {{ $category->name }}
                             </a>
@@ -94,19 +96,18 @@
 
             <div class="col-lg-9">
 
-                <div class="d-flex align-items-center bg-white p-3 rounded shadow-sm mb-4">
+                {{-- TOOLBAR SẮP XẾP (GIỮ NGUYÊN) --}}
+                <div class="d-flex align-items-center bg-white p-3 rounded shadow-sm mb-4" style="border-radius: 16px !important;">
                     <span class="fw-bold me-3">Sắp xếp theo:</span>
                     <div class="nav nav-pills" role="tablist">
 
-                        <a class="nav-link btn-sm py-1 px-3 
-                              {{ $sort === 'newest' ? 'active' : '' }}"
+                        <a class="nav-link btn-sm py-1 px-3 {{ $sort === 'newest' ? 'active' : '' }}"
                             href="{{ route('shop.show', array_merge(['id' => $shop->id], request()->query(), ['sort' => 'newest'])) }}">
                             Mới nhất
                         </a>
 
                         <div class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle btn-sm py-1 px-3 
-                                  {{ in_array($sort, ['price_asc', 'price_desc']) ? 'active' : '' }}"
+                            <a class="nav-link dropdown-toggle btn-sm py-1 px-3 {{ in_array($sort, ['price_asc', 'price_desc']) ? 'active' : '' }}"
                                 data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">
                                 Giá
                             </a>
@@ -129,109 +130,114 @@
                     </div>
                 </div>
 
+                {{-- DANH SÁCH SẢN PHẨM (ĐÃ CẬP NHẬT MODERN CARD) --}}
                 <section class="shop-products">
                     <div class="row g-4">
                         @forelse ($products as $product)
-                            <div class="col-6 col-md-4">
-                                {{-- Thêm d-flex flex-column để footer luôn ở dưới cùng --}}
-                                <div class="card product-card h-100 shadow-sm d-flex flex-column">
+                            <div class="col-6 col-md-4"> {{-- Grid 3 cột cho trang Shop (vì có sidebar) --}}
 
-                                    {{-- === BỌC LINK BẮT ĐẦU === --}}
+                                {{-- BẮT ĐẦU MODERN CARD --}}
+                                <div class="modern-product-card">
+
+                                    {{-- Link bao quanh ảnh và nội dung --}}
                                     <a href="{{ route('products.detail', ['id' => $product->id]) }}"
-                                        class="text-decoration-none text-dark" style="flex-grow: 1;">
+                                       class="text-decoration-none text-dark d-contents">
 
-                                        {{-- Badge giảm giá (Logic từ listproducts) --}}
-                                        @if ($product->original_price && $product->original_price > $product->price)
-                                            <span
-                                                class="badge-discount">-{{ round(100 - ($product->price / $product->original_price) * 100) }}%</span>
-                                        @endif
-
-                                        <img src="{{ $product->images->isNotEmpty()
-                                            ? asset('storage/' . $product->images->first()->image_path)
-                                            : asset('storage/product_images/default.jpg') }}"
-                                            alt="{{ $product->name }}" class="card-img-top product-img">
-
-                                        {{-- Thân card - Bỏ d-flex và mt-auto --}}
-                                        <div class="card-body">
-                                            <div>
-                                                <h5 class="card-title">{{ $product->name }}</h5>
-                                                <p class="text-muted small mb-1"> Danh mục:
-                                                    <span
-                                                        class="fw-semibold text-dark">{{ $product->category->name ?? 'Chưa phân loại' }}</span>
-                                                </p>
-                                                <p class="card-text text-muted">{{ Str::limit($product->description, 100) }}
-                                                </p>
-
-                                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                                    <div>
-                                                        <span class="text-muted small">Thương hiệu:</span>
-                                                        <span class="fw-bold">{{ $product->brand->name ?? 'N/A' }}</span>
-                                                    </div>
-                                                    <div>
-                                                        <span class="text-muted small">Tồn kho:</span>
-                                                        <span class="fw-bold">{{ $product->stock }}</span>
-                                                    </div>
+                                        {{-- 1. Ảnh sản phẩm --}}
+                                        <div class="product-img-wrapper">
+                                            {{-- Badge giảm giá --}}
+                                            @if ($product->original_price && $product->original_price > $product->price)
+                                                <div class="modern-discount-badge">
+                                                    -{{ round(100 - ($product->price / $product->original_price) * 100) }}%
                                                 </div>
+                                            @endif
+
+                                            <img src="{{ $product->images->isNotEmpty()
+                                                    ? asset('storage/' . $product->images->first()->image_path)
+                                                    : asset('storage/product_images/default.jpg') }}"
+                                                alt="{{ $product->name }}" class="modern-product-img">
+                                        </div>
+
+                                        {{-- 2. Nội dung (Body) --}}
+                                        <div class="product-body">
+                                            {{-- Tên sản phẩm --}}
+                                            <h5 class="product-title" title="{{ $product->name }}">
+                                                {{ $product->name }}
+                                            </h5>
+
+                                            {{-- Thông tin phụ --}}
+                                            <div class="mb-2">
+                                                 <span class="badge bg-light text-dark border fw-normal me-1">
+                                                    {{ Str::limit($product->category->name ?? 'Khác', 10) }}
+                                                </span>
+                                                <small class="text-muted">
+                                                    Kho: <span class="fw-bold">{{ $product->stock }}</span>
+                                                </small>
                                             </div>
 
-                                            {{-- Giá được đưa vào đây để có thể click --}}
-                                            <div class="mt-3">
-                                                <span
-                                                    class="product-price">{{ number_format($product->price, 0, ',', '.') }}₫</span>
+                                            {{-- Giá tiền (Luôn nằm đáy body) --}}
+                                            <div class="mt-auto">
+                                                <span class="product-price-highlight">
+                                                    {{ number_format($product->price, 0, ',', '.') }}₫
+                                                </span>
+                                                @if ($product->original_price > $product->price)
+                                                    <span class="text-muted text-decoration-line-through small ms-1" style="font-size: 0.8rem;">
+                                                        {{ number_format($product->original_price, 0, ',', '.') }}₫
+                                                    </span>
+                                                @endif
                                             </div>
                                         </div>
-                                        {{-- === BỌC LINK KẾT THÚC === --}}
                                     </a>
 
-                                    {{-- PHẦN NÚT BẤM (ĐỂ BÊN NGOÀI <a>) --}}
-                                    <div class="card-footer bg-white border-top-0 pt-0 pb-3">
-                                        <div class="d-flex">
-                                            {{-- Nút "Xem" (thay modal bằng link) --}}
+                                    {{-- 3. Nút bấm (Footer) --}}
+                                    <div class="product-footer">
+                                        <div class="d-flex gap-2">
+                                            {{-- Nút Xem --}}
                                             <a href="{{ route('products.detail', ['id' => $product->id]) }}"
-                                                class="btn btn-outline-primary btn-sm me-2">
+                                               class="btn btn-outline-primary btn-action-sm"
+                                               title="Xem chi tiết">
                                                 <i class="fas fa-eye"></i>
                                             </a>
 
-                                            {{-- Toàn bộ logic nút bấm "Thêm vào giỏ" --}}
+                                            {{-- Logic Nút Thêm vào giỏ --}}
                                             <div class="flex-grow-1">
                                                 @if (Auth::check())
                                                     @if (empty(Auth::user()->phoneNumber) || empty(Auth::user()->email) || empty(Auth::user()->address))
                                                         <a href="{{ route('general.users.edit', Auth::user()->id) }}"
-                                                            class="btn btn-warning btn-sm w-100">
+                                                            class="btn btn-warning btn-action-sm w-100 text-white"
+                                                            title="Cập nhật thông tin">
                                                             <i class="fas fa-user-edit"></i>
                                                         </a>
                                                     @else
                                                         @if ($product->stock > 0)
-                                                            <form action="{{ route('buyer.carts.store') }}"
-                                                                method="POST" class="flex-grow-1">
+                                                            <form action="{{ route('buyer.carts.store') }}" method="POST">
                                                                 @csrf
-                                                                <input type="hidden" name="product_id"
-                                                                    value="{{ $product->id }}">
+                                                                <input type="hidden" name="product_id" value="{{ $product->id }}">
                                                                 <input type="hidden" name="quantity" value="1">
-                                                                <button type="submit"
-                                                                    class="btn btn-success btn-sm w-100">
-                                                                    <i class="fas fa-cart-plus"></i>
+                                                                <button type="submit" class="btn btn-success btn-action-sm w-100">
+                                                                    <i class="fas fa-cart-plus me-1"></i> Thêm
                                                                 </button>
                                                             </form>
                                                         @else
-                                                            <button class="btn btn-secondary btn-sm w-100"
-                                                                disabled>Hết hàng</button>
+                                                            <button class="btn btn-secondary btn-action-sm w-100" disabled>Hết hàng</button>
                                                         @endif
                                                     @endif
                                                 @else
-                                                    <a href="{{ route('login') }}"
-                                                        class="btn btn-success btn-sm w-100">
-                                                        <i class="fas fa-cart-plus"></i>
+                                                    <a href="{{ route('login') }}" class="btn btn-success btn-action-sm w-100">
+                                                        <i class="fas fa-cart-plus me-1"></i> Thêm
                                                     </a>
                                                 @endif
                                             </div>
                                         </div>
                                     </div>
+
                                 </div>
+                                {{-- KẾT THÚC CARD --}}
+
                             </div>
                         @empty
                             <div class="col-12">
-                                <div class="bg-light p-5 rounded text-center">
+                                <div class="bg-light p-5 rounded text-center" style="border-radius: 16px !important;">
                                     <i class="fas fa-box-open fs-1 text-muted mb-3"></i>
                                     <p class="text-muted fs-5 mt-3">Cửa hàng này chưa có sản phẩm nào.</p>
                                 </div>
@@ -240,13 +246,10 @@
                     </div>
 
                     <div class="mt-5 d-flex justify-content-center">
-                        {{ $products->links() }}
+                        {{ $products->links('pagination::bootstrap-5') }}
                     </div>
                 </section>
             </div>
         </div>
     </div>
-
-    {{-- ĐÃ XÓA VÒNG LẶP MODAL Ở ĐÂY VÌ KHÔNG CẦN THIẾT NỮA --}}
-
 @endsection

@@ -105,7 +105,7 @@
                     <a href="{{ route('seller.orders.show', $order->id) }}" class="list-group-item list-group-item-action">
                         <div class="d-flex w-100 justify-content-between">
                             <h6 class="mb-1">Đơn hàng #{{ $order->id }}</h6>
-                            <small class="text-muted">{{ $order->created_at->diffForHumans() }}</small>
+                            <small class="text-muted">{{ $order->created_at->locale('vi')->diffForHumans() }}</small>
                         </div>
                         <p class="mb-1 fw-bold text-success">{{ number_format($order->total_price, 0, ',', '.') }} đ</p>
                         <small>{{ $order->buyer_name }}</small>

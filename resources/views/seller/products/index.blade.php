@@ -6,7 +6,7 @@
     <div class="page-header mt-4">
         <div class="d-flex flex-wrap justify-content-between align-items-center">
             <div class="mb-3 d-flex flex-wrap">
-                <a href="{{ route('seller.products.import.form') }}" class="btn btn-primary mr-2 mb-2 flex-fill text-nowrap">
+                <a href="{{ route('products.import') }}" class="btn btn-primary mr-2 mb-2 flex-fill text-nowrap">
                     <i class="fas fa-plus mr-2"></i>Thêm sản phẩm bằng File excel
                 </a>
                 <a href="{{ route('seller.products.create') }}" class="btn btn-primary mb-2 flex-fill text-nowrap">
@@ -94,9 +94,27 @@
         </div>
     </div>
 
-    @if($products && count($products) > 0)
+    {{-- Thông báo thành công (OK) --}}
+    @if(session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+    @endif
+
+    @php
+    // Tạo mảng thứ tự ưu tiên trạng thái
+    $statusOrder = ['Pending', 'Approved', 'Hidden', 'Rejected'];
+
+    // Sắp xếp collection theo thứ tự ưu tiên
+    $sortedProducts = $products->sortBy(function($product) use ($statusOrder) {
+    $index = array_search($product->status, $statusOrder);
+    return $index !== false ? $index : 99; // những trạng thái không có trong mảng sẽ đứng cuối
+    });
+    @endphp
+
+    @if($sortedProducts && $sortedProducts->count() > 0)
     <div class="row gy-4">
-        @foreach($products as $product)
+        @foreach($sortedProducts as $product)
         <div class="col-12 col-sm-6 col-md-4 col-lg-3">
             <div class="card h-100 product-card position-relative shadow-sm">
 
@@ -147,14 +165,36 @@
                         <a href="{{ route('seller.products.edit', $product->id) }}" class="btn btn-primary w-100 mb-2">
                             <i class="fas fa-edit me-2"></i>Sửa
                         </a>
-                        <form action="{{ route('seller.products.destroy', $product->id) }}" method="POST">
+
+                        @if($product->status == 'Approved')
+                        <form action="{{ route('seller.products.hidden', $product->id) }}" method="POST">
                             @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger w-100">
-                                <i class="fas fa-trash me-2"></i>Xóa
+                            <button type="submit" class="btn btn-warning w-100">
+                                <i class="fas fa-trash me-2"></i>Ẩn
                             </button>
                         </form>
+                        @elseif($product->status == 'Pending')
+                        <div class="alert alert-info text-center mb-0">
+                            Sản phẩm đang chờ duyệt
+                        </div>
+                        @elseif($product->status == 'Rejected')
+                        <div class="alert alert-danger text-center mb-0">
+                            Sản phẩm bị từ chối
+                        </div>
+                        @elseif($product->status == 'Hidden' && $product->previous_status == 'Approved')
+                        <form action="{{ route('seller.products.restore', $product->id) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="btn btn-success w-100">
+                                <i class="fas fa-undo me-2"></i>Hiện
+                            </button>
+                        </form>
+                        @else
+                        <div class="alert alert-secondary text-center mb-0">
+                            Sản phẩm bị ẩn bởi Admin
+                        </div>
+                        @endif
                     </div>
+
                 </div>
             </div>
         </div>
