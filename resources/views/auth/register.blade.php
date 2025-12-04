@@ -4,16 +4,16 @@
 
 <div class="register-wrapper">
     <div class="container d-flex justify-content-center">
-        
+
         <div class="register-card-modern">
-            
+
             {{-- CỘT TRÁI: BANNER THƯƠNG HIỆU --}}
             <div class="register-banner">
-            {{-- Thay ảnh minh họa ở đây --}}
-            <img src="https://cdn-icons-png.flaticon.com/512/6183/6183594.png" alt="Register Illustration" width="250">
-            <h2>Chào mừng bạn!</h2>
-            <p>Đăng ký thành viên ngay để nhận những ưu đãi đặc biệt và trải nghiệm mua sắm tuyệt vời nhất.</p>
-        </div>
+                {{-- Thay ảnh minh họa ở đây --}}
+                <img src="https://cdn-icons-png.flaticon.com/512/6183/6183594.png" alt="Register Illustration" width="250">
+                <h2>Chào mừng bạn!</h2>
+                <p>Đăng ký thành viên ngay để nhận những ưu đãi đặc biệt và trải nghiệm mua sắm tuyệt vời nhất.</p>
+            </div>
 
             {{-- CỘT PHẢI: FORM ĐĂNG KÝ --}}
             <div class="register-form-section">
@@ -21,18 +21,16 @@
 
                 <form action="/register" method="POST">
                     @csrf
-                    
+
                     {{-- Hàng 1: Họ tên & SĐT --}}
                     <div class="form-row">
                         <div class="custom-form-group">
                             <label for="name" class="custom-label">Họ và Tên</label>
-                            <input type="text" class="custom-input" id="name" name="name"
-                                placeholder="VD: Nguyễn Văn A" required>
+                            <input type="text" class="custom-input" id="name" name="name" placeholder="VD: Nguyễn Văn A" required>
                         </div>
                         <div class="custom-form-group">
                             <label for="phoneNumber" class="custom-label">Số Điện Thoại</label>
-                            <input type="text" class="custom-input" id="phoneNumber" name="phoneNumber"
-                                placeholder="VD: 0912..." required>
+                            <input type="text" class="custom-input" id="phoneNumber" name="phoneNumber" placeholder="VD: 0912..." required>
                         </div>
                     </div>
 
@@ -56,28 +54,32 @@
                     {{-- Email --}}
                     <div class="custom-form-group">
                         <label for="email" class="custom-label">Email</label>
-                        <input type="email" class="custom-input" id="email" name="email"
-                            placeholder="name@example.com" required>
+                        <input type="email" class="custom-input" id="email" name="email" placeholder="name@example.com" required>
                     </div>
 
                     {{-- Mật khẩu --}}
                     <div class="custom-form-group">
                         <label for="password" class="custom-label">Mật Khẩu</label>
-                        <input type="password" class="custom-input" id="password" name="password"
-                            placeholder="Nhập mật khẩu của bạn" required>
+                        <input type="password" class="custom-input" id="password" name="password" placeholder="Nhập mật khẩu của bạn" required>
                     </div>
 
                     <button type="submit" class="btn-register-modern">Đăng Ký Ngay</button>
                 </form>
+                @if($errors->any())
+                <div class="alert alert-danger">
+                    <ul class="mb-0 small">
+                        @foreach($errors->all() as $err)
+                        <li>{{ $err }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+                @endif
 
                 <div class="modern-divider">
                     <span>Hoặc đăng ký với</span>
                 </div>
 
-                <div class="social-buttons">
-                    <a href="#" class="btn-social-modern fb-modern">
-                        <i class="fab fa-facebook-f"></i> Facebook
-                    </a>
+                <div class="social-login-buttons-modern">
                     <a href="#" class="btn-social-modern google-modern">
                         <i class="fab fa-google"></i> Google
                     </a>

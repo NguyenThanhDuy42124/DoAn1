@@ -57,7 +57,7 @@ class WalletDashboard extends Component
 
 
         $orders = Order::with(['buyer:id,name,email', 'seller:id,name,email'])
-            ->select('id', 'user_id', 'seller_id', 'total_price', 'transaction_id', 'transaction_fee', 'pay_to_seller', 'created_at')
+            ->select('id', 'user_id', 'seller_id', 'total_price', 'transaction_id', 'transaction_fee', 'pay_to_seller', 'created_at','status','status')
             ->where('pay_to_seller', 0)
             ->where('status', '!=', 'cancelled')
             ->where('payment_status', 'paid')
@@ -68,7 +68,7 @@ class WalletDashboard extends Component
             ->where('status', '!=', 'cancelled')
             ->where('payment_status', 'paid')
             ->sum('total_price');
-            
+
         $fees = Order::where('pay_to_seller', 0)
             ->where('status', '!=', 'cancelled')
             ->where('payment_status', 'paid')
