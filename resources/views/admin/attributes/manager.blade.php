@@ -72,7 +72,7 @@
                         @endif
                     </h5>
                     {{-- Nút X đóng modal --}}
-                    <button type="button" class="close btn btn-link text-decoration-none text-dark" wire:click="$set('showModal', false)">
+                    <button type="button" class="close btn btn-link text-decoration-none text-dark" wire:click="closeModal">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -144,7 +144,7 @@
 
                         {{-- Footer của Modal --}}
                         <div class="modal-footer mt-4 px-0 pb-0">
-                            <button type="button" class="btn btn-secondary" wire:click="$set('showModal', false)">Hủy</button>
+                            <button type="button" class="btn btn-secondary" wire:click="closeModal">Hủy</button>
                             <button type="submit" class="btn btn-success">Lưu lại</button>
                         </div>
                     </form>

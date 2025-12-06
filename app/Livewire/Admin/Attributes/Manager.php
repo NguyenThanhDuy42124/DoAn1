@@ -29,23 +29,35 @@ class Manager extends Component
         $this->allAttributes = Attribute::orderBy('name')->get();
     }
 
-    // Reset các biến khi mở modal tạo mới
+    // FIX LỖI: Thêm hàm này để xử lý nút Hủy/Đóng modal
+    public function closeModal()
+    {
+        $this->showModal = false;
+        $this->resetErrorBag();
+        
+        // Reset dữ liệu về ban đầu
+        $this->editingAttribute = new Attribute();
+        $this->state = ['type' => 'text'];
+        $this->options = [];
+        $this->newOptionValue = '';
+        
+        $this->loadAttributes();
+    }
+
     public function createNewAttribute()
     {
-        $this->resetValidation(); // Xóa các thông báo lỗi cũ
-        $this->editingAttribute = new Attribute(); 
-        $this->state = ['type' => 'text']; 
-        $this->options = []; 
-        $this->newOptionValue = '';
+        // Gọi closeModal để dọn dẹp trước cho chắc
+        $this->closeModal(); 
         $this->showModal = true;
     }
 
-    // Load dữ liệu khi sửa
     public function editAttribute($attributeId)
     {
         $this->resetValidation();
         $this->editingAttribute = Attribute::with('options')->find($attributeId); 
         
+        if (!$this->editingAttribute) return;
+
         $this->state = $this->editingAttribute->toArray(); 
         $this->options = $this->editingAttribute->options->toArray(); 
         $this->newOptionValue = '';
@@ -79,7 +91,7 @@ class Manager extends Component
             'state.unit' => 'nullable|string|max:50', 
         ];
         
-        if ($this->state['type'] == 'select' && empty($this->options)) {
+        if (($this->state['type'] ?? '') == 'select' && empty($this->options)) {
             $this->addError('newOptionValue', 'Bạn phải thêm ít nhất một tùy chọn.');
             return;
         }
@@ -116,18 +128,27 @@ class Manager extends Component
             }
         });
 
-        $this->showModal = false; // Đóng modal
-        $this->loadAttributes(); 
+        // Gọi hàm này để đóng và load lại danh sách
+        $this->closeModal(); 
     }
 
     public function deleteAttribute($attributeId)
     {
-        // Thêm try-catch để an toàn
         try {
-            Attribute::find($attributeId)->delete();
+            $attr = Attribute::find($attributeId);
+            if ($attr) {
+                $attr->delete();
+            }
+
+            // FIX LỖI 404: Reset nếu xóa đúng cái đang sửa
+            if ($this->editingAttribute && $this->editingAttribute->id == $attributeId) {
+                $this->editingAttribute = new Attribute();
+                $this->state = ['type' => 'text']; // Reset luôn state cho an toàn
+            }
+
             $this->loadAttributes();
         } catch (\Exception $e) {
-             // Có thể dispatch browser event báo lỗi nếu muốn
+             // Dispatch event báo lỗi
         }
     }
 

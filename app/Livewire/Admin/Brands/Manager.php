@@ -28,18 +28,22 @@ class Manager extends Component
 
     // --- XỬ LÝ FORM ---
 
-    // HÀM QUAN TRỌNG: Đóng modal và reset
     public function closeModal()
     {
         $this->showModal = false;
         $this->resetErrorBag();
         $this->state = [];
+        
+        // FIX LỖI: Reset model về rỗng để tránh nhớ ID cũ
+        $this->editingBrand = new Brand();
+        $this->loadBrands();
     }
 
     public function createNewBrand()
     {
         $this->closeModal(); // Reset trước
-        $this->editingBrand = new Brand();
+        // Dòng dưới thực ra closeModal đã làm rồi, nhưng để lại cũng không sao
+        $this->editingBrand = new Brand(); 
         $this->showModal = true;
     }
 
@@ -56,27 +60,35 @@ class Manager extends Component
 
     public function saveBrand()
     {
-        // Validate gọn: Bắt buộc, tối đa 255 ký tự, không trùng tên (trừ chính nó ra khi sửa)
+        // Fix lỗi unique: thêm id vào để tránh lỗi khi update chính nó
         $this->validate([
-            'state.name' => 'required|string|max:255|unique:brands,name,' . $this->editingBrand->id,
+            'state.name' => 'required|string|max:255|unique:brands,name,' . ($this->editingBrand->id ?? ''),
         ]);
 
         // Lưu
         $this->editingBrand->fill($this->state);
         $this->editingBrand->save();
 
-        // Xong phim
+        // Xong phim -> gọi closeModal để reset sạch sẽ
         $this->closeModal();
-        $this->loadBrands();
     }
 
     public function deleteBrand($brandId)
     {
         try {
-            Brand::find($brandId)->delete();
+            $brand = Brand::find($brandId);
+            if ($brand) {
+                $brand->delete();
+            }
+
+            // FIX LỖI 404: Nếu xóa đúng thằng đang sửa thì phải reset ngay
+            if ($this->editingBrand && $this->editingBrand->id == $brandId) {
+                $this->editingBrand = new Brand();
+            }
+
             $this->loadBrands();
         } catch (\Exception $e) {
-            // Có thể thêm thông báo lỗi nếu cần (vd: đang có sản phẩm dùng brand này)
+            // Có thể thêm thông báo lỗi nếu cần
         }
     }
 

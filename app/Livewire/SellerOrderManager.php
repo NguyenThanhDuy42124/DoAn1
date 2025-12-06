@@ -11,6 +11,15 @@ use App\Models\Review;
 class SellerOrderManager extends Component
 {
     use WithPagination;
+    protected $paginationTheme = 'bootstrap'; 
+
+    // --- FIX 2: GIỮ TRẠNG THÁI TRÊN URL ---
+    // Cái này cực quan trọng. Nó giúp Livewire biết là mày đang ở Tab nào (VD: status=Shipping).
+    // Khi mày bấm qua trang 2, nó sẽ nối thêm ?status=Shipping&page=2
+    // Nếu không có dòng này, bấm trang 2 nó dễ bị reset về Pending lắm.
+    protected $queryString = [
+        'status' => ['except' => 'Pending'], // Không hiện lên URL nếu là Pending (mặc định)
+    ];
 
     public $status = 'Pending';
     public $selectedOrders = [];
