@@ -102,7 +102,7 @@
             <div class="list-group list-group-flush">
                 
                 @forelse($latestOrders as $order)
-                    <a href="{{ route('seller.orders.show', $order->id) }}" class="list-group-item list-group-item-action">
+                    <a href="#" class="list-group-item list-group-item-action">
                         <div class="d-flex w-100 justify-content-between">
                             <h6 class="mb-1">Đơn hàng #{{ $order->id }}</h6>
                             <small class="text-muted">{{ $order->created_at->locale('vi')->diffForHumans() }}</small>

@@ -4,42 +4,47 @@ namespace App\Livewire\Seller\Stock;
 
 use Livewire\Component;
 use App\Models\InventoryTransaction;
-use App\Models\Product; // <-- Thêm model Product
+use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB; // <-- Thêm DB
+use Illuminate\Support\Facades\DB;
 use Livewire\WithPagination;
 
 class SellerTransactionHistory extends Component
 {
     use WithPagination;
 
-    // --- Thuộc tính Filter & History (Giữ nguyên) ---
+    // --- FIX 1: Khai báo Theme để không bị vỡ giao diện phân trang ---
+    protected $paginationTheme = 'bootstrap';
+
+    // --- FIX 2: Giữ bộ lọc trên URL khi F5 hoặc chuyển trang ---
+    protected $queryString = [
+        'filterType' => ['except' => ''],
+        'filterProduct' => ['except' => ''],
+    ];
+
+    // --- Thuộc tính Filter & History ---
     public $filterType = '';
     public $filterProduct = '';
 
-    // --- Thuộc tính cho Modal Nhập kho ---
+    // --- Thuộc tính Modal Nhập kho ---
     public $showImportModal = false;
-    public $importableProducts = []; // Danh sách sản phẩm để chọn
+    public $importableProducts = [];
     public $importItems = [];
     public $import_notes = '';
 
-    // --- Thuộc tính cho Modal Xuất kho ---
+    // --- Thuộc tính Modal Xuất kho ---
     public $showExportModal = false;
     public $export_product_id = '';
     public $export_quantity = 0;
     public $export_notes = '';
     
-    /**
-     * Khởi chạy component, nhận tham số từ URL
-     */
     public function mount()
     {
-        // Lấy danh sách sản phẩm của seller để nạp vào dropdown
         $this->importableProducts = Product::where('seller_id', Auth::id())
                                            ->orderBy('name')
-                                           ->get(['id', 'name']); // Chỉ lấy id và name cho nhẹ
+                                           ->get(['id', 'name']);
 
-        // Lấy tham số từ URL
+        // Check URL xem có cần mở modal ngay không
         $action = request()->query('action', '');
         $prefillProductId = request()->query('product_id', '');
 
@@ -50,49 +55,65 @@ class SellerTransactionHistory extends Component
         }
     }
 
-    // --- Reset trang khi filter (Giữ nguyên) ---
     public function updatingFilterType() { $this->resetPage(); }
     public function updatingFilterProduct() { $this->resetPage(); }
 
-    // --- Logic Mở/Đóng Modal ---
+    // --- MODAL NHẬP KHO ---
     public function openImportModal($productId = null)
     {
         $this->resetErrorBag();
         $this->import_notes = '';
+        // Mặc định có 1 dòng để nhập luôn
         $this->importItems = [
             ['product_id' => $productId ?? '', 'quantity' => 1]
         ];
         $this->showImportModal = true;
     }
-    public function closeImportModal() { $this->showImportModal = false; }
+
+    // FIX 3: Đóng là phải Reset sạch sẽ
+    public function closeImportModal() 
+    { 
+        $this->showImportModal = false; 
+        $this->importItems = [];
+        $this->import_notes = '';
+        $this->resetErrorBag();
+    }
 
     public function addImportItem()
     {
-        // Thêm một dòng rỗng vào mảng
         $this->importItems[] = ['product_id' => '', 'quantity' => 1];
     }
+    
     public function removeImportItem($index)
     {
         unset($this->importItems[$index]);
-        $this->importItems = array_values($this->importItems); // Sắp xếp lại index
+        $this->importItems = array_values($this->importItems);
     }
 
+    // --- MODAL XUẤT KHO ---
     public function openExportModal($productId = null)
     {
         $this->resetErrorBag();
-        $this->export_product_id = $productId ?? ''; // Tự chọn sản phẩm nếu được truyền
-        $this->export_quantity = 0;
+        $this->export_product_id = $productId ?? ''; 
+        $this->export_quantity = 1; // Để mặc định là 1 cho tiện
         $this->export_notes = '';
         $this->showExportModal = true;
     }
-    public function closeExportModal() { $this->showExportModal = false; }
 
+    // FIX 3: Đóng là phải Reset sạch sẽ
+    public function closeExportModal() 
+    { 
+        $this->showExportModal = false; 
+        $this->export_product_id = '';
+        $this->export_quantity = 0;
+        $this->export_notes = '';
+        $this->resetErrorBag();
+    }
 
-    // --- Logic LƯU NHẬP KHO ---
+    // --- LƯU NHẬP KHO ---
     public function saveImport()
     {
         $validated = $this->validate([
-            // Sửa: Validate mảng $importItems
             'importItems' => 'required|array|min:1',
             'importItems.*.product_id' => 'required|exists:products,id',
             'importItems.*.quantity' => 'required|integer|min:1',
@@ -101,17 +122,12 @@ class SellerTransactionHistory extends Component
 
         DB::beginTransaction();
         try {
-            // Sửa: Lặp qua mảng $importItems
             foreach ($validated['importItems'] as $item) {
-                // Đảm bảo sản phẩm này thuộc seller
                 $product = Product::where('id', $item['product_id'])
                                   ->where('seller_id', Auth::id())
                                   ->first();
                 
-                if (!$product) {
-                    // Nếu sản phẩm không thuộc seller, báo lỗi và rollback
-                    throw new \Exception('Sản phẩm ID ' . $item['product_id'] . ' không hợp lệ.');
-                }
+                if (!$product) continue; // Bỏ qua nếu không tìm thấy (an toàn hơn throw lỗi)
 
                 // 1. Tạo log
                 InventoryTransaction::create([
@@ -119,16 +135,16 @@ class SellerTransactionHistory extends Component
                     'seller_id' => Auth::id(),
                     'transaction_type' => 'import',
                     'quantity' => $item['quantity'],
-                    'notes' => $validated['import_notes'], // Dùng ghi chú chung cho tất cả
+                    'notes' => $validated['import_notes'],
                 ]);
 
-                // 2. Cập nhật tồn kho
+                // 2. Tăng tồn kho
                 $product->increment('stock', $item['quantity']);
             }
 
             DB::commit();
-            session()->flash('success', 'Nhập kho hàng loạt thành công!');
-            $this->closeImportModal();
+            session()->flash('success', 'Nhập kho thành công!');
+            $this->closeImportModal(); // Đóng và reset form
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -136,23 +152,21 @@ class SellerTransactionHistory extends Component
         }
     }
 
-    // --- Logic LƯU XUẤT KHO ---
+    // --- LƯU XUẤT KHO ---
     public function saveExport()
     {
         $validated = $this->validate([
             'export_product_id' => 'required|exists:products,id',
             'export_quantity' => 'required|integer|min:1',
-            'export_notes' => 'required|string|max:500', // Bắt buộc lý do khi xuất
+            'export_notes' => 'required|string|max:500', 
         ]);
 
-        // Đảm bảo sản phẩm này thuộc seller
         $product = Product::where('id', $validated['export_product_id'])
                           ->where('seller_id', Auth::id())
                           ->firstOrFail();
 
-        // Kiểm tra tồn kho trước khi cho xuất
         if ($product->stock < $validated['export_quantity']) {
-            $this->addError('export_quantity', 'Số lượng xuất không thể lớn hơn tồn kho (hiện có: ' . $product->stock . ').');
+            $this->addError('export_quantity', 'Tồn kho không đủ (còn: ' . $product->stock . ').');
             return;
         }
 
@@ -167,12 +181,12 @@ class SellerTransactionHistory extends Component
                 'notes' => $validated['export_notes'],
             ]);
 
-            // 2. Cập nhật tồn kho (dùng decrement để an toàn)
+            // 2. Trừ tồn kho
             $product->decrement('stock', $validated['export_quantity']);
 
             DB::commit();
             session()->flash('success', 'Xuất kho thành công!');
-            $this->closeExportModal();
+            $this->closeExportModal(); // Đóng và reset form
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -180,18 +194,12 @@ class SellerTransactionHistory extends Component
         }
     }
 
-
-    /**
-     * Render (Giữ nguyên logic query, chỉ khác view)
-     */
     public function render()
     {
-        // Lấy query builder (giữ nguyên)
         $transactionsQuery = InventoryTransaction::query()
             ->where('seller_id', Auth::id()) 
             ->with('product'); 
 
-        // Áp dụng filter (giữ nguyên)
         if ($this->filterType) {
             $transactionsQuery->where('transaction_type', $this->filterType);
         }

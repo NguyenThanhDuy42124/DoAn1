@@ -116,7 +116,7 @@
                             <td>{{ $order->payment_status_vn }}</td>
                             <td>{{ $order->created_at->format('d/m/Y H:i') }}</td>
                             <td>
-                                <a href="{{ route('seller.orders.show', $order->id) }}" class="btn btn-info btn-sm">Xem
+                                <a href="#" class="btn btn-info btn-sm">Xem
                                     chi tiết</a>
                                 @if ($order->status === 'Pending')
                                     <button type="button" wire:click="updateStatus({{ $order->id }}, 'Shipping')"

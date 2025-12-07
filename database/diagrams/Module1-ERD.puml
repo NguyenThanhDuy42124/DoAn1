@@ -168,11 +168,6 @@ entity "products (Ref)" as products_ref #F0F0F0 {
 
 ' Users - Wallets (1 - 1)
 ' Dùng ||..|| nếu User bắt buộc phải có ví ngay khi tạo.
-' Dùng ||..o| nếu User tạo tài khoản xong mới kích hoạt ví sau (0 hoặc 1).
-users ||..|| wallets : "owns exactly one"
-
-' Wallets - Transactions (1 - N) -> Cái này giữ nguyên
-wallets ||..o{ transactions : "logs"
 
 ' Users - Carts (1 - 0..1)
 ' User luôn là chủ sở hữu (|| bên trái), Cart có thể chưa có (o| bên phải)
