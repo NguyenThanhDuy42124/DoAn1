@@ -16,13 +16,14 @@ use App\Models\Brand;
 
 
 class SellerController extends Controller
-{   
-  public function index(Request $request) 
-{   
-    
+{
+  public function index(Request $request)
+{
+
     // 1. Lấy danh sách Top Seller (Giữ nguyên code cũ của bạn)
     $shops = User::where('role', 'seller')
                      ->withAvg('sellerReviews', 'rating')
+                     ->orderByDesc('seller_reviews_avg_rating')
                      ->take(4)
                      ->get();
 
@@ -81,11 +82,11 @@ class SellerController extends Controller
                              ->sum('total_price');
     $todayOrderCount = Order::where('seller_id', Auth::id())
                             ->whereDate('created_at', Carbon::today()) // Dựa trên ngày tạo
-                            ->count();      
+                            ->count();
     $latestOrders = Order::where('seller_id', Auth::id())
                          ->orderByDesc('created_at') // Sắp xếp mới nhất lên đầu
                          ->take(5) // Chỉ lấy 5 đơn
-                         ->get();                                           
+                         ->get();
     // Trả về view, thêm 'pendingProductCount' vào compact
     return view('seller.dashboard', compact('products','pendingProductCount','approvedProductCount','todayRevenue','todayOrderCount','latestOrders'));
 }
@@ -98,7 +99,7 @@ public function showShop(Request $request, $id)
         // 2. Lấy tham số 'sort' và 'category' từ URL
         $sort = $request->query('sort', 'newest');
         $selectedCategory = $request->query('category'); // <-- THÊM MỚI
-        
+
         $isFollowing = false;
         $followerCount = $shop->followers()->count(); // Đếm số người theo dõi
 
@@ -112,7 +113,7 @@ public function showShop(Request $request, $id)
                               ->get();
 
         // 4. Xây dựng câu truy vấn sản phẩm
-        $productQuery = Product::with(['images', 'category', 'brand']) 
+        $productQuery = Product::with(['images', 'category', 'brand'])
                                ->where('seller_id', $shop->id)
                                ->where('status', 'Approved');
 
@@ -143,21 +144,21 @@ public function showShop(Request $request, $id)
 
         // 8. Trả về view, truyền thêm $categories và $selectedCategory
         return view('pages.shop', compact(
-            'shop', 
-            'products', 
-            'sort', 
-            'categories', 
+            'shop',
+            'products',
+            'sort',
+            'categories',
             'selectedCategory',
             'totalProductCount',
-            'shopRating',      
+            'shopRating',
             'shopReviewCount',
-            'isFollowing',    
-            'followerCount'   
+            'isFollowing',
+            'followerCount'
         ));
     }
     public function orders(Request $request)
 {
-    $seller = Auth::user(); 
+    $seller = Auth::user();
     $status = $request->query('status', 'Pending');
 
     // Tính counts riêng
@@ -215,12 +216,12 @@ public function showShop(Request $request, $id)
     Log::info('UpdateStatus called', ['id' => $id, 'user_id' => Auth::id(), 'input_status' => $request->input('status'), 'query_status' => $request->query('status')]);
 
     $order = Order::where('seller_id', Auth::id())->findOrFail($id);
-    
+
     Log::info('Order found', ['order_id' => $order->id, 'current_status' => $order->status, 'payment_status' => $order->payment_status]); // Log data order
 
     $newStatus = $request->input('status');
     $currentStatusQuery = $request->query('status', 'Pending');
-      $oldStatus = $order->status; 
+      $oldStatus = $order->status;
     if ($newStatus === 'Shipped' && $order->status === 'Pending') {
         $order->status = 'Shipped';
     } elseif ($newStatus === 'Delivered' && $order->status === 'Shipped') {
@@ -253,7 +254,7 @@ public function showShop(Request $request, $id)
 
     // --- KIỂM TRA REQUEST MỚI (TỪ TRANG BÁO CÁO) ---
     if ($request->has('range')) {
-        
+
         $range = $request->input('range', '7d');
         $labels = [];
         $values = [];
@@ -265,7 +266,7 @@ public function showShop(Request $request, $id)
                 // --- 1 NĂM (12 tháng qua, nhóm theo tháng) ---
                 $startDate = Carbon::now()->subMonths(11)->startOfMonth();
                 $endDate = Carbon::now()->endOfMonth();
-                
+
                 $dbData = $query->whereBetween('created_at', [$startDate, $endDate]) // <-- ĐÃ SỬA
                     ->select(
                         DB::raw('SUM(total_price) as revenue'),
@@ -302,7 +303,7 @@ public function showShop(Request $request, $id)
                     $values[] = $dbData->get($labelFormat, 0);
                 }
                 break;
-            
+
             case '7d':
             default:
                 // --- 7 NGÀY (7 ngày qua, nhóm theo ngày) ---
@@ -329,11 +330,11 @@ public function showShop(Request $request, $id)
         // Trả về JSON KIỂU MỚI cho trang Báo cáo
         return response()->json(['labels' => $labels, 'values' => $values]);
 
-    } 
-    
+    }
+
     // --- REQUEST CŨ (TỪ TRANG TỔNG QUAN) ---
     else {
-        
+
         // Đây là logic 7 ngày GỐC của bạn
         $salesData = Order::where('seller_id', $sellerId)
             ->where('payment_status', 'paid')
@@ -362,7 +363,7 @@ public function showShop(Request $request, $id)
         return response()->json($reportData);
     }
 }
-  
+
     public function showReportPage()
     {
         $sellerId = Auth::id();
@@ -379,7 +380,7 @@ public function showShop(Request $request, $id)
             ->orderByDesc('total_spent') // Sắp xếp theo tổng chi tiêu
             ->take(5) // Lấy 5 người cao nhất
             ->get();
-        
+
         // 2. Xử lý dữ liệu cho Chart.js
         $topCustomerLabels = $topCustomersData->pluck('buyer_name');
         $topCustomerValues = $topCustomersData->pluck('total_spent');
