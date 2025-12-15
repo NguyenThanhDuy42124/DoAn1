@@ -78,7 +78,7 @@ entity "products" as products {
     price : DOUBLE
     stock : INT
     description : TEXT
-    status : ENUM('Pending','Approved','Hidden','Rejected','Deleted')
+    status : ENUM('Pending','Approved','Hidden','Rejected')
     previous_status : VARCHAR(255)
     attributes : JSON
     created_at : TIMESTAMP
@@ -137,8 +137,8 @@ categories ||..o{ products : "classifies"
 brands ||..o{ products : "manufactures"
 
 ' Quan hệ N-N giữa Category và Brand (qua bảng trung gian brand_category)
-categories ||..o{ brand_category : "contains brands"
-brands ||..o{ brand_category : "belongs to"
+categories ||..up..o{ brand_category : "contains brands"
+brands ||..up..o{ brand_category : "belongs to"
 
 ' 1 Product có nhiều ảnh
 products ||..o{ product_images : "has"
